@@ -1,9 +1,17 @@
 (add-hook 'text-mode-hook '(lambda() (auto-fill-mode 1)))
-(setq default-major-mode 'text-mode)
 
-(turn-on-font-lock)
-(turn-on-lazy-lock)
-(setq-default font-lock-maximum-decoration t)
+(require 'compile)
+
+(setq 
+ default-major-mode 'text-mode
+ compilation-error-regexp-systems-list '(gnu)
+ )
+
+(compilation-build-compilation-error-regexp-alist)
+
+;;(turn-on-font-lock)
+;;(turn-on-lazy-lock)
+;;(setq-default font-lock-maximum-decoration t)
 
 ;; cc-mode setup, according to info pages
 (fmakunbound 'c-mode)
