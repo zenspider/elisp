@@ -2,40 +2,33 @@
 
 (setq running-xemacs (featurep 'xemacs))
 
-(unless (featurep 'xemacs)
+(if (featurep 'xemacs)
+    (progn
+      (message "you are running xemacs... good")
+      ;; Extend Info directories - TODO: needs counterpart for GNU emacs
+      (mapc '(lambda (x)
+	       (pushnew x Info-directory-list :test 'string=))
+	    (list 
+	     "/usr/share/info"
+	     (expand-file-name "~/Bin/elisp/third-party/tramp")
+	     )))
   (progn
     (message "Have I ever mentioned that GNU emacs sucks?")
 
-;;     (defun add-to-list (list-var element)
-;;       "Stolen from xemac's subr.el"
-;;       (or (member element (symbol-value list-var))
-;; 	  (set list-var (cons element (symbol-value list-var)))))
-    
-       ;  (defalias 'Info-directory-list 'Info-default-directory-list)
     (defalias 'mapc 'mapcar)
     (load-library "cl")
     (setq apropos-do-all t)
-    
+    (transient-mark-mode 1)
+    (add-hook 'comint-output-filter-functions
+	      'comint-watch-for-password-prompt)
     ))
-
-(if (featurep 'xemacs)
-    (progn
-    (message "you are running xemacs... good")
-
-    ;; Extend Info directories
-     (mapc '(lambda (x)
- 	     (pushnew x Info-directory-list :test 'string=))
- 	  (list 
- 	   "/usr/share/info"
- 	   (expand-file-name "~/Bin/elisp/third-party/tramp")
- 	   ))
-     ))
 
 ;;; Add my elisp directory to pathing
 
 (mapc '(lambda (path)
 	 (pushnew (expand-file-name path) load-path :test 'string=))
       (list 
+       "/usr/share/emacs/site-lisp/"
        "/usr/local/lib/xemacs/site-lisp/"
        "~/Bin/elisp/"
        "~/Bin/elisp/third-party/"
@@ -43,8 +36,6 @@
        "~/Bin/elisp/third-party/semantic"
        "~/Bin/elisp/third-party/jde/lisp"
        ))
-
-;(byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t)
 
 (require 'vc-hooks)
 
@@ -81,7 +72,7 @@
  '(query-user-mail-address nil)
  '(user-mail-address (concat "ryand@" (getenv "DOMAIN"))))
 
-; '(font-lock-mode t nil (font-lock))
+(setenv "ESHELL" "/bin/bash")
 
 (custom-set-faces)
 
