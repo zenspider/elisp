@@ -23,6 +23,13 @@
 			   TeX-mode))
       (indent-region (region-beginning) (region-end) nil)))
 
+(defun myshell ()
+  "Create a shell buffer that is properly named (shell-<N>)"
+  (interactive)
+  (shell)
+  (rename-buffer "shell")
+  (rename-uniquely))
+
 (defun hard-tabs ()
   "Set tabbing in current buffer so only hard tabs are inserted into file, but 4 col. tabstops are still observed."
   (interactive)
@@ -32,7 +39,7 @@
     (save-excursion
       (tabify (mark) (point)))))
 
-(defun my-tabs()
+(defun mytabs()
   "Set tabbing back to the way I like it."
   (interactive)
   (progn
