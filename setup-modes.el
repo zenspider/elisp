@@ -14,12 +14,13 @@
 (if (file-exists-p (expand-file-name "~/Bin/p4"))
     (p4-set-p4-executable (expand-file-name "~/Bin/p4")))
 
-(defun p4-amazon () (interactive) (p4-set-p4-port "perforce:6791"))
-(defun p4-brazil () (interactive) (p4-set-p4-port "perforce:9591"))
-(defun p4-normal () (interactive) (p4-set-p4-port "perforce:1666"))
 
+(defun p4-normal () (interactive) (p4-set-p4-port "perforce:1666"))
 (if (equal (getenv "DOMAIN") "amazon.com")
-    (p4-amazon)
+    (progn
+      (defun p4-amazon () (interactive) (p4-set-p4-port "perforce:6791"))
+      (defun p4-brazil () (interactive) (p4-set-p4-port "perforce:9591"))
+      (p4-amazon))
   (p4-normal))
 
 (resize-minibuffer-mode 1)
@@ -110,6 +111,19 @@
 (require 'autorevert)
 (turn-on-auto-revert-mode)
 (global-auto-revert-mode)
+
+; "trivial-mode" defines external programs to open files
+(defun define-trivial-mode(mode-prefix file-regexp &optional command)
+  (or command (setq command mode-prefix))
+  (let ((mode-command (intern (concat mode-prefix "-mode"))))
+    (fset mode-command
+          `(lambda ()
+             (interactive)
+             (start-process ,mode-prefix (current-buffer)
+                            ,command (buffer-file-name))))
+    (add-to-list 'auto-mode-alist (cons file-regexp mode-command))))
+(define-trivial-mode "gv" "\\.ps$")
+(define-trivial-mode "gv" "\\.pdf$")
 
 ;; Xrefactory configuration part ;;
 ;; some Xrefactory defaults can be set here

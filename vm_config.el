@@ -59,6 +59,7 @@ vm-subject-ignored-prefix "^\\(re\\(\\[[0-9]+\\]\\)?: *\\)+"
 			 "antlr"
 			 "backup"
 			 "bill"
+			 "brazil"
 			 "build"
 			 "commit"
 			 "commit-main"
@@ -108,7 +109,9 @@ vm-subject-ignored-prefix "^\\(re\\(\\[[0-9]+\\]\\)?: *\\)+"
 
  )
 
-; (bbdb-insinuate-vm)
+(require 'bbdb)
+(bbdb-initialize 'vm)
+(bbdb-insinuate-vm)
 
 (add-to-list 'vm-mime-type-converter-alist
              '("text/html" "text/plain" "lynx -force_html -dump -stdin"))
