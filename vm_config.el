@@ -4,8 +4,12 @@
 (add-to-list 'vm-mime-default-face-charsets "Windows-1252")
 (add-to-list 'vm-mime-default-face-charsets "Windows-1257")
 
-(setq
- 
+(setq 
+
+ ;; Don't display HTML automatically
+ vm-mime-internal-content-type-exceptions '("text/html")
+ vm-auto-displayed-mime-content-type-exceptions '("text/html")
+
  ;; Automatically get mail every 10 seconds (INBOX only?)
  vm-use-toolbar nil
  vm-auto-get-new-mail 10
@@ -78,12 +82,27 @@
  		 (list "~/Mail/zss" "~/Mail/spool/zss" "~/Mail/zss.CRASH")
 		 )
 
- ;; vm-virtual-folder-alist '(("regexp-virtual-folder"
- ;;			    (("INBOX")
- ;;			     (text "regexp")))
- ;;			   ("all-mail"
- ;;			    (("~/Mail")
- ;;			     (text "another-regexp")))))
+ vm-virtual-folder-alist '(
+			   ("search"
+			    (("~/Mail")
+			     (text "poker")))
+			   )
+
+; vm-virtual-folder-alist
+; '(
+;   ;; start virtual folder definition
+;   ("virtual-folder-name"
+;    (("all-mail"
+;     (header "foo")
+;     (header "bar")
+;     )
+;    (("/path/to/folder3" "/path/to/folder4")
+;     (and (header "baz") (header "woof"))
+;     )
+;    )
+;   ;; end of virtual folder definition
+;   )
+
  )
 
 ; (bbdb-insinuate-vm)
