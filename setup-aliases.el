@@ -58,6 +58,15 @@
       (mark-whole-buffer)
       (untabify (mark) (point)))))
 
+(defun mytabs2()
+  "Set tabbing back to the way I like it."
+  (interactive)
+  (progn
+    (setq tab-width 2 indent-tabs-mode nil)
+    (save-excursion
+      (mark-whole-buffer)
+      (untabify (mark) (point)))))
+
 (defalias 'cvs-remove-diff (read-kbd-macro
 "<down> 4*C-k NUL C-s ============ RET <right> <down> C-x C-x C-w"))
 
