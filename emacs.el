@@ -40,6 +40,8 @@
        "~/Bin/elisp/"
        "~/Bin/elisp/third-party/"
        "~/Bin/elisp/third-party/tramp"
+       "~/Bin/elisp/third-party/semantic"
+       "~/Bin/elisp/third-party/jde/lisp"
        ))
 
 (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0)
