@@ -2,65 +2,63 @@
 
 (require 'compile)
 
-(setq 
- default-major-mode 'text-mode
- compilation-error-regexp-systems-list '(gnu)
- )
+(setq default-major-mode 'text-mode)
 
+;; fixes compile regex coredump on DEC UNIX
+(setq compilation-error-regexp-systems-list '(gnu))
 (compilation-build-compilation-error-regexp-alist)
-
-;;(turn-on-font-lock)
-;;(turn-on-lazy-lock)
-;;(setq-default font-lock-maximum-decoration t)
 
 ;; cc-mode setup, according to info pages
 (fmakunbound 'c-mode)
-(makunbound  'c-mode-map)
 (fmakunbound 'c++-mode)
+(makunbound  'c-mode-map)
 (makunbound  'c++-mode-map)
 (makunbound  'c-style-alist)
-
 (require 'cc-mode)
 
 ;;====================================================================
 ;; auto-insert
+;(require 'auto-insert-tkld)
+;(setq auto-insert-path '("/home/ryand/Bin/elisp/autoinsert")
+;      auto-insert-automatically t)
+;
+;(pushnew '("\.java'" . "Java")
+;	 auto-insert-alist :test 'equal)
+;(pushnew '("Java" . "java-insert.java")
+;	 auto-insert-type-alist :test 'equal)
+;(pushnew '("\\.pm$" . "PerlModule")
+;	 auto-insert-alist :test 'equal)
+;(pushnew '("PerlModule" . "perl-insert.pm")
+;	 auto-insert-type-alist :test 'equal)
+;
+;(global-set-key "\C-ci" 'insert-auto-insert-type)
 
-(require 'auto-insert-tkld)
-(setq auto-insert-path '("/home/ryand/Bin/elisp/autoinsert")
-      auto-insert-automatically t)
+;;; func-menu is a package that scans your source file for function
+;;; definitions and makes a menubar entry that lets you jump to any
+;;; particular function definition by selecting it from the menu.  The
+;;; following code turns this on for all of the recognized languages.
+;;; Scanning the buffer takes some time, but not much.
+;;;
+;;; Send bug reports, enhancements etc to:
+;;; David Hughes <ukchugd@ukpmr.cs.philips.nl>
 
-(pushnew '("\.java'" . "Java")
-	 auto-insert-alist :test 'equal)
-(pushnew '("Java" . "java-insert.java")
-	 auto-insert-type-alist :test 'equal)
-(pushnew '("\\.pm$" . "PerlModule")
-	 auto-insert-alist :test 'equal)
-(pushnew '("PerlModule" . "perl-insert.pm")
-	 auto-insert-type-alist :test 'equal)
-
-(global-set-key "\C-ci" 'insert-auto-insert-type)
-
-;;====================================================================
-;; imenu
-;(defun my-imenu-add-to-menubar ()
-;  (imenu-add-to-menubar "Index"))
-;(add-hook 'emacs-lisp-mode-hook 'my-imenu-add-to-menubar)
-;(add-hook 'cperl-mode-hook      'my-imenu-add-to-menubar)
-;(add-hook 'c-mode-hook          'my-imenu-add-to-menubar)
-;(add-hook 'c++-mode-hook        'my-imenu-add-to-menubar)
-;(add-hook 'java-mode-hook       'my-imenu-add-to-menubar)
-
-;(autoload 'imenu "imenu" "Goto buffer index position." t)
-;(setq imenu-max-items 44)
-;(setq imenu-sort-function 'imenu--sort-by-name)
-;(define-key global-map [(shift button3)] 'imenu) ;; Or some other key
-
-;; FIX
-;(defvar c-hanging-braces-alist '((brace-list-open)
-;                                 (substatement-open before)
-;                                 ;(block-close . c-snug-do-while)
-;                                 ;(extern-lang-open after)
-;				 ))
+(cond (running-xemacs
+       (require 'func-menu)
+       ;(define-key global-map 'f8 'function-menu)
+       (add-hook 'find-file-hooks 'fume-add-menubar-entry)
+       (define-key global-map "\C-cl" 'fume-list-functions)      
+       (define-key global-map "\C-cg" 'fume-prompt-function-goto) 
+       (define-key global-map '(button3) 'mouse-function-menu)
+       
+       ;; For descriptions of the following user-customizable variables,
+       ;; type C-h v <variable>
+       (setq
+	fume-fn-window-position 3
+	fume-auto-position-popup t
+	fume-display-in-modeline-p t
+	fume-buffer-name "*Function List*"
+	fume-no-prompt-on-valid-default nil)
+       ))
 
 ;;====================================================================
 
