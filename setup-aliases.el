@@ -152,3 +152,7 @@
 (defalias 'clean-whitespace (read-kbd-macro
 "<f12> [ SPC C-q TAB ]+ SPC <backspace> $ 2*RET ! ESC < <f12> C-q C-j C-q C-j + RET C-q C-j C-q C-j RET ! ESC <"))
   
+(defun insert-isodate ()
+  "Inserts an ISO-8601 compliant date string into the current buffer"
+  (interactive)
+  (insert-shell-command "date +%Y-%m-%d"))
