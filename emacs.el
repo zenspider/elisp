@@ -29,5 +29,9 @@
 ;; ============================
 ;; End of Options Menu Settings
 
-(custom-set-variables)
+(custom-set-variables
+ '(bar-cursor 2)
+ '(time-stamp-format "%02y-%02m-%02d %02H:%02M:%02S %u")
+ '(user-mail-address "ryand@amazon.com" t)
+ '(query-user-mail-address nil))
 (custom-set-faces)
