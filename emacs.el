@@ -37,4 +37,5 @@
  '(user-mail-address "ryand@amazon.com" t)
  '(query-user-mail-address nil))
 (custom-set-faces
- '(default ((t (:foreground "black" :background "white"))) t))
+ '(default ((t (:foreground "black" :background "white"))) t)
+ '(dired-face-symlink ((((class color)) (:italic t)))))
