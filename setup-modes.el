@@ -3,17 +3,15 @@
 
 (require 'compile)
 ; (require 'jdok)
-(require 'p4)
+; (require 'p4)
 (require 'jde)
-
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 (defun p4-setup ()
   "Initializes p4"
   (interactive)
   (progn
     (load-library "p4")
-    (p4-set-my-clients '(ryand))
+    (p4-set-my-clients '(ryand ryand-itsy))
     (p4-set-client-name "ryand")))
 
 ;; fixes compile regex coredump on DEC UNIX
@@ -97,6 +95,13 @@
 (add-hook 'ruby-mode-hook
           '(lambda ()
              (inf-ruby-keys)
+	     (define-key ruby-mode-map "\e\C-b" 'bury-buffer)
+             ))
+
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'text-mode-hook
+          '(lambda ()
+	     (define-key text-mode-map "\M-s" 'fixup-whitespace)
              ))
 
 (autoload 'auto-revert-mode "autorevert" nil t)

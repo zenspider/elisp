@@ -13,5 +13,5 @@
 (set-glyph-image modeline-pointer-glyph "leftbutton")
 (gnuserv-start)
 
-(setq Info-directory-list
-      (append Info-directory-list '("/usr/obj/usr/src/gnu/usr.bin/cvs/doc/")))
+;(setq Info-directory-list
+;      (append Info-directory-list '("/usr/obj/usr/src/gnu/usr.bin/cvs/doc/")))

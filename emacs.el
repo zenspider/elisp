@@ -11,6 +11,9 @@
 (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t)
 ; (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0)
 
+;; Extend Info directories
+(setq Info-directory-list (cons "/usr/share/info" Info-directory-list))
+
 (require 'vc-hooks)
 ;(require 'project)
 
@@ -23,9 +26,10 @@
 (load "bs")
 
 (custom-set-variables
- '(gutter-buffers-tab-visible-p nil)
- '(backup-by-copying-when-linked t)
  '(paren-mode (quote paren) nil (paren))
+ '(column-number-mode t)
+ '(gnuserv-program "/usr/local/lib/xemacs-21.1.12/i386--freebsd/gnuserv")
+ '(bar-cursor t)
  '(gutter-visible-p nil)
  '(jde-make-program "gmake")
  '(jde-auto-parse-buffer-interval 60)
@@ -41,16 +45,11 @@
  '(jde-gen-get-set-var-template (quote ("(end-of-line) '&" "(P \"Variable type: \" type) \" \"" "(P \"Variable name: \" name) \";\" '>'n '>'n" "\"/**\" '>'n" "\"* Get the value of \" (s name) \".\" '>'n" "\"* @return value of \" (s name) \".\" '>'n" "\"**/\" '>'n '>'n" " \"public \" (s type)" "(if (string= \"boolean\" (jde-gen-lookup-named 'type) ) " "\" is\" " "\" \" ) " "(s name)" "\"() \"" "(if jde-gen-k&r " "()" "'>'n)" "\"{\" '>'n" "\"return this.\" (s name) \";\" '>'n \"}\"" "'>'n '>'n" "\"/**\" '>'n" "\"* Set the value of \" (s name) \".\" '>'n" "\"* @param \" (s name) \" Value to assign to \" (s name) \".\" '>'n" "\"**/\" '>'n '>'n" "\"public void \" (s name)" "\"(\" (s type) \" \" (s name) \") \" " "(if jde-gen-k&r " "()" "'>'n)" "\"{\" '>'n" "'>'n \"this.\" (s name) \" = \" (s name) \";\" '>'n \"}\" '>'n'>")))
  '(shell-multiple-shells t)
  '(toolbar-visible-p nil)
- '(jde-build-use-make t)
- '(time-stamp-format "%02y-%02m-%02d %02H:%02M:%02S %u" t)
  '(line-number-mode t)
- '(calendar-time-display-form (quote (24-hours ":" minutes (if time-zone " (") time-zone (if time-zone ")"))))
- '(cperl-hairy t)
- '(user-mail-address "ryand@amazon.com" t)
- '(query-user-mail-address nil))
-(custom-set-faces
- '(default ((t (:foreground "black" :background "white"))) t)
- '(dired-face-symlink ((((class color)) (:italic t)))))
+ '(user-mail-address "ryand@zenspider.com." t)
+ '(query-user-mail-address nil)
+ '(font-lock-mode t nil (font-lock)))
+(custom-set-faces)
 
 ;; Options Menu Settings
 ;; =====================
