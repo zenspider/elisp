@@ -9,7 +9,7 @@
 
 ; (load "simple")
 
-(defun recompile-init ()
+(defun my-recompile-init ()
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t))
 
