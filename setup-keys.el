@@ -2,9 +2,8 @@
 ;; Keys & Menus:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;bad habits broken by dvorak
-;(global-unset-key "\C-x\C-c") ;; Keep from killing myself with bad habits.
 ;(global-unset-key "\C-z") ;; Annoying behavior
+(global-unset-key 'insert) ; Annoying behavior
 
 (global-set-key 'f1  'undo)                         ;; undo
 (global-set-key 'f2  'x-kill-primary-selection)     ;; cut
@@ -19,13 +18,13 @@
 (global-set-key 'f11 'call-last-kbd-macro)
 (global-set-key 'f12 'query-replace-regexp)
 
+(global-set-key (kbd "C-x !") 'insert-shell-command-interactive) ; located in setup-aliases.el
+
 ;; Add Big Brother Database keys
 ;;(global-set-key "\C-x\M-b" 'bbdb)
 ;;(global-set-key "\C-x\M-m" 'vm-bugread)
 
 (global-set-key "\C-\M-n" 'insert-buffer-name)
-
-(global-unset-key 'insert)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus
