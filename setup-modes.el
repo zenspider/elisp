@@ -14,6 +14,8 @@
 (if (file-exists-p (expand-file-name "~/Bin/p4"))
     (p4-set-p4-executable (expand-file-name "~/Bin/p4")))
 
+(cond (running-xemacs
+       (setq diff-switches nil))) ; -c doesn't work well with GNU emacs
 
 (defun p4-normal () (interactive) (p4-set-p4-port "perforce:1666"))
 (if (equal (getenv "DOMAIN") "amazon.com")
