@@ -2,7 +2,7 @@
 ;; Keys & Menus:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;(global-unset-key "\C-z") ;; Annoying behavior
+(global-unset-key "\C-x\C-c") ;; Annoying behavior; save-buffers-kill-emacs
 (global-unset-key 'insert) ; Annoying behavior
 
 (global-set-key 'f1  'undo)                         ;; undo
