@@ -16,6 +16,7 @@
 (load "bs")
 
 (custom-set-variables
+ '(gutter-buffers-tab-visible-p nil)
  '(backup-by-copying-when-linked t)
  '(paren-mode (quote paren) nil (paren))
  '(gutter-visible-p nil)
