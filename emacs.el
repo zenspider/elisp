@@ -19,6 +19,7 @@
  '(gutter-buffers-tab-visible-p nil)
  '(backup-by-copying-when-linked t)
  '(paren-mode (quote paren) nil (paren))
+ '(delete-key-deletes-forward nil)
  '(gutter-visible-p nil)
  '(lazy-shot-mode t nil (lazy-shot))
  '(c-echo-syntactic-information-p t)
