@@ -1,6 +1,6 @@
 ;;; p4.el --- Simple Perforce-Emacs Integration
 ;;
-;; $Id: //depot/main/user/ryand/Bin/elisp/p4.el#1 $
+;; $Id: //depot/main/user/ryand/Bin/elisp/p4.el#2 $
 
 ;;; Commentary:
 ;;
@@ -30,7 +30,7 @@
 ;; LCD Archive Entry:
 ;; p4|Rajesh Vaidheeswarran|rv@fore.com|
 ;; P4 SCM Integration into Emacs/XEmacs|
-;; 1999/10/28|8.0|not_assigned_yet|
+;; 1999/10/29|8.3|not_assigned_yet|
 
 ;;
 ;; WARNING:
@@ -78,7 +78,7 @@
 ;; to vc-toggle-read-only.
 (require 'vc)
 
-(defvar p4-emacs-version "8.0" "The Current P4-Emacs Integration Revision.")
+(defvar p4-emacs-version "8.2" "The Current P4-Emacs Integration Revision.")
 
 ;; Find out what type of emacs we are running in. We will be using this
 ;; quite a few times in this program.
@@ -95,13 +95,18 @@
 
 (defvar p4-web-page "http://www.dsmit.com/p4" "The home of p4.el.")
 
-(eval-and-compile
-  (if (< (string-to-int emacs-version) 20)
-      (progn
-	(defmacro defgroup (sym memb doc &rest args)
-	  t)
-	(defmacro defcustom (sym val doc &rest args)
-	  `(defvar ,sym ,val ,doc)))))
+;; For flavors of Emacs which don't define `defgroup' and `defcustom'.
+(eval-when-compile
+  (if (not (fboundp 'defgroup))
+      (defmacro defgroup (sym memb doc &rest args)
+	"Null macro for defgroup in all versions of Emacs that don't define
+defgroup"
+	t))
+  (if (not (fboundp 'defcustom))
+      (defmacro defcustom (sym val doc &rest args)
+	"Macro to alias defcustom to defvar in all versions of Emacs that
+don't define defcustom"
+	`(defvar ,sym ,val ,doc))))
 
 (defgroup p4 nil  "Perforce VC System."  :group 'tools)
 
@@ -160,7 +165,6 @@ This provides for a much faster `p4-find-file-hook'."
   :type 'boolean
   :group 'p4)
 
-;; Auto-refresh?
 (defcustom p4-verbose t
   "When set, p4 will pop up the output buffer with the result of the
 command."
@@ -285,6 +289,7 @@ within emacs."
 	  (cons '(p4-minor-mode . p4-minor-map) minor-mode-map-alist)))
 
 (defvar p4-current-command nil)
+(make-variable-buffer-local 'p4-current-command)
 (put 'p4-current-command 'permanent-local t)
 (set-default 'p4-current-command nil)
 
@@ -433,7 +438,7 @@ for saved window configurations."
 	(progn
 	  (set-buffer output-buffer)
 	  (delete-region (point-min) (point-max))))
-    (apply 'call-process p4-executable p4-null-device
+    (apply 'call-process (p4-check-p4-executable) p4-null-device
 	   output-buffer
 	   nil				; update display?
 	   args)
@@ -472,13 +477,9 @@ the last popped element to restore the window configuration."
 				 &optional argument)
   "Internal function called by various p4 commands."
   (save-excursion
-    (if (not (stringp cmd))
-	(error "p4-noinput-buffer-action: Command not a string."))
     (save-excursion
       (p4-exec-p4 (get-buffer-create p4-output-buffer-name)
-		  (if argument
-		      (append (list cmd) argument)
-		    (list cmd))
+		  (append (list cmd) argument)
 		  t))
     (p4-partial-cache-cleanup cmd)
     (if (and do-revert buffer-file-name)
@@ -506,29 +507,30 @@ the last popped element to restore the window configuration."
 (defun p4-edit (show-output)
   "To open the current depot file for edit, type \\[p4-edit].
 
-Open or re-open an existing file for edit.
+Open an existing file for edit.  The server notes that the current
+user on the current client has the file opened, and then changes
+the file permission from read-only to read/write.
 
-If file is already open for edit or delete then it is reopened
-for edit and moved into the specified change number (or 'default'
-change if no change number is given.)
+If -c changelist# is given, the file is put into the pending
+changelist; the changelist must have been previously created by
+'p4 change'.  Otherwise the file is opened in the 'default'
+\(unnumbered\) changelist.
 
 If -t type is given the file is explicitly opened as the specified
-file type, which may be text, ltext, xtext, binary, xbinary, ktext
-kxtext, symlink, or resource.  Not all types are supported on all
-operating systems.  See the Users' Guide for a description of file
-types.	If no type is specified, the type is determined automatically
-by examination of the file's contents and execution permission bits.
+file type.  See 'p4 help filetypes' for a complete list.  If no type
+is specified, the type of the previous revision is reused.
 
 Argument SHOW-OUTPUT  displays the *P4 Output* buffer on executing the
 command if t."
 
   (interactive (list p4-verbose))
-  (let ((args (if (p4-buffer-file-name-2)
-		  (p4-buffer-file-name-2)
-		""))
+  (let ((args buffer-file-name)
 	(refresh-after nil))
-    (if (or current-prefix-arg (string= "" args))
+    (if (or current-prefix-arg (not args))
 	(progn
+	  (setq args (if (p4-buffer-file-name-2)
+			 (p4-buffer-file-name-2)
+		       ""))
 	  (setq args (p4-make-list-from-string
 		      (p4-read-arg-string "p4 edit: " (cons args 0))))
 	  (setq refresh-after t))
@@ -551,9 +553,9 @@ kxtext, symlink, or resource).
 Argument SHOW-OUTPUT  displays the *P4 Output* buffer on executing the
 command if t."
 
-  (interactive "P")
-  (let ((args (if buffer-file-name
-		  buffer-file-name
+  (interactive (list p4-verbose))
+  (let ((args (if (p4-buffer-file-name-2)
+		  (p4-buffer-file-name-2)
 		"")))
     (setq args (p4-make-list-from-string
 		(p4-read-arg-string "p4 reopen: " (cons args 0))))
@@ -568,21 +570,24 @@ command if t."
 Argument SHOW-OUTPUT  displays the *P4 Output* buffer on executing the
 command if t."
   (interactive (list p4-verbose))
-  (let ((args (list (buffer-file-name)))
+  (let ((args buffer-file-name)
 	(refresh-after nil))
-    (if (or current-prefix-arg (not buffer-file-name))
+    (if (or current-prefix-arg (not args))
 	(progn
+	  (setq args (if (p4-buffer-file-name-2)
+			 (p4-buffer-file-name-2)
+		       ""))
 	  (setq args (p4-make-list-from-string
-		      (p4-read-arg-string "p4 revert: "
-					  (p4-buffer-file-name-2))))
-	  (setq refresh-after t)))
+		      (p4-read-arg-string "p4 revert: " args)))
+	  (setq refresh-after t))
+      (setq args (list args)))
     (if (yes-or-no-p "Really revert changes? ")
 	(progn
 	  (p4-noinput-buffer-action "revert" t (and show-output 's) args)
 	  (if refresh-after
-	      (p4-refresh-files-in-buffers)))))
-  (p4-check-mode)
-  (p4-update-opened-list))
+	      (p4-refresh-files-in-buffers))
+	  (p4-check-mode)
+	  (p4-update-opened-list)))))
 
 ;; The p4 lock command
 (defun p4-lock ()
@@ -862,15 +867,11 @@ change descriptions."
     (get-buffer-create p4-output-buffer-name);; We do these two lines
     (kill-buffer p4-output-buffer-name);; to ensure no duplicates
     (p4-noinput-buffer-action cmd nil t (cons "-l" p4-filename))
-    (p4-make-depot-list-buffer p4-filelog-buffer)
+    (p4-activate-print-buffer p4-filelog-buffer)
     (set-buffer p4-filelog-buffer)
     (setq buffer-read-only nil)
     (setq p4-local-client p4-this-client
 	  p4-local-server-port p4-this-server-port)
-    (make-local-variable 'p4-fname)
-    (setq p4-fname (if (equal cmd "filelog")
-		       (car p4-filename)
-		     nil))
     (goto-char (point-min))
     (while (re-search-forward (concat
 			       "^\\(\\.\\.\\. #\\([0-9]+\\) \\)?change "
@@ -1003,7 +1004,7 @@ mapping is used to list the corresponding depot files."
 	  (delete-region max (point-max))
 	  (insert "\n")
 	  (apply 'call-process
-		 p4-executable nil t nil "where" (reverse args))
+		 (p4-check-p4-executable) nil t nil "where" (reverse args))
 	  (goto-char max)
 	  (if (< p4-server-version 98)
 	      (progn
@@ -1020,40 +1021,37 @@ mapping is used to list the corresponding depot files."
 		      "^\\([^ \n]+\\) //\\([^ \n]+\\) \\(.*\\)$" nil t)
 		(setq files (cons
 			     (cons
-			      (match-string 1)  (match-string 3)) files)))))
+			      (match-string 1) (match-string 3)) files)))))
 	  (delete-region max (point-max))
 	  (goto-char (point-min))
 	  (rename-buffer p4-opened-buffer t)
 	  (while (re-search-forward depot-regexp nil t)
-	    (let ((p4-cur-file (cdr (assoc (match-string 2) files)))
+	    (let ((p4-client-file (cdr (assoc (match-string 2) files)))
 		  (p4-depot-file (match-string 2))
 		  (start (match-beginning 2))
 		  (end (match-end 2)))
-	      (cond ((not p4-cur-file)
+	      (if (and p4-client-file
+		       (file-readable-p p4-client-file))
+		  (p4-set-extent-property start end 'link-client-name
+					  p4-client-file)
+		(p4-set-extent-property start end 'link-depot-name
+					p4-depot-file))
+	      (cond ((not p4-client-file)
 		     (p4-set-extent-property start end 'face
-					     'p4-depot-unmapped-face)
-		     (p4-set-extent-property start end 'unmapped-file
-					     p4-depot-file))
+					     'p4-depot-unmapped-face))
 		    ((save-excursion
 		       (goto-char end)
 		       (looking-at ".* deleted?[ \n]"))
 		     (p4-set-extent-property start end 'face
-					     'p4-depot-deleted-face)
-		     (p4-set-extent-property start end 'deleted-filename
-					     p4-depot-file))
+					     'p4-depot-deleted-face))
 		    ((save-excursion
 		       (goto-char end)
 		       (looking-at ".* \\(add\\|branch\\)\\(ed\\)?[ \n]"))
 		     (p4-create-active-link start end
-					    (list
-					     (cons 'filename
-						   p4-cur-file)
-					     (cons 'face
-						   'p4-depot-added-face))))
+					    (list (cons 'face
+							'p4-depot-added-face))))
 		    (t
-		     (p4-create-active-link start end
-					    (list (cons 'filename
-							p4-cur-file)))))))
+		     (p4-create-active-link start end nil)))))
 	  (use-local-map p4-opened-map)
 	  (setq buffer-read-only t)
 	  (p4-move-buffer-point-to-top p4-opened-buffer)))))
@@ -1069,7 +1067,13 @@ find the corresponding depot file.  The -q flag suppresses the
 initial line that displays the file name and revision."
 
   (interactive)
-  (let ((arg-string (p4-buffer-file-name-2)))
+  (let ((arg-string (p4-buffer-file-name-2))
+	(rev (get-char-property (point) 'rev))
+	(change (get-char-property (point) 'change)))
+    (cond (rev
+	   (setq arg-string (concat arg-string "#" rev)))
+	  (change
+	   (setq arg-string (concat arg-string "@" change))))
     (if (or current-prefix-arg (not arg-string))
 	(setq arg-string (p4-read-arg-string "p4 print: " arg-string)))
     (p4-noinput-buffer-action
@@ -1083,9 +1087,19 @@ initial line that displays the file name and revision."
     (setq buffer-read-only nil)
     (goto-char (point-min))
     (while (re-search-forward "^//[a-zA-Z]+/" nil t)
-      (let ((fname (get-char-property (match-end 0) 'filename)))
-	(p4-set-extent-property (match-beginning 0) (point-max)
-				'local-fname fname)))
+      (let ((link-client-name (get-char-property (match-end 0) 'link-client-name))
+	    (link-depot-name (get-char-property (match-end 0) 'link-depot-name))
+	    (start (match-beginning 0))
+	    (end (point-max)))
+	(save-excursion
+	  (if (re-search-forward "^//[a-zA-Z]+/" nil t)
+	      (setq end (match-beginning 0))))
+	(if link-client-name
+	    (p4-set-extent-property start end
+				    'block-client-name link-client-name))
+	(if link-depot-name
+	    (p4-set-extent-property start end
+				    'block-depot-name link-depot-name))))
     (setq buffer-read-only t)))
 
 
@@ -1207,8 +1221,6 @@ type \\[p4-print-with-rev-history]"
       (let (line rev ch (old-rev 0))
 	(save-excursion
 	  (set-buffer buffer)
-	  (make-local-variable 'p4-fname)
-	  (setq p4-fname file-name)
 	  (goto-line 2)
 	  (move-to-column 0)
 	  (insert "  Change  Rev\n")
@@ -1292,7 +1304,7 @@ the client with the view, but do not actually get the files.  If no files
 are named show the result for the entire client view."
 
   (interactive)
-  (let ((args 'nil))
+  (let ((args nil))
     (if current-prefix-arg
 	(setq args (p4-make-list-from-string (p4-read-arg-string "p4 get: "))))
     (p4-noinput-buffer-action "get" nil t args)
@@ -1567,7 +1579,7 @@ character events"
 	(action (get-char-property pnt 'action))
 	(user (get-char-property pnt 'user))
 	(client (get-char-property pnt 'client))
-	(filename (if (boundp 'p4-fname) p4-fname)))
+	(filename (p4-buffer-file-name-2)))
     (cond ((and (not action) rev)
 	   (let ((fn1 (concat filename "#" rev)))
 	     (p4-noinput-buffer-action "print" nil t (list fn1))
@@ -1599,14 +1611,16 @@ character events"
 	  ;; Check if a "filename link" or an active "diff buffer area" was
 	  ;; selected.
 	  (t
-	   (let ((p4-this-file (get-char-property pnt 'filename))
-		 (local-fname (get-char-property pnt 'local-fname))
+	   (let ((link-client-name (get-char-property pnt 'link-client-name))
+		 (link-depot-name (get-char-property pnt 'link-depot-name))
+		 (block-client-name (get-char-property pnt 'block-client-name))
+		 (block-depot-name (get-char-property pnt 'block-depot-name))
 		 (first-line (get-char-property pnt 'first-line))
-		 (start (get-char-property pnt 'start))
-		 (p4-unmapped-file (get-char-property pnt 'unmapped-file)))
-	     (cond (p4-this-file
-		    (find-file-other-window p4-this-file))
-		   (local-fname
+		 (start (get-char-property pnt 'start)))
+	     (cond ((or link-client-name link-depot-name)
+		    (p4-find-file-or-print-other-window
+		     link-client-name link-depot-name))
+		   ((or block-client-name block-depot-name)
 		    (if first-line
 			(let ((c (max 0 (- pnt
 					   (save-excursion
@@ -1619,17 +1633,25 @@ character events"
 			    (goto-char start)
 			    (while (re-search-forward "^[ +>].*\n" pnt t)
 			      (setq r (1+ r))))
-			  (find-file-other-window local-fname)
+			  (p4-find-file-or-print-other-window
+			   block-client-name block-depot-name)
 			  (goto-line r)
+			  (if (not block-client-name)
+			      (forward-line 1))
 			  (beginning-of-line)
 			  (goto-char (+ (point) c)))
-		      (find-file-other-window local-fname)))
-		   (p4-unmapped-file
-		    (p4-noinput-buffer-action "print" nil t
-					      (list p4-unmapped-file))
-		    (p4-activate-print-buffer "*P4 print*"))
+		      (p4-find-file-or-print-other-window
+		       block-client-name block-depot-name)))
 		   (t
 		    (error "There is no file at that cursor location!"))))))))
+
+(defun p4-find-file-or-print-other-window (client-name depot-name)
+  (if client-name
+      (find-file-other-window client-name)
+    (p4-noinput-buffer-action "print" nil t
+			      (list depot-name))
+    (p4-activate-print-buffer depot-name)
+    (other-window 1)))
 
 (defun p4-find-file-other-window ()
   "Open file"
@@ -1750,10 +1772,16 @@ character events"
     (goto-char (point-min))
     (while (re-search-forward "^\\(==== //\\).*\n\\(\\(\n\\|[^=\n].*\n\\)*\\)"
 			      nil t)
-      (let ((fname (get-char-property (match-end 1) 'filename))
+      (let ((link-client-name (get-char-property (match-end 1) 'link-client-name))
+	    (link-depot-name (get-char-property (match-end 1) 'link-depot-name))
 	    (start (match-beginning 2))
 	    (end (match-end 2)))
-	(p4-set-extent-property start end 'local-fname fname)))
+	(if link-client-name
+	    (p4-set-extent-property start end
+				    'block-client-name link-client-name))
+	(if link-depot-name
+	    (p4-set-extent-property start end
+				    'block-depot-name link-depot-name))))
 
     (goto-char (point-min))
     (while (re-search-forward
@@ -1935,7 +1963,7 @@ number range.  See 'p4 help revisions' for help specifying revisions.
 The -i flag also includes any fixes made by changelists integrated
 into the specified files."
   (interactive)
-  (let ((args 'nil))
+  (let ((args nil))
     (if current-prefix-arg
 	(setq args (p4-make-list-from-string (p4-read-arg-string "p4 fixes: "))))
     (p4-noinput-buffer-action "fixes" nil t args)
@@ -1994,7 +2022,7 @@ arguments to P4-OUT-COMMAND."
     (set-buffer (get-buffer-create (concat "*P4 " p4-this-command "*"))))
   (setq p4-current-command p4-this-command)
   (if (zerop (apply 'call-process-region (point-min) (point-max)
-		    p4-executable t t nil
+		    (p4-check-p4-executable) t t nil
 		    p4-current-command "-o"
 		    p4-in-args))
       (progn
@@ -2016,20 +2044,21 @@ arguments to P4-OUT-COMMAND."
 	(define-key p4-minor-map "\C-c\C-c" 'p4-async-call-process)
 	(run-hooks 'p4-async-command-hook)
 	(message "C-c C-c to finish editing and exit buffer."))
-    (error "%s %s -o failed to complete successfully." p4-executable
-	   p4-current-command)))
+    (error "%s %s -o failed to complete successfully."
+	   (p4-check-p4-executable))))
 
 (defun p4-async-call-process ()
   "Internal function called by `p4-async-process-command' to process the
 buffer after editing is done using the minor mode key mapped to `C-c C-c'."
   (interactive)
   (message "p4 %s ..." p4-current-command)
-  (let ((max (point-max)) msg)
+  (let ((max (point-max)) msg
+	(current-command p4-current-command))
     (goto-char max)
     (if (zerop (apply 'call-process-region (point-min)
-		      max p4-executable
+		      max (p4-check-p4-executable)
 		      nil '(t t) nil
-		      p4-current-command "-i"
+		      current-command "-i"
 		      p4-current-args))
 	(progn
 	  (goto-char max)
@@ -2041,16 +2070,17 @@ buffer after editing is done using the minor mode key mapped to `C-c C-c'."
 	    (insert msg))
 	  (kill-buffer nil)
 	  (display-buffer p4-output-buffer-name)
-	  (p4-partial-cache-cleanup p4-current-command)
-	  (message "p4 %s done." p4-current-command)
-	  (if (equal p4-current-command "submit")
+	  (p4-partial-cache-cleanup current-command)
+	  (message "p4 %s done." current-command)
+	  (if (equal current-command "submit")
 	      (progn
 		(p4-refresh-files-in-buffers)
 		(p4-check-mode-all-buffers)))
-	  (if (and p4-notify (equal p4-current-command "submit"))
+	  (if (and p4-notify (equal current-command "submit"))
 	      (p4-notify p4-notify-list)))
-      (error "%s %s -i failed to complete successfully." p4-executable
-	     p4-current-command))))
+      (error "%s %s -i failed to complete successfully."
+	     (p4-check-p4-executable)
+	     current-command))))
 
 ;; The p4 change command
 (defun p4-change ()
@@ -2134,14 +2164,18 @@ The -i flag causes a client specification to be read from the
 standard input.	 The user's editor is not invoked."
 
   (interactive)
-  (let ((args nil))
-    (if current-prefix-arg
-	(setq args (p4-make-list-from-string
-		    (p4-read-arg-string "p4 client: " nil "client"))))
-    (if (memq 't (mapcar (lambda (x) (not (not (string-match "^-" x))))
-			 args))
-	(p4-noinput-buffer-action "client" nil t args)
-      (p4-async-process-command "client" nil nil nil args))))
+  (let ((args nil)
+	(client-buf-name "*P4 client*"))
+    (if (buffer-live-p (get-buffer client-buf-name))
+	(switch-to-buffer-other-window (get-buffer client-buf-name))
+      (if current-prefix-arg
+	  (setq args (p4-make-list-from-string
+		      (p4-read-arg-string "p4 client: " nil "client"))))
+      (if (memq t (mapcar (lambda (x) (not (not (string-match "^-" x))))
+			  args))
+	  (p4-noinput-buffer-action "client" nil t args)
+	(p4-async-process-command "client" "Description:\n\t"
+				  client-buf-name nil args)))))
 
 (defun p4-clients ()
   "To list all clients, type \\[p4-clients].
@@ -2158,8 +2192,8 @@ Reports the list of all clients currently known to the system."
 		 (p4-read-arg-string "p4 branch: " nil "branch"))))
   (if (or (null args) (equal args (list "")))
       (error "Branch must be specified!")
-    (if (memq 't (mapcar (lambda (x) (not (not (string-match "^-" x))))
-			 args))
+    (if (memq t (mapcar (lambda (x) (not (not (string-match "^-" x))))
+			args))
 	(p4-noinput-buffer-action "branch" nil t args)
       (p4-async-process-command "branch" "Description:\n\t"
 				(concat "*P4 Branch: "
@@ -2182,8 +2216,8 @@ Branches takes no arguments."
 		 (p4-read-arg-string "p4 label: " nil "label"))))
   (if (or (null args) (equal args (list "")))
       (error "label must be specified!")
-    (if (memq 't (mapcar (lambda (x) (not (not (string-match "^-" x))))
-			 args))
+    (if (memq t (mapcar (lambda (x) (not (not (string-match "^-" x))))
+			args))
 	(p4-noinput-buffer-action "label" nil t args)
       (p4-async-process-command "label" "Description:\n\t"
 				(concat "*P4 label: "
@@ -2243,8 +2277,8 @@ standard input.	 The user's editor is not invoked."
 	  (setq args (p4-make-list-from-string
 		      (p4-read-arg-string "p4 submit: " nil))))
       (save-some-buffers)
-      (if (memq 't (mapcar (lambda (x) (not (not (string-match "^-" x))))
-			   args))
+      (if (memq t (mapcar (lambda (x) (not (not (string-match "^-" x))))
+			  args))
 	  (progn
 	    (p4-noinput-buffer-action "submit" nil t args)
 	    (p4-refresh-files-in-buffers))
@@ -2303,8 +2337,8 @@ standard input.	 The user's editor is not invoked."
     (if current-prefix-arg
 	(setq args (p4-make-list-from-string
 		    (p4-read-arg-string "p4 user: " nil "user"))))
-    (if (memq 't (mapcar (lambda (x) (not (not (string-match "^-" x))))
-			 args))
+    (if (memq t (mapcar (lambda (x) (not (not (string-match "^-" x))))
+			args))
 	(p4-noinput-buffer-action "user" nil t args)
       (p4-async-process-command "user" nil nil nil args))))
 
@@ -2347,8 +2381,8 @@ The -f flag allows otherwise read-only fields to be set."
     (if current-prefix-arg
 	(setq args (p4-make-list-from-string
 		    (p4-read-arg-string "p4 job: " nil "job"))))
-    (if (memq 't (mapcar (lambda (x) (not (not (string-match "^-" x))))
-			 args))
+    (if (memq t (mapcar (lambda (x) (not (not (string-match "^-" x))))
+			args))
 	(p4-noinput-buffer-action "job" nil t args)
       (p4-async-process-command "job" "Description:\n\t" nil nil args))))
 
@@ -2379,7 +2413,8 @@ The -f flag allows otherwise read-only fields to be set."
 	(goto-char (point-max))
 	(setq pmin (point))
 	(if (zerop (call-process
-		    p4-executable nil t nil "client" "-o" client-name))
+		    (p4-check-p4-executable)
+		    nil t nil "client" "-o" client-name))
 	    (progn
 	      (save-restriction
 		(narrow-to-region pmin (point-max))
@@ -2414,7 +2449,7 @@ then, a corresponding list of values is returned."
       (set-buffer p4-output-buffer-name)
       (goto-char (point-max))
       (setq pmin (point))
-      (if (zerop (call-process  p4-executable nil t nil "info"))
+      (if (zerop (call-process (p4-check-p4-executable) nil t nil "info"))
 	  (save-restriction
 	    (narrow-to-region pmin (point-max))
 	    (let ((all-keys (if (equal key "NULL")
@@ -2620,7 +2655,7 @@ controlled files."
 	  (setq default-directory (file-name-directory filename)))
       (if (and filename
 	       (zerop (call-process
-		       p4-executable
+		       (p4-check-p4-executable)
 		       nil
 		       p4-output-buffer-name
 		       nil
@@ -2796,17 +2831,17 @@ list."
 	    (goto-char (point-min))
 	    (if (re-search-forward  "[0-9]+.*submitted" (point-max)  t)
 		(progn
-		  (let ((p4-matched-change 'nil))
+		  (let ((p4-matched-change nil))
 		    (setq p4-matched-change (substring (match-string 0) 0 -10))
 		    (set-buffer (get-buffer-create "*P4 Notify*"))
 		    (delete-region (point-min) (point-max))
 		    (call-process-region (point-min) (point-max)
-					 p4-executable
+					 (p4-check-p4-executable)
 					 t t nil "describe" "-s"
 					 p4-matched-change)
 		    (switch-to-buffer "*P4 Notify*")
 		    (goto-char (point-min))
-		    (let ((p4-chg-desc 'nil))
+		    (let ((p4-chg-desc nil))
 		      (if (re-search-forward "^Change.*$" (point-max) t)
 			  (setq p4-chg-desc (match-string 0))
 			(setq p4-chg-desc (concat
@@ -2840,6 +2875,14 @@ list."
   (message (concat (cond (p4-running-xemacs "X")) "Emacs-P4 Integration v%s")
 	   p4-emacs-version))
 
+(defun p4-check-p4-executable ()
+  "Check if the `p4-executable' is nil, and if so, prompt the user for a
+valid `p4-executable'."
+  (interactive)
+  (if (not p4-executable)
+      (call-interactively 'p4-set-p4-executable)
+    p4-executable))
+
 ;; To set the path to the p4 executable
 (defun p4-set-p4-executable (p4-exe-name)
   "Set the path to the correct P4 Executable.
@@ -2851,7 +2894,8 @@ To set this as a part of the .emacs, add the following to your .emacs:
 
 Argument P4-EXE-NAME The new value of the p4 executable, with full path."
   (interactive "fFull path to your P4 executable: " )
-  (setq p4-executable p4-exe-name))
+  (setq p4-executable p4-exe-name)
+  p4-executable)
 
 (defun p4-set-sendmail-program (p4-program)
   "Set the path to the correct sendmail.
@@ -3018,10 +3062,6 @@ the VC check on/off when opening files."
 ;; Wrap C-x C-q to allow p4-edit/revert and also to ensure that
 ;; we don't stomp on vc-toggle-read-only.
 
-(defun p4-toggle-read-only-verbose ()
-  (interactive)
-  (p4-toggle-read-only t))
-
 (defun p4-toggle-read-only (&optional verbose)
   "If p4-mode is non-nil, \\[p4-toggle-read-only] toggles between `p4-edit'
 and `p4-revert'.
@@ -3031,8 +3071,8 @@ all the parameters to `vc-toggle-read-only'."
   (interactive "P")
   (if (and (boundp 'p4-mode) (not (eq p4-mode nil)))
       (if buffer-read-only
-	  (p4-edit verbose)
-	(p4-revert verbose))
+	  (p4-edit p4-verbose)
+	(p4-revert p4-verbose))
     (vc-toggle-read-only verbose)))
 
 (defun p4-browse-web-page ()
@@ -3235,11 +3275,13 @@ the P4 depot or in the current client view.."
 ;; buffers.
 (defun p4-buffer-file-name-2 ()
   (cond ((buffer-file-name))
-	((get-char-property (point) 'filename))
-	((get-char-property (point) 'deleted-filename))
-	((get-char-property (point) 'local-fname))
-	((boundp 'p4-fname)
-	 p4-fname)))
+	((get-char-property (point) 'link-client-name))
+	((get-char-property (point) 'link-depot-name))
+	((get-char-property (point) 'block-client-name))
+	((get-char-property (point) 'block-depot-name))
+	((if (and (fboundp 'dired-get-filename)
+		  (dired-get-filename nil t))
+	     (dired-get-filename nil t)))))
 
 (defvar p4-depot-filespec-history nil
   "History for p4-depot filespecs.")
@@ -3524,7 +3566,8 @@ file name selection.")
 	 (all-completions string (mapcar 'list (cdr list)) predicate))
 	;; Test for an exact match
 	(t
-	 (= (length list) 2))))))
+	 (and (>= (length list) 2)
+	      (member (car list) (cdr list))))))))
 
 (defalias 'p4-branches-completion (p4-completion-builder "branches"))
 
@@ -3710,7 +3753,7 @@ file name selection."
       (set-buffer p4-output-buffer-name)
       (goto-char (point-max))
       (setq pmin (point))
-      (if (zerop (call-process p4-executable nil t nil "info"))
+      (if (zerop (call-process (p4-check-p4-executable) nil t nil "info"))
 	  (save-restriction
 	    (narrow-to-region pmin (point-max))
 	    (goto-char pmin)
@@ -3747,7 +3790,7 @@ depot mapping is returned, else the client mapping is returned."
       (set-buffer p4-output-buffer-name)
       (delete-region (point-min) (point-max))
       (apply 'call-process
-	     p4-executable nil t nil "where" (list filespec))
+	     (p4-check-p4-executable) nil t nil "where" (list filespec))
       (goto-char (point-min))
       (if (< p4-server-version 98)
 	  (progn
@@ -3784,7 +3827,7 @@ depot mapping is returned, else the client mapping is returned."
 	  (get-buffer-create file)
 	  (set-buffer file)
 	  (p4-noinput-buffer-action
-	   "print" nil t (p4-make-list-from-string (concat "-q " file)))
+	   "print" nil t (list file))
 	  (p4-activate-print-buffer file))))))
 
 (defun p4-current-client ()
@@ -3808,7 +3851,7 @@ depot mapping is returned, else the client mapping is returned."
       (insert "====\n")
       (goto-char (point-min))
       (setq empty-diff (not (null (re-search-forward
-				   "====.*\n====" nil t)))))
+				   "^====.*\n====" nil t)))))
     (kill-buffer buffer)
     empty-diff))
 
