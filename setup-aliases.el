@@ -26,6 +26,9 @@
       (mark-whole-buffer)
       (untabify (mark) (point)))))
 
+
+(defalias 'clean-whitespace (read-kbd-macro
+"<f12> [ SPC C-q TAB ]+ SPC <backspace> $ 2*RET ! ESC < <f12> C-q C-j C-q C-j + RET C-q C-j C-q C-j RET ! ESC <"))
   
 (defalias 'cvs-remove-diff (read-kbd-macro
 "<down> 4*C-k NUL C-s ============ RET <right> <down> C-x C-x C-w"))
