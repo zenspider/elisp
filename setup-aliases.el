@@ -18,6 +18,7 @@
 			   cperl-mode
 			   java-mode
 			   jde-mode
+			   ruby-mode
 			   LaTeX-mode
 			   TeX-mode))
       (indent-region (region-beginning) (region-end) nil)))
