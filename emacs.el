@@ -13,6 +13,7 @@
 (load "setup-mail-and-news")
 (load "setup-misc")
 (load "setup-modes")
+(load "bs")
 
 (custom-set-variables
  '(backup-by-copying-when-linked t)

@@ -1,4 +1,7 @@
-(add-hook 'text-mode-hook '(lambda() (auto-fill-mode 1)))
+(require 'setnu)
+
+(add-hook 'text-mode-hook 'turn-on-auto-fill) ;;'(lambda() (auto-fill-mode 1)))
+(add-hook 'text-mode-hook 'turn-on-setnu-mode)
 
 (require 'compile)
 
@@ -15,23 +18,6 @@
 (makunbound  'c++-mode-map)
 (makunbound  'c-style-alist)
 (require 'cc-mode)
-
-;;====================================================================
-;; auto-insert
-;(require 'auto-insert-tkld)
-;(setq auto-insert-path '("/toasters/toaster5/users/ryand/Bin/elisp/autoinsert")
-;      auto-insert-automatically t)
-;
-;(pushnew '("\.java'" . "Java")
-;	 auto-insert-alist :test 'equal)
-;(pushnew '("Java" . "java-insert.java")
-;	 auto-insert-type-alist :test 'equal)
-;(pushnew '("\\.pm$" . "PerlModule")
-;	 auto-insert-alist :test 'equal)
-;(pushnew '("PerlModule" . "perl-insert.pm")
-;	 auto-insert-type-alist :test 'equal)
-;
-;(global-set-key "\C-ci" 'insert-auto-insert-type)
 
 ;;; func-menu is a package that scans your source file for function
 ;;; definitions and makes a menubar entry that lets you jump to any
