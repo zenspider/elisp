@@ -38,6 +38,7 @@
  '(lazy-shot-mode t nil (lazy-shot))
  '(gnuserv-program "/usr/local/lib/xemacs-21.1.12/i386--freebsd/gnuserv")
  '(c-echo-syntactic-information-p t)
+ '(sql-postgres-options (quote ("-P pager=off")))
  '(browse-url-browser-function (quote browse-url-w3))
  '(inhibit-startup-message t t)
  '(cperl-help t)
