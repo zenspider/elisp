@@ -62,6 +62,7 @@
  		 (list "~/Mail/build" "~/Mail/spool/build" "~/Mail/build.CRASH")
  		 (list "~/Mail/commit" "~/Mail/spool/commit" "~/Mail/commit.CRASH")
  		 (list "~/Mail/downtown" "~/Mail/spool/downtown" "~/Mail/downtown.CRASH")
+ 		 (list "~/Mail/frank" "~/Mail/spool/frank" "~/Mail/frank.CRASH")
  		 (list "~/Mail/kathy" "~/Mail/spool/kathy" "~/Mail/kathy.CRASH")
  		 (list "~/Mail/ryand" "~/Mail/spool/ryand" "~/Mail/ryand.CRASH")
  		 (list "~/Mail/software" "~/Mail/spool/software" "~/Mail/software.CRASH")
