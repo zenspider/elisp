@@ -1,20 +1,12 @@
 ; (require 'setnu)
 (require 'func-menu)
+
 (require 'compile)
 ; (require 'jdok)
 (require 'p4)
 (require 'jde)
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
-
-(defun my-shell-mode-hook ()
-  "Renames the buffer to quit bugging me"
-  (interactive)
-  ; (rename-buffer "shell")
-  (rename-uniquely))
-(add-hook 'shell-mode-hook 'my-shell-mode-hook)
-
-; (setq default-major-mode 'text-mode)
 
 (defun p4-setup ()
   "Initializes p4"
@@ -65,8 +57,6 @@
 ;;====================================================================
 
 (require 'antlr-mode)
-;;(add-hook 'speedbar-load-hook  ; would be too late in antlr-mode.el
-;;	  (lambda () (speedbar-add-supported-extension ".g")))
 (autoload 'antlr-set-tabs "antlr-mode")
 (add-hook 'java-mode-hook 'antlr-set-tabs)
 
@@ -89,6 +79,25 @@
 
 ;; Perl support
 (load "setup-perl")
+
+;;============================================================
+;; Taken from the comment section in inf-ruby.el
+
+(setq ruby-program-name "/usr/local/bin/ruby")
+
+(autoload 'ruby-mode "ruby-mode"
+  "Mode for editing ruby source files")
+(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
+(add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
+
+(autoload 'run-ruby "inf-ruby"
+  "Run an inferior Ruby process")
+(autoload 'inf-ruby-keys "inf-ruby"
+  "Set local key defs for inf-ruby in ruby-mode")
+(add-hook 'ruby-mode-hook
+          '(lambda ()
+             (inf-ruby-keys)
+             ))
 
 (autoload 'auto-revert-mode "autorevert" nil t)
 (autoload 'turn-on-auto-revert-mode "autorevert" nil nil)
