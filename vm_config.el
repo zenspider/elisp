@@ -1,5 +1,9 @@
 ;; -*-Lisp-*-
 
+(add-to-list 'vm-mime-default-face-charsets "Windows-1251")
+(add-to-list 'vm-mime-default-face-charsets "Windows-1252")
+(add-to-list 'vm-mime-default-face-charsets "Windows-1257")
+
 (setq
  
  ;; Automatically get mail every 10 seconds (INBOX only?)
@@ -66,6 +70,7 @@
  		 (list "~/Mail/kathy" "~/Mail/spool/kathy" "~/Mail/kathy.CRASH")
  		 (list "~/Mail/ryand" "~/Mail/spool/ryand" "~/Mail/ryand.CRASH")
  		 (list "~/Mail/software" "~/Mail/spool/software" "~/Mail/software.CRASH")
+ 		 (list "~/Mail/ssc" "~/Mail/spool/ssc" "~/Mail/ssc.CRASH")
  		 (list "~/Mail/test" "~/Mail/spool/test" "~/Mail/test.CRASH")
  		 (list "~/Mail/zss" "~/Mail/spool/zss" "~/Mail/zss.CRASH")
 		 )
