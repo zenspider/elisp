@@ -1,29 +1,15 @@
-; (require 'setnu)
 (require 'func-menu)
 
 (require 'compile)
-; (require 'jdok)
-; (require 'p4)
-(require 'jde)
 
-(defun p4-setup ()
-  "Initializes p4"
-  (interactive)
-  (progn
-    (load-library "p4")
-    (p4-set-p4-port "perforce:1666")
-    (p4-set-my-clients '(ryand ryand-itsy ryand-greed ryand-amzn ryand-amzn2))
-    (setq p4-strict-complete nil)
-    (p4-set-client-name "ryand")))
+; (require 'jde) ; FIX: lost eieio, need to reinstall
 
-;; fixes compile regex coredump on DEC UNIX
-
-(push '(java ("\\([^ \n	]+\\)\\([0-9]+\\):" 1 2)) 
-	 compilation-error-regexp-alist-alist)
-
-
-(setq compilation-error-regexp-systems-list '(gnu java))
-(compilation-build-compilation-error-regexp-alist)
+(require 'p4)
+(setq p4-strict-complete nil)
+(p4-set-my-clients '(ryand ryand-itsy ryand-greed ryand-amzn ryand-amzn2))
+(p4-toggle-vc-mode-off)
+(p4-set-p4-port "perforce:1666")
+(p4-set-client-name "ryand")
 
 (resize-minibuffer-mode 1)
 
@@ -69,9 +55,6 @@
  (setq auto-mode-alist
        (append
        '(
-; 	("\\.[cCiIhH]$"				. cc-mode)
-; 	("\\.cc$"				. cc-mode)
-; 	("\\.[chi]xx$"				. cc-mode)
  	("\\.bash.*$"				. ksh-mode)
  	("^I?\\(M\\|m\\|GNUm\\)akefile.*$"	. makefile-mode)
  	("\\.g$"				. antlr-mode)
@@ -83,7 +66,6 @@
 ;;============================================================
 ;; Taken from the comment section in inf-ruby.el
 
-(setq ruby-program-name "/usr/local/bin/ruby")
 
 (autoload 'ruby-mode "ruby-mode"
   "Mode for editing ruby source files")
@@ -98,6 +80,7 @@
           '(lambda ()
              (inf-ruby-keys)
 	     (define-key ruby-mode-map "\e\C-b" 'bury-buffer)
+	     (setq ruby-program-name "/usr/local/bin/ruby")
              ))
 
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
@@ -106,6 +89,14 @@
 	     (define-key text-mode-map "\M-s" 'fixup-whitespace)
              ))
 
-(autoload 'auto-revert-mode "autorevert" nil t)
-(autoload 'turn-on-auto-revert-mode "autorevert" nil nil)
-(autoload 'global-auto-revert-mode "autorevert" nil t)
+(require 'autorevert)
+(turn-on-auto-revert-mode)
+(global-auto-revert-mode)
+
+;; Xrefactory configuration part ;;
+;; some Xrefactory defaults can be set here
+;(defvar xref-current-project nil);; can be also "my_project_name"
+;(defvar xref-key-binding 'global);; can be also 'local or 'none
+;(setq load-path (append load-path '("/usr/home/ryand/xref/xemacs")))
+;(load "xrefactory")
+;; end of Xrefactory configuration part ;;

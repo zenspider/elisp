@@ -1,5 +1,7 @@
 ;; -*-Lisp-*-
 
+(require 'vm)
+
 (add-to-list 'vm-mime-default-face-charsets "Windows-1251")
 (add-to-list 'vm-mime-default-face-charsets "Windows-1252")
 (add-to-list 'vm-mime-default-face-charsets "Windows-1257")
