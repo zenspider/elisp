@@ -130,10 +130,15 @@
 (define-trivial-mode "gv" "\\.ps$")
 (define-trivial-mode "gv" "\\.pdf$")
 
-;; Xrefactory configuration part ;;
-;; some Xrefactory defaults can be set here
-;(defvar xref-current-project nil);; can be also "my_project_name"
-;(defvar xref-key-binding 'global);; can be also 'local or 'none
-;(setq load-path (append load-path '("/usr/home/ryand/xref/xemacs")))
-;(load "xrefactory")
-;; end of Xrefactory configuration part ;;
+(add-hook 'after-save-hook
+	  '(lambda ()
+             (progn
+               (and (save-excursion
+                      (save-restriction
+                        (widen)
+                        (goto-char (point-min))
+                        (save-match-data
+                          (looking-at "^#!"))))
+                    (shell-command (concat "chmod u+x " buffer-file-name))
+                    (message (concat "Saved as script: " buffer-file-name))
+                    ))))

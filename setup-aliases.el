@@ -17,20 +17,21 @@
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t))
 
-(defadvice yank (after indent-region activate)
-  (if (member major-mode '(emacs-lisp-mode
-			   c-mode
-			   c++-mode
-			   tcl-mode
-			   sql-mode
-			   perl-mode
-			   cperl-mode
-			   java-mode
-			   jde-mode
-			   ruby-mode
-			   LaTeX-mode
-			   TeX-mode))
-      (indent-region (region-beginning) (region-end) nil)))
+(if (featurep 'xemacs)
+    (defadvice yank (after indent-region activate)
+      (if (member major-mode '(emacs-lisp-mode
+			       c-mode
+			       c++-mode
+			       tcl-mode
+			       sql-mode
+			       perl-mode
+			       cperl-mode
+			       java-mode
+			       jde-mode
+			       ruby-mode
+			       LaTeX-mode
+			       TeX-mode))
+	  (indent-region (region-beginning) (region-end) nil))))
 
 (defun myshell ()
   "Create a shell buffer that is properly named (shell-<N>)"
