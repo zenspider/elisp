@@ -98,6 +98,14 @@
 	     (setq ruby-program-name "/usr/local/bin/ruby")
              ))
 
+(autoload 'ruby-index "ri.el" "ri utility" t)
+(autoload 'ri "ri.el" "ri utility" t)
+(autoload 'ri-show-term-at-point "ri.el" "ri utility" t)
+(autoload 'ri-show-term-composite-at-point "ri.el" "ri utility" t)
+
+(global-set-key "\C-c\C-c\C-r" 'ri-show-term-at-point)
+(global-set-key "\C-c\C-c\C-t" 'ri-show-term-composite-at-point)
+
 (add-hook 'shell-mode-hook
           '(lambda ()
 	     (define-key shell-mode-map  (kbd "<M-return>") 'shell-resync-dirs)
@@ -144,3 +152,4 @@
                     (shell-command (concat "chmod u+x " buffer-file-name))
                     (message (concat "Saved as script: " buffer-file-name))
                     ))))
+
