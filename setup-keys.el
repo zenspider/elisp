@@ -30,6 +30,7 @@
 
 (unless (featurep 'xemacs)
   (progn
+    (require 'dired)
     (global-set-key "\M-g" 'goto-line)
     (define-key dired-mode-map "k" 'dired-kill-subdir)
   ))
