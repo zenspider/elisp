@@ -7,6 +7,13 @@
 (add-to-list 'vm-mime-default-face-charsets "Windows-1257")
 (add-to-list 'vm-mime-default-face-charsets "iso-8859-9")
 
+(defun vm-my-spool-file (name)
+  (list (concat "~/Mail/" name) 
+	(concat "~/Mail/spool/" name)
+	(concat "~/Mail/" name ".CRASH")
+	)
+  )
+
 (setq 
 
  ;; Don't display HTML automatically
@@ -44,34 +51,35 @@ vm-subject-ignored-prefix "^\\(re\\(\\[[0-9]+\\]\\)?: *\\)+"
  vm-auto-folder-case-fold-search t
 
  ;; Spool setup
- vm-spool-files (list 
- 		 (list "~/Mail/INBOX" "~/Mail/spool/INBOX" "~/Mail/INBOX.CRASH")
- 		 (list "~/Mail/GrayBox" "~/Mail/spool/GrayBox" "~/Mail/GrayBox.CRASH")
- 		 (list "~/Mail/BlackBox" "~/Mail/spool/BlackBox" "~/Mail/BlackBox.CRASH")
- 		 (list "~/Mail/antlr" "~/Mail/spool/antlr" "~/Mail/antlr.CRASH")
- 		 (list "~/Mail/bill" "~/Mail/spool/bill" "~/Mail/bill.CRASH")
- 		 (list "~/Mail/build" "~/Mail/spool/build" "~/Mail/build.CRASH")
- 		 (list "~/Mail/commit" "~/Mail/spool/commit" "~/Mail/commit.CRASH")
- 		 (list "~/Mail/commit-main" "~/Mail/spool/commit-main" "~/Mail/commit-main.CRASH")
- 		 (list "~/Mail/cvs" "~/Mail/spool/cvs" "~/Mail/cvs.CRASH")
- 		 (list "~/Mail/downtown" "~/Mail/spool/downtown" "~/Mail/downtown.CRASH")
- 		 (list "~/Mail/frank" "~/Mail/spool/frank" "~/Mail/frank.CRASH")
- 		 (list "~/Mail/crontab" "~/Mail/spool/crontab" "~/Mail/crontab.CRASH")
- 		 (list "~/Mail/kathy" "~/Mail/spool/kathy" "~/Mail/kathy.CRASH")
- 		 (list "~/Mail/perf" "~/Mail/spool/perf" "~/Mail/perf.CRASH")
- 		 (list "~/Mail/progress" "~/Mail/spool/progress" "~/Mail/progress.CRASH")
- 		 (list "~/Mail/junit" "~/Mail/spool/junit" "~/Mail/junit.CRASH")
- 		 (list "~/Mail/obidos" "~/Mail/spool/obidos" "~/Mail/obidos.CRASH")
- 		 (list "~/Mail/other" "~/Mail/spool/other" "~/Mail/other.CRASH")
- 		 (list "~/Mail/qa" "~/Mail/spool/qa" "~/Mail/qa.CRASH")
- 		 (list "~/Mail/ryand" "~/Mail/spool/ryand" "~/Mail/ryand.CRASH")
- 		 (list "~/Mail/software" "~/Mail/spool/software" "~/Mail/software.CRASH")
- 		 (list "~/Mail/ssc" "~/Mail/spool/ssc" "~/Mail/ssc.CRASH")
- 		 (list "~/Mail/test" "~/Mail/spool/test" "~/Mail/test.CRASH")
- 		 (list "~/Mail/backup" "~/Mail/spool/backup" "~/Mail/backup.CRASH")
- 		 (list "~/Mail/zss" "~/Mail/spool/zss" "~/Mail/zss.CRASH")
- 		 (list "~/Mail/xmas" "~/Mail/spool/xmas" "~/Mail/xmas.CRASH")
-		 )
+ vm-spool-files (mapcar '(lambda (x) (vm-my-spool-file x))
+			(list 
+			 "INBOX"
+			 "GrayBox"
+			 "BlackBox"
+			 "antlr"
+			 "backup"
+			 "bill"
+			 "build"
+			 "commit"
+			 "commit-main"
+			 "crontab"
+			 "cvs"
+			 "depend"
+			 "downtown"
+			 "frank"
+			 "junit"
+			 "obidos"
+			 "other"
+			 "perf"
+			 "progress"
+			 "qa"
+			 "ryand"
+			 "software"
+			 "ssc"
+			 "test"
+			 "xmas"
+			 "zss"
+			 ))
 
  vm-virtual-folder-alist '(
 			   ("search"
@@ -81,6 +89,7 @@ vm-subject-ignored-prefix "^\\(re\\(\\[[0-9]+\\]\\)?: *\\)+"
 			    (("~/Mail")
 			     (sent-before "Oct 1 2001")))
 			   )
+
 
 ; vm-virtual-folder-alist
 ; '(
@@ -100,3 +109,8 @@ vm-subject-ignored-prefix "^\\(re\\(\\[[0-9]+\\]\\)?: *\\)+"
  )
 
 ; (bbdb-insinuate-vm)
+
+(add-to-list 'vm-mime-type-converter-alist
+             '("text/html" "text/plain" "lynx -force_html -dump -stdin"))
+
+(vm-my-spool-file "blah")
