@@ -26,11 +26,22 @@
       (mark-whole-buffer)
       (untabify (mark) (point)))))
 
-
 (defalias 'cvs-remove-diff (read-kbd-macro
 "<down> 4*C-k NUL C-s ============ RET <right> <down> C-x C-x C-w"))
 
+(defalias 'p4-fill-diff (read-kbd-macro
+"TAB + SPC 2*<left> C-SPC C-e M-q C-k"))
+
 ;; Java Aliases
+
+(defalias 'java-new-copy-constructor (read-kbd-macro
+"2*RET 2*<up> TAB public SPC ins 3*<backspace> ESC x insert-buffer-name RET ESC <backspace> <backspace> ( ESC x insert-buffer-name RET ESC <backspace> <backspace> SPC o) S-SPC { RET TAB super(o); 2*RET TAB XXX; RET } C-a 2*<down> 6*<up> C-l"))
+
+(defalias 'java-new-constructor (read-kbd-macro
+"2*RET 2*<up> TAB public SPC ESC x insert- buffer- name RET ESC <backspace> <backspace> () S-SPC { RET TAB super(); RET } C-a 2*<up> C-l"))
+
+(defalias 'java-new-clone (read-kbd-macro
+"2*RET 2*<up> TAB public SPC Object SPC clone() S-SPC { RET TAB return SPC new SPC ESC x insert- bu TAB - TAB RET ESC <backspace> <backspace> (this); RET } C-a"))
 
 (defalias 'java-setters (read-kbd-macro
 "M-d TAB C-s ; RET <backspace> C-a TAB C-SPC C-s SPC RET <left> C-x C-x C-x r s 1 C-x C-x C-w C-d C-SPC C-e C-x r s 2 C-x C-x C-w public SPC void SPC C-x r i 2 C-e ( C-x r i 1 C-e SPC newValue) S-SPC { RET TAB this. C-x r i 2 C-e SPC = SPC newValue; RET } 2*RET TAB public SPC C-x r i 1 C-e SPC C-x r i 2 C-e () S-SPC { RET TAB return SPC this. C-x r i 2 C-e ; RET } 2*RET <backspace> <down>" nil))
