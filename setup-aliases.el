@@ -105,3 +105,6 @@
   (interactive)
   (progn
     (insert (buffer-name))))
+
+(defalias 'insert-project-line (read-kbd-macro
+"RET <up> ? SPC 000 SPC C-u ESC ! /home/ryand/Bin/is TAB RET C-e C-h C-h C-h C-h C-h C-h SPC C-u ESC ! <up> RET C-e C-h C-h C-h C-h C-h C-h SPC XXX 2*C-k RET"))
