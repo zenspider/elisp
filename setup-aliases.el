@@ -27,19 +27,13 @@
       (untabify (mark) (point)))))
 
 
-(defalias 'clean-whitespace (read-kbd-macro
-"<f12> [ SPC C-q TAB ]+ SPC <backspace> $ 2*RET ! ESC < <f12> C-q C-j C-q C-j + RET C-q C-j C-q C-j RET ! ESC <"))
-  
 (defalias 'cvs-remove-diff (read-kbd-macro
 "<down> 4*C-k NUL C-s ============ RET <right> <down> C-x C-x C-w"))
 
 ;; Java Aliases
 
-(defalias 'java-getter (read-kbd-macro
-"TAB public SPC <C-right> <right> M-d C-y () SPC { C-d RET TAB return SPC C-y ; RET } RET 3*<up> 2*<C-right> <right> 2*C-d M-l C-a 4*<down>"))
-
-(defalias 'java-setter (read-kbd-macro
-"TAB public SPC void SPC M-d C-d <C-right> ( C-y SPC newValue) SPC { RET TAB = SPC newValue C-e RET } RET C-a 3*<up> 2*<C-right> M-d C-y C-a <down> TAB C-y SPC C-a <up> 2*<C-right> <right> 2*C-d M-l C-a 4*<down>"))
+(defalias 'java-setters (read-kbd-macro
+"M-d TAB C-s ; RET <backspace> C-a TAB C-SPC C-s SPC RET <left> C-x C-x C-x r s 1 C-x C-x C-w C-d C-SPC C-e C-x r s 2 C-x C-x C-w public SPC void SPC C-x r i 2 C-e ( C-x r i 1 C-e SPC newValue) S-SPC { RET TAB this. C-x r i 2 C-e SPC = SPC newValue; RET } 2*RET TAB public SPC C-x r i 1 C-e SPC C-x r i 2 C-e () S-SPC { RET TAB return SPC this. C-x r i 2 C-e ; RET } 2*RET <backspace> <down>" nil))
 
 (defalias 'java-convert-assert (query-replace-regexp "QT.assert(\\([^,]+\\),[^\"]+\\(\"[^\"]+\"\\));" "assert(\\2, \\1);" nil))
 
@@ -112,7 +106,15 @@
 (defun insert-shell-command (cmd)
   "Execute and insert results of a command in current buffer."
   (shell-command-on-region (point nil) (point nil) cmd nil t))
+
 (defun insert-shell-command-interactive (s)
   "Execute and insert results of a command in current buffer."
   (interactive "sShell Command: ")
   (insert-shell-command s))
+
+(defalias 'windoze-sucks
+  (read-kbd-macro "ESC < M-% C-q C-m 2*RET ! ESC <"))
+
+(defalias 'clean-whitespace (read-kbd-macro
+"<f12> [ SPC C-q TAB ]+ SPC <backspace> $ 2*RET ! ESC < <f12> C-q C-j C-q C-j + RET C-q C-j C-q C-j RET ! ESC <"))
+  
