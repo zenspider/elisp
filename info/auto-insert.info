@@ -1,0 +1,393 @@
+This is Info file auto-insert.info, produced by Makeinfo-1.55 from the
+input file auto-insert.texinfo.
+
+   This file documents Auto Insert.
+
+   Copyright (C) 1994 Kevin Davidson
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under same conditions as for modified
+versions.
+
+
+File: auto-insert.info,  Node: Top,  Next: Overview,  Prev: (dir),  Up: (dir)
+
+This manual documents `auto-insert-tkld.el', by Kevin Davidson
+`Kevin.Davidson@ed.ac.uk'.  Auto Insert is a package for automatically
+setting up default text when creating a new file.
+
+* Menu:
+
+* Overview::                    What is Auto Insert ?
+* Installation::                Installing Auto Insert.
+* Customisation::               How to tailor Auto Insert.
+
+* Variable Index::
+* Concept Index::
+
+
+File: auto-insert.info,  Node: Overview,  Next: Installation,  Prev: Top,  Up: Top
+
+Overview of Auto Insert
+***********************
+
+   "Auto Insert" is a package for setting up default contents in new
+GNU Emacs buffers.  When typing `C-x C-f new-file.c' it can
+automatically set up the new buffer with standard copyright or
+disclaimer messages, RCS or SCCS version control lines, author's name,
+the date or other information.
+
+   The same can be achieved with an existing buffer, by typing `M-x
+auto-insert-type' to ask for the type of file that a buffer corresponds
+to. Types might include program source, documentation, letters,
+announcements or anything else for which a standard layout might be
+wanted.
+
+
+File: auto-insert.info,  Node: Installation,  Next: Customisation,  Prev: Overview,  Up: Top
+
+Installation
+************
+
+   Before you can use Auto Insert, it will have to be installed on your
+system. If this has already been done (by a system administrator or
+another user), you can skip *Note Installing From Scratch:: and go
+stright on to *Note Using Auto Insert::.
+
+* Menu:
+
+* Installing From Scratch::
+* Using Auto Insert::
+
+
+File: auto-insert.info,  Node: Installing From Scratch,  Next: Using Auto Insert,  Prev: Installation,  Up: Installation
+
+Installing From Scratch
+=======================
+
+   To install Auto Insert, check the paths for info and lisp directories
+at the top of the `Makefile' are correct for your system and type
+`make' to build the package.  Typing `make install' will copy the files
+to the correct locations.
+
+   This manual can then be printed out on a PostScript printer by
+typing `lpr auto-insert.ps'.
+
+
+File: auto-insert.info,  Node: Using Auto Insert,  Prev: Installing From Scratch,  Up: Installation
+
+Using Auto Insert
+=================
+
+   Try this now to test Auto Insert:
+
+   * Load the package into Emacs by typing `M-x load-library RET
+     auto-insert-tkld RET'
+
+   * Create a new file in another window with `C-x 4 C-f new-file.c
+     RET'.
+
+   This buffer should contain a skeleton file with a leading comment.
+For details on how to modify this text, see *Note Creating Template
+Files::.
+
+   To make Auto Insert a permanent feature in Emacs, add `(require
+'auto-insert-tkld)' to the `~/.emacs' file in your home directory and
+check that any customisation variables are set to suitable values *note
+Customisation Variables::., using `setq'.
+
+
+File: auto-insert.info,  Node: Customisation,  Next: Variable Index,  Prev: Installation,  Up: Top
+
+Customisation
+*************
+
+   Auto Insert can be customised in two ways:
+
+   * Lisp variables that can be set in `.emacs' or `site-start.el'
+
+   * The insert files themselves can be edited.
+
+* Menu:
+
+* Customisation Variables::
+* Creating Template Files::
+
+
+File: auto-insert.info,  Node: Customisation Variables,  Next: Creating Template Files,  Prev: Customisation,  Up: Customisation
+
+Customisation Variables
+=======================
+
+   Auto Insert can be customised to behave differently using the
+following variables:
+
+ - User Option: auto-insert-automatically
+     Default: t
+
+     If t, automatically insert file contents based on file name and
+     type.  If nil, do not automatically insert any contents and leave
+     the buffer untouched. This effectively turns off Auto Insert.  If
+     non-nil and non-t, then ask the user for each new file whether to
+     insert file contents or not.
+
+
+ - User Option: auto-insert-alist
+     An alist of regular expressions to match file names and the types
+     of file they represent. For example ` (("\\.tex$" . "TeX") ("\\.c"
+     . "C")) ' would define files ending in `.tex' as being TeX
+     documents and those ending in `.c' as C source code.
+
+
+ - User Option: auto-insert-type-alist
+     An alist of auto-insert types and the names of files that should
+     be inserted for those types. For example ` (("TeX" .
+     "tex-insert.tex") ("C" . "c-insert.c")) ', would say that files of
+     type `TeX' should be automatically created with the contents of
+     `tex-insert.tex'.  This file is to be found somewhere on
+     auto-insert-path.
+
+
+ - User Option: auto-insert-path
+     A list of directories in which Auto Insert files will be searched
+     for.  Typically this will include a directory containing a user's
+     own library of insert files and a system wide directory.  For
+     shared projects, where files should have a common appearance, a
+     project specific directory could be set up.
+
+
+ - User Option: auto-insert-search-current-dir
+     Default: t
+
+     Setting this to `t' causes Auto Insert to look for auto-insert
+     files in the current directory associated with the new buffer,
+     before looking along auto-insert-path.  If a project requires a
+     different file layout from the default, suitable insert files for
+     each file type could be created in the project's directory.
+
+
+ - User Option: auto-insert-num-prefix
+     Default: `"0"'
+
+     The prefix used when inserting numerical days and months.  Other
+     suitable values might be `" "' or `""', to create right justified
+     dates, or to close up space with no leading zero.
+
+
+ - User Option: user-mail-address
+     Default: `"<user@machine>"' or `"<user@gnus-local-domain>"'
+
+     Used when inserting the mail address of the user, this should be
+     set to a valid mail address if the default is not a correct mail
+     address.
+
+
+ - User Option: auto-insert-organisation
+     Default: `gnus-local-organization' or `$ORGANIZATION'
+
+     Used when inserting the organisation of the user.  If GNUS has not
+     been set up, the ORGANIZATION (or ORGANISATION) environment
+     variable is used. If none are set, the empty string is used.
+
+ - User Option: auto-insert-system-name
+     Default: `(system-name)'
+
+     Used when inserting the hostname with %h.  There shouldn't be any
+     reason to change this.
+
+ - User Option: auto-insert-login-name
+     Default: `(user-login-name)'
+
+     The login name of the user, used when expanding %u.
+
+ - User Option: auto-insert-full-name
+     Default: `(user-full-name)'
+
+     The full name of the user, used when expanding %U.  Normally this
+     is taken from the password file.
+
+
+File: auto-insert.info,  Node: Creating Template Files,  Prev: Customisation Variables,  Up: Customisation
+
+Creating Template Files
+=======================
+
+   Auto Insert template files are plain text files containing default
+text. However, for shared templates this alone would not be very useful,
+since the user would not be able to put their own name at the head of
+the file, nor could the filename itself be automatically inserted in the
+new buffer.
+
+   To solve this Auto Insert will also expand certain "%-escapes" into
+dynamically defined text, including the current date and time,
+filename, username, etc. The initial positions of point ( *note :
+(emacs)Point) and mark ( *note : (emacs)Mark ) can also be set.
+
+   Auto Insert template files will be searched for in order through the
+directories listed in auto-insert-path *Note Customisation Variables::.
+This allows users to define their own library of templates to override
+any system-wide defaults.
+
+`%u'
+     is replaced by the user's login name from auto-insert-login-name,
+     see *Note Customisation Variables::
+
+`%U'
+     is the user's full name from auto-insert-full-name, see *Note
+     Customisation Variables::
+
+`%h'
+     is the name of the user's machine (the value of
+     auto-insert-system-name), see *Note Customisation Variables::
+
+`%a'
+     is the user's mail address from user-mail-address, see *Note
+     Customisation Variables::
+
+`%f'
+     is the file name (without the directory part)
+
+`%F'
+     is the file name, capitalised
+
+`%b'
+     is the base file name (without any suffix)
+
+`%B'
+     is the base file name capitalised
+
+`%e'
+     is the file's suffix (extension)
+
+`%E'
+     is the file's suffix, capitalised
+
+`%p'
+     is the full path name of the file
+
+`%P'
+     is the directory part of the file name
+
+`%d'
+     is the current date in a standard format
+
+`%y'
+     is the current year
+
+`%Y'
+     is the final two digits of the current year
+
+`%M'
+     is the month in figures
+
+`%m'
+     is the month in words
+
+`%D'
+     is the day of the month
+
+`%o'
+     is the user's organisation (from the lisp variable
+     gnus-local-organization, if it's set, or the environment variable
+     $ORGANIZATION or $ORGANISATION)
+
+`%{ and %}'
+     surround a comment. This is text that is simply removed when
+     inserted.
+
+`%[ and %]'
+     surround a string that is used to prompt the user for text to be
+     inserted in the buffer at that point. This is useful for inserting
+     text that cannot be inferred from the buffer's name.
+
+`%1, %2, ..., %9'
+     refer to the nth string that was prompted for with %[ %].
+
+`%( and %)'
+     surround an Emacs lisp form that is evalled and deleted
+
+`%^'
+     centres the current line
+
+`%+'
+     fills the current paragraph. This allows text to be tidied up
+     after long replacements have been inserted.
+
+`%='
+     justifies the current paragraph, so that the right and left
+     margins are straight.
+
+`%< and %>'
+     surround a value for fill-prefix. This is used for subsequent
+     paragraph fills, and also for justifying paragraphs. This is
+     useful for text that is embedded in a comment where each line
+     should be prefixed with a common sequence (eg `;;;' in Emacs lisp,
+     `//' in C++).
+
+`%%'
+     is a single %
+
+`%@'
+     sets the initial position of `point'
+
+
+File: auto-insert.info,  Node: Variable Index,  Next: Concept Index,  Prev: Customisation,  Up: Top
+
+Variable Index
+**************
+
+* Menu:
+
+* auto-insert-alist:                    Customisation Variables.
+* auto-insert-automatically:            Customisation Variables.
+* auto-insert-full-name:                Customisation Variables.
+* auto-insert-login-name:               Customisation Variables.
+* auto-insert-num-prefix:               Customisation Variables.
+* auto-insert-organisation:             Customisation Variables.
+* auto-insert-path:                     Customisation Variables.
+* auto-insert-search-current-dir:       Customisation Variables.
+* auto-insert-system-name:              Customisation Variables.
+* auto-insert-type-alist:               Customisation Variables.
+* user-mail-address:                    Customisation Variables.
+
+
+File: auto-insert.info,  Node: Concept Index,  Prev: Variable Index,  Up: Top
+
+Concept Index
+*************
+
+* Menu:
+
+* Auto Insert:                          Overview.
+* Auto Insert Concepts:                 Concept Index.
+* Customisation:                        Customisation.
+* Overview:                             Overview.
+* Percent Expansions:                   Creating Template Files.
+* Tailoring:                            Customisation.
+* Template Files:                       Creating Template Files.
+* Variables:                            Variable Index.
+
+
+
+Tag Table:
+Node: Top743
+Node: Overview1226
+Node: Installation1937
+Node: Installing From Scratch2369
+Node: Using Auto Insert2876
+Node: Customisation3627
+Node: Customisation Variables3988
+Node: Creating Template Files7402
+Node: Variable Index10706
+Node: Concept Index11565
+
+End Tag Table
