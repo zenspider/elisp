@@ -16,5 +16,5 @@
     (setq isearch-highlight t)
   (setq search-highlight t))
 
-(set-glyph-image modeline-pointer-glyph "leftbutton")
+; HACK (set-glyph-image modeline-pointer-glyph "leftbutton")
 

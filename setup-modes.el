@@ -1,4 +1,4 @@
-(require 'func-menu)
+; HACK (require 'func-menu)
 
 (require 'compile)
 
