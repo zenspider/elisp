@@ -35,8 +35,8 @@
  vm-crash-box-suffix ".crash"
 
  ;; Add "Re:" to messages, and ignore "Re" (w/ possible #) when grouping
-; vm-reply-subject-prefix "Re: "
-; vm-subject-ignored-prefix "^\\(re\\(\\[[0-9]+\\]\\)?: *\\)+"
+vm-reply-subject-prefix "Re: "
+vm-subject-ignored-prefix "^\\(re\\(\\[[0-9]+\\]\\)?: *\\)+"
 
 ;; vm-print-command-switches lpr-switches
 
@@ -77,6 +77,9 @@
 			   ("search"
 			    (("~/Mail")
 			     (text "poker")))
+			   ("old-files"
+			    (("~/Mail")
+			     (sent-before "Oct 1 2001")))
 			   )
 
 ; vm-virtual-folder-alist
