@@ -106,5 +106,10 @@
   (progn
     (insert (buffer-name))))
 
-(defalias 'insert-project-line (read-kbd-macro
-"RET <up> ? SPC 000 SPC C-u ESC ! /home/ryand/Bin/is TAB RET C-e C-h C-h C-h C-h C-h C-h SPC C-u ESC ! <up> RET C-e C-h C-h C-h C-h C-h C-h SPC XXX 2*C-k RET"))
+(defun insert-shell-command (cmd)
+  "Execute and insert results of a command in current buffer."
+  (shell-command-on-region (point nil) (point nil) cmd nil t))
+(defun insert-shell-command-interactive (s)
+  "Execute and insert results of a command in current buffer."
+  (interactive "sShell Command: ")
+  (insert-shell-command s))
