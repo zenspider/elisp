@@ -1,12 +1,20 @@
-(require 'setnu)
+; (require 'setnu)
 (require 'func-menu)
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
-;(add-hook 'text-mode-hook 'turn-on-setnu-mode)
-
 (require 'compile)
-(require 'jdok)
+; (require 'jdok)
+(require 'p4)
+(require 'jde)
 
-(setq default-major-mode 'text-mode)
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+(defun my-shell-mode-hook ()
+  "Renames the buffer to quit bugging me"
+  (interactive)
+  ; (rename-buffer "shell")
+  (rename-uniquely))
+(add-hook 'shell-mode-hook 'my-shell-mode-hook)
+
+; (setq default-major-mode 'text-mode)
 
 (defun p4-setup ()
   "Initializes p4"
@@ -24,13 +32,6 @@
 
 (setq compilation-error-regexp-systems-list '(gnu java))
 (compilation-build-compilation-error-regexp-alist)
-
-;; cc-mode setup, according to info pages
-(fmakunbound 'c-mode)
-(fmakunbound 'c++-mode)
-(makunbound  'c-mode-map)
-(makunbound  'c++-mode-map)
-(require 'cc-mode)
 
 (resize-minibuffer-mode 1)
 
@@ -69,16 +70,22 @@
 (autoload 'antlr-set-tabs "antlr-mode")
 (add-hook 'java-mode-hook 'antlr-set-tabs)
 
-(setq auto-mode-alist
-      (append
-      '(
-	("\\.[cCiIhH]$"				. c++-mode)
-	("\\.cc$"				. c++-mode)
-	("\\.[chi]xx$"				. c++-mode)
-	("\\.bash.*$"				. ksh-mode)
-	("^I?\\(M\\|m\\|GNUm\\)akefile.*$"	. makefile-mode)
-	("\\.g$"				. antlr-mode)
-	) auto-mode-alist))
+(add-hook 'java-mode-hook 'my-java-mode-handler)
+(defun my-java-mode-handler ()
+  "Set C-c C-r to recompile in java mode"
+  (local-set-key "\C-\c\C-r" 'recompile)
+  )
+
+ (setq auto-mode-alist
+       (append
+       '(
+; 	("\\.[cCiIhH]$"				. cc-mode)
+; 	("\\.cc$"				. cc-mode)
+; 	("\\.[chi]xx$"				. cc-mode)
+ 	("\\.bash.*$"				. ksh-mode)
+ 	("^I?\\(M\\|m\\|GNUm\\)akefile.*$"	. makefile-mode)
+ 	("\\.g$"				. antlr-mode)
+ 	) auto-mode-alist))
 
 ;; Perl support
 (load "setup-perl")
