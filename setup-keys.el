@@ -10,9 +10,8 @@
 (global-set-key 'f3  'x-copy-primary-selection)     ;; copy
 (global-set-key 'f4  'x-yank-clipboard-selection)   ;; paste
 (global-set-key 'f5  'kill-buffer-and-close-window) ;; close
+(global-set-key 'f6  'windoze-sucks)
 (global-set-key 'f6  'clean-whitespace)             ;; clean (setup-aliases.el)
-
-;; f6 unassigned
 (global-set-key 'f7  'swap-buffers) ; located in setup-aliases.el
 (global-set-key 'f8  'toggle-split) ; located in setup-aliases.el
 (global-set-key 'f9  'start-kbd-macro)
