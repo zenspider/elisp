@@ -155,4 +155,5 @@
 (defun insert-isodate ()
   "Inserts an ISO-8601 compliant date string into the current buffer"
   (interactive)
-  (insert-shell-command "date +%Y-%m-%d"))
+  (insert-shell-command "date +%Y-%m-%d")
+  (delete-backward-char 1))
