@@ -25,21 +25,3 @@
 (global-set-key "\C-\M-n" 'insert-buffer-name)
 (global-set-key "\M-s" 'fixup-whitespace)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Menus
-
-(add-menu-button '("Tools") ["----" nil nil])
-(add-submenu   '("Tools") '("Server"
-			    [ "Start Edit Server" gnuserv-start t ]
-			    [ "Stop Edit Server" (gnuserv-start t) t ]
-			    [ "Finish Edit" server-edit t ]))
-;(add-submenu   '("Tools") '("VM Mail"
-;			    [ "Read Bugmail" vm-bugread t ]
-;			    [ "Read HelpRequest" vm-hrread t ]))
-;;(add-submenu   '("Tools") '("BBDB"
-;;			    [ "Grep" bbdb t]
-;;			    [ "New" bbdb-create t]))
-(add-submenu   '("Tools") '("Misc"
-			    [ "Repeat Macro To End" macro-to-end t]
-			    [ "Inline Shell on Region" shell-on-region t]
-			    [ "Insert Buffer name" insert-buffer-name t]))

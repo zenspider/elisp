@@ -90,7 +90,7 @@
 (add-hook 'ruby-mode-hook
           '(lambda ()
              (inf-ruby-keys)
-	     (define-key ruby-mode-map "\e\C-b" 'bury-buffer)
+	     (define-key ruby-mode-map "\M-\C-b" 'bury-buffer)
 	     (setq ruby-program-name "/usr/local/bin/ruby")
              ))
 
@@ -99,6 +99,12 @@
           '(lambda ()
 	     (define-key text-mode-map "\M-s" 'fixup-whitespace)
              ))
+
+(add-hook 'c-mode-hook 'my-c-mode-handler)
+(defun my-c-mode-handler ()
+  "Set C-c C-r to recompile in c mode"
+  (local-set-key "\C-\c\C-r" 'recompile)
+  )
 
 (require 'autorevert)
 (turn-on-auto-revert-mode)
