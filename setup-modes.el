@@ -7,8 +7,15 @@
 
 (setq default-major-mode 'text-mode)
 
-;; fixes compile regex coredump on DEC UNIX
+(defun p4-setup ()
+  "Initializes p4"
+  (interactive)
+  (progn
+    (load-library "p4")
+    (p4-set-my-clients '(ryand))
+    (p4-set-client-name "ryand")))
 
+;; fixes compile regex coredump on DEC UNIX
 
 (push '(java ("\\([^ \n	]+\\)\\([0-9]+\\):" 1 2)) 
 	 compilation-error-regexp-alist-alist)
@@ -23,6 +30,8 @@
 (makunbound  'c-mode-map)
 (makunbound  'c++-mode-map)
 (require 'cc-mode)
+
+(resize-minibuffer-mode 1)
 
 ;;; func-menu is a package that scans your source file for function
 ;;; definitions and makes a menubar entry that lets you jump to any
