@@ -14,6 +14,14 @@
 (if (file-exists-p (expand-file-name "~/Bin/p4"))
     (p4-set-p4-executable (expand-file-name "~/Bin/p4")))
 
+(defun p4-amazon () (interactive) (p4-set-p4-port "perforce:6791"))
+(defun p4-brazil () (interactive) (p4-set-p4-port "perforce:9591"))
+(defun p4-normal () (interactive) (p4-set-p4-port "perforce:1666"))
+
+(if (equal (getenv "DOMAIN") "amazon.com")
+    (p4-amazon)
+  (p4-normal))
+
 (resize-minibuffer-mode 1)
 
 ;;; func-menu is a package that scans your source file for function
