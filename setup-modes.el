@@ -1,6 +1,6 @@
 (require 'setnu)
 (require 'func-menu)
-(add-hook 'text-mode-hook 'turn-on-auto-fill) ;;'(lambda() (auto-fill-mode 1)))
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
 ;(add-hook 'text-mode-hook 'turn-on-setnu-mode)
 
 (require 'compile)
@@ -8,7 +8,13 @@
 (setq default-major-mode 'text-mode)
 
 ;; fixes compile regex coredump on DEC UNIX
-(setq compilation-error-regexp-systems-list '(gnu))
+
+
+(push '(java ("\\([^ \n	]+\\)\\([0-9]+\\):" 1 2)) 
+	 compilation-error-regexp-alist-alist)
+
+
+(setq compilation-error-regexp-systems-list '(gnu java))
 (compilation-build-compilation-error-regexp-alist)
 
 ;; cc-mode setup, according to info pages
@@ -16,7 +22,6 @@
 (fmakunbound 'c++-mode)
 (makunbound  'c-mode-map)
 (makunbound  'c++-mode-map)
-(makunbound  'c-style-alist)
 (require 'cc-mode)
 
 ;;; func-menu is a package that scans your source file for function
@@ -48,6 +53,12 @@
 
 ;;====================================================================
 
+(require 'antlr-mode)
+;;(add-hook 'speedbar-load-hook  ; would be too late in antlr-mode.el
+;;	  (lambda () (speedbar-add-supported-extension ".g")))
+(autoload 'antlr-set-tabs "antlr-mode")
+(add-hook 'java-mode-hook 'antlr-set-tabs)
+
 (setq auto-mode-alist
       (append
       '(
@@ -56,6 +67,7 @@
 	("\\.[chi]xx$"				. c++-mode)
 	("\\.bash.*$"				. ksh-mode)
 	("^I?\\(M\\|m\\|GNUm\\)akefile.*$"	. makefile-mode)
+	("\\.g$"				. antlr-mode)
 	) auto-mode-alist))
 
 ;; Perl support
