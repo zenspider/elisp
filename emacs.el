@@ -4,6 +4,9 @@
 
 (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0)
 
+(require 'vc-hooks)
+;(require 'project)
+
 ;;; Load My Stuff
 (load "setup-aliases")
 (load "setup-keys")
@@ -21,6 +24,7 @@
  '(bar-cursor (quote (quote other)))
  '(jde-jdk-doc-url "file:///usr/share/doclib/java/index.html")
  '(eldoc-mode t)
+ '(shell-multiple-shells t)
  '(toolbar-visible-p nil)
  '(time-stamp-format "%02y-%02m-%02d %02H:%02M:%02S %u")
  '(line-number-mode t)
