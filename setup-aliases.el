@@ -7,7 +7,7 @@
 (defalias 'kill-buffer-and-close-window
   (read-kbd-macro "C-x k RET C-x 0"))
 
-(load "simple")
+; (load "simple")
 (defadvice yank (after indent-region activate)
   (if (member major-mode '(emacs-lisp-mode
 			   c-mode

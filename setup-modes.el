@@ -53,9 +53,9 @@
 
 ;;====================================================================
 
-(require 'antlr-mode)
-(autoload 'antlr-set-tabs "antlr-mode")
-(add-hook 'java-mode-hook 'antlr-set-tabs)
+; (require 'antlr-mode)
+; (autoload 'antlr-set-tabs "antlr-mode")
+; (add-hook 'java-mode-hook 'antlr-set-tabs)
 
 (add-hook 'java-mode-hook 'my-java-mode-handler)
 (defun my-java-mode-handler ()
@@ -68,7 +68,7 @@
        '(
  	("\\.bash.*$"				. ksh-mode)
  	("^I?\\(M\\|m\\|GNUm\\)akefile.*$"	. makefile-mode)
- 	("\\.g$"				. antlr-mode)
+; 	("\\.g$"				. antlr-mode)
  	) auto-mode-alist))
 
 ;; Perl support
