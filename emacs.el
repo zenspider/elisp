@@ -18,6 +18,7 @@
 (custom-set-variables
  '(backup-by-copying-when-linked t)
  '(paren-mode (quote paren) nil (paren))
+ '(gutter-visible-p nil)
  '(lazy-shot-mode t nil (lazy-shot))
  '(c-echo-syntactic-information-p t)
  '(browse-url-browser-function (quote browse-url-w3))
@@ -29,7 +30,7 @@
  '(shell-multiple-shells t)
  '(toolbar-visible-p nil)
  '(jde-build-use-make t)
- '(time-stamp-format "%02y-%02m-%02d %02H:%02M:%02S %u")
+ '(time-stamp-format "%02y-%02m-%02d %02H:%02M:%02S %u" t)
  '(line-number-mode t)
  '(calendar-time-display-form (quote (24-hours ":" minutes (if time-zone " (") time-zone (if time-zone ")"))))
  '(cperl-hairy t)
