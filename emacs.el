@@ -59,7 +59,6 @@
  '(cperl-help t)
  '(delete-key-deletes-forward nil)
  '(eldoc-mode t t)
- '(global-font-lock-mode t nil (font-core))
  '(gutter-buffers-tab-visible-p nil)
  '(gutter-visible-p nil)
  '(inhibit-startup-message t)
