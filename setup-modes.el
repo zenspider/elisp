@@ -19,12 +19,6 @@
 	 )))
 
 (defun p4-normal () (interactive) (p4-set-p4-port "perforce:1666"))
-(if (equal (getenv "DOMAIN") "amazon.com")
-    (progn
-      (defun p4-amazon () (interactive) (p4-set-p4-port "perforce:6791"))
-      (defun p4-brazil () (interactive) (p4-set-p4-port "perforce:9591"))
-      (p4-amazon))
-  (p4-normal))
 
 (resize-minibuffer-mode 1)
 
