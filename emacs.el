@@ -1,7 +1,5 @@
 ; Stupid compatibility checking
 
-(setq apropos-do-all t)
-
 (setq running-xemacs (featurep 'xemacs))
 
 (if (featurep 'xemacs)
@@ -16,7 +14,6 @@
 	     )))
   (progn
     (message "Have I ever mentioned that GNU emacs sucks?")
-
     (defalias 'mapc 'mapcar)
     (load-library "cl")
     (setq apropos-do-all t)
@@ -24,6 +21,9 @@
     (add-hook 'comint-output-filter-functions
 	      'comint-watch-for-password-prompt)
     ))
+
+;; EVIL - can't cntl-c a proccess in a shell! (setq process-connection-type nil)
+(put 'erase-buffer 'disabled nil) ;; nukes stupid warning
 
 ;;; Add my elisp directory to pathing
 
@@ -79,6 +79,7 @@
  '(shell-multiple-shells t)
  '(show-paren-mode t nil (paren))
  '(sql-postgres-options (quote ("-P pager=off")))
+ '(tool-bar-mode nil nil (tool-bar))
  '(toolbar-visible-p nil)
  '(user-mail-address (concat "ryand@" (getenv "DOMAIN"))))
 
@@ -105,4 +106,3 @@
 ;; ============================
 ;; End of Options Menu Settings
 
-(put 'erase-buffer 'disabled nil)
