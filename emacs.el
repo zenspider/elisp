@@ -29,6 +29,7 @@
 (load "bs")
 
 (custom-set-variables
+ '(gutter-buffers-tab-visible-p nil)
  '(paren-mode (quote paren) nil (paren))
  '(gutter-visible-p nil)
  '(jde-make-program "gmake")
@@ -36,7 +37,6 @@
  '(delete-key-deletes-forward nil)
  '(column-number-mode t)
  '(lazy-shot-mode t nil (lazy-shot))
- '(gnuserv-program "/usr/local/lib/xemacs-21.1.12/i386--freebsd/gnuserv")
  '(c-echo-syntactic-information-p t)
  '(sql-postgres-options (quote ("-P pager=off")))
  '(browse-url-browser-function (quote browse-url-w3))
@@ -50,7 +50,6 @@
  '(toolbar-visible-p nil)
  '(line-number-mode t)
  '(revert-without-query (quote ("\\.html")))
- '(user-mail-address "ryand@zenspider.com." t)
  '(query-user-mail-address nil)
  '(font-lock-mode t nil (font-lock)))
 (custom-set-faces)

@@ -12,7 +12,7 @@
   (progn
     (load-library "p4")
     (p4-set-p4-port "perforce:1666")
-    (p4-set-my-clients '(ryand ryand-itsy ryand-greed))
+    (p4-set-my-clients '(ryand ryand-itsy ryand-greed ryand-amzn ryand-amzn2))
     (setq p4-strict-complete nil)
     (p4-set-client-name "ryand")))
 
