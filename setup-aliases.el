@@ -13,6 +13,26 @@
   (interactive)
   (kill-buffer (current-buffer)))
 
+(defun my-fix-window ()
+  (interactive)
+
+  (let ((frame (car (car (cdr (current-frame-configuration))))))
+    (progn
+      (delete-other-windows)
+      (set-frame-position frame 5 10)
+      (set-frame-size frame 80 50))))
+
+(defun my-big-window ()
+  "Create a large window suitable for coding on a 20 inch cinema display"
+  (interactive)
+
+  (let ((frame (car (car (cdr (current-frame-configuration))))))
+    (progn
+      (delete-other-windows)
+      (set-frame-position frame 5 10)
+      (set-frame-size frame 164 60)
+      (split-window-horizontally))))
+
 (defun my-recompile-init ()
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t))

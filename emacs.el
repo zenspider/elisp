@@ -31,7 +31,7 @@
 	 (pushnew (expand-file-name path) load-path :test 'string=))
       (list 
        "/usr/share/emacs/site-lisp/"
-       "/usr/local/lib/xemacs/site-lisp/"
+       (if (featurep 'xemacs) "/usr/local/lib/xemacs/site-lisp/" "/usr/local/lib/emacs/site-lisp/")
        "~/Bin/elisp/"
        "~/Bin/elisp/third-party/"
        "~/Bin/elisp/third-party/tramp"
