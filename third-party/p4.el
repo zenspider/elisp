@@ -686,7 +686,7 @@ controlled files."
 	(body (cdr (cddr all-args))))
     `(defalias ',fkn
        ,(append (list 'lambda args
-		      (p4-help-text help-cmd help-txt))
+		      "extra help not available");  (p4-help-text help-cmd help-txt))
 		body))))
 
 (defun p4-noinput-buffer-action (cmd

@@ -1,5 +1,7 @@
 ; Stupid compatibility checking
 
+(setq apropos-do-all t)
+
 (setq running-xemacs (featurep 'xemacs))
 
 (if (featurep 'xemacs)
@@ -68,6 +70,8 @@
  '(jde-make-program "gmake")
  '(lazy-lock-mode t t (lazy-lock))
  '(line-number-mode t)
+ '(p4-executable "/Users/ryan/Bin/p4")
+ '(p4-strict-complete nil)
  '(paren-mode (quote paren) nil (paren))
  '(query-user-mail-address nil t)
  '(revert-without-query (quote ("\\.html")))

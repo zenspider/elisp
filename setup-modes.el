@@ -7,14 +7,10 @@
 
 ; Perforce setup
 (require 'p4)
-(setq p4-strict-complete nil)
 (p4-set-my-clients '(ryand ryand-itsy ryand-greed ryand-amzn ryand-amzn2))
 (p4-toggle-vc-mode-off)
 (p4-set-p4-port (concat "perforce." (getenv "DOMAIN") ":1666"))
 (p4-set-client-name "ryand")
-
-(if (file-exists-p (expand-file-name "~/Bin/p4"))
-    (p4-set-p4-executable (expand-file-name "~/Bin/p4")))
 
 (cond (running-xemacs
        (progn
