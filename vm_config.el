@@ -109,9 +109,10 @@ vm-subject-ignored-prefix "^\\(re\\(\\[[0-9]+\\]\\)?: *\\)+"
 
  )
 
-(require 'bbdb)
-(bbdb-initialize 'vm)
-(bbdb-insinuate-vm)
+(eval-after-load "bbdb"
+  '(progn
+     (bbdb-initialize 'vm)
+     (bbdb-insinuate-vm)))
 
 (add-to-list 'vm-mime-type-converter-alist
              '("text/html" "text/plain" "lynx -force_html -dump -stdin"))
