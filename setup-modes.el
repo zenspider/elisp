@@ -4,6 +4,7 @@
 ;(add-hook 'text-mode-hook 'turn-on-setnu-mode)
 
 (require 'compile)
+(require 'jdok)
 
 (setq default-major-mode 'text-mode)
 
@@ -81,3 +82,7 @@
 
 ;; Perl support
 (load "setup-perl")
+
+(autoload 'auto-revert-mode "autorevert" nil t)
+(autoload 'turn-on-auto-revert-mode "autorevert" nil nil)
+(autoload 'global-auto-revert-mode "autorevert" nil t)
