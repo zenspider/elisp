@@ -21,10 +21,7 @@
 
 (global-set-key (kbd "C-x !") 'insert-shell-command-interactive) ; located in setup-aliases.el
 
-;; Add Big Brother Database keys
-;;(global-set-key "\C-x\M-b" 'bbdb)
-;;(global-set-key "\C-x\M-m" 'vm-bugread)
-
+(global-set-key "\C-\M-b" 'bury-buffer)
 (global-set-key "\C-\M-n" 'insert-buffer-name)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
