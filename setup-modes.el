@@ -1,9 +1,11 @@
-; HACK (require 'func-menu)
 
 (require 'compile)
 
 ; (require 'jde) ; FIX: lost eieio, need to reinstall
 
+(setq inferior-lisp-program "clisp")
+
+; Perforce setup
 (require 'p4)
 (setq p4-strict-complete nil)
 (p4-set-my-clients '(ryand ryand-itsy ryand-greed ryand-amzn ryand-amzn2))
@@ -15,7 +17,10 @@
     (p4-set-p4-executable (expand-file-name "~/Bin/p4")))
 
 (cond (running-xemacs
-       (setq diff-switches nil))) ; -c doesn't work well with GNU emacs
+       (progn
+	 (setq diff-switches nil)	; -c doesn't work well with GNU emacs
+	 (require 'func-menu)		; only appears to exist on xemacs?
+	 )))
 
 (defun p4-normal () (interactive) (p4-set-p4-port "perforce:1666"))
 (if (equal (getenv "DOMAIN") "amazon.com")
