@@ -1,12 +1,16 @@
 (require 'bbdb)
-(autoload 'bbdb         "bbdb-com" "Insidious Big Brother Database" t)
-(autoload 'bbdb-name    "bbdb-com" "Insidious Big Brother Database" t)
-(autoload 'bbdb-company "bbdb-com" "Insidious Big Brother Database" t)
-(autoload 'bbdb-net     "bbdb-com" "Insidious Big Brother Database" t)
-(autoload 'bbdb-notes   "bbdb-com" "Insidious Big Brother Database" t)
-(autoload 'bbdb-insinuate-vm       "bbdb-vm"    "Hook BBDB into VM")
-(autoload 'bbdb-insinuate-gnus     "bbdb-gnus"  "Hook BBDB into GNUS")
-(autoload 'bbdb-insinuate-sendmail "bbdb"       "Hook BBDB into sendmail")
+
+(require 'bbdb)
+(bbdb-initialize)
+
+;(autoload 'bbdb         "bbdb-com" "Insidious Big Brother Database" t)
+;(autoload 'bbdb-name    "bbdb-com" "Insidious Big Brother Database" t)
+;(autoload 'bbdb-company "bbdb-com" "Insidious Big Brother Database" t)
+;(autoload 'bbdb-net     "bbdb-com" "Insidious Big Brother Database" t)
+;(autoload 'bbdb-notes   "bbdb-com" "Insidious Big Brother Database" t)
+;(autoload 'bbdb-insinuate-vm       "bbdb-vm"    "Hook BBDB into VM")
+;(autoload 'bbdb-insinuate-gnus     "bbdb-gnus"  "Hook BBDB into GNUS")
+;(autoload 'bbdb-insinuate-sendmail "bbdb"       "Hook BBDB into sendmail")
 ;; NOTE: VM hook is in ~/.vm
 
 (setq mail-setup-hook 'bbdb-insinuate-sendmail) ;; Hook into sendmail.
