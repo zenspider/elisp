@@ -38,48 +38,28 @@
  ;; Ignore case
  vm-auto-folder-case-fold-search t
 
- ;; My list of folders to automatically save to
-; vm-auto-folder-alist '(
-;			("From:"
-;			 ("ryand" . "ryand")
-;			 ("bosik" . "kathy")
-;			 ("pwilk" . "phil")
-;			 ("alanh" . "alan")
-;			 ("bill@" . "bill")
-;			 ("snoc"  . "snoc")
-;			 )
-;			(
-;			 "Subject:"
-;			 ("checkin" . "commit")
-;			 ("commit" . "commit")
-;			 )
-;			(
-;			 "To:"
-;			 ("software@" . "software")
-;			 ("qa@" . "qa")
-;			 ("downtown" . "downtown")
-;			 )
-;			(
-;			 "CC:"
-;			 ("software@" . "software")
-;			 ("qa@" . "software")
-;			 ("downtown" . "downtown")
-;			 )
-;			)
+ ;; Spool setup
  vm-spool-files (list 
  		 (list "~/Mail/INBOX" "~/Mail/spool/INBOX" "~/Mail/INBOX.CRASH")
+ 		 (list "~/Mail/antlr" "~/Mail/spool/antlr" "~/Mail/antlr.CRASH")
  		 (list "~/Mail/bill" "~/Mail/spool/bill" "~/Mail/bill.CRASH")
  		 (list "~/Mail/build" "~/Mail/spool/build" "~/Mail/build.CRASH")
  		 (list "~/Mail/commit" "~/Mail/spool/commit" "~/Mail/commit.CRASH")
+ 		 (list "~/Mail/commit-main" "~/Mail/spool/commit-main" "~/Mail/commit-main.CRASH")
  		 (list "~/Mail/downtown" "~/Mail/spool/downtown" "~/Mail/downtown.CRASH")
  		 (list "~/Mail/frank" "~/Mail/spool/frank" "~/Mail/frank.CRASH")
+ 		 (list "~/Mail/crontab" "~/Mail/spool/crontab" "~/Mail/crontab.CRASH")
  		 (list "~/Mail/kathy" "~/Mail/spool/kathy" "~/Mail/kathy.CRASH")
+ 		 (list "~/Mail/perf" "~/Mail/spool/perf" "~/Mail/perf.CRASH")
+ 		 (list "~/Mail/poker" "~/Mail/spool/poker" "~/Mail/poker.CRASH")
+ 		 (list "~/Mail/other" "~/Mail/spool/other" "~/Mail/other.CRASH")
+ 		 (list "~/Mail/qa" "~/Mail/spool/qa" "~/Mail/qa.CRASH")
  		 (list "~/Mail/ryand" "~/Mail/spool/ryand" "~/Mail/ryand.CRASH")
  		 (list "~/Mail/software" "~/Mail/spool/software" "~/Mail/software.CRASH")
- 		 (list "~/Mail/qa" "~/Mail/spool/qa" "~/Mail/qa.CRASH")
  		 (list "~/Mail/ssc" "~/Mail/spool/ssc" "~/Mail/ssc.CRASH")
  		 (list "~/Mail/test" "~/Mail/spool/test" "~/Mail/test.CRASH")
  		 (list "~/Mail/zss" "~/Mail/spool/zss" "~/Mail/zss.CRASH")
+ 		 (list "~/Mail/xmas" "~/Mail/spool/xmas" "~/Mail/xmas.CRASH")
 		 )
 
  vm-virtual-folder-alist '(
