@@ -8,12 +8,17 @@
   (read-kbd-macro "C-x k RET C-x 0"))
 
 ; (load "simple")
+
+(defun recompile-init ()
+  (interactive)
+  (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t))
+
 (defadvice yank (after indent-region activate)
   (if (member major-mode '(emacs-lisp-mode
 			   c-mode
 			   c++-mode
 			   tcl-mode
-			   sql-mode    
+			   sql-mode
 			   perl-mode
 			   cperl-mode
 			   java-mode
@@ -146,12 +151,21 @@
   (interactive "sShell Command: ")
   (insert-shell-command s))
 
-(defalias 'windoze-sucks
-  (read-kbd-macro "ESC < M-% C-q C-m 2*RET ! ESC <"))
+(defun windoze-sucks ()
+  (interactive)
+  (progn
+    (beginning-of-buffer)
+    (replace-regexp "\r+$" "" nil)
+    ))
 
-(defalias 'clean-whitespace (read-kbd-macro
-"<f12> [ SPC C-q TAB ]+ SPC <backspace> $ 2*RET ! ESC < <f12> C-q C-j C-q C-j + RET C-q C-j C-q C-j RET ! ESC <"))
-  
+(defun clean-whitespace ()
+  (interactive)
+  (progn
+    (beginning-of-buffer)
+    (replace-regexp "[\ \t]+$" "" nil)
+    (beginning-of-buffer)
+    (replace-regexp "\n\n+" "\n\n" nil)))
+
 (defun insert-isodate ()
   "Inserts an ISO-8601 compliant date string into the current buffer"
   (interactive)

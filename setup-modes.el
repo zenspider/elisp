@@ -91,6 +91,7 @@
           '(lambda ()
              (inf-ruby-keys)
 	     (define-key ruby-mode-map "\M-\C-b" 'bury-buffer)
+	     (define-key ruby-mode-map "\M-\C-h" 'backward-kill-word)
 	     (setq ruby-program-name "/usr/local/bin/ruby")
              ))
 

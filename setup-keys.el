@@ -24,4 +24,4 @@
 (global-set-key "\C-\M-b" 'bury-buffer)
 (global-set-key "\C-\M-n" 'insert-buffer-name)
 (global-set-key "\M-s" 'fixup-whitespace)
-
+(global-set-key "\C-x\C-p" 'find-file-at-point)
