@@ -14,6 +14,8 @@
  vm-use-toolbar nil
  vm-auto-get-new-mail 10
  vm-mail-check-interval 30
+
+ vm-raise-frame-at-startup nil
  
  vm-included-text-prefix "> "
 
