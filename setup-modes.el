@@ -96,6 +96,11 @@
 	     (setq ruby-program-name "/usr/local/bin/ruby")
              ))
 
+(add-hook 'shell-mode-hook
+          '(lambda ()
+	     (define-key shell-mode-map  (kbd "<M-return>") 'shell-resync-dirs)
+             ))
+
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 (add-hook 'text-mode-hook
           '(lambda ()
