@@ -51,7 +51,9 @@
  '(line-number-mode t)
  '(revert-without-query (quote ("\\.html")))
  '(query-user-mail-address nil)
- '(font-lock-mode t nil (font-lock)))
+ '(font-lock-mode t nil (font-lock))
+ '(user-mail-address (concat "ryand@" (getenv "DOMAIN"))))
+
 (custom-set-faces)
 
 ;; Options Menu Settings
