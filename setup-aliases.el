@@ -9,6 +9,10 @@
 
 ; (load "simple")
 
+(defun kill-current-buffer ()
+  (interactive)
+  (kill-buffer (current-buffer)))
+
 (defun my-recompile-init ()
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t))
@@ -48,8 +52,7 @@
   "Set tabbing back to the way I like it."
   (interactive)
   (progn
-    (setq tab-width 4)
-    (setq indent-tabs-mode nil)
+    (setq tab-width 4 indent-tabs-mode nil)
     (save-excursion
       (mark-whole-buffer)
       (untabify (mark) (point)))))
