@@ -19,7 +19,7 @@
 ;;====================================================================
 ;; auto-insert
 ;(require 'auto-insert-tkld)
-;(setq auto-insert-path '("/home/ryand/Bin/elisp/autoinsert")
+;(setq auto-insert-path '("/toasters/toaster5/users/ryand/Bin/elisp/autoinsert")
 ;      auto-insert-automatically t)
 ;
 ;(pushnew '("\.java'" . "Java")
