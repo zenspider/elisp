@@ -1,5 +1,5 @@
 (require 'setnu)
-
+(require 'func-menu)
 (add-hook 'text-mode-hook 'turn-on-auto-fill) ;;'(lambda() (auto-fill-mode 1)))
 (add-hook 'text-mode-hook 'turn-on-setnu-mode)
 
