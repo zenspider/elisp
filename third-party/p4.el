@@ -193,6 +193,9 @@ command."
 (eval-and-compile
   (defvar p4-output-buffer-name "*P4 Output*" "P4 Output Buffer."))
 
+(eval-and-compile
+  (defvar p4-should-delete-other-windows nil "Delete other windows when displaying output."))
+
 ;; Set this variable in .emacs if you want p4-set-client-name to complete
 ;; your client name for you.
 (defvar p4-my-clients nil
@@ -723,7 +726,8 @@ controlled files."
 					   (end-of-line)
 					   (point)))))
 	  (p4-push-window-config)
-	  (if (not (one-window-p))
+	  (if (and (not (one-window-p))
+		   p4-should-delete-other-windows)
 	      (delete-other-windows))
 	  (display-buffer p4-output-buffer-name t))))
   (if (and do-revert (p4-buffer-file-name))
