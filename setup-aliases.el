@@ -19,8 +19,8 @@
   (let ((frame (car (car (cdr (current-frame-configuration))))))
     (progn
       (delete-other-windows)
-      (set-frame-position frame 5 10)
-      (set-frame-size frame 80 50))))
+      (set-frame-position frame 5 25)
+      (set-frame-size frame 80 45))))
 
 (defun my-big-window ()
   "Create a large window suitable for coding on a 20 inch cinema display"
@@ -29,7 +29,7 @@
   (let ((frame (car (car (cdr (current-frame-configuration))))))
     (progn
       (delete-other-windows)
-      (set-frame-position frame 5 10)
+      (set-frame-position frame 5 25)
       (set-frame-size frame 164 60)
       (split-window-horizontally))))
 

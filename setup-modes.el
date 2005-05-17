@@ -9,7 +9,8 @@
 (require 'p4)
 (p4-set-my-clients '(ryand ryand-itsy ryand-greed ryand-amzn ryand-amzn2))
 (p4-toggle-vc-mode-off)
-(p4-set-p4-port (concat "perforce." (getenv "DOMAIN") ":1666"))
+(p4-set-client-config ".p4config")
+; (p4-set-p4-port (concat "perforce." (getenv "DOMAIN") ":1666"))
 (p4-set-client-name "ryand")
 
 (cond (running-xemacs
