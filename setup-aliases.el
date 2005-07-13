@@ -9,6 +9,14 @@
 
 ; (load "simple")
 
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph       
+;;; Takes a multi-line paragraph and makes it into a single line of text.       
+(defun unfill-paragraph ()
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
+
 (defun kill-current-buffer ()
   (interactive)
   (kill-buffer (current-buffer)))
@@ -30,7 +38,7 @@
     (progn
       (delete-other-windows)
       (set-frame-position frame 5 25)
-      (set-frame-size frame 164 60)
+      (set-frame-size frame 169 60)
       (split-window-horizontally))))
 
 (defun my-recompile-init ()
@@ -154,14 +162,10 @@
     (beginning-of-buffer)
     (replace-regexp "\n\n+" "\n\n" nil)))
 
-(defun insert-isodate ()
-  "Inserts an ISO-8601 compliant date string into the current buffer"
+(defun forward-line-6 ()
   (interactive)
-  (insert-shell-command "date +%Y-%m-%d")
-  (delete-backward-char 1))
+  (forward-line 6))
 
-
-(defun zentest ()
-  "Runs zentest on the current buffer"
+(defun previous-line-6 ()
   (interactive)
-  (shell-command (concat "./ZenTest.rb " buffer-file-name)))
+  (previous-line 6))

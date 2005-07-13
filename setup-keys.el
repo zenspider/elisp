@@ -28,6 +28,13 @@
 (global-set-key "\C-x\C-p" 'find-file-at-point)
 (global-set-key "\C-c\C-r" 'recompile)
 
+(defun forward-block-of-lines () 
+  (interactive "_") 
+  (forward-line block-movement-size)) 
+
+(define-key global-map [C-up]           'previous-line-6)
+(define-key global-map [C-down]         'forward-line-6)
+
 (unless (featurep 'xemacs)
   (progn
     (require 'dired)
