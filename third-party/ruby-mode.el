@@ -2,11 +2,11 @@
 ;;;  ruby-mode.el -
 ;;;
 ;;;  $Author: matz $
-;;;  $Date: 2004/05/07 08:44:24 $
+;;;  $Date: 2005/06/12 16:58:40 $
 ;;;  created at: Fri Feb  4 14:49:13 JST 1994
 ;;;
 
-(defconst ruby-mode-revision "$Revision: 1.81 $")
+(defconst ruby-mode-revision "$Revision: 1.74.2.11 $")
 
 (defconst ruby-mode-version
   (progn
@@ -293,15 +293,17 @@ The variable ruby-indent-level controls the amount of indentation.
 	  (move-to-column (+ x shift))))))
 
 (defun ruby-special-char-p (&optional pnt)
-  (let ((c (char-before (or pnt (point)))))
+  (setq pnt (or pnt (point)))
+  (let ((c (char-before pnt)) (b (and (< (point-min) pnt) (char-before (1- pnt)))))
     (cond ((or (eq c ??) (eq c ?$)))
-	  ((eq c ?\\)
-	   (eq (char-before (1- (or pnt (point)))) ??)))))
+	  ((and (eq c ?:) (or (not b) (eq (char-syntax b) ? ))))
+	  ((eq c ?\\) (eq b ??)))))
 
 (defun ruby-expr-beg (&optional option)
   (save-excursion
     (store-match-data nil)
-    (let ((space (skip-chars-backward " \t")))
+    (let ((space (skip-chars-backward " \t"))
+	  (start (point)))
       (cond
        ((bolp) t)
        ((progn
@@ -310,7 +312,7 @@ The variable ruby-indent-level controls the amount of indentation.
 	       (or (eq (char-syntax (char-before (point))) ?w)
 		   (ruby-special-char-p))))
 	nil)
-       ((or (looking-at ruby-operator-re)
+       ((or (save-excursion (goto-char start) (looking-at ruby-operator-re))
 	    (looking-at "[\\[({,;]")
 	    (and (or (not (eq option 'heredoc))
 		     (< space 0))
@@ -321,9 +323,9 @@ The variable ruby-indent-level controls the amount of indentation.
 	    (and (looking-at ruby-symbol-re)
 		 (skip-chars-backward ruby-symbol-chars)
 		 (cond
-		  ((or (looking-at ruby-block-beg-re)
-		       (looking-at ruby-block-op-re)
-		       (looking-at ruby-block-mid-re))
+		  ((or (looking-at (concat "\\<\\(" ruby-block-beg-re
+					   "|" ruby-block-op-re
+					   "|" ruby-block-mid-re "\\)\\>")))
 		   (goto-char (match-end 0))
                   (not (looking-at "\\s_")))
 		  ((eq option 'expr-qstr)
@@ -396,7 +398,7 @@ The variable ruby-indent-level controls the amount of indentation.
 	 ((and (not (eobp))
 	       (ruby-expr-beg 'expr-qstr)
 	       (not (looking-at "%="))
-	       (looking-at "%[QqrxWw]?\\(.\\)"))
+	       (looking-at "%[QqrxWw]?\\([^a-zA-Z0-9 \t\n]\\)"))
 	  (goto-char (match-beginning 1))
 	  (setq expand (not (memq (char-before) '(?q ?w))))
 	  (setq w (match-string 1))
@@ -451,7 +453,7 @@ The variable ruby-indent-level controls the amount of indentation.
 	  (setq depth (1- depth)))
 	(setq nest (cdr nest))
 	(goto-char pnt))
-       ((looking-at ruby-block-end-re)
+       ((looking-at (concat "\\<\\(" ruby-block-end-re "\\)\\>"))
 	(if (or (and (not (bolp))
 		     (progn
 		       (forward-char -1)
@@ -477,7 +479,7 @@ The variable ruby-indent-level controls the amount of indentation.
 	      (setq nest (cons (cons nil pnt) nest))
 	      (setq depth (1+ depth))))
 	(goto-char (match-end 0)))
-       ((looking-at ruby-block-beg-re)
+       ((looking-at (concat "\\<\\(" ruby-block-beg-re "\\)\\>"))
 	(and
 	 (save-match-data
 	   (or (not (looking-at "do\\>[^_]"))
@@ -503,7 +505,11 @@ The variable ruby-indent-level controls the amount of indentation.
 	 (setq nest (cons (cons nil pnt) nest))
 	 (setq depth (1+ depth)))
 	(goto-char pnt))
-       ((looking-at ":\\([a-zA-Z_][a-zA-Z_0-9]*\\)?")
+       ((looking-at ":\\(['\"]\\)\\(\\\\.\\|[^\\\\]\\)*\\1")
+	(goto-char (match-end 0)))
+       ((looking-at ":\\([-,.+*/%&|^~<>]=?\\|===?\\|<=>\\)")
+	(goto-char (match-end 0)))
+       ((looking-at ":\\([a-zA-Z_][a-zA-Z_0-9]*[!?=]?\\)?")
 	(goto-char (match-end 0)))
        ((or (looking-at "\\.\\.\\.?")
 	    (looking-at "\\.[0-9]+")
@@ -521,10 +527,23 @@ The variable ruby-indent-level controls the amount of indentation.
 	       (looking-at "<<\\(-\\)?\\(\\([\"'`]\\)\\([^\n]+?\\)\\3\\|\\sw+\\)"))
 	  (setq re (regexp-quote (or (match-string 4) (match-string 2))))
 	  (if (match-beginning 1) (setq re (concat "\\s *" re)))
-	  (if (re-search-forward (concat "^" re "$") end 'move)
-	      (forward-line 1)
-	    (setq in-string (match-end 0))
-	    (goto-char end)))
+	  (let* ((id-end (goto-char (match-end 0)))
+		 (line-end-position (save-excursion (end-of-line) (point)))
+		 (state (list in-string nest depth pcol indent)))
+	    ;; parse the rest of the line
+	    (while (and (> line-end-position (point))
+			(setq state (apply 'ruby-parse-partial
+					   line-end-position state))))
+	    (setq in-string (car state)
+		  nest (nth 1 state)
+		  depth (nth 2 state)
+		  pcol (nth 3 state)
+		  indent (nth 4 state))
+	    ;; skip heredoc section
+	    (if (re-search-forward (concat "^" re "$") end 'move)
+		(forward-line 1)
+	      (setq in-string id-end)
+	      (goto-char end))))
 	 (t
 	  (goto-char pnt))))
        ((looking-at "^__END__$")
@@ -661,7 +680,7 @@ The variable ruby-indent-level controls the amount of indentation.
 	  (and
 	   (or (and (looking-at ruby-symbol-re)
 		    (skip-chars-backward ruby-symbol-chars)
-		    (looking-at ruby-block-hanging-re)
+		    (looking-at (concat "\\<\\(" ruby-block-hanging-re "\\)\\>"))
 		    (not (eq (point) (nth 3 state)))
 		    (save-excursion
 		      (goto-char (match-end 0))
@@ -700,7 +719,7 @@ The variable ruby-indent-level controls the amount of indentation.
 		 (cond
 		  ((and
 		    (null op-end)
-		    (not (looking-at ruby-block-hanging-re))
+		    (not (looking-at (concat "\\<\\(" ruby-block-hanging-re "\\)\\>")))
 		    (eq (ruby-deep-indent-paren-p t) 'space)
 		    (not (bobp)))
 		   (save-excursion
@@ -757,7 +776,7 @@ An end of a defun is found by moving forward from the beginning of one."
 (defun ruby-move-to-block (n)
   (let (start pos done down)
     (setq start (ruby-calculate-indent))
-    (setq down (looking-at (if (< n 0) ruby-block-end-re ruby-block-beg-re)))
+    (setq down (looking-at (concat "\\<\\(" (if (< n 0) ruby-block-end-re ruby-block-beg-re) "\\)\\>")))
     (while (and (not done) (not (if (< n 0) (bobp) (eobp))))
       (forward-line n)
       (cond
@@ -779,7 +798,7 @@ An end of a defun is found by moving forward from the beginning of one."
       (if done
 	  (save-excursion
 	    (back-to-indentation)
-	    (if (looking-at ruby-block-mid-re)
+	    (if (looking-at (concat "\\<\\(" ruby-block-mid-re "\\)\\>"))
 		(setq done nil))))))
   (back-to-indentation))
 
@@ -807,7 +826,7 @@ An end of a defun is found by moving forward from the beginning of one."
 		     (skip-chars-forward ",.:;|&^~=!?\\+\\-\\*")
 		     (looking-at "\\s("))
 		   (goto-char (scan-sexps (point) 1)))
-		  ((and (looking-at ruby-block-beg-re)
+		  ((and (looking-at (concat "\\<\\(" ruby-block-beg-re "\\)\\>"))
 			(not (eq (char-before (point)) ?.))
 			(not (eq (char-before (point)) ?:)))
 		   (ruby-end-of-block)
@@ -868,7 +887,7 @@ An end of a defun is found by moving forward from the beginning of one."
 				   (?:
 				    (forward-char -1)
 				    (eq (char-before) :)))))
-		   (if (looking-at ruby-block-end-re)
+		   (if (looking-at (concat "\\<\\(" ruby-block-end-re "\\)\\>"))
 		       (ruby-beginning-of-block))
 		   nil))
 	    (setq i (1- i)))
@@ -980,7 +999,7 @@ balanced expression is found."
 	  ("\\(#\\)[{$@]" 1 (1 . nil))
 	  ;; the last $', $", $` in the respective string is not variable
 	  ;; the last ?', ?", ?` in the respective string is not ascii code
-	  ("\\(^\\|[\[ \t\n<+\(,=]\\)\\(['\"`]\\)\\(\\\\.\\|\\2\\|[^'\"`\n\\\\]\\)*\\\\?[?$]\\(\\2\\)"
+	  ("\\(^\\|[\[ \t\n<+\(,=]\\)\\(['\"`]\\)\\(\\\\.\\|\\2\\|[^'\"`\n\\\\]\\)*?\\\\?[?$]\\(\\2\\)"
 	   (2 (7 . nil))
 	   (4 (7 . nil)))
 	  ;; $' $" $` .... are variables

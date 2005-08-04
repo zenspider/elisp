@@ -1,8 +1,8 @@
 ;;; -*-Emacs-Lisp-*-
 ;;;
-;;;  $Id: inf-ruby.el,v 1.6 2002/09/07 14:35:46 nobu Exp $
-;;;  $Author: nobu $
-;;;  $Date: 2002/09/07 14:35:46 $
+;;;  $Id: inf-ruby.el,v 1.6.2.1 2004/07/27 07:51:28 matz Exp $
+;;;  $Author: matz $
+;;;  $Date: 2004/07/27 07:51:28 $
 ;;;
 ;;; Inferior Ruby Mode - ruby process in a buffer.
 ;;;                      adapted from cmuscheme.el
@@ -21,7 +21,7 @@
 ;;;    (setq interpreter-mode-alist (append '(("ruby" . ruby-mode))
 ;;;    				     interpreter-mode-alist))
 ;;;    
-;;; (2) set to road inf-ruby and set inf-ruby key definition in ruby-mode.
+;;; (2) set to load inf-ruby and set inf-ruby key definition in ruby-mode.
 ;;;
 ;;;    (autoload 'run-ruby "inf-ruby"
 ;;;      "Run an inferior Ruby process")
@@ -35,6 +35,10 @@
 ;;; HISTORY
 ;;; senda -  8 Apr 1998: Created.
 ;;;	 $Log: inf-ruby.el,v $
+;;;	 Revision 1.6.2.1  2004/07/27 07:51:28  matz
+;;;	 * object.c (Init_Object): "===" calls rb_obj_equal() directly.
+;;;	   [ruby-list:39937]
+;;;	
 ;;;	 Revision 1.6  2002/09/07 14:35:46  nobu
 ;;;	 * misc/inf-ruby.el (inferior-ruby-error-regexp-alist): regexp
 ;;;	   alist for error message from ruby.
