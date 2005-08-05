@@ -37,6 +37,7 @@
        "~/Bin/elisp/third-party/tramp"
        "~/Bin/elisp/third-party/semantic"
        "~/Bin/elisp/third-party/jde/lisp"
+       "~/Bin/elisp/third-party/ecb"
        ))
 
 (if (featurep 'xemacs)
@@ -79,8 +80,11 @@
  '(column-number-mode t)
  '(cua-mode nil)
  '(dired-recursive-deletes (quote top))
+ '(ecb-layout-window-sizes (quote (("left9" (0.325 . 0.975)))))
+ '(ecb-options-version "2.32")
  '(global-font-lock-mode t nil (font-core))
  '(inhibit-startup-message t)
+ '(mouse-wheel-mode t nil (mwheel))
  '(save-place t nil (saveplace))
  '(show-paren-mode t nil (paren))
  '(tool-bar-mode nil nil (tool-bar))

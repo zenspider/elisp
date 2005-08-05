@@ -41,6 +41,16 @@
       (set-frame-size frame 169 60)
       (split-window-horizontally))))
 
+(defun my-big-window2 ()
+  "Create a large window suitable for coding on a 20 inch cinema display"
+  (interactive)
+
+  (let ((frame (car (car (cdr (current-frame-configuration))))))
+    (progn
+      (delete-other-windows)
+      (set-frame-position frame 5 25)
+      (set-frame-size frame 84 60))))
+
 (defun my-recompile-init ()
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t))
