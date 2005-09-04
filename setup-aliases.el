@@ -21,7 +21,7 @@
   (interactive)
   (kill-buffer (current-buffer)))
 
-(defun my-fix-window ()
+(defun my-window-laptop ()
   (interactive)
 
   (let ((frame (car (car (cdr (current-frame-configuration))))))
@@ -30,7 +30,7 @@
       (set-frame-position frame 5 25)
       (set-frame-size frame 80 45))))
 
-(defun my-big-window ()
+(defun my-window-lcd ()
   "Create a large window suitable for coding on a 20 inch cinema display"
   (interactive)
 
@@ -41,7 +41,7 @@
       (set-frame-size frame 169 60)
       (split-window-horizontally))))
 
-(defun my-big-window2 ()
+(defun my-window-work ()
   "Create a large window suitable for coding on a 20 inch cinema display"
   (interactive)
 
