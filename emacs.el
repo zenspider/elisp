@@ -34,10 +34,12 @@
        (if (featurep 'xemacs) "/usr/local/lib/xemacs/site-lisp/" "/usr/local/lib/emacs/site-lisp/")
        "~/Bin/elisp/"
        "~/Bin/elisp/third-party/"
-       "~/Bin/elisp/third-party/tramp"
-       "~/Bin/elisp/third-party/semantic"
-       "~/Bin/elisp/third-party/jde/lisp"
+       "~/Bin/elisp/third-party/cedet"
        "~/Bin/elisp/third-party/ecb"
+       "~/Bin/elisp/third-party/jde/lisp"
+       "~/Bin/elisp/third-party/mmm"
+       "~/Bin/elisp/third-party/semantic"
+       "~/Bin/elisp/third-party/tramp"
        ))
 
 (if (featurep 'xemacs)

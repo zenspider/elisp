@@ -34,8 +34,9 @@
              (inf-ruby-keys)
 	     (define-key ruby-mode-map "\M-\C-x" 'bury-buffer)
 	     (setq ruby-program-name "/usr/local/bin/ruby")
-	     (require 'ruby-electric)
-	     (ruby-electric-mode)))
+	     ;(require 'ruby-electric)
+	     ;(ruby-electric-mode)
+	     ))
 
 (autoload 'ruby-index "ri.el" "ri utility" t)
 (autoload 'ri "ri.el" "ri utility" t)
@@ -190,6 +191,8 @@ ruby on the file I'm visiting."
                     (message (concat "Saved as script: " buffer-file-name))))))
 
 
-(load-file "~/Bin/elisp/third-party/cedet/common/cedet.el") ; FIX: ? maybe
+(load-file (expand-file-name "~/Bin/elisp/third-party/cedet/common/cedet.el"))
+(require 'cedet)
+(require 'semantic)
 (semantic-load-enable-code-helpers)
 
