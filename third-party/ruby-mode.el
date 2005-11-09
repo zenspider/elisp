@@ -1,12 +1,12 @@
 ;;;
 ;;;  ruby-mode.el -
 ;;;
-;;;  $Author: matz $
-;;;  $Date: 2005/06/12 16:56:04 $
+;;;  $Author: nobu $
+;;;  $Date: 2005/09/24 16:47:07 $
 ;;;  created at: Fri Feb  4 14:49:13 JST 1994
 ;;;
 
-(defconst ruby-mode-revision "$Revision: 1.92 $")
+(defconst ruby-mode-revision "$Revision: 1.94 $")
 
 (defconst ruby-mode-version
   (progn
@@ -152,7 +152,7 @@
 Also ignores spaces after parenthesis when 'space."
   :group 'ruby)
 
-(defcustom ruby-deep-indent-paren '(?\( t)
+(defcustom ruby-deep-indent-paren '(?\( ?\[ ?\] t)
   "*Deep indent lists in parenthesis when non-nil. t means continuous line.
 Also ignores spaces after parenthesis when 'space."
   :group 'ruby)
@@ -312,11 +312,10 @@ The variable ruby-indent-level controls the amount of indentation.
 	       (or (eq (char-syntax (char-before (point))) ?w)
 		   (ruby-special-char-p))))
 	nil)
-       ((or (save-excursion (goto-char start) (looking-at ruby-operator-re))
+       ((and (eq option 'heredoc) (< space 0)) t)
+       ((or (looking-at ruby-operator-re)
 	    (looking-at "[\\[({,;]")
-	    (and (or (not (eq option 'heredoc))
-		     (< space 0))
-		 (looking-at "[!?]")
+	    (and (looking-at "[!?]")
 		 (or (not (eq option 'modifier))
 		     (bolp)
 		     (save-excursion (forward-char -1) (looking-at "\\Sw"))))
@@ -327,7 +326,7 @@ The variable ruby-indent-level controls the amount of indentation.
 					   "|" ruby-block-op-re
 					   "|" ruby-block-mid-re "\\)\\>")))
 		   (goto-char (match-end 0))
-                (not (looking-at "\\s_")))
+		   (not (looking-at "\\s_")))
 		  ((eq option 'expr-qstr)
 		   (looking-at "[a-zA-Z][a-zA-z0-9_]* +%[^ \t]"))
 		  ((eq option 'expr-re)
@@ -618,7 +617,11 @@ The variable ruby-indent-level controls the amount of indentation.
 			   (t (setq indent (ruby-indent-size (1- indent) 1))))))
 	    (if (nth 3 state) (goto-char (nth 3 state))
 	      (goto-char parse-start) (back-to-indentation))
-	    (setq indent (ruby-indent-size (current-column) (nth 2 state))))))
+	    (setq indent (ruby-indent-size (current-column) (nth 2 state))))
+	  (and (eq (car (nth 1 state)) paren)
+	       (ruby-deep-indent-paren-p (matching-paren paren))
+	       (search-backward (char-to-string paren))
+	       (setq indent (current-column)))))
        ((and (nth 2 state) (> (nth 2 state) 0)) ; in nest
 	(if (null (cdr (nth 1 state)))
 	    (error "invalid nest"))
@@ -727,6 +730,7 @@ The variable ruby-indent-level controls the amount of indentation.
 		     (goto-char (or begin parse-start))
 		     (skip-syntax-forward " ")
 		     (current-column)))
+		  ((car (nth 1 state)) indent)
 		  (t
 		   (+ indent ruby-indent-level))))))))
       indent)))
