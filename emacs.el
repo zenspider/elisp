@@ -80,7 +80,7 @@
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(cua-mode nil)
+ '(cua-mode nil nil (cua-base))
  '(dired-recursive-deletes (quote top))
  '(ecb-layout-window-sizes (quote (("left9" (0.325 . 0.975)))))
  '(ecb-options-version "2.32")
@@ -88,7 +88,7 @@
  '(inhibit-startup-message t)
  '(mouse-wheel-mode t nil (mwheel))
  '(save-place t nil (saveplace))
- '(show-paren-mode t nil (paren))
+ '(show-paren-mode t)
  '(tool-bar-mode nil nil (tool-bar))
  '(transient-mark-mode t))
 (custom-set-faces
@@ -96,4 +96,4 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- )
+ '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "slate blue")))))

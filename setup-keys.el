@@ -27,6 +27,7 @@
 (global-set-key "\M-s" 'fixup-whitespace)
 (global-set-key "\C-x\C-p" 'find-file-at-point)
 (global-set-key "\C-c\C-r" 'recompile)
+(global-set-key "\C-x\C-b" 'bs-show)
 
 (defun forward-block-of-lines () 
   (interactive "_") 

@@ -46,10 +46,6 @@
 (global-set-key "\C-c\C-c\C-r" 'ri-show-term-at-point)
 (global-set-key "\C-c\C-c\C-t" 'ri-show-term-composite-at-point)
 
-(fset 'ruby-hash-header
-   "#!/usr/bin/ruby\C-m\C-m")
- (global-set-key "\C-[#" 'ruby-hash-header) ;; ESC # = #!/usr/bin/ruby
-
 (defun rb-compile-command (filename)
     "Find the unit test script for testing FILENAME.  I always organize my
 packages in the same way.  The unit_test.rb script is in the package root.  The

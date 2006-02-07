@@ -2,26 +2,14 @@
 ;; Aliases:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; (defalias 'macro-to-end (read-kbd-macro "C-u 0 C-x e"))
-; (defalias 'shell-on-region (read-kbd-macro "C-u M-|"))
-;(defalias 'kill-buffer-and-close-window
-;  (read-kbd-macro "C-x k RET C-x 0"))
-
-; (load "simple")
-
-;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph       
-;;; Takes a multi-line paragraph and makes it into a single line of text.       
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
+;;; Takes a multi-line paragraph and makes it into a single line of text.
 (defun unfill-paragraph ()
   (interactive)
   (let ((fill-column (point-max)))
     (fill-paragraph nil)))
 
-
-(defun kill-current-buffer ()
-  (interactive)
-  (kill-buffer (current-buffer)))
-
-(defun my-window-laptop ()
+(defun small ()
   (interactive)
 
   (let ((frame (car (car (cdr (current-frame-configuration))))))
@@ -30,7 +18,7 @@
       (set-frame-position frame 5 25)
       (set-frame-size frame 80 45))))
 
-(defun my-window-lcd ()
+(defun huge ()
   "Create a large window suitable for coding on a 20 inch cinema display"
   (interactive)
 
@@ -41,16 +29,6 @@
       (set-frame-size frame 169 60)
       (split-window-horizontally))))
 
-(defun my-window-work ()
-  "Create a large window suitable for coding on a 20 inch cinema display"
-  (interactive)
-
-  (let ((frame (car (car (cdr (current-frame-configuration))))))
-    (progn
-      (delete-other-windows)
-      (set-frame-position frame 5 25)
-      (set-frame-size frame 84 60))))
-
 (defun my-recompile-init ()
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t))
@@ -58,18 +36,18 @@
 (if (featurep 'xemacs)
     (defadvice yank (after indent-region activate)
       (if (member major-mode '(emacs-lisp-mode
-			       c-mode
-			       c++-mode
-			       tcl-mode
-			       sql-mode
-			       perl-mode
-			       cperl-mode
-			       java-mode
-			       jde-mode
-			       ruby-mode
-			       LaTeX-mode
-			       TeX-mode))
-	  (indent-region (region-beginning) (region-end) nil))))
+                               c-mode
+                               c++-mode
+                               tcl-mode
+                               sql-mode
+                               perl-mode
+                               cperl-mode
+                               java-mode
+                               jde-mode
+                               ruby-mode
+                               LaTeX-mode
+                               TeX-mode))
+          (indent-region (region-beginning) (region-end) nil))))
 
 (defun myshell ()
   "Create a shell buffer that is properly named (shell-<N>)"
@@ -105,24 +83,18 @@
       (mark-whole-buffer)
       (untabify (mark) (point)))))
 
-; (defalias 'cvs-remove-diff (read-kbd-macro
-; "<down> 4*C-k NUL C-s ============ RET <right> <down> C-x C-x C-w"))
-
-; (defalias 'p4-fill-diff (read-kbd-macro
-; "TAB + SPC 2*<left> C-SPC C-e M-q C-k"))
-
 (defun toggle-split ()
   "Toggle vertical/horizontal window split."
   (interactive)
   (if (one-window-p)
       (error "Frame doesn't have two windows")
     (let* ((cw (selected-window))
-	   (nw (next-window cw))
-	   (wf (window-frame cw))
-	   ;;(cb (buffer-name (window-buffer cw)))
-	   (nb (buffer-name (window-buffer nw)))
-	   (sv (if (eq (window-width cw) (frame-width wf))
-		   t nil)))
+           (nw (next-window cw))
+           (wf (window-frame cw))
+           ;;(cb (buffer-name (window-buffer cw)))
+           (nb (buffer-name (window-buffer nw)))
+           (sv (if (eq (window-width cw) (frame-width wf))
+                   t nil)))
       (delete-window nw)
       (split-window cw nil sv)
       (switch-to-buffer-other-window nb)
@@ -134,9 +106,9 @@
   (if (one-window-p)
       (error "Frame doesn't have two windows")
     (let* ((cw (selected-window))
-	   (nw (next-window cw))
-	   (cb (buffer-name (window-buffer cw)))
-	   (nb (buffer-name (window-buffer nw))))
+           (nw (next-window cw))
+           (cb (buffer-name (window-buffer cw)))
+           (nb (buffer-name (window-buffer nw))))
       (switch-to-buffer nb)
       (select-window nw)
       (switch-to-buffer cb))))
@@ -179,3 +151,22 @@
 (defun previous-line-6 ()
   (interactive)
   (previous-line 6))
+
+(defun sexup ()
+  "make text pretty"
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "[ \t]+$" nil t)
+      (delete-region (match-beginning 0) (match-end 0)))
+    (goto-char (point-min))
+    (while (re-search-forward "^[ \t]+" nil t)
+      (delete-region (match-beginning 0) (match-end 0)))
+    (indent-region (point-min) (point-max) nil)
+    (goto-char (point-min))
+    (if (search-forward "\t" nil t)
+        (untabify (1- (point)) (point-max)))
+    (exchange-point-and-mark)
+    ))
+
+; (global-set-key "\M-i" 'sexup)
