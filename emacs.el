@@ -47,6 +47,7 @@
   (require 'vc-hooks))
 
 ;;; Load My Stuff
+(load "toggle")
 (load "setup-aliases")
 (load "setup-keys")
 (load "setup-mail-and-news")
@@ -54,11 +55,7 @@
 (load "setup-modes")
 (load "bs")
 
-
-
-(setenv "ESHELL" "/bin/bash")
-
-
+(setq explicit-shell-file-name "/bin/bash")
 
 ;; Options Menu Settings
 ;; =====================
@@ -85,12 +82,23 @@
  '(ecb-layout-window-sizes (quote (("left9" (0.325 . 0.975)))))
  '(ecb-options-version "2.32")
  '(global-font-lock-mode t nil (font-core))
- '(inhibit-startup-message t)
+ '(global-semantic-decoration-mode nil nil (semantic-decorate-mode))
+ '(global-semantic-highlight-edits-mode nil nil (semantic-util-modes))
+ '(global-semantic-idle-completions-mode nil nil (semantic-idle))
+ '(global-semantic-idle-scheduler-mode nil nil (semantic-idle))
+ '(global-semantic-idle-summary-mode t nil (semantic-idle))
+ '(global-semantic-show-parser-state-mode nil nil (semantic-util-modes))
+ '(global-semantic-show-unmatched-syntax-mode nil nil (semantic-util-modes))
+ '(global-semantic-stickyfunc-mode nil nil (semantic-util-modes))
+ '(global-senator-minor-mode t nil (senator))
+ '(inhibit-splash-screen t)
  '(mouse-wheel-mode t nil (mwheel))
  '(save-place t nil (saveplace))
+ '(semanticdb-global-mode t nil (semanticdb))
  '(show-paren-mode t)
  '(tool-bar-mode nil nil (tool-bar))
- '(transient-mark-mode t))
+ '(transient-mark-mode t)
+ '(which-function-mode nil))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.

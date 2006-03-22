@@ -28,6 +28,7 @@
 (global-set-key "\C-x\C-p" 'find-file-at-point)
 (global-set-key "\C-c\C-r" 'recompile)
 (global-set-key "\C-x\C-b" 'bs-show)
+(global-set-key "\C-x\C-t" 'toggle-buffer)
 
 (defun forward-block-of-lines () 
   (interactive "_") 

@@ -1,6 +1,6 @@
 ;;; p4.el --- Simple Perforce-Emacs Integration
 ;;
-;; $Id: p4.el,v 1.65 2003/09/12 17:30:44 rvgnu Exp $
+;; $Id: p4.el,v 1.68 2004/06/12 00:46:26 rvgnu Exp $
 
 ;;; Commentary:
 ;;
@@ -8,7 +8,7 @@
 
 ;;    Programs for  Emacs <-> Perforce Integration.
 ;;    Copyright (C) 1996, 1997	Eric Promislow
-;;    Copyright (C) 1997-2003	Rajesh Vaidheeswarran
+;;    Copyright (C) 1997-2004	Rajesh Vaidheeswarran
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 ;; LCD Archive Entry:
 ;; p4|Rajesh Vaidheeswarran|rv@NoSpAm.lOsEtHiS.dsmit.com|
 ;; P4 SCM Integration into Emacs/XEmacs|
-;; 2003/09/12|10.3|not_assigned_yet|
+;; 2004/06/11|10.6|not_assigned_yet|
 
 ;; WARNING:
 ;; --------
@@ -64,7 +64,7 @@
 
 ;;; Code:
 
-(defvar p4-emacs-version "10.3" "The Current P4-Emacs Integration Revision.")
+(defvar p4-emacs-version "10.6" "The Current P4-Emacs Integration Revision.")
 
 ;; Find out what type of emacs we are running in. We will be using this
 ;; quite a few times in this program.
@@ -128,8 +128,12 @@ don't define defcustom"
     "This is the p4 executable.
 To set this, use the function  `p4-set-p4-executable' or `customize'"
     :type 'string
-    :group 'p4))
+    :group 'p4)
 
+  (defcustom p4-cygpath-exec "cygpath" "Path to cygpath binary on cygwin
+systems."
+    :type 'string
+    :group 'p4))
 ;; This is a string with default arguments to pass to "p4 diff",
 ;; "p4 diff2", "p4 describe", etc.
 (defcustom p4-default-diff-options "-du"
@@ -192,9 +196,6 @@ command."
 
 (eval-and-compile
   (defvar p4-output-buffer-name "*P4 Output*" "P4 Output Buffer."))
-
-(eval-and-compile
-  (defvar p4-should-delete-other-windows nil "Delete other windows when displaying output."))
 
 ;; Set this variable in .emacs if you want p4-set-client-name to complete
 ;; your client name for you.
@@ -689,7 +690,7 @@ controlled files."
 	(body (cdr (cddr all-args))))
     `(defalias ',fkn
        ,(append (list 'lambda args
-		      "extra help not available");  (p4-help-text help-cmd help-txt))
+		      (p4-help-text help-cmd help-txt))
 		body))))
 
 (defun p4-noinput-buffer-action (cmd
@@ -726,8 +727,7 @@ controlled files."
 					   (end-of-line)
 					   (point)))))
 	  (p4-push-window-config)
-	  (if (and (not (one-window-p))
-		   p4-should-delete-other-windows)
+	  (if (not (one-window-p))
 	      (delete-other-windows))
 	  (display-buffer p4-output-buffer-name t))))
   (if (and do-revert (p4-buffer-file-name))
@@ -1155,7 +1155,7 @@ When visiting a depot file, type \\[p4-ediff2] and enter the versions.\n"
 	      (progn
 		(goto-char pmin)
 		(re-search-forward
-		 "^Server version: .*\/.*\/\\(\\([0-9]+\\)\.[0-9]+\\)\/.*(.*)$")
+		 "^Server version: .*\/.*\/\\(\\([0-9]+\\)\.[0-9]+\\).*\/.*(.*)$")
 		(setq ser-ver (string-to-number (match-string 2)))
 		(setq p4-server-version-cache (cons (cons p4-port ser-ver)
 						    p4-server-version-cache))
@@ -1239,17 +1239,21 @@ name and a client name."
       (delete-region pmin (point-max)))
     files))
 
-(make-face 'p4-depot-unmapped-face)
-(set-face-foreground 'p4-depot-unmapped-face "grey30")
+(defun p4-make-face (face-name fg bg)
+  "Creates a new face if it does not already exist."
+  (let ((face (facep face-name)))
+    (cond
+     ((null face)
+      (make-face face-name)
+      (if (not (null bg))
+	  (set-face-background face-name bg) t)
+      (if (not (null fg))
+	  (set-face-foreground face-name fg) t)))))
 
-(make-face 'p4-depot-deleted-face)
-(set-face-foreground 'p4-depot-deleted-face "red")
-
-(make-face 'p4-depot-added-face)
-(set-face-foreground 'p4-depot-added-face "blue")
-
-(make-face 'p4-depot-branch-op-face)
-(set-face-foreground 'p4-depot-branch-op-face "blue4")
+(p4-make-face 'p4-depot-unmapped-face "grey30" nil)
+(p4-make-face 'p4-depot-deleted-face "red" nil)
+(p4-make-face 'p4-depot-added-face "blue" nil)
+(p4-make-face 'p4-depot-branch-op-face "blue4" nil)
 
 (defun p4-make-depot-list-buffer (bufname &optional print-buffer)
   "Take the p4-output-buffer-name buffer, rename it to bufname, and
@@ -1962,6 +1966,7 @@ character events"
 	(change (get-char-property pnt 'change))
 	(action (get-char-property pnt 'action))
 	(user (get-char-property pnt 'user))
+	(group (get-char-property pnt 'group))
 	(client (get-char-property pnt 'client))
 	(label (get-char-property pnt 'label))
 	(branch (get-char-property pnt 'branch))
@@ -2129,20 +2134,11 @@ character events"
 
 
 ;; Activate special handling for a buffer generated with a diff-like command
-(make-face 'p4-diff-file-face)
-(set-face-background 'p4-diff-file-face "gray90")
-
-(make-face 'p4-diff-head-face)
-(set-face-background 'p4-diff-head-face "gray95")
-
-(make-face 'p4-diff-ins-face)
-(set-face-foreground 'p4-diff-ins-face "blue")
-
-(make-face 'p4-diff-del-face)
-(set-face-foreground 'p4-diff-del-face "red")
-
-(make-face 'p4-diff-change-face)
-(set-face-foreground 'p4-diff-change-face "dark green")
+(p4-make-face 'p4-diff-file-face nil "gray90")
+(p4-make-face 'p4-diff-head-face nil "gray95")
+(p4-make-face 'p4-diff-ins-face "blue" nil)
+(p4-make-face 'p4-diff-del-face "red" nil)
+(p4-make-face 'p4-diff-change-face "dark green" nil)
 
 (defun p4-buffer-set-face-property (regexp face-property)
   (save-excursion
@@ -2283,6 +2279,17 @@ character events"
     (p4-noinput-buffer-action "users" nil t args))
   (p4-make-basic-buffer "*P4 users*")
   (p4-regexp-create-links "*P4 users*" "^\\([^ ]+\\).*\n" 'user))
+
+(defp4cmd p4-groups ()
+  "groups" "To display list of known groups, type \\[p4-groups].\n"
+  (interactive)
+  (let (args)
+    (if current-prefix-arg
+	(setq args (p4-make-list-from-string
+		    (p4-read-arg-string "p4 groups: " nil "group"))))
+    (p4-noinput-buffer-action "groups" nil t args))
+  (p4-make-basic-buffer "*P4 groups*")
+  (p4-regexp-create-links "*P4 groups*" "^\\(.*\\)\n" 'group))
 
 ;; The p4 jobs command
 (defp4cmd p4-jobs ()
@@ -2560,6 +2567,18 @@ buffer after editing is done using the minor mode key mapped to `C-c C-c'."
     (if (p4-cmd-line-flags args)
 	(p4-noinput-buffer-action "user" nil t args)
       (p4-async-process-command "user" nil nil nil args))))
+
+;; The p4 group command
+(defp4cmd p4-group ()
+  "group" "To create or edit a group specification, type \\[p4-group].\n"
+  (interactive)
+  (let (args)
+    (if current-prefix-arg
+	(setq args (p4-make-list-from-string
+		    (p4-read-arg-string "p4 group: " nil "group"))))
+    (if (p4-cmd-line-flags args)
+	(p4-noinput-buffer-action "group" nil t args)
+      (p4-async-process-command "group" nil nil nil args))))
 
 ;; The p4 job command
 (defp4cmd p4-job ()
@@ -3195,8 +3214,14 @@ making the file writable and write protected."
 	(t nil)))
 
 (defun p4-follow-link-name (name)
+  (p4-cygpath
   (if p4-follow-symlinks
       (file-truename name)
+     name)))
+
+(defun p4-cygpath (name)
+  (if (memq system-type '(cygwin32))
+      (replace-in-string (exec-to-string (format "%s -w %s" p4-cygpath-exec name)) "\n" "")
     name))
 
 (defvar p4-depot-filespec-history nil
@@ -3225,7 +3250,7 @@ cdr is the list of answers??")
 
 (defvar p4-jobs-completion-cache nil
   "Cache for `p4-depot-completion'.
-It is a list of lists whose car is a client and
+It is a list of lists whose car is a job and
 cdr is the list of answers??")
 
 (defvar p4-labels-history nil
@@ -3233,12 +3258,17 @@ cdr is the list of answers??")
 
 (defvar p4-labels-completion-cache nil
   "Cache for `p4-depot-completion'.
-It is a list of lists whose car is a client and
+It is a list of lists whose car is a label and
 cdr is the list of answers??")
 
 (defvar p4-users-completion-cache nil
   "Cache for `p4-depot-completion'.
-It is a list of lists whose car is a client and
+It is a list of lists whose car is a user and
+cdr is the list of answers??")
+
+(defvar p4-groups-completion-cache nil
+  "Cache for `p4-depot-completion'.
+It is a list of lists whose car is a group and
 cdr is the list of answers??")
 
 (defvar p4-arg-string-history nil
@@ -3259,7 +3289,8 @@ So the 'no match' answer is different from 'not in cache'."
 	    ((equal cmd "dirs") p4-depot-completion-cache)
 	    ((equal cmd "jobs") p4-jobs-completion-cache)
 	    ((equal cmd "labels") p4-labels-completion-cache)
-	    ((equal cmd "users") p4-users-completion-cache)))
+	    ((equal cmd "users") p4-users-completion-cache)
+	    ((equal cmd "groups") p4-groups-completion-cache)))
 	dir list)
 
     (if (and p4-cleanup-cache (not p4-timer))
@@ -3294,6 +3325,7 @@ So the 'no match' answer is different from 'not in cache'."
   (setq p4-jobs-completion-cache nil)
   (setq p4-labels-completion-cache nil)
   (setq p4-users-completion-cache nil)
+  (setq p4-groups-completion-cache nil)
   (if (and p4-running-emacs (timerp p4-timer)) (cancel-timer p4-timer))
   (if (and p4-running-xemacs p4-timer) (disable-timeout p4-timer))
   (setq p4-timer nil)
@@ -3312,7 +3344,9 @@ So the 'no match' answer is different from 'not in cache'."
 	((string= type "label")
 	 (setq p4-labels-completion-cache nil))
 	((string= type "user")
-	 (setq p4-users-completion-cache nil))))
+	 (setq p4-users-completion-cache nil))
+	((string= type "group")
+	 (setq p4-groups-completion-cache nil))))
 
 (defun p4-read-depot-output (buffer &optional regexp)
   "Reads first line of BUFFER and returns it.
@@ -3392,7 +3426,11 @@ matched the REGEXP."
      ((equal cmd "users")
       (setq list (p4-completion-helper
 		  filespec cmd 'p4-users-completion-cache
-		  "^\\([^ ]+\\).*$"))))
+		  "^\\([^ ]+\\).*$")))
+     ((equal cmd "groups")
+      (setq list (p4-completion-helper
+		  filespec cmd 'p4-groups-completion-cache
+		  "^\\(.*\\)$"))))
     (message nil)
     (cons filespec list)))
 
@@ -3444,6 +3482,7 @@ file name selection.")
 (defalias 'p4-jobs-completion (p4-completion-builder "jobs"))
 (defalias 'p4-labels-completion (p4-completion-builder "labels"))
 (defalias 'p4-users-completion (p4-completion-builder "users"))
+(defalias 'p4-groups-completion (p4-completion-builder "groups"))
 
 
 (defun p4-read-arg-string (prompt &optional initial type)
@@ -3462,7 +3501,9 @@ file name selection.")
 			   ((string= type "job")
 			    'p4-job-string-completion)
 			   ((string= type "user")
-			    'p4-user-string-completion))
+			    'p4-user-string-completion)
+			   ((string= type "group")
+			    'p4-group-string-completion))
 		     nil nil
 		     initial 'p4-arg-string-history)))
 
@@ -3588,6 +3629,9 @@ file name selection.")
 
 (defalias 'p4-user-string-completion (p4-string-completion-builder
 				      'p4-users-completion))
+
+(defalias 'p4-group-string-completion (p4-string-completion-builder
+				      'p4-groups-completion))
 
 (defun p4-depot-find-file (file)
   (interactive (list (completing-read "Enter filespec: "

@@ -31,7 +31,7 @@
 
 (defun my-recompile-init ()
   (interactive)
-  (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0 t))
+  (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0))
 
 (if (featurep 'xemacs)
     (defadvice yank (after indent-region activate)
