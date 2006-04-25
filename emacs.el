@@ -25,8 +25,6 @@
 ;; EVIL - can't cntl-c a proccess in a shell! (setq process-connection-type nil)
 (put 'erase-buffer 'disabled nil) ;; nukes stupid warning
 
-;;; Add my elisp directory to pathing
-
 (mapc '(lambda (path)
 	 (pushnew (expand-file-name path) load-path :test 'string=))
       (list 
@@ -34,13 +32,13 @@
        (if (featurep 'xemacs) "/usr/local/lib/xemacs/site-lisp/" "/usr/local/lib/emacs/site-lisp/")
        "~/Bin/elisp/"
        "~/Bin/elisp/third-party/"
-       "~/Bin/elisp/third-party/cedet"
-       "~/Bin/elisp/third-party/ecb"
-       "~/Bin/elisp/third-party/jde/lisp"
-       "~/Bin/elisp/third-party/mmm"
-       "~/Bin/elisp/third-party/semantic"
-       "~/Bin/elisp/third-party/tramp"
        ))
+
+(mapc '(lambda (path) (pushnew (expand-file-name path) load-path :test 'string=))
+      (remove-if-not (lambda (o)
+		       (and (file-directory-p o)
+			    (not (string-match "\\.$" o))))
+		     (directory-files "~/Bin/elisp/third-party" t)))
 
 (if (featurep 'xemacs)
     t
@@ -57,20 +55,6 @@
 
 (setq explicit-shell-file-name "/bin/bash")
 
-;; Options Menu Settings
-;; =====================
-(cond
- ((and (string-match "XEmacs" emacs-version)
-       (boundp 'emacs-major-version)
-       (or (and
-            (= emacs-major-version 19)
-            (>= emacs-minor-version 14))
-           (= emacs-major-version 20))
-       (fboundp 'load-options-file))
-  (load-options-file "/home/ryand/.xemacs-options")))
-;; ============================
-;; End of Options Menu Settings
-
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -82,19 +66,11 @@
  '(ecb-layout-window-sizes (quote (("left9" (0.325 . 0.975)))))
  '(ecb-options-version "2.32")
  '(global-font-lock-mode t nil (font-core))
- '(global-semantic-decoration-mode nil nil (semantic-decorate-mode))
- '(global-semantic-highlight-edits-mode nil nil (semantic-util-modes))
- '(global-semantic-idle-completions-mode nil nil (semantic-idle))
- '(global-semantic-idle-scheduler-mode nil nil (semantic-idle))
- '(global-semantic-idle-summary-mode t nil (semantic-idle))
- '(global-semantic-show-parser-state-mode nil nil (semantic-util-modes))
- '(global-semantic-show-unmatched-syntax-mode nil nil (semantic-util-modes))
- '(global-semantic-stickyfunc-mode nil nil (semantic-util-modes))
- '(global-senator-minor-mode t nil (senator))
  '(inhibit-splash-screen t)
  '(mouse-wheel-mode t nil (mwheel))
+ '(quack-programs (quote ("/usr/local/bin/mzscheme" "bigloo" "csi" "csi -hygienic" "gosh" "gsi" "gsi ~~/syntax-case.scm -" "guile" "kawa" "mit-scheme" "mred -z" "mzscheme" "mzscheme -M errortrace" "rs" "scheme" "scheme48" "scsh" "sisc" "stklos" "sxi")))
+ '(quack-smart-open-paren-p nil)
  '(save-place t nil (saveplace))
- '(semanticdb-global-mode t nil (semanticdb))
  '(show-paren-mode t)
  '(tool-bar-mode nil nil (tool-bar))
  '(transient-mark-mode t)

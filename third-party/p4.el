@@ -727,8 +727,8 @@ controlled files."
 					   (end-of-line)
 					   (point)))))
 	  (p4-push-window-config)
-	  (if (not (one-window-p))
-	      (delete-other-windows))
+; 	  (if (not (one-window-p))
+; 	      (delete-other-windows))
 	  (display-buffer p4-output-buffer-name t))))
   (if (and do-revert (p4-buffer-file-name))
       (revert-buffer t t)))
@@ -1467,13 +1467,13 @@ type \\[p4-blame]"
     (if (string-match "\\(.*\\)@\\([0-9]+\\)" file-spec)
 	(progn
 	  (setq file-name (match-string 1 file-spec))
-	  (setq change (string-to-int (match-string 2 file-spec)))))
+	  (setq change (string-to-number (match-string 2 file-spec)))))
 
     ;; we asked for blame constrained by a revision
     (if (string-match "\\(.*\\)#\\([0-9]+\\)" file-spec)
 	(progn
 	  (setq file-name (match-string 1 file-spec))
-	  (setq head-rev (string-to-int (match-string 2 file-spec)))))
+	  (setq head-rev (string-to-number (match-string 2 file-spec)))))
 
     ;; make sure the filespec is unambiguous
     (p4-exec-p4 buffer (list "files" file-name) t)
@@ -1501,8 +1501,8 @@ type \\[p4-blame]"
 
 	;; a non-branch change:
 	(if (looking-at p4-blame-change-regex)
-	    (let ((rev (string-to-int (match-string 1)))
-		  (ch (string-to-int (match-string 2)))
+	    (let ((rev (string-to-number (match-string 1)))
+		  (ch (string-to-number (match-string 2)))
 		  (op (match-string 3))
 		  (date (match-string 4))
 		  (author (match-string 5)))
@@ -1559,11 +1559,11 @@ type \\[p4-blame]"
 	    (set-buffer buffer)
 	    (goto-char (point-max))
 	    (while (re-search-backward p4-blame-revision-regex nil t)
-	      (let ((la (string-to-int (match-string 1)))
-		    (lb (string-to-int (match-string 2)))
+	      (let ((la (string-to-number (match-string 1)))
+		    (lb (string-to-number (match-string 2)))
 		    (op (match-string 3))
-		    (ra (string-to-int (match-string 4)))
-		    (rb (string-to-int (match-string 5))))
+		    (ra (string-to-number (match-string 4)))
+		    (rb (string-to-number (match-string 5))))
 		(if (= lb 0)
 		    (setq lb la))
 		(if (= rb 0)
@@ -1594,7 +1594,7 @@ type \\[p4-blame]"
 	  (move-to-column 0)
 	  (p4-insert-no-properties "Change  Rev       Date  Author\n")
 	  (while (setq line (p4-read-depot-output ch-buffer))
-	    (setq cnum (string-to-int line))
+	    (setq cnum (string-to-number line))
 	    (if (= cnum old-cnum)
 		(p4-insert-no-properties (format "%29s : " ""))
 
@@ -1976,10 +1976,10 @@ character events"
 	     (p4-noinput-buffer-action "print" nil t (list fn1))
 	     (p4-activate-print-buffer "*P4 print*" t)))
 	  (action
-	   (let* ((rev2 (int-to-string (1- (string-to-int rev))))
+	   (let* ((rev2 (int-to-string (1- (string-to-number rev))))
 		  (fn1 (concat filename "#" rev))
 		  (fn2 (concat filename "#" rev2)))
-	     (if (> (string-to-int rev2) 0)
+	     (if (> (string-to-number rev2) 0)
 		 (progn
 		   (p4-noinput-buffer-action
 		    "diff2" nil t
@@ -2185,7 +2185,7 @@ character events"
     (while (re-search-forward
 	    (concat "^[@0-9].*\\([cad+]\\)\\([0-9]*\\).*\n"
 		    "\\(\\(\n\\|[^@0-9\n].*\n\\)*\\)") nil t)
-      (let ((first-line (string-to-int (match-string 2)))
+      (let ((first-line (string-to-number (match-string 2)))
 	    (start (match-beginning 3))
 	    (end (match-end 3)))
 	(p4-set-extent-properties start end
@@ -3784,7 +3784,8 @@ that."
 (defun p4-blame-secondary-buffer-cleanup ()
   "Attempt to clean up a` p4-blame' secondary buffer neatly, deleting
 windows or frames when we think that\'s necessary"
-  (let* ((this-buffer (current-buffer))
+  (let* ((p4-blame-2ary-disp-method 'default)
+	 (this-buffer (current-buffer))
 	 (this-window (get-buffer-window this-buffer t)))
     (cond
      ;; in new-frame mode, delete the frame

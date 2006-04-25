@@ -4,19 +4,18 @@
 (require 'compile)
 (require 'p4)
 (require 'ecb-autoloads)
+(require 'which-func)
+(require 'expand)
+(require 'slime)
+(require 'mmm-mode)
+(require 'mmm-auto)
+(require 'autorevert)
+(require 'icicles)
 
 ;; ============================================================
-;; Java:
+;; Simple mode toggles:
 
-; (require 'jde) ; FIX: lost eieio, need to reinstall
-
-; (require 'antlr-mode)
-; (autoload 'antlr-set-tabs "antlr-mode")
-; (add-hook 'java-mode-hook 'antlr-set-tabs)
-
-(add-hook 'java-mode-hook
-	  '(lambda ()
-	     (local-set-key "\C-\c\C-r" 'recompile)))
+(resize-minibuffer-mode 1)
 
 ;; ============================================================
 ;; Ruby:
@@ -29,13 +28,134 @@
   "Run an inferior Ruby process")
 (autoload 'inf-ruby-keys "inf-ruby"
   "Set local key defs for inf-ruby in ruby-mode")
+
+(defun autotest ()
+  (interactive)
+  (let ((buffer (shell "autotest")))
+    (compilation-shell-minor-mode)
+    (define-key shell-mode-map "\C-c\C-a" 'autotest-switch)
+    (comint-send-string buffer "autotest\n")))
+
+(defun autotest-switch ()
+  (interactive)
+  (if (equal "autotest" (buffer-name))
+      (switch-to-buffer nil)
+    (switch-to-buffer "autotest")))
+
+; TODO: add something to be smart about this
+(setenv "PATH" (concat "/usr/local/bin" ":" (getenv "PATH")))
+
+;; (setq scheme-program-name
+;;       (or (executable-find "scheme48")
+;;           (executable-find "csi")       ; chicken
+;;           (executable-find "scheme")    ; MIT scheme
+;;           (executable-find "bigloo")
+;;           (executable-find "mzscheme")
+;;           (executable-find "rs")        ; rscheme
+;;           (executable-find "elk")
+;;           (executable-find "gosh")      ; gauche
+;;           (executable-find "guile-1.6")
+;;           (executable-find "guile1.4")
+;;           (executable-find "scsh")
+;;           (executable-find "scm")
+;;           (executable-find "sigscheme")
+;;           (executable-find "festival")))
+
+
+; TODO: evaluate this
+; (eval-after-load "dabbrev" '(defalias 'dabbrev-expand 'hippie-expand))
+
+
+
+(defun expand-parse (name l &optional str pos)
+  (cond ((null l)
+	 (list name str (reverse pos)))
+	((equal 'n (car l))
+	 (expand-parse name (cdr l) (concat str "\n")
+		       (cons (1+ (length str)) pos)))
+	((equal 'p (car l))
+	 (expand-parse name (cdr l) str (cons (1+ (length str)) pos)))
+	(t (expand-parse name (cdr l) (concat str (car l)) pos))))
+
+(defconst ruby-expand-list
+  (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
+	  '(
+	    ("shebang" ("#!/usr/local/bin/ruby -w\n\n"))
+	    ("cls" ("class " n
+		    "  def initialize\n"
+		    "    " n
+		    "  end\nend"))
+	    ("tst" ("class Test" p " < Test::Unit::TestCase\n"
+		    "  def setup\n"
+		    "    " n
+		    "  end\n\n"
+		    "  def test_" n
+		    "    " n
+		    "  end\nend"))))
+  "Expansions for Ruby mode")
+
+(setq save-abbrevs nil)
+
+(add-to-list 'compilation-error-regexp-alist 
+     '("test[a-zA-Z0-9_]*([A-Z][a-zA-Z0-9_]*) \\[\\(.*\\):\\([0-9]+\\)\\]:"
+       1 2))
+(add-to-list 'compilation-error-regexp-alist 
+	     '("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in"
+	       1 2))
+
+; steve_molitor -- Here's some elisp that uses the Emacs compile command to navigate to error / unit test failure locations.
+
+;; The following does what one would expect when sending something to irb from emacs. If the last word of the current line is "end", it'll send the current block to the ruby inferior process. Otherwise, it'll send the current line. I find this quite useful.
+
+;; (defun ruby-send-block-or-line ()
+;;   (save-excursion
+;;     (if (re-search-backward "[\n\t ]\\(.*\\)[\n\t ]" nil t)
+;; 	(let ((foo (match-string 0)))
+;; 	  (set-text-properties 0 (length foo) nil foo)
+;; 	  (if (string= foo "end")
+;; 	      (begin
+;; 	       (previous-line -1)
+;; 	       (ruby-send-definition))
+;; 	    (ruby-send-region (line-beginning-position) (line-end-position)))))))
+
+;; ;; run the current test function
+
+(defun ruby-test-function ()
+  "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."
+  (interactive)
+  (let* ((funname (which-function))
+	 (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname))))
+    (compile (concat "ruby " (file-name-nondirectory (buffer-file-name)) " --name " fn))
+    ))
+
+;; ;; run the current test function using F8 key
+;; (add-hook 'ruby-mode-hook (lambda () (local-set-key [f8] 'ruby-test-function)))
+
+(add-hook 'foo-mode-hook
+           (lambda ()
+	     (set (make-local-variable imenu-generic-expression)
+                   '(("Comments" "^\\s-*#" 1)
+                     ...))))
+
+(setq sql-imenu-generic-expression
+       '(("Comments" "^-- \\(.+\\)" 1)
+	 ("Function Definitions" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
+ [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]+\\)?[ai]s\\b" 2)
+	 ("Function Prototypes" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
+ [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]*\\)?;" 2)
+	 ("Indexes" "^\\s-*create\\s-+index\\s-+\\(\\w+\\)" 1)
+	 ("Tables" "^\\s-*create\\s-+table\\s-+\\(\\w+\\)" 1)))
+
+(setq ruby-program-name "/usr/local/bin/irb")
+
 (add-hook 'ruby-mode-hook
           '(lambda ()
              (inf-ruby-keys)
+	     (which-function)
 	     (define-key ruby-mode-map "\M-\C-x" 'bury-buffer)
-	     (setq ruby-program-name "/usr/local/bin/ruby")
-	     ;(require 'ruby-electric)
-	     ;(ruby-electric-mode)
+	     (define-key ruby-mode-map "\C-c\C-a" 'autotest-switch)
+	     (expand-add-abbrevs ruby-mode-abbrev-table ruby-expand-list)
+	     (abbrev-mode)
 	     ))
 
 (autoload 'ruby-index "ri.el" "ri utility" t)
@@ -45,6 +165,12 @@
 
 (global-set-key "\C-c\C-c\C-r" 'ri-show-term-at-point)
 (global-set-key "\C-c\C-c\C-t" 'ri-show-term-composite-at-point)
+(setq ri-ri-command "/usr/local/bin/ri")
+(setq ri-emacsrb "plain")
+
+(setq scheme-program-name "/usr/local/bin/mzscheme")
+(setq inferior-lisp-program "/opt/local/bin/sbcl")
+(slime-setup)
 
 (defun rb-compile-command (filename)
     "Find the unit test script for testing FILENAME.  I always organize my
@@ -90,8 +216,6 @@ ruby on the file I'm visiting."
 ;; ============================================================
 ;; MMM
 
-(require 'mmm-mode)
-(require 'mmm-auto)
 (setq mmm-global-mode 'maybe)
 (setq mmm-submode-decoration-level 2)
 (set-face-background 'mmm-output-submode-face  "LightBlue")
@@ -119,26 +243,6 @@ ruby on the file I'm visiting."
 ;; ============================================================
 ;; Misc Modes/Stuff:
 
-(resize-minibuffer-mode 1)
-
-(cond (running-xemacs
-       (require 'func-menu)
-       (add-hook 'find-file-hooks 'fume-add-menubar-entry)
-       (define-key global-map "\C-cl" 'fume-list-functions)      
-       (define-key global-map "\C-cg" 'fume-prompt-function-goto) 
-       (define-key global-map '(button3) 'mouse-function-menu)
-       
-       ;; For descriptions of the following user-customizable variables,
-       ;; type C-h v <variable>
-       (setq
-	diff-switches nil		; -c doesn't work well with GNU emacs
-	fume-fn-window-position 3
-	fume-auto-position-popup t
-	fume-display-in-modeline-p t
-	fume-buffer-name "*Function List*"
-	fume-no-prompt-on-valid-default nil)
-       ))
-
 (add-to-list 'auto-mode-alist '("\\.bash.*$" . ksh-mode))
 (add-to-list 'auto-mode-alist
 	     '("^I?\\(M\\|m\\|GNUm\\)akefile.*$" . makefile-mode))
@@ -157,7 +261,6 @@ ruby on the file I'm visiting."
 	  '(lambda ()
 	     (local-set-key "\C-\c\C-r" 'recompile)))
 
-(require 'autorevert)
 (turn-on-auto-revert-mode)
 (global-auto-revert-mode)
 
@@ -175,20 +278,18 @@ ruby on the file I'm visiting."
 (define-trivial-mode "gv" "\\.ps$")
 (define-trivial-mode "gv" "\\.pdf$")
 
-(add-hook 'after-save-hook
-	  '(lambda ()
-             (progn
-               (and (save-excursion
-                      (save-restriction
-                        (widen)
-                        (goto-char (point-min))
-                        (save-match-data (looking-at "^#!"))))
-                    (shell-command (concat "chmod u+x " buffer-file-name))
-                    (message (concat "Saved as script: " buffer-file-name))))))
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
+
+(autoload 'semantic-load-enable-code-helpers "semantic" "semantic lib" t)
+(defun my-load-cedet ()
+  (interactive)
+  (load-file (expand-file-name "~/Bin/elisp/third-party/cedet/common/cedet.el"))
+  (require 'cedet)
+  (require 'semantic)
+  (semantic-load-enable-code-helpers))
+
+(global-set-key (kbd "M-<return>") 'complete-tag)
 
 
-(load-file (expand-file-name "~/Bin/elisp/third-party/cedet/common/cedet.el"))
-(require 'cedet)
-(require 'semantic)
-(semantic-load-enable-code-helpers)
+
 

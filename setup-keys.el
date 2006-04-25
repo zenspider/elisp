@@ -30,6 +30,12 @@
 (global-set-key "\C-x\C-b" 'bs-show)
 (global-set-key "\C-x\C-t" 'toggle-buffer)
 
+(defun prev-window ()
+  (interactive)
+  (other-window -1))
+
+(global-set-key "\C-xO" 'prev-window)
+
 (defun forward-block-of-lines () 
   (interactive "_") 
   (forward-line block-movement-size)) 

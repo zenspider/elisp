@@ -9,20 +9,28 @@
   (let ((fill-column (point-max)))
     (fill-paragraph nil)))
 
+(defun current-frame ()
+  (car (car (last (cdr (current-frame-configuration))))))
+
 (defun small ()
   (interactive)
 
-  (let ((frame (car (car (cdr (current-frame-configuration))))))
+  (let ((frame (current-frame)))
     (progn
       (delete-other-windows)
       (set-frame-position frame 5 25)
       (set-frame-size frame 80 45))))
 
+(defun my-clean-windows ()
+  (interactive)
+  (delete-other-frames)
+  (small))
+
 (defun huge ()
   "Create a large window suitable for coding on a 20 inch cinema display"
   (interactive)
 
-  (let ((frame (car (car (cdr (current-frame-configuration))))))
+  (let ((frame (current-frame)))
     (progn
       (delete-other-windows)
       (set-frame-position frame 5 25)
