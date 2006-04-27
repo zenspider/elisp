@@ -21,10 +21,14 @@
       (set-frame-position frame 5 25)
       (set-frame-size frame 80 45))))
 
-(defun my-clean-windows ()
+(defun medium ()
   (interactive)
-  (delete-other-frames)
-  (small))
+
+  (let ((frame (current-frame)))
+    (progn
+      (delete-other-windows)
+      (set-frame-position frame 5 25)
+      (set-frame-size frame 136 45))))
 
 (defun huge ()
   "Create a large window suitable for coding on a 20 inch cinema display"
@@ -36,6 +40,11 @@
       (set-frame-position frame 5 25)
       (set-frame-size frame 169 60)
       (split-window-horizontally))))
+
+(defun my-clean-windows ()
+  (interactive)
+  (delete-other-frames)
+  (small))
 
 (defun my-recompile-init ()
   (interactive)

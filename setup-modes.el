@@ -17,6 +17,8 @@
 
 (resize-minibuffer-mode 1)
 
+(setq ecb-toggle-layout-sequence '("left10" "left9" "left6"))
+
 ;; ============================================================
 ;; Ruby:
 
@@ -64,8 +66,6 @@
 
 ; TODO: evaluate this
 ; (eval-after-load "dabbrev" '(defalias 'dabbrev-expand 'hippie-expand))
-
-
 
 (defun expand-parse (name l &optional str pos)
   (cond ((null l)
@@ -125,8 +125,16 @@
   (interactive)
   (let* ((funname (which-function))
 	 (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname))))
-    (compile (concat "ruby " (file-name-nondirectory (buffer-file-name)) " --name " fn))
-    ))
+    (compile (concat "ruby " (file-name-nondirectory (buffer-file-name)) " --name " fn))))
+
+(defun ruby-find-view ()
+  "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."
+  (interactive)
+  (let* ((funname (which-function))
+	 (cls (and (string-match "\\(.*\\)Controller#" funname) (downcase (match-string 1 funname))))
+	 (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname)))
+	 (appdir (file-name-directory (directory-file-name (file-name-directory (buffer-file-name))))))
+    (find-file (concat appdir "views/" cls "/" fn ".rhtml"))))
 
 ;; ;; run the current test function using F8 key
 ;; (add-hook 'ruby-mode-hook (lambda () (local-set-key [f8] 'ruby-test-function)))
