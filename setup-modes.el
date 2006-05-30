@@ -6,7 +6,6 @@
 (require 'ecb-autoloads)
 (require 'which-func)
 (require 'expand)
-(require 'slime)
 (require 'mmm-mode)
 (require 'mmm-auto)
 (require 'autorevert)
@@ -172,6 +171,8 @@
 (autoload 'ri "ri.el" "ri utility" t)
 (autoload 'ri-show-term-at-point "ri.el" "ri utility" t)
 (autoload 'ri-show-term-composite-at-point "ri.el" "ri utility" t)
+(autoload 'slime-setup "slime.el" "slime" t)
+(autoload 'slime "slime.el" "slime" t)
 
 (global-set-key "\C-c\C-c\C-r" 'ri-show-term-at-point)
 (global-set-key "\C-c\C-c\C-t" 'ri-show-term-composite-at-point)
@@ -180,7 +181,6 @@
 
 (setq scheme-program-name "/usr/local/bin/mzscheme")
 (setq inferior-lisp-program "/opt/local/bin/sbcl")
-(slime-setup)
 
 (defun rb-compile-command (filename)
     "Find the unit test script for testing FILENAME.  I always organize my

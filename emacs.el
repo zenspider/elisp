@@ -38,7 +38,10 @@
       (remove-if-not (lambda (o)
 		       (and (file-directory-p o)
 			    (not (string-match "\\.$" o))))
-		     (directory-files "~/Bin/elisp/third-party" t)))
+		     (append (directory-files "~/Bin/elisp/third-party" t)
+			     (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3" t)
+			     (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3/semantic" t)
+			     )))
 
 (if (featurep 'xemacs)
     t
@@ -61,6 +64,10 @@
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
+ '(indicate-empty-lines t)
+ '(tool-bar-mode nil)
+ '(tooltip-mode nil)
+ '(transient-mark-mode t)
  '(cua-mode nil nil (cua-base))
  '(dired-recursive-deletes (quote top))
  '(ecb-layout-window-sizes (quote (("left9" (0.325 . 0.975)))))
