@@ -38,7 +38,7 @@
     (progn
       (delete-other-windows)
       (set-frame-position frame 5 25)
-      (set-frame-size frame 169 60)
+      (set-frame-size frame 199 60)
       (split-window-horizontally))))
 
 (defun my-clean-windows ()
@@ -69,8 +69,7 @@
 (defun myshell ()
   "Create a shell buffer that is properly named (shell-<N>)"
   (interactive)
-  (shell)
-  (rename-buffer "shell")
+  (shell "shell")
   (rename-uniquely))
 
 (defun hard-tabs ()
@@ -138,7 +137,7 @@
 
 (defun insert-shell-command (cmd)
   "Execute and insert results of a command in current buffer."
-  (shell-command-on-region (point nil) (point nil) cmd nil t))
+  (shell-command-on-region (point) (point) cmd nil t))
 
 (defun insert-shell-command-interactive (s)
   "Execute and insert results of a command in current buffer."
@@ -155,11 +154,26 @@
 
 (defun clean-whitespace ()
   (interactive)
-  (progn
-    (beginning-of-buffer)
-    (replace-regexp "[\ \t]+$" "" nil)
-    (beginning-of-buffer)
-    (replace-regexp "\n\n+" "\n\n" nil)))
+  (save-excursion
+    (save-restriction
+      (save-match-data
+	(progn
+	  (delete-trailing-whitespace)
+	  (goto-char (point-min))
+	  (while (re-search-forward "^[ \t]+" nil t)
+	    (delete-region (match-beginning 0) (match-end 0)))
+	  (goto-char (point-min))
+	  (while (re-search-forward " +" nil t)
+	    (delete-region (+ 1 (match-beginning 0)) (match-end 0)))
+	  (goto-char (point-min))
+	  (while (re-search-forward "\n\n+" nil t)
+	    (delete-region (+ 2 (match-beginning 0)) (match-end 0)))
+	  (goto-char (point-min))
+	  (while (looking-at "\n")
+	    (delete-char 1))
+	  (goto-char (- (point-max) 1))
+	  (while (looking-at "\n")
+	    (delete-char 1)))))))
 
 (defun forward-line-6 ()
   (interactive)
@@ -168,22 +182,3 @@
 (defun previous-line-6 ()
   (interactive)
   (previous-line 6))
-
-(defun sexup ()
-  "make text pretty"
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward "[ \t]+$" nil t)
-      (delete-region (match-beginning 0) (match-end 0)))
-    (goto-char (point-min))
-    (while (re-search-forward "^[ \t]+" nil t)
-      (delete-region (match-beginning 0) (match-end 0)))
-    (indent-region (point-min) (point-max) nil)
-    (goto-char (point-min))
-    (if (search-forward "\t" nil t)
-        (untabify (1- (point)) (point-max)))
-    (exchange-point-and-mark)
-    ))
-
-; (global-set-key "\M-i" 'sexup)

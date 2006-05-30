@@ -162,9 +162,11 @@
 	     (which-function)
 	     (define-key ruby-mode-map "\M-\C-x" 'bury-buffer)
 	     (define-key ruby-mode-map "\C-c\C-a" 'autotest-switch)
+	     (define-key ruby-mode-map "\C-c\C-a" 'autotest-switch)
 	     (expand-add-abbrevs ruby-mode-abbrev-table ruby-expand-list)
 	     (abbrev-mode)
-	     ))
+	     (outline-minor-mode)
+	     (set (make-local-variable 'outline-regexp) "^ *\\(def\\|class\\|module\\)")))
 
 (autoload 'ruby-index "ri.el" "ri utility" t)
 (autoload 'ri "ri.el" "ri utility" t)
