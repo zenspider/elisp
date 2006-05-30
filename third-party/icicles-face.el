@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:19:43 2006
 ;; Version: 22.0
-;; Last-Updated: Fri Apr 14 13:43:32 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Fri Apr 28 17:08:32 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 78
+;;     Update #: 82
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-face.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -35,12 +35,15 @@
 ;;    `icicle-match-highlight-minibuffer', `icicle-prompt-suffix',
 ;;    `icicle-search-current-input',
 ;;    `icicle-search-main-regexp-current',
-;;    `icicle-search-main-regexp-others'.
+;;    `icicle-search-main-regexp-others',
+;;    `icicle-whitespace-highlight'.
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change log:
 ;;
+;; 2006/04/28 dadams
+;;     Added: icicle-whitespace-highlight.
 ;; 2006/04/14 dadams
 ;;     Renamed icicle-search-refined-regexp to icicle-search-current-input.
 ;; 2006/04/07 dadams
@@ -154,6 +157,10 @@ face is not used."
 
 (defface icicle-search-current-input '((t (:foreground "Black" :background "Green")))
   "*Face used to highlight what your current input matches."
+  :group 'icicles :group 'faces)
+
+(defface icicle-whitespace-highlight '((t (:background "Magenta")))
+  "*Face used to highlight initial whitespace in minibuffer input."
   :group 'icicles :group 'faces)
 
 

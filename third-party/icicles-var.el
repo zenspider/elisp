@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:23:26 2006
 ;; Version: 22.0
-;; Last-Updated: Fri Apr 14 14:53:37 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Sun Apr 30 13:17:22 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 171
+;;     Update #: 178
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-var.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -31,7 +31,9 @@
 ;; 
 ;;  Internal variables defined here:
 ;;
-;;    `icicle-candidate-nb', `icicle-cmd-calling-for-completion',
+;;    `icicle-candidate-action-fn', `icicle-candidate-entry-fn',
+;;    `icicle-candidate-nb', `icicle-candidates-alist',
+;;    `icicle-cmd-calling-for-completion',
 ;;    `icicle-common-match-string', `icicle-complete-input-overlay',
 ;;    `icicle-completion-candidates' `icicle-completion-help-string',
 ;;    `icicle-current-completion-candidate-overlay',
@@ -56,9 +58,8 @@
 ;;    `icicle-saved-ignored-extensions',
 ;;    `icicle-saved-regexp-search-ring-max',
 ;;    `icicle-saved-region-background',
-;;    `icicle-saved-search-ring-max', `icicle-search-candidates',
-;;    `icicle-search-current-overlay', `icicle-search-overlays',
-;;    `icicle-search-refined-overlays',
+;;    `icicle-saved-search-ring-max', `icicle-search-current-overlay',
+;;    `icicle-search-overlays', `icicle-search-refined-overlays',
 ;;    `icicle-successive-grab-count',
 ;;    `icicle-thing-at-pt-fns-pointer'.
 ;;
@@ -66,6 +67,9 @@
 ;; 
 ;;; Change log:
 ;;
+;; 2006/04/30 dadams
+;;     Added: icicle-candidate-entry-fn.
+;;     Renamed: icicle-search-candidates to icicle-candidates-alist.
 ;; 2006/04/14 dadams
 ;;     Renamed icicle-search-refined-overlay to icicle-search-refined-overlays.
 ;;     Added: icicle-search-candidates.
@@ -146,9 +150,17 @@ such as `icicle-self-insert' and `icicle-delete-backward-char'.")
 For `icicle-all-candidates-action' to be able to report successes,
 this should return non-nil for \"success\" and nil for \"failure\".")
 
+(defvar icicle-candidate-entry-fn nil
+  "Function to apply to selected entries in `icicle-candidates-alist'.")
+
 (defvar icicle-candidate-nb nil
   "Current completion candidate number, or nil if not cycling candidates.
 Numbering starts at zero.")
+
+(defvar icicle-candidates-alist nil
+  "Alist of candidate entries.
+The car (key) of each entry is treated as a completion candidate.
+The cdr is some other data to be used when the candidate is chosen.")
 
 (defvar icicle-cmd-calling-for-completion 'ignore
   "Last command causing display of list of possible completions.")
@@ -287,9 +299,6 @@ Used for completion in `icicle-candidate-set-retrieve-from-variable'.")
 
 (defvar icicle-saved-search-ring-max search-ring-max
   "Saved value of `search-ring-max', so it can be restored.")
-
-(defvar icicle-search-candidates nil
-  "Alist of search candidates and their positions.")
 
 (defvar icicle-search-current-overlay nil
   "Overlay used to highlight current match of `icicle-search' regexp arg.")

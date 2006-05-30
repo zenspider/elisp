@@ -1,5 +1,5 @@
 ;;; icicles-opt.el --- User options (variables) for Icicles
-;; 
+;;
 ;; Filename: icicles-opt.el
 ;; Description: User options (variables) for Icicles
 ;; Author: Drew Adams
@@ -7,50 +7,52 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:22:14 2006
 ;; Version: 22.0
-;; Last-Updated: Fri Apr 14 22:47:51 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Fri May 19 22:09:32 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 190
+;;     Update #: 245
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-opt.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
 ;; Compatibility: GNU Emacs 20.x, GNU Emacs 21.x, GNU Emacs 22.x
-;; 
+;;
 ;; Features that might be required by this library:
 ;;
 ;;   `cl', `color-theme', `cus-face', `easymenu', `hexrgb',
 ;;   `thingatpt', `thingatpt+', `wid-edit', `widget'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;;; Commentary: 
-;; 
+;;
+;;; Commentary:
+;;
 ;;  This is a helper library for library `icicles.el'.  It defines
 ;;  user options (variables).  See `icicles.el' for documentation.
-;; 
+;;
 ;;  User options defined here (in Custom group `icicles'):
 ;;
 ;;    `icicle-arrows-respect-completion-type-flag',
-;;    `icicle-buffer-configs', `icicle-buffer-extras',
+;;    `icicle-bind-top-level-commands-flag', `icicle-buffer-configs',
+;;    `icicle-buffer-extras',
+;;    `icicle-buffer-ignore-space-prefix-flag',
 ;;    `icicle-buffer-match-regexp', `icicle-buffer-no-match-regexp',
 ;;    `icicle-buffer-predicate', `icicle-buffer-require-match-flag'
 ;;    `icicle-buffer-sort', `icicle-change-region-background-flag',
-;;    `icicle-color-themes', `icicle-completion-nospace-flag',
-;;    `icicle-Completions-frame-at-right-flag',
+;;    `icicle-color-themes', `icicle-Completions-frame-at-right-flag',
 ;;    `icicle-cycle-into-subdirs-flag',
 ;;    `icicle-default-thing-insertion',
 ;;    `icicle-expand-input-to-common-match-flag',
+;;    `icicle-highlight-input-initial-whitespace-flag',
+;;    `icicle-ignore-space-prefix-flag',
 ;;    `icicle-incremental-completion-delay',
 ;;    `icicle-incremental-completion-flag',
 ;;    `icicle-incremental-completion-threshold',
-;;    `icicle-inhibit-reminder-prompt-flag', `icicle-init-value-flag',
-;;    `icicle-input-string' `icicle-list-join-string',
-;;    `icicle-mark-position-in-candidate',
+;;    `icicle-init-value-flag', `icicle-input-string'
+;;    `icicle-list-join-string', `icicle-mark-position-in-candidate',
 ;;    `icicle-minibuffer-setup-hook',
 ;;    `icicle-point-position-in-candidate',
 ;;    `icicle-redefine-standard-commands-flag',
 ;;    `icicle-regexp-quote-flag', `icicle-regexp-search-ring-max',
-;;    `icicle-region-background', `icicle-require-match-flag',
-;;    `icicle-saved-completion-sets',
+;;    `icicle-region-background', `icicle-reminder-prompt-flag',
+;;    `icicle-require-match-flag', `icicle-saved-completion-sets',
 ;;    `icicle-search-highlight-all-flag',
 ;;    `icicle-search-cleanup-flag', `icicle-search-hook',
 ;;    `icicle-search-ring-max',
@@ -65,9 +67,22 @@
 ;;    `icicle-increment-color-value'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;;
 ;;; Change log:
 ;;
+;; 2006/05/19 dadams
+;;     Renamed icicle-inhibit-reminder* to icicle-reminder*.
+;;       Changed its functionality to use a countdown.
+;; 2006/05/16 dadams
+;;     Added: icicle-bind-top-level-commands-flag.
+;; 2006/05/15 dadams
+;;     Renamed: icicle-completion-nospace-flag to icicle-ignore-space-prefix-flag.
+;;     Added: icicle-buffer-ignore-space-prefix-flag.
+;;     icicle-ignore-space-prefix-flag: Changed default value to nil.
+;; 2006/05/09 dadams
+;;     icicle-incremental-completion-threshold: Updated doc string (msg "Displaying...").
+;; 2006/04/28 dadams
+;;     Added: icicle-highlight-input-initial-whitespace-flag.
 ;; 2006/04/14 dadams
 ;;     Added: icicle-input-string, icicle-search-cleanup-flag, icicle-update-input-hook.
 ;;     icicle-list-join-string: Added :type and :group.
@@ -95,26 +110,26 @@
 ;;     Added: icicle-touche-pas-aux-menus-flag.
 ;; 2006/03/03 dadams
 ;;     icicle-list-join-string: Changed value to ^G^J.  Clarified doc string.
-;; 
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
-;; any later version.
-;; 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;; 
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to the
-;; Free Software Foundation, Inc., 51 Franklin Street, Fifth
-;; ;; Floor, Boston, MA 02110-1301, USA.
-;; 
+;; along with this program; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+;; Floor, Boston, MA 02110-1301, USA.
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;;
 ;;; Code:
 
 (when (< emacs-major-version 20) (eval-when-compile (require 'cl))) ;; when, unless
@@ -122,7 +137,7 @@
 (require 'hexrgb nil t)     ;; (no error if not found): hexrgb-color-values-to-hex,
                             ;; hexrgb-increment-(red|green|blue), hexrgb-rgb-to-hsv,
                             ;; hexrgb-color-values-to-hex, hexrgb-hsv-to-rgb
-(require 'thingatpt)        ;; symbol-at-point, thing-at-point, thing-at-point-url-at-point, 
+(require 'thingatpt)        ;; symbol-at-point, thing-at-point, thing-at-point-url-at-point,
 (require 'thingatpt+ nil t) ;; (no error if not found): symbol-name-nearest-point,
                             ;; word-nearest-point
 
@@ -132,10 +147,41 @@
 ;;; User Options (alphabetical, except for dependencies) ---
 
 ;;;###autoload
+(defcustom icicle-arrows-respect-completion-type-flag nil
+  "*Non-nil means `TAB', `S-TAB' change the behavior of vertical arrows.
+Nil means that `up' and `down' always cycle prefix completions.
+Non-nil means that `up' and `down':
+ - Traverse the input history, by default.
+ - Cycle prefix completions, if preceded by `TAB'.
+ - Cycle apropos completions, if preceded by `S-TAB'.
+
+If this option is non-nil you can still use `M-p' and `M-n' to
+traverse the input history, `C-p' and `C-n' to cycle prefix
+completions, and `prior' and `next' to cycle apropos completions.  If
+you do that, you need not use `TAB' and `S-TAB' to switch between the
+two completion types.  Once you have used `TAB' or `S-TAB', the only
+way to traverse the history is via `M-p' and `M-n'."
+  :type 'boolean :group 'icicles)
+
+;;;###autoload
+(defcustom icicle-bind-top-level-commands-flag t
+  "*Non-nil means to bind top-level Icicles commands.
+This is done by loading `icicles-keys.el'."
+  :type 'boolean :group 'icicles)
+
+;;;###autoload
 (defcustom icicle-buffer-extras nil
   "*List of additional buffer-name candidates added to the normal list.
 List elements are strings."
   :type '(repeat string) :group 'icicles)
+
+;;;###autoload
+(defcustom icicle-buffer-ignore-space-prefix-flag t
+  "*Override `icicle-ignore-space-prefix-flag' for `icicle-buffer*'.
+Note: This option is provided mainly for use (binding) in
+      `icicle-define-command' and `icicle-define-file-command'.
+      You probably do not want to set this globally, but you can."
+  :type 'boolean :group 'icicles)
 
 ;;;###autoload
 (defcustom icicle-buffer-match-regexp nil
@@ -205,14 +251,6 @@ Examples of sort functions are `icicle-buffer-sort-*...*-last' and
   :type 'hook :group 'icicles)
 
 ;;;###autoload
-(defcustom icicle-completion-nospace-flag t
-  "*Non-nil means ignore completion candidates that start with a space
-unless the input to be completed also starts with a space.
-This corresponds roughly to the NOSPACE argument to `all-completions'.
-Note: Some Icicles functionalities ignore the value of this option."
-  :type 'boolean :group 'icicles)
-
-;;;###autoload
 (defcustom icicle-Completions-frame-at-right-flag t
   "*Non-nil means move *Completions* frame to right edge of display.
 This is done by `icicle-candidate-action'.
@@ -226,23 +264,6 @@ This can be useful to make *Completions* more visible."
 If this is non-nil, then you might want to use a function such as
 `icicle-sort-dirs-last' for option `icicle-sort-function', to prevent
 cycling into subdirectories depth first."
-  :type 'boolean :group 'icicles)
-
-;;;###autoload
-(defcustom icicle-arrows-respect-completion-type-flag nil
-  "*Non-nil means `TAB', `S-TAB' change the behavior of vertical arrows.
-Nil means that `up' and `down' always cycle prefix completions.
-Non-nil means that `up' and `down':
- - Traverse the input history, by default.
- - Cycle prefix completions, if preceded by `TAB'.
- - Cycle apropos completions, if preceded by `S-TAB'.
-
-If this option is non-nil you can still use `M-p' and `M-n' to
-traverse the input history, `C-p' and `C-n' to cycle prefix
-completions, and `prior' and `next' to cycle apropos completions.  If
-you do that, you need not use `TAB' and `S-TAB' to switch between the
-two completion types.  Once you have used `TAB' or `S-TAB', the only
-way to traverse the history is via `M-p' and `M-n'."
   :type 'boolean :group 'icicles)
 
 ;;;###autoload
@@ -274,12 +295,29 @@ your regexp input, completing it as far as possible.
 
 If you want to edit your original regexp input, use `\\[icicle-retrieve-last-input]'.
 If your input has been expanded, then hit `\\[icicle-retrieve-last-input]' twice:
-once to replace a completion candidate (from, say, [next]) with the 
+once to replace a completion candidate (from, say, [next]) with the
 common match string, and a second time to replace the common match
 string with your original regexp input.
 
 If you want to always work with a regexp in the minibuffer, then set
 this option to nil."
+  :type 'boolean :group 'icicles)
+
+;;;###autoload
+(defcustom icicle-highlight-input-initial-whitespace-flag t
+  "*Non-nil means highlight initial whitespace in your input.
+This is done using face `icicle-whitespace-highlight'.
+Purpose: Otherwise, you might not notice that you accidentally typed
+some whitespace at the beginning of your input, so you might not
+understand the set of matching candidates (or lack thereof)."
+  :type 'boolean :group 'icicles)
+
+;;;###autoload
+(defcustom icicle-ignore-space-prefix-flag nil
+  "*Non-nil means ignore completion candidates that start with a space.
+However, such candidates are not ignored for prefix completion when
+the input also starts with a space.
+Note: Some Icicles functionalities ignore the value of this option."
   :type 'boolean :group 'icicles)
 
 ;;;###autoload
@@ -307,16 +345,11 @@ See also `icicle-incremental-completion-delay' and
 ;;;###autoload
 (defcustom icicle-incremental-completion-threshold 1000
   "*More candidates means apply `icicle-incremental-completion-delay'.
-See also `icicle-incremental-completion-flag' and 
-`icicle-incremental-completion-delay'."
+See also `icicle-incremental-completion-flag' and
+`icicle-incremental-completion-delay'.
+This threshold is also used to decide when to display the message
+ \"Displaying completion candidates...\"."
   :type 'integer :group 'icicles)
-
-;;;###autoload
-(defcustom icicle-inhibit-reminder-prompt-flag nil
-  "*Non-nil means do not add reminder to Icicles prompt.
-Nil means add a reminder like this: (<S-tab>, TAB: list, C-h: help),
-if space permits."
-  :type 'boolean :group 'icicles)
 
 ;;;###autoload
 (defcustom icicle-init-value-flag nil
@@ -516,6 +549,19 @@ toggle this option at any time."
   :type 'string :group 'icicles)
 
 ;;;###autoload
+(defcustom icicle-reminder-prompt-flag 20
+  "*Whether to use `icicle-prompt-suffix' reminder in minibuffer prompt.
+Nil means never use the reminder.
+Non-nil means use the reminder, if space permits:
+ An integer value means use only for that many Emacs sessions.
+ T means always use it."
+  :type '(choice
+          (const   :tag "Never use a reminder in the prompt"                  nil)
+          (const   :tag "Always use a reminder in the prompt"                 t)
+          (integer :tag "Use a reminder in the prompt for this many sessions" :value 20))
+  :group 'icicles)
+
+;;;###autoload
 (defcustom icicle-require-match-flag nil
   "*Control REQUIRE-MATCH arg to `completing-read' and `read-file-name'.
 The possible values are as follows:
@@ -668,7 +714,7 @@ behavior of `icicle-insert-string-at-point'.  Otherwise, option
 used by `icicle-insert-string-at-point'.  `C-u' with no number
 reverses the meaning of `icicle-default-thing-insertion'."
   :type
-  '(cons 
+  '(cons
     (choice
      (repeat (function :tag "Function to grab some text at point and insert it in minibuffer"))
      (const :tag "No alternative text-grabbing functions" nil))

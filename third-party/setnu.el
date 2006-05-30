@@ -1,5 +1,5 @@
-;;; vi-style line number mode for Emacs
-;;; (requires Emacs 19.29 or later, or XEmacs 19.11 or later)
+;;; setnu.el -- vi-style line number mode for Emacs
+;;; (requires Emacs 19.29 or later, or XEmacs 19.14 or later)
 ;;; Copyright (C) 1994, 1995, 1997 Kyle E. Jones
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@
   (or (string-match "XEmacs" emacs-version)
       (string-match "Lucid" emacs-version)))
 
-(defconst setnu-mode-version "1.05"
+(defconst setnu-mode-version "1.06"
   "Version number for this release of setnu-mode.")
 
 (defvar setnu-mode nil
@@ -61,7 +61,7 @@ be made the begin glyph of an extent to display as a line number.")
 				     'before-string)
   "Property name to use to set the begin glyph of an extent.")
 
-(defvar setnu-line-number-format (if setnu-running-under-xemacs "%4d" "%4d  ")
+(defvar setnu-line-number-format (if setnu-running-under-xemacs "%4d" "%6d  ")
   "String suitable for `format' that will generate a line number string.
 `format' will be called with this string and one other argument
 which will be an integer, the line number.")
@@ -446,3 +446,5 @@ it is created based on where the extent failed to be found."
 
 (add-hook 'before-change-functions 'setnu-before-change-function)
 (add-hook 'after-change-functions 'setnu-after-change-function)
+
+;;; setnu.el ends here

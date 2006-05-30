@@ -1,5 +1,5 @@
 ;;; icicles-mode.el --- Icicle Mode definition for Icicles
-;; 
+;;
 ;; Filename: icicles-mode.el
 ;; Description: Icicle Mode definition for Icicles
 ;; Author: Drew Adams
@@ -7,25 +7,25 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 10:21:10 2006
 ;; Version: 22.0
-;; Last-Updated: Mon Apr 03 08:31:11 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Fri May 19 22:34:28 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 56
+;;     Update #: 121
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-mode.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
 ;; Compatibility: GNU Emacs 20.x, GNU Emacs 21.x, GNU Emacs 22.x
-;; 
+;;
 ;; Features that might be required by this library:
 ;;
 ;;   None
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;;; Commentary: 
-;; 
+;;
+;;; Commentary:
+;;
 ;;  This is a helper library for library `icicles.el'.  It defines the
 ;;  command `icicle-mode'.  See `icicles.el' for documentation.
-;; 
+;;
 ;;  User options defined here (in Custom group `icicles'):
 ;;
 ;;    `icicle-mode', `icicle-mode-hook'.
@@ -35,9 +35,17 @@
 ;;    `icicle-mode-map'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;;
 ;;; Change log:
 ;;
+;; 2006/05/19 dadams
+;;     icicle-mode: (add-hook 'kill-emacs-hook 'icicle-control-reminder-prompt).
+;; 2006/05/18 dadams
+;;     Change :init-value to nil, per new Emacs convention.
+;; 2006/05/13 dadams
+;;     icicle-mode: Updated doc string.
+;; 2006/05/10 dadams
+;;     icicle-define-icicle-mode-map: Added menu item Send Bug Report.
 ;; 2006/04/03 dadams
 ;;     icicle-define-icicle-mode-map: Added icicle-toggle-(regexp-quote|incremental-completion).
 ;; 2006/03/16 dadams
@@ -51,26 +59,26 @@
 ;;     Moved here from icicle-opt.el: icicle-mode, icicle-mode-hook.
 ;;     Moved here from icicle-fn.el: icicle-mode-map.
 ;;     Added: icicle-define-icicle-mode-map.
-;; 
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;;
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation; either version 2, or (at your option)
 ;; any later version.
-;; 
+;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
-;; 
+;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program; see the file COPYING.  If not, write to the
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ;; ;; Floor, Boston, MA 02110-1301, USA.
-;; 
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;;
 ;;; Code:
 
 (when (fboundp 'define-minor-mode) (require 'minibuf-depth nil t)) ; Emacs 22
@@ -118,39 +126,48 @@ See also `icicle-rebind-completion-maps' for minibuffer bindings.")
     (eval '(define-minor-mode icicle-mode
             "Icicle mode: Toggle minibuffer input completion and cycling.
 Non-nil prefix ARG turns mode on if ARG > 0, else turns it off.
+Icicle mode binds several keys in the minibuffer.
 
-Icicle mode binds several keys in the minibuffer.  For more
-information, use `\\<minibuffer-local-completion-map>\\[icicle-completion-help]' when the \
-minibuffer is active (e.g. `\\[execute-extended-command] \\[icicle-completion-help]').
+The following top-level commands are also available in Icicle mode:
 
-The following commands are also available in Icicle mode, and are
-intended for top-level-use.
+`icicle-bookmark'                      - Jump to bookmark(s)
+`icicle-buffer'(`-other-window')       - Switch to buffer(s)
+`icicle-buffer-config'                 - Pick `icicle-buffer' options
+`icicle-clear-option'                  - Set binary option(s) to nil
+`icicle-color-theme'                   - Change color theme
+`icicle-compilation-search'            - `icicle-search' and show hits
+`icicle-complete-thesaurus-entry'      - Complete word using thesaurus
+`icicle-completion-help'               - Give bindings for completion
+`icicle-customize-icicles-group'       - Customize options and faces
+`icicle-delete-file'                   - Delete file(s)/directory(s)
+`icicle-doc'                           - Show function/variable doc(s)
+`icicle-execute-extended-command'      - `execute-extended-command' +
+`icicle-find-file'(`-other-window')    - Visit file(s)/directory(s)
+`icicle-font'                          - Change font of frame
+`icicle-frame-bg'                      - Change background of frame
+`icicle-frame-fg'                      - Change foreground of frame
+`icicle-fundoc'                        - Show function description(s)
+`icicle-imenu'                         - Navigate among Imenu entries
+`icicle-insert-thesaurus-entry'        - Insert thesaurus entry(s)
+`icicle-locate-file'(`-other-window')  - Visit file(s) in a directory
+`icicle-map'                           - Apply function to alist items
+`icy-mode' or `icicle-mode'            - Toggle Icicle mode
+`icicle-occur'                         - `occur' + apropos icompletion
+`icicle-recent-file'(`-other-window')  - Open recently used file(s)
+`icicle-reset-option-to-nil'           - Set binary option(s) to nil
+`icicle-save-string-to-variable'       - Save text for use with `C-='
+`icicle-search'                        - Search with regexps & cycling
+`icicle-send-bug-report'               - Send Icicles bug report
+`icicle-set-option-to-t'               - Set binary option(s) to t
+`icicle-toggle-ignored-extensions'     - Toggle ignoring file suffixes
+`icicle-toggle-incremental-completion' - Toggle apropos icompletion
+`icicle-toggle-option'                 - Toggle binary user option(s)
+`icicle-toggle-sorting'                - Toggle sorting of completions
+`icicle-vardoc'                        - Show variable description(s)
 
-`icicle-bookmark'                  - jump to a bookmark
-`icicle-buffer'                    - switch to a different buffer
-`icicle-buffer-other-window'
-`icicle-color-theme'               - change color theme
-`icicle-completion-help'           - give bindings for completion
-`icicle-delete-file'               - delete a file or directory
-`icicle-doc'                       - show doc of function or variable
-`icicle-find-file'                 - open a file or directory
-`icicle-font'                      - change font of current frame
-`icicle-frame-bg'                  - change background of frame
-`icicle-frame-fg'                  - change foreground of frame
-`icicle-fundoc'                    - show the doc of a function
-`icy-mode' or `icicle-mode'        - toggle Icicle mode
-`icicle-recent-file'               - open a recently used file
-`icicle-recent-file-other-window'
-`icicle-search'                    - search for a regexp match
-`icicle-toggle-ignored-extensions' - toggle respect of
-`completion-ignored-extensions'
-`icicle-toggle-sorting'            - toggle sorting of completions
-`icicle-vardoc'                    - show the doc of a variable
-
-In a compilation-mode buffer, such as `*grep*', this is useful:
-
-`icicle-compilation-search'        - `icicle-search' and show hits"
-            :global t :group 'icicles :lighter " Icy" :init-value t
+For more information, use `\\<minibuffer-local-completion-map>\\[icicle-completion-help]' \
+when the minibuffer is active."
+            :global t :group 'icicles :lighter " Icy" :init-value nil
             (cond (icicle-mode
                    (unless icicle-mode-map (icicle-define-icicle-mode-map))
                    (add-hook 'minibuffer-setup-hook    'icicle-minibuffer-setup)
@@ -162,6 +179,7 @@ In a compilation-mode buffer, such as `*grep*', this is useful:
                    ;; Nevertheless, they are removed here when Icicle mode is exited.
                    (add-hook 'isearch-mode-hook        'icicle-bind-isearch-keys)
                    (add-hook 'completion-setup-hook    'icicle-set-calling-cmd 'append)
+                   (add-hook 'kill-emacs-hook          'icicle-control-reminder-prompt)
                    (icicle-undo-std-completion-faces)
                    (icicle-redefine-std-completion-fns)
                    (icicle-redefine-standard-commands)
@@ -177,6 +195,7 @@ In a compilation-mode buffer, such as `*grep*', this is useful:
                    (remove-hook 'post-command-hook        'icicle-run-icicle-post-command-hook nil)
                    (remove-hook 'isearch-mode-hook        'icicle-bind-isearch-keys)
                    (remove-hook 'completion-setup-hook    'icicle-set-calling-cmd)
+                   (remove-hook 'kill-emacs-hook          'icicle-control-reminder-prompt)
                    ;; $$$ Should restore standard completion faces here.
                    (icicle-restore-std-completion-fns)
                    (icicle-restore-standard-commands)
@@ -191,38 +210,47 @@ In a compilation-mode buffer, such as `*grep*', this is useful:
   (defun icicle-mode (&optional arg)
     "Icicle mode: Toggle minibuffer input completion and cycling.
 Non-nil prefix ARG turns mode on if ARG > 0, else turns it off.
+Icicle mode binds several keys in the minibuffer.
 
-Icicle mode binds several keys in the minibuffer.  For more
-information, use `\\<minibuffer-local-completion-map>\\[icicle-completion-help]' when the \
-minibuffer is active (e.g. `\\[execute-extended-command] \\[icicle-completion-help]').
+The following top-level commands are also available in Icicle mode:
 
-The following commands are also available in Icicle mode, and are
-intended for top-level-use.
+`icicle-bookmark'                      - Jump to bookmark(s)
+`icicle-buffer'(`-other-window')       - Switch to buffer(s)
+`icicle-buffer-config'                 - Pick `icicle-buffer' options
+`icicle-clear-option'                  - Set binary option(s) to nil
+`icicle-color-theme'                   - Change color theme
+`icicle-compilation-search'            - `icicle-search' and show hits
+`icicle-complete-thesaurus-entry'      - Complete word using thesaurus
+`icicle-completion-help'               - Give bindings for completion
+`icicle-customize-icicles-group'       - Customize options and faces
+`icicle-delete-file'                   - Delete file(s)/directory(s)
+`icicle-doc'                           - Show function/variable doc(s)
+`icicle-execute-extended-command'      - `execute-extended-command' +
+`icicle-find-file'(`-other-window')    - Visit file(s)/directory(s)
+`icicle-font'                          - Change font of frame
+`icicle-frame-bg'                      - Change background of frame
+`icicle-frame-fg'                      - Change foreground of frame
+`icicle-fundoc'                        - Show function description(s)
+`icicle-imenu'                         - Navigate among Imenu entries
+`icicle-insert-thesaurus-entry'        - Insert thesaurus entry(s)
+`icicle-locate-file'(`-other-window')  - Visit file(s) in a directory
+`icicle-map'                           - Apply function to alist items
+`icy-mode' or `icicle-mode'            - Toggle Icicle mode
+`icicle-occur'                         - `occur' + apropos icompletion
+`icicle-recent-file'(`-other-window')  - Open recently used file(s)
+`icicle-reset-option-to-nil'           - Set binary option(s) to nil
+`icicle-save-string-to-variable'       - Save text for use with `C-='
+`icicle-search'                        - Search with regexps & cycling
+`icicle-send-bug-report'               - Send Icicles bug report
+`icicle-set-option-to-t'               - Set binary option(s) to t
+`icicle-toggle-ignored-extensions'     - Toggle ignoring file suffixes
+`icicle-toggle-incremental-completion' - Toggle apropos icompletion
+`icicle-toggle-option'                 - Toggle binary user option(s)
+`icicle-toggle-sorting'                - Toggle sorting of completions
+`icicle-vardoc'                        - Show variable description(s)
 
-`icicle-bookmark'                  - jump to a bookmark
-`icicle-buffer'                    - switch to a different buffer
-`icicle-buffer-other-window'
-`icicle-color-theme'               - change color theme
-`icicle-completion-help'           - give bindings for completion
-`icicle-delete-file'               - delete a file or directory
-`icicle-doc'                       - show doc of function or variable
-`icicle-find-file'                 - open a file or directory
-`icicle-font'                      - change font of current frame
-`icicle-frame-bg'                  - change background of frame
-`icicle-frame-fg'                  - change foreground of frame
-`icicle-fundoc'                    - show the doc of a function
-`icy-mode' or `icicle-mode'        - toggle Icicle mode
-`icicle-recent-file'               - open a recently used file
-`icicle-recent-file-other-window'
-`icicle-search'                    - search for a regexp match
-`icicle-toggle-ignored-extensions' - toggle respect of
-`completion-ignored-extensions'
-`icicle-toggle-sorting'            - toggle sorting of completions
-`icicle-vardoc'                    - show the doc of a variable
-
-In a compilation-mode buffer, such as `*grep*', this is useful:
-
-`icicle-compilation-search'        - `icicle-search' and show hits"
+For more information, use `\\<minibuffer-local-completion-map>\\[icicle-completion-help]' \
+when the minibuffer is active."
     (interactive "P")
     (setq icicle-mode (if arg (> (prefix-numeric-value arg) 0) (not icicle-mode)))
     (icicle-rebind-completion-maps icicle-mode)
@@ -238,6 +266,7 @@ In a compilation-mode buffer, such as `*grep*', this is useful:
            ;; Nevertheless, they are removed here when Icicle mode is exited.
            (add-hook 'isearch-mode-hook        'icicle-bind-isearch-keys)
            (add-hook 'completion-setup-hook    'icicle-set-calling-cmd 'append)
+           (add-hook 'kill-emacs-hook          'icicle-control-reminder-prompt)
            (icicle-redefine-std-completion-fns)
            (icicle-redefine-standard-commands)
            (icicle-redefine-standard-options)
@@ -252,6 +281,7 @@ In a compilation-mode buffer, such as `*grep*', this is useful:
            (remove-hook 'post-command-hook        'icicle-run-icicle-post-command-hook nil)
            (remove-hook 'isearch-mode-hook        'icicle-bind-isearch-keys)
            (remove-hook 'completion-setup-hook    'icicle-set-calling-cmd)
+           (remove-hook 'kill-emacs-hook          'icicle-control-reminder-prompt)
            (icicle-restore-std-completion-fns)
            (icicle-restore-standard-commands)
            (icicle-restore-standard-options)
@@ -265,6 +295,7 @@ In a compilation-mode buffer, such as `*grep*', this is useful:
     (define-key map [menu-bar] (make-sparse-keymap))
     (define-key map [menu-bar icicles] (cons "Icicles" map))
     (define-key map [icicle-mode] '("Turn Off Icicle Mode" . icicle-mode))
+    (define-key map [icicle-report-bug] '("Send Bug Report" . icicle-send-bug-report))
     (define-key map [icicle-help] '("Help" . icicle-completion-help))
     (define-key map [icicle-separator-last] '("--"))
     (cond ((and (not icicle-touche-pas-aux-menus-flag)
@@ -398,7 +429,7 @@ In a compilation-mode buffer, such as `*grep*', this is useful:
            (define-key menu-bar-file-menu [icicle-find-file-other-window]
              '("[Icy] Open File or Directory Other Window..." . icicle-find-file-other-window))
            (define-key menu-bar-file-menu [icicle-find-file]
-             '("[Icy] Open File or Directory..." . icicle-find-file)))             
+             '("[Icy] Open File or Directory..." . icicle-find-file)))
           (t
            (define-key map [icicle-delete-file] '("Delete File..." . icicle-delete-file))
            (when (condition-case nil (require 'recentf) (error nil))

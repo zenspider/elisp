@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:24:28 2006
 ;; Version: 22.0
-;; Last-Updated: Fri Mar 31 08:50:59 2006 (-28800 Pacific Standard Time)
+;; Last-Updated: Tue May 16 17:28:37 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 46
+;;     Update #: 54
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-mac.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -38,6 +38,8 @@
 ;; 
 ;;; Change log:
 ;;
+;; 2006/05/16 dadams
+;;     icicle-define(-file)-command: Treat cases where user wiped out orig-buff or orig-window.
 ;; 2006/03/31 dadams
 ;;     icicle-define(-file)-command: Wrap action function in unwind-protect to select minibuf frame.
 ;; 2006/03/11 dadams
@@ -165,9 +167,17 @@ This is an Icicles command - see `icicle-mode'.")
                    (condition-case action-fn-return
                        (progn
                          (condition-case in-action-fn
-                             (with-current-buffer orig-buff
-                               (save-selected-window
-                                 (select-window orig-window)
+                             ;; Treat 3 cases, because previous use of `icicle-candidate-action-fn'
+                             ;; might have killed the buffer or deleted the window.
+                             (if (and (buffer-live-p orig-buff) (window-live-p orig-window))
+                                 (with-current-buffer orig-buff
+                                   (save-selected-window
+                                     (select-window orig-window)
+                                     (funcall ',function candidate)))
+                               (if (window-live-p orig-window)
+                                   (save-selected-window
+                                     (select-window orig-window)
+                                     (funcall ',function candidate))
                                  (funcall ',function candidate)))
                            (error (unless (string= "Cannot switch buffers in minibuffer window"
                                                    (error-message-string in-action-fn))
@@ -268,9 +278,17 @@ This is an Icicles command - see `icicle-mode'.")
                    (condition-case action-fn-return
                        (progn
                          (condition-case in-action-fn
-                             (with-current-buffer orig-buff
-                               (save-selected-window
-                                 (select-window orig-window)
+                             ;; Treat 3 cases, because previous use of `icicle-candidate-action-fn'
+                             ;; might have killed the buffer or deleted the window.
+                             (if (and (buffer-live-p orig-buff) (window-live-p orig-window))
+                                 (with-current-buffer orig-buff
+                                   (save-selected-window
+                                     (select-window orig-window)
+                                     (funcall ',function candidate)))
+                               (if (window-live-p orig-window)
+                                   (save-selected-window
+                                     (select-window orig-window)
+                                     (funcall ',function candidate))
                                  (funcall ',function candidate)))
                            (error (unless (string= "Cannot switch buffers in minibuffer window"
                                                    (error-message-string in-action-fn))

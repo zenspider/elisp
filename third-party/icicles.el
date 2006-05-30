@@ -7,9 +7,9 @@
 ;; Copyright (C) 1996-2006, Drew Adams, all rights reserved.
 ;; Created: Tue Aug  1 14:21:16 1995
 ;; Version: 22.0
-;; Last-Updated: Sun Apr 16 15:07:19 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Fri May 26 18:43:30 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 17508
+;;     Update #: 17986
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -19,9 +19,9 @@
 ;;
 ;;   `apropos', `apropos-fn+var', `cl', `color-theme', `cus-face',
 ;;   `easymenu', `hexrgb', `icicles-cmd', `icicles-face',
-;;   `icicles-fn', `icicles-mac', `icicles-mode', `icicles-opt',
-;;   `icicles-var', `misc-fns', `thingatpt', `thingatpt+',
-;;   `wid-edit', `widget'.
+;;   `icicles-fn', `icicles-keys', `icicles-mac', `icicles-menu',
+;;   `icicles-mode', `icicles-opt', `icicles-var', `misc-fns',
+;;   `subr-21', `thingatpt', `thingatpt+', `wid-edit', `widget'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -57,6 +57,11 @@
 ;;    Add this to your initialization file (~/.emacs or ~/_emacs):
 ;;
 ;;      (require 'icicles) ; Load this library.
+;;      (icicle-mode 1)    ; Turn on Icicle mode.
+;;
+;;    It is best to add this code *after* any code that creates or
+;;    changes key bindings, so Icicles can pick up all or your key
+;;    definitions (bindings).
 ;;
 ;;    You will need all of these libraries (loaded by `icicles.el'):
 ;;
@@ -68,21 +73,10 @@
 ;;      `icicles-opt.el'
 ;;      `icicles-var.el'
 ;;
-;;    In Emacs 21 and later, Icicle mode (a minor mode) will
-;;    automatically be turned on when the library is loaded.  You can
-;;    prevent that, if you wish, by setting option `icicle-mode' to
-;;    nil in your init file, before loading the library:
-;;
-;;      (setq icicle-mode nil) ; Prevent turning on Icicle mode.
-;;      (require 'icicles)
-;;
-;;    Alternatively, you can customize option `icicle-mode' to nil.
-;;
-;;    In Emacs 20, Icicle mode is off, by default, after you load the
-;;    library.  You can explicitly turn it on in your init file.
-;;
-;;      (require 'icicles)
-;;      (icicle-mode 1)    ; Turn on Icicle mode.
+;;    If you want Icicles to bind some top-level Icicles commands for
+;;    you, then you will also need library `icicles-keys.el'.  If you
+;;    do not want this, then you will need to set (e.g. customize)
+;;    user option `icicle-bind-top-level-commands-flag' to nil.
 ;;
 ;;    After startup, you can turn Icicle mode on or off at any time
 ;;    interactively, using command `icy-mode' (aka `icicle-mode' -
@@ -121,28 +115,32 @@
 ;;    `icicle-buffer-config', `icicle-buffer-list',
 ;;    `icicle-buffer-other-window', `icicle-color-theme',
 ;;    `icicle-compilation-search', `icicle-complete-thesaurus-entry',
-;;    `icicle-clear-option', `icicle-dabbrev-completion',
-;;    `icicle-delete-file', `icicle-dired-saved-file-candidates',
+;;    `icicle-clear-option', `icicle-customize-icicles-group',
+;;    `icicle-dabbrev-completion', `icicle-delete-file',
+;;    `icicle-dired-saved-file-candidates',
 ;;    `icicle-dired-saved-file-candidates-other-window', `icicle-doc',
 ;;    `icicle-execute-extended-command', `icicle-find-file',
 ;;    `icicle-find-file-other-window', `icicle-font',
 ;;    `icicle-frame-bg', `icicle-frame-fg', `icicle-fundoc',
-;;    `icicle-insert-string-from-variable',
-;;    `icicle-insert-thesaurus-entry', `icicle-lisp-complete-symbol',
-;;    `icicle-locate-file', `icicle-locate-file-other-window',
-;;    `icicle-mode', `icy-mode', `icicle-occur', `icicle-recent-file',
+;;    `icicle-imenu', `icicle-insert-string-from-variable',
+;;    `icicle-insert-thesaurus-entry', `icicle-kill-buffer',
+;;    `icicle-lisp-complete-symbol', `icicle-locate-file',
+;;    `icicle-locate-file-other-window', `icicle-map' `icicle-mode',
+;;    `icy-mode', `icicle-occur', `icicle-recent-file',
 ;;    `icicle-recent-file-other-window',
 ;;    `icicle-remove-buffer-candidate', `icicle-remove-buffer-config',
 ;;    `icicle-remove-saved-completion-set',
 ;;    `icicle-repeat-complex-command', `icicle-reset-option-to-nil',
 ;;    `icicle-save-string-to-variable', `icicle-search',
-;;    `icicle-search-imenu', `icicle-search-highlight-cleanup',
-;;    `icicle-set-option-to-t', `icicle-toggle-ignored-extensions',
+;;    `icicle-search-highlight-cleanup', `icicle-set-option-to-t',
+;;    `icicle-toggle-ignored-extensions',
+;;    `icicle-toggle-ignored-space-prefix',
 ;;    `icicle-toggle-incremental-completion',
 ;;    `icicle-toggle-regexp-quote', `icicle-toggle-sorting',
 ;;    `icicle-vardoc', `toggle-icicle-ignored-extensions',
-;;    `toggle-icicle-regexp-quote', `toggle-icicle-sorting',
-;;    `toggle-icicle-incremental-completion'
+;;    `toggle-icicle-ignored-space-prefix',
+;;    `toggle-icicle-incremental-completion',
+;;    `toggle-icicle-regexp-quote', `toggle-icicle-sorting'.
 ;;
 ;;   Commands to be used mainly in the minibuffer or *Completions*:
 ;; 
@@ -170,6 +168,7 @@
 ;;    `icicle-customize-apropos-options',
 ;;    `icicle-delete-backward-char', `icicle-delete-char',
 ;;    `icicle-delete-windows-on', `icicle-erase-minibuffer',
+;;    `icicle-erase-minibuffer-or-history-element',
 ;;    `icicle-exit-minibuffer', `icicle-help-on-candidate',
 ;;    `icicle-history', `icicle-insert-string-at-point',
 ;;    `icicle-insert-string-from-variable', `icicle-isearch-complete',
@@ -193,9 +192,10 @@
 ;;    `icicle-previous-prefix-candidate-action',
 ;;    `icicle-retrieve-candidates-from-set',
 ;;    `icicle-retrieve-last-input', `icicle-self-insert',
-;;    `icicle-switch-to-Completions-buf',
+;;    `icicle-send-bug-report', `icicle-switch-to-Completions-buf',
 ;;    `icicle-switch-to-completions', `icicle-switch-to-minibuffer',
 ;;    `icicle-toggle-ignored-extensions',
+;;    `icicle-toggle-ignored-space-prefix',
 ;;    `icicle-toggle-incremental-completion',
 ;;    `icicle-toggle-regexp-quote', `icicle-toggle-sorting',
 ;;    `icicle-transpose-chars', `icicle-transpose-sexps',
@@ -204,8 +204,9 @@
 ;;    `old-completion-setup-function', `old-exit-minibuffer',
 ;;    `old-minibuffer-complete-and-exit', `old-read-file-name',
 ;;    `old-switch-to-completions', `toggle-icicle-ignored-extensions',
-;;    `toggle-icicle-regexp-quote', `toggle-icicle-sorting',
-;;    `toggle-icicle-incremental-completion'
+;;    `toggle-icicle-ignored-space-prefix',
+;;    `toggle-icicle-incremental-completion',
+;;    `toggle-icicle-regexp-quote', `toggle-icicle-sorting'.
 ;;
 ;;  Faces defined in Icicles (in Custom group `icicles'):
 ;;
@@ -221,26 +222,28 @@
 ;;  User options defined in Icicles (in Custom group `icicles'):
 ;;
 ;;    `icicle-arrows-respect-completion-type-flag',
-;;    `icicle-buffer-configs', `icicle-buffer-extras',
+;;    `icicle-bind-top-level-commands-flag', `icicle-buffer-configs',
+;;    `icicle-buffer-extras',
+;;    `icicle-buffer-ignore-space-prefix-flag',
 ;;    `icicle-buffer-match-regexp', `icicle-buffer-no-match-regexp',
 ;;    `icicle-buffer-predicate', `icicle-buffer-require-match-flag'
 ;;    `icicle-buffer-sort', `icicle-change-region-background-flag',
-;;    `icicle-color-themes', `icicle-completion-nospace-flag',
-;;    `icicle-Completions-frame-at-right-flag',
+;;    `icicle-color-themes', `icicle-Completions-frame-at-right-flag',
 ;;    `icicle-cycle-into-subdirs-flag',
 ;;    `icicle-default-thing-insertion',
 ;;    `icicle-expand-input-to-common-match-flag',
+;;    `icicle-ignore-space-prefix-flag',
 ;;    `icicle-incremental-completion-delay',
 ;;    `icicle-incremental-completion-flag',
 ;;    `icicle-incremental-completion-threshold',
-;;    `icicle-inhibit-reminder-prompt-flag', `icicle-init-value-flag',
-;;    `icicle-list-join-string', `icicle-mark-position-in-candidate',
+;;    `icicle-init-value-flag', `icicle-list-join-string',
+;;    `icicle-mark-position-in-candidate',
 ;;    `icicle-minibuffer-setup-hook', `icicle-mode',
 ;;    `icicle-mode-hook', `icicle-point-position-in-candidate',
 ;;    `icicle-redefine-standard-commands-flag',
 ;;    `icicle-regexp-quote-flag', `icicle-regexp-search-ring-max',
-;;    `icicle-region-background', `icicle-require-match-flag',
-;;    `icicle-saved-completion-sets',
+;;    `icicle-region-background', `icicle-reminder-prompt-flag',
+;;    `icicle-require-match-flag', `icicle-saved-completion-sets',
 ;;    `icicle-search-highlight-all-flag',
 ;;    `icicle-search-cleanup-flag', `icicle-search-hook',
 ;;    `icicle-search-ring-max',
@@ -275,21 +278,22 @@
 ;;    `icicle-filter-alist', `icicle-filter-wo-input',
 ;;    `icicle-find-file-w-wildcards',
 ;;    `icicle-find-file-other-window-w-wildcards', `icicle-frames-on',
-;;    `icicle-highlight-complete-input',
+;;    `icicle-highlight-complete-input', `icicle-imenu-in-buffer-p',
 ;;    `icicle-increment-cand-nb+signal-end',
 ;;    `icicle-increment-color-hue', `icicle-increment-color-value',
 ;;    `icicle-insert-input', `icicle-insert-thesaurus-entry-cand-fn',
 ;;    `icicle-insert-thing', `icicle-isearch-resume',
+;;    `icicle-kill-a-buffer', `icicle-map-action',
 ;;    `icicle-maybe-sort-and-strip-candidates',
 ;;    `icicle-minibuffer-contents',
 ;;    `icicle-minibuffer-contents-from-minibuffer',
 ;;    `icicle-minibuffer-prompt-end', `icicle-minibuffer-setup',
 ;;    `icicle-msg-maybe-in-minibuffer',
 ;;    `icicle-nb-of-candidate-in-Completions',
-;;    `icicle-next-candidate', `icicle-place-cursor',
-;;    `icicle-place-overlay', `icicle-prefix-candidates',
-;;    `icicle-prefix-complete-1', `icicle-read-file-name',
-;;    `icicle-read-from-minibuffer',
+;;    `icicle-next-candidate', `icicle-non-whitespace-string-p',
+;;    `icicle-place-cursor', `icicle-place-overlay',
+;;    `icicle-prefix-candidates', `icicle-prefix-complete-1',
+;;    `icicle-read-file-name', `icicle-read-from-minibuffer',
 ;;    `icicle-read-from-minibuf-nil-default', `icicle-read-string',
 ;;    `icicle-rebind-completion-maps', `icicle-recompute-candidates',
 ;;    `icicle-redefine-standard-commands',
@@ -304,8 +308,7 @@
 ;;    `icicle-run-icicle-post-command-hook',
 ;;    `icicle-run-icicle-pre-command-hook',
 ;;    `icicle-save-or-restore-input',
-;;    `icicle-scroll-or-update-Completions',
-;;    `icicle-search-action-fn',
+;;    `icicle-scroll-or-update-Completions', `icicle-search-action',
 ;;    `icicle-search-highlight-all-input-matches',
 ;;    `icicle-select-minibuffer-contents' `icicle-set-calling-cmd',
 ;;    `icicle-set-difference', `icicle-set-intersection',
@@ -397,7 +400,7 @@
 ;;                                2. Help on help.
 ;;  `switch-to-completions' - Always selects *Completions* window.
 ;;
-;;  `next-history-element' (advised only) - 
+;;  `next-history-element' (advised only) -
 ;;     Depending on `icicle-init-value-flag', select minibuffer
 ;;     contents.
 ;;
@@ -408,9 +411,9 @@
 ;;  Nutshell View
 ;;  -------------
 ;;
-;;  Load this library and turn on Icicle mode and you're good to go.
-;;  Icicle mode is turned on; you can turn it off at any time with
-;;  command `icy-mode'.
+;;  Load this library, turn on Icicle mode, and you're good to go.
+;;  You can turn Icicle mode off or on at any time with command
+;;  `icy-mode'.
 ;;
 ;;  Here's a sample of what you can do in Icicle mode.
 ;;
@@ -483,8 +486,8 @@
 ;;  doc for that function. If, instead, you were completing input to
 ;;  `M-x', you could choose a command to execute. And so on.
 ;;
-;;  The thing to notice here is that you can use `M-*' to input
-;;  multiple simple regexps, to narrow down the set of completion
+;;  The thing to notice here is that you can use `M-*' to input chains
+;;  of multiple simple regexps, to narrow down the set of completion
 ;;  candidates progressively. This is analogous to piping the result
 ;;  of `grep' to another `grep', and piping that result to another
 ;;  `grep'...
@@ -608,7 +611,7 @@
 ;;  you set `icicle-default-thing-insertion' to `alternatives', then
 ;;  repeated use of `M-.' inserts a different kind of thing at point:
 ;;  file name, word, or URL.
-;;  
+;;
 ;;  You can use `C-u M-.' at any time to temporarily override the
 ;;  value of `icicle-default-thing-insertion'.  If you use a numeric
 ;;  prefix argument N (not just plain `C-u'), then it is the same as
@@ -654,27 +657,39 @@
 ;;  "candidate default values" might be command names, buffer names,
 ;;  existing file names, variable names, and so on.
 ;;
-;;  For most Emacs functions that prompt you and ask for input, the
-;;  person who wrote the function decided on the reasonable set of
-;;  default values, and passed these to an "input-completing function"
-;;  such as `completing-read' or `read-file-name', which prompts you
-;;  and reads your input.  The programmer also decided whether you
-;;  will be *required* to pick one of the default values or you will
-;;  be free to enter something else.  The programmer might also have
-;;  told the input-completing function to require your input to pass
-;;  some special test (predicate).
+;;  For most Emacs functions that prompt you for input, the person who
+;;  wrote the function decided on the reasonable set of default
+;;  values, and passed these to an "input-completing function" such as
+;;  `completing-read' or `read-file-name', which prompts you and reads
+;;  your input.  The programmer also decided whether you will be
+;;  *required* to pick one of the default values or you will be free
+;;  to enter something else.  The programmer might also have told the
+;;  input-completing function to require that your input pass some
+;;  special test (predicate).
 ;;
-;;  So, how do you get access to those default values, in order to
-;;  choose one?  You hit certain keys to "complete" the current
-;;  contents of the minibuffer (excluding the prompt).  This current,
-;;  partial input is considered as a prefix of one of the default
-;;  values, and it is completed in the minibuffer to the entire
-;;  default value.
+;;  Be aware that standard Emacs terminology does not refer to such a
+;;  set of default values as "default values"; they are called
+;;  "completions". By "default value", standard Emacs terminology
+;;  means only the single value that you can access via `M-n'. Icicles
+;;  refers to all such potential inputs indifferently as "default
+;;  values", "completions", "completion candidates", and
+;;  "candidates". Whenever completion is not requiring you to pick one
+;;  of the available candidates, they are effectively only default
+;;  choices.
+;;
+;;  So, how do you get access to the default values that the
+;;  programmer has made available to you, in order to choose one?  You
+;;  hit certain keys to complete the current contents of the
+;;  minibuffer (excluding the prompt).  This current, partial input is
+;;  considered as a prefix of one of the default values, and it is
+;;  completed in the minibuffer to the entire default value
+;;  (completion).
 ;;
 ;;  Keys `TAB', `RET' (Return), and `SPC' (Space) perform different
-;;  degrees of this "prefix completion".  If you type a prefix of one
-;;  of the default values, you can complete the value this way in the
-;;  minibuffer, and then enter it, with `RET'.
+;;  degrees of this "prefix completion" in standard Emacs.  If you
+;;  type a prefix of one of the available default values, you can
+;;  complete the value this way in the minibuffer, and then enter
+;;  (commit) it, using `RET'.
 ;;
 ;;  But if your partial input matches the prefix of more than one
 ;;  default value, then completion pops up the list of all matching
@@ -684,11 +699,12 @@
 ;;
 ;;  Because this is the way you access the default values supplied to
 ;;  an input-completing function, I call those values
-;;  "prefix-completion candidates".  If there is no partial input yet,
-;;  then the entire list of default values supplied to the
-;;  input-completing function appears in the pop-up *Completions*
-;;  buffer.  See the Emacs manual (`C-h i') for more on this general
-;;  mechanism of prefix completion (called simply "completion" there).
+;;  "prefix-completion candidates".  If there is no partial input yet
+;;  (empty minibuffer), then the entire list of default values
+;;  supplied to the input-completing function appears in the pop-up
+;;  *Completions* buffer.  See the Emacs manual (`C-h i') for more on
+;;  this general mechanism of prefix completion (called simply
+;;  "completion" there).
 ;;
 ;;  Calls to `completing-read' and `read-file-name' are not the only
 ;;  places where input completion is used.  When you use `M-x'
@@ -726,11 +742,8 @@
 ;;  automatically reflects the change.
 ;;
 ;;  This also means that it's good to have a quick way to clear the
-;;  minibuffer of any input, so this library also provides minibuffer
-;;  key bindings `M-S-backspace' and `M-S-delete' (Meta + Shift +
-;;  Backspace or Delete) to do that.  (I also use `M-C-backspace'
-;;  (Meta + Control + Backspace), which I have bound globally to
-;;  `backward-kill-sexp'.  It is not bound here, however.)
+;;  minibuffer of any input, so Icicles also provides minibuffer key
+;;  binding `M-k' to do that.
 ;;
 ;;  A visible and audible signal lets you know when you have reached
 ;;  one end of the list of completion candidates, but you can of
@@ -763,7 +776,7 @@
 ;;  filtering by a prefix only is not very potent.
 ;;
 ;;  Tip: Whenever you type or delete text in the minibuffer, your
-;;  partial input is remembered.  sWhen you cycle completion
+;;  partial input is remembered.  When you cycle completion
 ;;  candidates, your input is replaced by each candidate, but you can
 ;;  at any time refresh the minibuffer to retrieve what you last
 ;;  typed.  You do this with `C-l', which is bound in the minibuffer
@@ -967,7 +980,7 @@
 ;;  a function `moccur-regexp-read-from-minibuf' is defined (it is in
 ;;  library `color-moccur.el'), and your input to `C-h f' is
 ;;  `min[^-]*buf', then only `minibuf' is highlighted in red.
-;;  
+;;
 ;;  Longest-common-match completion is convenient, but when
 ;;  apropos-completing you often need to try variants of a regexp,
 ;;  editing it and observing which candidates match in *Completions*,
@@ -1283,9 +1296,8 @@
 ;;  candidates in the minibuffer and choose one as soon as you type
 ;;  enough of its name to select it unambiguously - without your
 ;;  needing to confirm your choice (with `RET', for example).  Library
-;;  `ido.el' is an example of such a library.  Library
-;;  `##iswitchb.el##' is another such library; it is specialized for
-;;  choosing a buffer.
+;;  `ido.el' is an example of such a library.  Library `iswitchb.el'
+;;  is another such library; it is specialized for choosing a buffer.
 ;;
 ;;  Choosing without confirming can be very quick, but I prefer to
 ;;  confirm a choice.  In any case, you can also use Icicles to choose
@@ -1342,9 +1354,11 @@
 ;;
 ;;  If you use standard Emacs command `switch-to-buffer' then `RET'
 ;;  does not behave this way; it simply accepts your input, `new', and
-;;  creates a new buffer with that name.  Icicles does not change any
-;;  of your global bindings, so, by default, when you use `C-x b' you
-;;  get the `switch-to-buffer' behavior in the context of Icicles.
+;;  creates a new buffer with that name.  If you set user option
+;;  `icicle-bind-top-level-commands-flag' to nil, then Icicles will
+;;  not change any of your global bindings, and, in that case, when
+;;  you use `C-x b' you get the `switch-to-buffer' behavior in the
+;;  context of Icicles.
 ;;
 ;;  By default, Icicles command `icicle-buffer' behaves the same way
 ;;  as `switch-to-buffer' in this regard.  However, you can obtain the
@@ -1473,8 +1487,8 @@
 ;;  You can toggle incremental completion at any time (changing
 ;;  `icicle-incremental-completion-flag' between nil and t) using
 ;;  command `icicle-toggle-incremental-completion', which is bound to
-;;  `C-^' in the minibuffer.  If the number of completion candidates
-;;  is very large, then use `C-^' to toggle incremental completion off
+;;  `C-#' in the minibuffer.  If the number of completion candidates
+;;  is very large, then use `C-#' to toggle incremental completion off
 ;;  - that will save time by not updating *Completions*.  See also
 ;;  "Dealing With Large Candidate Sets", below, for other ways to deal
 ;;  with a large number of candidates.
@@ -1866,7 +1880,7 @@
 ;;  For other examples of using set operations, see also:
 ;;
 ;;   * "Progressive Completion"
-;;   * "History Enhancements" 
+;;   * "History Enhancements"
 ;;   * "Search Enhancements"
 ;;
 ;;  For saving completion candidates persistently and retrieving them
@@ -1888,8 +1902,7 @@
 ;;  itself, not the directory portion, is used for matching.  The
 ;;  behavior is thus the same whether or not the directory is present
 ;;  in the minibuffer.  If you prefer, you can delete the directory
-;;  first, using `M-S-backspace' (the `default-directory' is used, by
-;;  default).
+;;  first, using `M-k' (the `default-directory' is used, by default).
 ;;
 ;;  This means, in particular, that you can use apropos completion to
 ;;  match a substring, without needing to prefix the substring with
@@ -2017,11 +2030,11 @@
 ;;  the addition of real-time regexp matching.  Here is all you do:
 ;;
 ;;    M-x icicle-locate-file RET
-;;    C-^        ; Once or twice: turn off incremental completion.
+;;    C-#        ; Once or twice: turn off incremental completion.
 ;;    C-{        ; Retrieve all file names from your cache file.
 ;;               ; You are prompted for the set name and file name.
 ;;    foo.*bar   ; Regexp to match names with `foo' followed by `bar'.
-;;    S-TAB      ; Update *Completions* display (because of `C-^').
+;;    S-TAB      ; Update *Completions* display (because of `C-#').
 ;;
 ;;  Of course, once you have retrieved a set of candidates from your
 ;;  cache file, you can access them again without re-reading the file.
@@ -2034,7 +2047,7 @@
 ;;  * "File-Name Input and Locating Files Anywhere" for information on
 ;;    finding files located anywhere in your file system
 ;;
-;;  * "Icompletion" for information on `C-^' (toggle incremental
+;;  * "Icompletion" for information on `C-#' (toggle incremental
 ;;    completion)
 ;;
 ;;  * "Sets of Completion Candidates" for information on `C->' (save
@@ -2073,8 +2086,8 @@
 ;;  candidates:
 ;;
 ;;  * Turn off incremental completion display in buffer *Completions*.
-;;    You can do this on the fly at any time by using `C-^' in the
-;;    minibuffer - use `C-^' again to turn it back on.  See
+;;    You can do this on the fly at any time by using `C-#' in the
+;;    minibuffer - use `C-#' again to turn it back on.  See
 ;;    "Icompletion", above.
 ;;
 ;;  * Compute a large candidate set only once, cache the result, and
@@ -2100,33 +2113,34 @@
 ;;  History Enhancements
 ;;  --------------------
 ;;
-;;  One advantage Icicles provides for working with minibuffer
-;;  histories is display of the previous inputs that match your
-;;  current input.  In vanilla Emacs, the history lists are never
-;;  shown as such; you can access previous inputs only one at a time,
-;;  in order (with `M-p').  Displaying previous inputs that match the
-;;  current input sounds like a minor advantage, but it is actually
-;;  quite helpful in practice.  Among other things, it means you can
-;;  work with long history lists in a practical way.
+;;  Icicles enhances minibuffer history in three independent ways:
 ;;
-;;  In addition, whenever you display candidate completions in buffer
-;;  *Completions*, those that you have used previously are highlighted
-;;  slightly (blue, by default), so you can more easily recognize
-;;  them.  This is another, minor way in which Icicles helps you with
-;;  minibuffer histories.
-;;
-;;  There are two other, more important ways in which Icicles enhances
-;;  use of minibuffer histories.
-;;
-;;  1. Command `icicle-history' (`M-h' in the minibuffer) matches the
-;;     current input against the minibuffer history.
+;;  1. Candidates displayed in *Completions* are highlighted (blue, by
+;;     default), when they have been used previously, so you can more
+;;     easily recognize them.
 ;;
 ;;  2. Command `icicle-keep-only-past-inputs' (`M-pause' in the
 ;;     minibuffer) restricts the current set of completion candidates
-;;     to its members that you have already used previously.  In other
-;;     words, it keeps only those candidates that are highlighted in
-;;     blue.  To use `M-pause', you must first have used `TAB' or
-;;     `S-TAB' to establish an explicit candidate set.
+;;     to those that you have used previously.  In other words, it
+;;     keeps only those candidates that are highlighted in blue.  To
+;;     use `M-pause', you must first have used `TAB' or `S-TAB' to
+;;     establish an explicit candidate set.
+;;
+;;  3. Command `icicle-history' (`M-h' in the minibuffer) matches the
+;;     current input against the minibuffer history directly.
+;;
+;;  All three of these enhancements let you see the complete list of
+;;  previous inputs that match your current input.  In vanilla Emacs,
+;;  the history lists are never shown as such; you can access previous
+;;  inputs only one at a time, in order (with `M-p').  In vanilla
+;;  Emacs, you can use a regexp to search the history list (via
+;;  `M-r'), but the regexp matching is not dynamic, and the first
+;;  match found is the (only) one you get.
+;;
+;;  Displaying previous inputs that match the current input sounds
+;;  like a minor advantage, but it is actually quite helpful in
+;;  practice.  Among other things, it means that you can work with
+;;  long history lists in a practical way.
 ;;
 ;;  Both `M-h' and `M-pause' can be used toward the same end.  They
 ;;  both work for all input types.  They both use the appropriate
@@ -2201,7 +2215,7 @@
 ;;  always) inserted into the minibuffer by commands such as
 ;;  `find-file', so either `M-h' or `M-pause' after `C-x C-f' will
 ;;  match previously input file names from the current directory.
-;; 
+;;
 ;;  However, in the case of `M-h', the entire minibuffer input is
 ;;  matched against the history list, which is a list of absolute file
 ;;  names.  `M-pause' works only with the current candidate set,
@@ -2417,14 +2431,26 @@
 ;;  variable once and use `C-=' from then on to retrieve it - simple.
 ;;
 ;;  If it's so simple then why not let a command do it?  Done.  Just
-;;  use command `icicle-search-imenu'; it is an ''Imenu browser''.
-;;  You don't need to bother looking up Imenu regexps and assigning
-;;  them to variables for use with `C-=' and `icicle-search'.  But if
-;;  you look at the definition of `icicle-search-imenu' you'll see
-;;  that it simply lets you choose an Imenu submenu appropriate for
-;;  the current buffer type, and then it calls `icicle-search'.
-;;  That's the real point here: you can define your own commands
-;;  similarly using `icicle-search' to browse regexp matches.
+;;  use command `icicle-imenu'; it is an ''Imenu browser''.  You don't
+;;  need to bother looking up Imenu regexps and assigning them to
+;;  variables for use with `C-=' and `icicle-search'.
+;;
+;;  If you look at the definition of `icicle-imenu' you'll see that it
+;;  simply lets you choose an Imenu submenu appropriate for the
+;;  current buffer type, and then it calls `icicle-search'.  That's
+;;  the real point here: you can define your own commands similarly
+;;  using `icicle-search' to browse regexp matches.  You get all of
+;;  the features of `icicle-search' when you do this.  For example,
+;;  `icicle-imenu' gives you these advantages over a standard Imenu
+;;  menu:
+;;
+;;  * You can restrict navigation (search) to a region.
+;;
+;;  * You can navigate (browse) among multiple entries, instead of
+;;    choosing them one by one from a menu.
+;;
+;;  * You can restrict the entries to browse using (regexp) pattern
+;;    matching.
 ;;
 ;;  In sum: For complete interactivity, type a regexp dynamically as
 ;;  input to `icicle-search'.  For isolated special regexps that you
@@ -2432,7 +2458,7 @@
 ;;  For well-defined sets of regexps, especially if used frequently,
 ;;  define a command that uses `icicle-search'.  There is a spectrum
 ;;  of use cases for `icicle-search'.
-;;  
+;;
 ;;  Command `icicle-search' is very general and very powerful.  It
 ;;  might never replace incremental search - either regexp or literal
 ;;  string search, but in some cases it can be quite handy.  Think of
@@ -2521,7 +2547,135 @@
 ;;
 ;;  * "Progressive Completion", above, for information on using any
 ;;    number of regexps with `M-*'
-
+
+;;
+;;
+;;  Using Complex Completion Candidates
+;;  -----------------------------------
+;;
+;;  This section could also be called "Mapping over Sets", because it
+;;  is about applying some function to members of a set of completion
+;;  candidates.  You already know that you can manipulate sets of
+;;  candidates - see "Sets of Completion Candidates", above.  The
+;;  elements of those sets are strings; you choose candidate names.
+;;  Sometimes, however, you need to choose among named items that are
+;;  themselves complex, containing more information than just the
+;;  name.  That is the idea behind command `icicle-map', which this
+;;  section introduces.
+;;
+;;  You (or a command that you use) can obtain the information
+;;  associated with a name after you choose the name, whether during
+;;  multi-command cycling (see "Multi-Commands", above) or after final
+;;  candidate choice (`RET').  This is what happens, for instance,
+;;  when you use `find-file'; the command looks up the file associated
+;;  with the name after you choose the name.  Likewise, for
+;;  `icicle-bookmark' and other commands.  Multi-commands need to
+;;  perform this lookup both when you use a candidate while cycling
+;;  and when you make a final candidate selection.
+;;
+;;  Names and their associated information can be available in Emacs
+;;  Lisp in the form of an association list (alist), that is, a list
+;;  whose items are conses.  An alist is often used to represent a
+;;  function or relation that maps one set of things to another.  The
+;;  conses in the alist are the tuples (typically pairs) of related
+;;  items.  The car of each cons is called its "key"; the cdr is
+;;  called its "value".  Different alists have different kinds of keys
+;;  and values.  Typical key types include symbols and strings;
+;;  typical value types include symbols, strings, numbers, and lists.
+;;  There are quite a few standard Emacs-Lisp variables whose value is
+;;  an alist.  Most are internal variables, but some are user options.
+;;  See the Emacs-Lisp manual for more about alists.
+;;
+;;  The completion mechanism of Emacs function `completing-read' takes
+;;  an alist as input: the keys are completion-candidate strings.  For
+;;  completion, however, the value (cdr) of each alist key/value entry
+;;  is completely ignored.  Icicles uses `completing-read', so it
+;;  works the same way.  If a command needs to access the value
+;;  associated with a name, then it must somehow do so independently
+;;  of completion.
+;;
+;;  Command `icicle-search' offers an example of this.  The completion
+;;  alist contains key/value pairs whose car (key) is a buffer string
+;;  that matches your search string and whose cdr (value) is the
+;;  corresponding buffer position.  When you use completion with this
+;;  command, you work only with the keys, but `icicle-search' keeps
+;;  track of the corresponding positions for you as well.  The logic
+;;  for doing this is coded into the definition of `icicle-search'.
+;;
+;;  It is common to want to do something interesting interactively
+;;  with the values, not just the keys, of a completion alist.  Why
+;;  lose the important value information when you choose a key?  And
+;;  instead of requiring the logic of each command to deal with this
+;;  need separately, why not provide a general mechanism for accessing
+;;  this information - both by program and interactively?  This is
+;;  what command `icicle-map' is for.
+;;
+;;  To make use of completion-alist values, you need to access the cdr
+;;  of a key/value pair.  However, different alists are structured
+;;  differently: the cdr can itself be complex (structured).  In
+;;  general, you want to access the key/value pair as a whole, to do
+;;  what you want with it, that is, to apply some function to it.
+;;
+;;  Emacs-Lisp programmers sometimes map functions over lists to
+;;  obtain a different list.  For example, mapping the function `1+'
+;;  over the list (3 1 4 1 5 9) gives the list (4 2 5 2 6 10).  The
+;;  command `icicle-map' is inspired by this common practice, but it
+;;  applies only to alists, and it lets you choose interactively which
+;;  list elements to use.
+;;
+;;  Command `icicle-map' lets you apply a function of your choice
+;;  (choose the function via completion, if you like) to any number of
+;;  key/value entries in an alist.  The alist is used for completion,
+;;  so you can choose among the possible keys.  But the function is
+;;  applied to the corresponding key/value pairs, not to just the
+;;  keys.
+;;
+;;  For example, given the alist `auto-mode-alist' and the function
+;;  `cdr', you can choose to apply `cdr' to selected alist entries.
+;;  This acts as a simple lookup function, because `cdr' just returns
+;;  the value associated with a chosen key.  If you choose, for
+;;  example, the candidate (key) "\.el\'", then the result is the
+;;  symbol `emacs-lisp-mode'.  In this case, the chosen key/value pair
+;;  is ("\\.el\\'" . emacs-lisp-mode).  (A literal backslash must be
+;;  doubled in an Emacs-Lisp string.)
+;;
+;;  Function `cdr' returns the value, which is `emacs-lisp-mode' here.
+;;  If, instead of `cdr', you use the function (lambda (x)
+;;  (describe-function (cdr x))), then the result of choosing
+;;  candidate "\.el\'" is to display the help for function
+;;  `emacs-lisp-mode'.  Yes, you can type in a lambda expression when
+;;  prompted for the function - any function can be used.  Keep in
+;;  mind, however, that the function must target a key/value pair
+;;  (cons).  This is why you could not simply use `describe-function'
+;;  as the function here.
+;;
+;;  So what is `icicle-map' really for?  Anything you want.  You can
+;;  use it to simply browse an alist or to perform actions on things.
+;;  The idea is to let you take advantage of Icicles features to
+;;  interactively filter and manipulate a set of completion keys, and
+;;  then apply any function you like to them - not just to the keys,
+;;  but to the keys or their values, or both.
+;;
+;;  You can use apropos (regexp) matching or prefix matching to filter
+;;  the alist, as always, during completion.  You can use `C-next',
+;;  `C-RET', and so on to act on (that is, apply the function to)
+;;  selected key/value pairs that match your current input, or you can
+;;  use `C-!' to act on *all* such pairs.  The latter case corresponds
+;;  to mapping a function over all of the items in a list.
+;;
+;;  As an Emacs-Lisp programmer, you can use function `icicle-map'
+;;  programmatically to let users look things up in alists that you
+;;  construct or to act on selected alist entries in complex ways.
+;;  Icicles just provides the interactive completion features.  The
+;;  real value of `icicle-map' comes from what you do with it.  Use it
+;;  with a database of geographical coordinates to look up location
+;;  names provided by users and draw corresponding vicinity maps.  Use
+;;  it with a list of hardware configurations to let users perform
+;;  diagnostic or maintenance operations on selected equipment.  You
+;;  get the idea - use your imagination.
+;;
+;;  Note: Although completion alists normally require string-valued
+;;  keys, `icicle-map' is designed to work with any alist.
 
 ;;
 ;;
@@ -2713,8 +2867,10 @@
 ;;  thesaurus and looking up words and phrases in it.  Command
 ;;  `icicle-complete-thesaurus-entry' takes advantage of these
 ;;  features.  You can use it to complete a word in a text buffer to
-;;  any word or phrase in the thesaurus.  I bind it to `C-c /',
-;;  myself, but Icicles makes no global bindings.
+;;  any word or phrase in the thesaurus.  If user option
+;;  `icicle-bind-top-level-commands-flag' is non-nil (which it is by
+;;  default), then this is bound to `C-c /'; if it is nil, then
+;;  Icicles makes no global bindings.
 ;;
 ;;  Tip: You can use `icicle-complete-thesaurus-entry' to quickly
 ;;  check the spelling of a word.  If it is correctly spelled, then it
@@ -2930,7 +3086,7 @@
 ;;  * User option `icicle-incremental-completion-flag' controls
 ;;    whether or not *Completions* is updated incrementally
 ;;    (icompletion) as you type.  You can toggle incremental
-;;    completion at any time using `C-^'.  For more information, see
+;;    completion at any time using `C-#'.  For more information, see
 ;;    "Icompletion", above.
 ;;
 ;;  * User options `icicle-incremental-completion-delay' and
@@ -2959,11 +3115,43 @@
 ;;    functionalities, you can bind `icicle-sort-function' temporarily
 ;;    to any sort function you need.
 ;;
-;;  * User option `icicle-completion-nospace-flag' can be used to
-;;    control ignoring of completion candidates that start with a
-;;    space unless the input to be completed also starts with a space.
-;;    The effect is similar to that of the NOSPACE argument to
-;;    `all-completions'.
+;;  * User options `icicle-require-match-flag' and
+;;    `icicle-buffer-require-match-flag' let you override the value of
+;;    the REQUIRE-MATCH argument provided to `completing-read' or
+;;    `read-file-name'.  They are provided mainly for use (binding) in
+;;    `icicle-define-command' and `icicle-define-file-command', but
+;;    you may also use them globally, if you wish.  See "Exiting the
+;;    Minibuffer Without Confirmation: `S-RET'", above.
+;;
+;;    A typical use is made in the definition of command
+;;    `icicle-buffer': `icicle-buffer-require-match-flag' is used to
+;;    bind `icicle-require-match-flag', so that you can, for example,
+;;    match only existing buffers and be able to match on partial
+;;    input without explicitly completing (hitting `TAB' or `S-TAB').
+;;    Simply set the option to `partial-match-ok' to get this
+;;    behavior.  To apropos-complete and exit the minibuffer, use
+;;    `S-RET' instead of `RET'.  See "Exiting the Minibuffer Without
+;;    Confirmation: `S-RET'", above, for more information.
+;;
+;;  * Non-nil user option `icicle-ignore-space-prefix-flag' means to
+;;    ignore completion candidates that start with a space.  However,
+;;    such candidates are not ignored for prefix completion if the
+;;    input also starts with a space.  Naturally, apropos completion
+;;    is not affected by whether or not the input starts with a space.
+;;
+;;    Option `icicle-buffer-ignore-space-prefix-flag' lets you
+;;    override the value of `icicle-ignore-space-prefix-flag' for use
+;;    with buffer-name completion (the names of internal buffers start
+;;    with a space).  It is provided mainly for binding in
+;;    `icicle-define-command' (`icicle-buffer' does this).
+;;
+;;    You can toggle `icicle-ignore-space-prefix-flag' at any time
+;;    using `C-^' in the minibuffer.  If the current command binds
+;;    this option locally, then it is the local, not the global, value
+;;    that is changed.  For example, if
+;;    `icicle-buffer-ignore-space-prefix-flag' is non-nil, then `C-^'
+;;    toggles `icicle-ignore-space-prefix-flag' to nil only for the
+;;    duration of `icicle-buffer'.
 ;;
 ;;  * Non-nil user option `icicle-regexp-quote-flag' reduces apropos
 ;;    completion to simple substring completion.  Regexp special
@@ -3017,24 +3205,6 @@
 ;;    The idea of buffer-option configurations was borrowed from
 ;;    library `bs.el', by Olaf Sylvester <olaf@geekware.de>.
 ;;
-;;  * User options `icicle-require-match-flag' and
-;;    `icicle-buffer-require-match-flag' let you override the value of
-;;    the REQUIRE-MATCH argument provided to `completing-read' or
-;;    `read-file-name'.  They are mainly provided for use (binding) in
-;;    `icicle-define-command' and `icicle-define-file-command', but
-;;    you may also use them globally, if you wish.  See "Exiting the
-;;    Minibuffer Without Confirmation: `S-RET'", above.
-;;
-;;    A typical use is made in the definition of command
-;;    `icicle-buffer': `icicle-buffer-require-match-flag' is used to
-;;    bind `icicle-require-match-flag', so that you can, for example,
-;;    match only existing buffers and be able to match on partial
-;;    input without explicitly completing (hitting `TAB' or `S-TAB').
-;;    Simply set the option to `partial-match-ok' to get this
-;;    behavior.  To apropos-complete and exit the minibuffer, use
-;;    `S-RET' instead of `RET'.  See "Exiting the Minibuffer Without
-;;    Confirmation: `S-RET'", above, for more information.
-;;
 ;;  * User option `icicle-list-join-string' is described in
 ;;    "Multi-Completions", above.  It is the separator string that
 ;;    joins together the parts of a multi-completion.
@@ -3064,13 +3234,16 @@
 ;;    search histories easier, using commands `clear-search-history',
 ;;    `clear-regexp-search-history', and `clear-search-histories'.
 ;;
-;;  * Non-nil user option `icicle-inhibit-reminder-prompt-flag'
-;;    inhibits the addition of a reminder about Icicles bindings to
-;;    the minibuffer prompt.  If nil (the default value), then a
-;;    reminder such as "(<S-tab>, TAB: list, C-h: help)" is added to
-;;    the prompt (if the window is wide enough).  If you are already
-;;    used to using Icicles, you might want to set this option to t to
-;;    save some space in the minibuffer.
+;;  * User option `icicle-reminder-prompt-flag' controls the addition
+;;    of a reminder about Icicles bindings to the minibuffer prompt.
+;;    This is the reminder: "(<S-tab>, TAB: list, C-h: help)".  If
+;;    this is nil or 0, the reminder is never displayed.  If this is
+;;    t, the reminder is always displayed.  If this is a whole number,
+;;    the reminder is displayed for that many Emacs sessions; it is
+;;    not displayed thereafter. The default value is 20, meaning that
+;;    you see the reminder during 20 Emacs sessions.  Regardless of
+;;    the value of this option, the reminder only appears when there
+;;    is sufficient minibuffer space.
 ;;
 ;;  * Non-nil user option `icicle-touche-pas-aux-menus-flag' means
 ;;    that Icicles will not add menu items to menu-bar menus, except
@@ -3109,6 +3282,28 @@
 ;;    that, you need not use `TAB' and `S-TAB' to switch between the
 ;;    two completion types.  Once you have used `TAB' or `S-TAB', the
 ;;    only way to traverse the history is via `M-p' and `M-n'.
+;;
+;;  * Non-nil option `icicle-highlight-input-initial-whitespace-flag'
+;;    uses face `icicle-whitespace-highlight' to highlight any
+;;    whitespace that starts your minibuffer input.  This is done to
+;;    help you recognize accidentally typing such whitespace.
+;;    Otherwise, you might not understand the set of matching
+;;    completion candidates (or lack thereof).  There is not
+;;    necessarily anything wrong with input that starts with
+;;    whitespace - it might be what you want, but without this
+;;    highlighting it is easy to not notice the whitespace.
+;;
+;;  * Non-nil option `icicle-bind-top-level-commands-flag' binds
+;;    several top-level Icicles commands to key sequences.  It does
+;;    this by loading library `icicles-keys.el'.  Top-level commands
+;;    are commands that are not used only in the minibuffer.  Be aware
+;;    that this changes some standard key bindings.  For example, it
+;;    substitutes `icicle-kill-buffer' for `kill-buffer' (binding it
+;;    to whatever `kill-buffer' was bound to).  If you want to bind
+;;    top-level Icicles commands but you want different bindings from
+;;    those defined in `icicles-keys.el', then you can add your own
+;;    bindings, either in place of, or after, loading library
+;;    `icicles-keys.el'.
 
 ;;
 ;;
@@ -3215,27 +3410,131 @@
 ;;  Key Bindings
 ;;  ------------
 ;;
-;;  *** Icicles does not change any of your global key bindings. ***
+;;  Icicles makes three kinds of key bindings:
+;;
+;;  1. global bindings (optional)
+;;  2. Icicle-mode bindings
+;;  3. minibuffer local bindings
+;;
+;;  These are discussed here in two sections, one for the optional
+;;  bindings (#1) and one for the others (#2, #3).
+;;
+;;  Note that #2 and #3 are also optional in the sense that you can
+;;  override them with any bindings you like.  You can prevent global
+;;  bindings (#1) from being made in the first place.
+;;
+;;
+;;  ** Global Bindings **
+;;
+;;  Global bindings are changed by Icicles only if user option
+;;  `icicle-bind-top-level-commands-flag' is non-nil (which it is by
+;;  default).  If you set this option to nil, then Icicles will _not
+;;  change any of your global key bindings_.
 ;;
 ;;  There is an exception: In Icicle mode, various Icicles commands
 ;;  are added to menu-bar menus.  File commands are added to the File
-;;  menu, and so on.  Those that don't belong naturally to any
-;;  existing menu-bar menu are added to a new Icicles menu.  Whatever
-;;  the menu they appear in, Icicles menu items are enabled only when
-;;  Icicle mode is active.  Those that are in a menu other than the
-;;  Icicles menu have "[Icy]" prefixed to their name.
+;;  menu, and so on.  Those that do not belong naturally to any
+;;  existing menu-bar menu are added to a new Icicles menu and
+;;  existing menu Minibuf.  Whatever the menu they appear in, however,
+;;  Icicles menu items are enabled only when Icicle mode is active.
+;;  Those that are in a menu other than the Icicles menu have "[Icy]"
+;;  prefixed to their name so you can easily identify them.
 ;;
-;;  Icicles normally adds items to appropriate existing menus, such as
-;;  File and Options, as well as to menus Minibuf and Icicles, but you
-;;  can prevent this, if you like.  If you do not want Icicles items
-;;  to be added to menus besides Minibuf and Icicles, then just set
-;;  option `icicle-touche-pas-aux-menus' to non-nil.  The items in
-;;  question are then added to the Icicles menu instead. See
-;;  "Customizing Key Bindings", below.
+;;  If you do not want Icicles to add items to menus besides Minibuf
+;;  and Icicles, then set option `icicle-touche-pas-aux-menus' to
+;;  non-nil.  See "Customizing Key Bindings", below.
 ;;
-;;  Other than this exception, Icicles binds keys only in its own
-;;  Icicle-mode keymap, and in minibuffer-local keymaps.  The
-;;  following key bindings are made for the minibuffer completion
+;;  There is one more thing to say about Icicles global bindings,
+;;  should you decide to accept them: they are pretty innocuous.
+;;  Either the same key sequences are not bound in vanilla Emacs or
+;;  they are bound to similar commands.  And, in the latter case, the
+;;  Icicles commands generally revert to doing what the standard
+;;  commands do when you are not in Icicle mode.  In particular, the
+;;  Icicles versions are multi-commands (see "Multi-Commands", above)
+;;  that simply act as normal commands except in Icicle mode.
+;;
+;;  Icicles makes the following global bindings:
+;;
+;;  * `C-c C-s'        - `icicle-search'
+;;  * `C-c C-s'        - `icicle-compilation-search' (in grep etc.)
+;;  * `C-c /'          - `icicle-complete-thesaurus-entry'
+;;  * `M-x'            - `icicle-execute-extended-command'
+;;  * `ESC M-x', `M-`' - `icicle-execute-menu-command'
+;;
+;;  Icicles also substitutes all of the key bindings for some standard
+;;  commands.  For example, instead of simply binding `icicle-buffer'
+;;  to `C-x b', it binds it to all keys originally bound to standard
+;;  command `switch-to-buffer'.  The following standard commands have
+;;  their bindings coopted this way by Icicles commands:
+;;
+;;  Standard Command                   Icicles Command
+;;
+;;  `switch-to-buffer'.................`icicle-buffer'
+;;  `switch-to-buffer-other-window'....`icicle-buffer-other-window'
+;;  `find-file'........................`icicle-find-file'
+;;  `find-file-other-window'...........`icicle-find-file-other-window'
+;;  `kill-buffer'......................`icicle-kill-buffer'
+;;
+;;  Here are some other Icicles commands that you might want to bind
+;;  to keys:
+;;
+;;  `icicle-add-buffer-candidate' -
+;;                          Add buffer to those always shown
+;;  `icicle-add-buffer-config' - Add to `icicle-buffer-configs'
+;;  `icicle-apropos'      - `apropos', but shows matches
+;;  `icicle-apropos-command' - Enhanced `apropos-command'
+;;  `icicle-apropos-variable' - Enhanced `apropos-variable'
+;;  `icicle-apropos-zippy' - Show matching Zippy quotes
+;;  `icicle-bookmark'     - Jump to a bookmark
+;;  `icicle-buffer-config' - Pick `icicle-buffer' options
+;;  `icicle-buffer-list'  - Choose a list of buffer names
+;;  `icicle-clear-option' - Set the value of a binary option to nil
+;;  `icicle-color-theme'  - Change color theme
+;;  `icicle-complete-thesaurus-entry' -
+;;                          Complete word using thesaurus
+;;  `icicle-completion-help' - Display Icicles help
+;;  `icicle-customize-icicles-group' -
+;;                          Customize Icicles options and faces
+;;  `icicle-delete-file'  - Delete a file or directory
+;;  `icicle-delete-windows-on' - Delete all windows for buffer
+;;  `icicle-doc'          - Display the doc of a function or variable
+;;  `icicle-font'         - Change the frame font
+;;  `icicle-frame-bg'     - Change the frame background color
+;;  `icicle-frame-fg'     - Change the frame foreground color
+;;  `icicle-fundoc'       - Display the doc of a function
+;;  `icicle-imenu'        - Navigate among Imenu entries
+;;  `icicle-insert-thesaurus-entry' -
+;;                          Insert a thesaurus entry
+;;  `icicle-locate-file'  - Open a file located anywhere
+;;  `icicle-map'          - Apply function to alist items
+;;  `icicle-occur'        - `occur' + apropos icompletion
+;;  `icicle-recent-file'  - Open a recently used file
+;;  `icicle-remove-buffer-candidate' - 
+;;                          Remove buffer from those always shown
+;;  `icicle-remove-buffer-config' - 
+;;                          Remove from `icicle-buffer-configs'
+;;  `icicle-reset-option-to-nil' -
+;;                          Set value of binary option to nil
+;;  `icicle-save-string-to-variable' -
+;;                          Save text for use with `C-='
+;;  `icicle-search'       - Search with regexps & cycling
+;;  `icicle-set-option-to-t' - Set value of binary option to t
+;;  `icicle-toggle-option' - Toggle the value of a binary option
+;;  `icicle-vardoc'       - Display the doc of a variable
+;;
+;;
+;;  ** Minibuffer and Icicle-mode Bindings **
+;;
+;;  Again, other than the following exceptions, Icicles binds keys
+;;  only in the Icicle-mode keymap and in minibuffer local keymaps:
+;;
+;;  * If `icicle-bind-top-level-commands-flag' is non-nil, then some
+;;    Icicles commands are bound globally to keyboard key sequences.
+;;
+;;  * If `icicle-touche-pas-aux-menus' is nil, then some Icicles
+;;    commands are added to menu-bar menus such as File and Options.
+;;
+;;  The following key bindings are made for the minibuffer completion
 ;;  keymaps.  They are in effect whenever you are using the minibuffer
 ;;  for input with completion (e.g. `completing-read',
 ;;  `read-file-name', `M-x').
@@ -3293,11 +3592,12 @@
 ;;  "Customization and General Tips", above.
 ;;
 ;;  The following minibuffer binding is made to clear minibuffer
-;;  input.  It has no special relation to completion or completion
-;;  cycling, except that it is handy for editing and removing
-;;  completions (e.g. default or initial values) in the minibuffer:
+;;  input, making it handy for editing and removing completions
+;;  (e.g. default or initial values) in the minibuffer.  It has an
+;;  alternative behavior when you are cycling minibuffer history
+;;  items: it deletes the current item from the history.
 ;;
-;;    `M-S-backspace' and `M-S-delete' - `icicle-erase-minibuffer'
+;;    `M-k' - `icicle-erase-minibuffer-or-history-element'
 ;;
 ;;  The following minibuffer binding can be used to get rid of a
 ;;  completion inserted during cycling, and retrieve the last real
@@ -3360,7 +3660,8 @@
 ;;
 ;;    `C-,'     - `icicle-toggle-sorting'
 ;;    `C-.'     - `icicle-toggle-ignored-extensions': file extensions
-;;    `C-^'     - `icicle-toggle-incremental-completion'
+;;    `C-^'     - `icicle-toggle-ignored-space-prefix'
+;;    `C-#'     - `icicle-toggle-incremental-completion'
 ;;    `C-`'     - `icicle-toggle-regexp-quote'
 ;;
 ;;  The following bindings are made for `completion-list-mode', that
@@ -3379,27 +3680,6 @@
 ;;  minibuffer history, you can restore those bindings and bind the
 ;;  corresponding Icicles commands to different keys.  See
 ;;  "Customizing Key Bindings", below.
-;;
-;;  Other, suggested key bindings - put this in your ~/.emacs file:
-;;
-;;    ;; Search - use `C-c C-s' or some other key
-;;    (global-set-key "\C-c\C-s" 'icicle-search)
-;;    (define-key compilation-minor-mode-map "\C-c\C-s"
-;;                'icicle-compilation-search)
-;;
-;;    ;; Replacements for `switch-to-buffer(-other-window)'.
-;;    (define-key ctl-x-map   "b" 'icicle-buffer)
-;;    (define-key ctl-x-4-map "b" 'icicle-buffer-other-window)
-;;
-;;    ;; Replacements for `find-file(-other-window)'.
-;;    (define-key ctl-x-map   "\C-f" 'icicle-find-file)
-;;    (define-key ctl-x-4-map "f"    'icicle-find-file-other-window)
-;;
-;;    ;; Multi-command version of `M-x'.
-;;    (global-set-key "\M-x" 'icicle-execute-extended-command)
-;;
-;;    ;; Complete a partial word to an entry from a thesaurus.
-;;    (global-set-key "\C-c/" 'icicle-complete-thesaurus-entry)
 
 ;;
 ;;
@@ -3436,6 +3716,12 @@
 ;;  the Icicles menu instead.
 ;;
 ;;  ** Customizing Minibuffer Bindings **
+;;
+;;  Note: If you are thinking about customizing key bindings just so
+;;  you can use `up' and `down' for the minibuffer history, consider
+;;  setting `icicle-arrows-respect-completion-type-flag' to t instead;
+;;  it should give you the behavior you want.  If you still want to
+;;  customize keys to do this, then see the example below.
 ;;
 ;;  To understand how you can modify Icicles minibuffer bindings, it
 ;;  helps to know how Icicles creates the default bindings.  For that,
@@ -3784,32 +4070,51 @@
 ;;  `icicle-define-command', except for arguments that are passed to
 ;;  `read-file-name' instead of `completing-read'.
 ;;
-;;  Several top-level Icicles commands have been defined here using
+;;  Several top-level Icicles commands have been defined using
 ;;  `icicle-define-command' and `icicle-define-file-command'.  You can
 ;;  use their definitions as models.
 ;;
-;;   `icicle-bookmark'     - jump to a bookmark
-;;   `icicle-buffer'       - switch to another buffer
-;;   `icicle-clear-option' - set the value of a binary option to nil
-;;   `icicle-color-theme'  - change color theme
-;;   `icicle-delete-file'  - delete a file or directory
-;;   `icicle-doc'          - display the doc of a function or variable
-;;   `icicle-execute-extended-command' -
-;;                           a multi-command version of `M-x'
-;;   `icicle-find-file'    - open a file or directory
-;;   `icicle-font'         - change the frame font
-;;   `icicle-frame-bg'     - change the frame background color
-;;   `icicle-frame-fg'     - change the frame foreground color
-;;   `icicle-fundoc'       - display the doc of a function
-;;   `icicle-locate-file'  - open a file located anywhere
-;;   `icicle-recent-file'  - open a recently used file
-;;   `icicle-set-option-to-t' - set the value of a binary option to t
-;;   `icicle-toggle-option' - toggle the value of a binary option
-;;   `icicle-vardoc'       - display the doc of a variable
+;;  `icicle-add-buffer-candidate' - Add buffer to those always shown
+;;  `icicle-add-buffer-config' - Add to `icicle-buffer-configs'
+;;  `icicle-bookmark'     - Jump to a bookmark
+;;  `icicle-buffer'       - Switch to another buffer
+;;  `icicle-buffer-config' - Choose a config for `icicle-buffer'
+;;  `icicle-buffer-list'  - Choose a list of buffer names
+;;  `icicle-clear-option' - Set the value of a binary option to nil
+;;  `icicle-color-theme'  - Change color theme
+;;  `icicle-delete-file'  - Delete a file or directory
+;;  `icicle-doc'          - Display the doc of a function or variable
+;;  `icicle-execute-extended-command' -
+;;                          A multi-command version of `M-x'
+;;  `icicle-find-file'    - Open a file or directory
+;;  `icicle-font'         - Change the frame font
+;;  `icicle-frame-bg'     - Change the frame background color
+;;  `icicle-frame-fg'     - Change the frame foreground color
+;;  `icicle-fundoc'       - Display the doc of a function
+;;  `icicle-insert-thesaurus-entry' -
+;;                          Insert thesaurus entry(s)
+;;  `icicle-kill-buffer'  - Kill a buffer
+;;  `icicle-locate-file'  - Open a file located anywhere
+;;  `icicle-recent-file'  - Open a recently used file
+;;  `icicle-remove-buffer-candidate' - 
+;;                          Remove buffer from those always shown
+;;  `icicle-remove-buffer-config' - 
+;;                          Remove from `icicle-buffer-configs'
+;;  `icicle-reset-option-to-nil' -
+;;                          Set value of binary option to nil
+;;  `icicle-set-option-to-t' -
+;;                          Set value of binary option to t
+;;  `icicle-toggle-option' - Toggle the value of a binary option
+;;  `icicle-vardoc'       - Display the doc of a variable
+;;
+;;  For simplicity, the descriptions of these commands are singular
+;;  actions (e.g. "kill a buffer"), but each of them can be used to
+;;  act on any number of items any number of times (e.g. kill one or
+;;  more buffers).
 ;;
 ;;
 ;;  See also: library `synonyms.el', which uses macro
-;;  `icicle-define-file-command' to define command `synonyms'.  This
+;;  `icicle-define-command' to define command `synonyms'.  This
 ;;  command lets you use Icicles completion on input regexps when you
 ;;  search a thesaurus.
 
@@ -3966,7 +4271,7 @@
 ;;     alternative to turning it off is the approach taken in Icicles
 ;;     (e.g. `icicle-vardoc' and `icicle-insert-thesaurus-entry'):
 ;;     Just add a reminder to the doc string to tell users that they
-;;     can toggle `icicle-incremental-completion-flag' with `C-^'.
+;;     can toggle `icicle-incremental-completion-flag' with `C-#'.
 ;;
 ;;  6. You can bind `icicle-sort-function' temporarily to any sort
 ;;     function you need.
@@ -4091,19 +4396,32 @@
 ;;  Maybe To Do?
 ;;  ------------
 ;;
-;;  1. Write a command to use Icicles to navigate among tags. 
-;;
-;;  2. Consider doing the key binding & unbinding differently - copy
+;;  1. Consider doing the key binding & unbinding differently - copy
 ;;     standard bindings when enter `icicle-mode' and restore them
 ;;     when leave it?
 ;;
-;;  3. Replace redefinition of `exit-minibuffer' and/or
+;;  2. Replace redefinition of `exit-minibuffer' and/or
 ;;     `minibuffer-complete-and-exit' with icicles-only commands.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change log:
 ;;
+;; 2006/05/26 dadams
+;;     Mention M-k as icicle-erase-minibuffer-or-history-element.
+;;     Don't mention M-S-backspace and M-S-delete any more.
+;; 2006/05/19 dadams
+;;     Renamed icicle-inhibit-reminder* to icicle-reminder*.
+;;       Updated its doc to reflect new functionality.
+;; 2006/05/18 dadams
+;;     Change install instructions to include turning on Icicle mode.
+;; 2006/05/16 dadams
+;;     Require icicles-keys.el when icicle-bind-top-level-commands-flag.
+;;     Updated doc to reflect new library icicles-keys.el.
+;; 2006/05/15 dadams
+;;     Renamed: ici*-nospace-flag to icicle-ignore-space-prefix-flag.
+;;     Updated doc of icicle-ignore-space-prefix-flag.
+;;     Added doc of icicle-buffer-ignore-space-prefix-flag.
 ;; 2006/04/14 dadams
 ;;     Added section Inserting a Regexp from a Variable.
 ;; 2006/04/09 dadams
@@ -4128,7 +4446,7 @@
 ;; 2006/02/25 dadams
 ;;     Added: icicle-narrow-candidates (bound to M-*),
 ;;            icicle-icicle-completing-p, icicle-set-calling-cmd,
-;;            icicle-reset-icicle-completing-p, 
+;;            icicle-reset-icicle-completing-p,
 ;;            icicle-run-icicle-(pre|post)-command-hook.
 ;;     Add all hooks in icicle-mode only, except for minibuffer-local
 ;;       hooks (pre- and post-command).
@@ -4297,7 +4615,7 @@
 ;;       Hard-code bindings, instead of using \\[...], so the simpler
 ;;         bindings are shown.
 ;;     Changed C-o to C-RET for consistency (C-o still works too).
-;;       icicle-(bind|restore)-completion-keys: Added C-RET binding. 
+;;       icicle-(bind|restore)-completion-keys: Added C-RET binding.
 ;; 2006/01/21 dadams
 ;;     icicle-mouse-choose-completion:
 ;;       Don't save selected window if it's *Completions*.
@@ -4463,7 +4781,7 @@
 ;;     Redefined using icicle-define-command:
 ;;       icicle-bookmark, icicle-buffer*, icicle-color-theme,
 ;;       icicle-delete-file, icicle-find-file*, icicle-font,
-;;       icicle-frame-*, icicle-recent-file*. 
+;;       icicle-frame-*, icicle-recent-file*.
 ;;     icicle-all-candidates-action:
 ;;       Report failures, not successes.  Use error msg.
 ;;     Added Commentary sections: Special-Character Conflicts,
@@ -4571,7 +4889,7 @@
 ;;     Use icicle-scroll-or-update-*Completions* in
 ;;         icicle-candidate-set-1.
 ;; 2005/10/06 dadams
-;;     icicle-prefix-complete, icicle-apropos-complete-1: 
+;;     icicle-prefix-complete, icicle-apropos-complete-1:
 ;;       Removed vestigial slash cruft - should have been removed in
 ;;         2005/09/01 fix.
 ;;     Added: icicle-remove-dots.
@@ -4582,7 +4900,7 @@
 ;;     Replace use of minibuffer-completion-help by
 ;;       icicle-apropos-complete.
 ;;     Added: icicle-recent-file*, icicle-toggle-ignored-extensions,
-;;            icicle-update-completions, 
+;;            icicle-update-completions,
 ;;            icicle-msg-maybe-in-minibuffer,
 ;;            icicle-saved-ignored-extensions.
 ;;     Bound icicle-toggle-*.
@@ -4644,8 +4962,8 @@
 ;;       icicle-display-candidates-in-*Completions*:
 ;;         Removed first arg (candidates).
 ;;         Update icicle-completion-candidates.
-;;    icicle-all-candidates-action: 
-;;      Use icicle-completion-candidates, so act on completions of 
+;;    icicle-all-candidates-action:
+;;      Use icicle-completion-candidates, so act on completions of
 ;;      either kind.
 ;; 2005/09/30 dadams
 ;;     Commented out resetting of minibuffer-completion-table to nil
@@ -4658,7 +4976,7 @@
 ;;     Bug fix: Changed "\C-!"  to [(control ?!)] (others similarly).
 ;;     Bound [S-iso-lefttab] like [S-tab].
 ;; 2005/09/16 dadams
-;;     Added: icicle-all-candidates-action, icicle-delete-file*, 
+;;     Added: icicle-all-candidates-action, icicle-delete-file*,
 ;;     icicle-rebind-completion-maps:
 ;;       Bound icicle-all-candidates-action to C-!.
 ;;     icicle-(apropos|prefix)-complete: Return candidates list.
@@ -5209,11 +5527,7 @@
 (require 'icicles-mac)
 (require 'icicles-cmd)
 (require 'icicles-fn)
-
-
-;; Apparently, this is needed if the initial value is non-nil.
-;; Otherwise, the lighter shows the mode as on, but it is not on.
-(when icicle-mode (icicle-mode 1))
+(when icicle-bind-top-level-commands-flag (require 'icicles-keys))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 
