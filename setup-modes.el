@@ -17,6 +17,7 @@
 (resize-minibuffer-mode 1)
 
 (setq ecb-toggle-layout-sequence '("left10" "left9" "left6"))
+(icicle-mode 1)
 
 ;; ============================================================
 ;; Ruby:

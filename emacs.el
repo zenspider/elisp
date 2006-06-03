@@ -64,15 +64,13 @@
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(indicate-empty-lines t)
- '(tool-bar-mode nil)
- '(tooltip-mode nil)
- '(transient-mark-mode t)
  '(cua-mode nil nil (cua-base))
  '(dired-recursive-deletes (quote top))
  '(ecb-layout-window-sizes (quote (("left9" (0.325 . 0.975)))))
  '(ecb-options-version "2.32")
  '(global-font-lock-mode t nil (font-core))
+ '(icicle-reminder-prompt-flag 12)
+ '(indicate-empty-lines t)
  '(inhibit-splash-screen t)
  '(mouse-wheel-mode t nil (mwheel))
  '(quack-programs (quote ("/usr/local/bin/mzscheme" "bigloo" "csi" "csi -hygienic" "gosh" "gsi" "gsi ~~/syntax-case.scm -" "guile" "kawa" "mit-scheme" "mred -z" "mzscheme" "mzscheme -M errortrace" "rs" "scheme" "scheme48" "scsh" "sisc" "stklos" "sxi")))
@@ -80,6 +78,7 @@
  '(save-place t nil (saveplace))
  '(show-paren-mode t)
  '(tool-bar-mode nil nil (tool-bar))
+ '(tooltip-mode nil)
  '(transient-mark-mode t)
  '(which-function-mode nil))
 (custom-set-faces

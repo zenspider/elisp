@@ -28,7 +28,8 @@
     (progn
       (delete-other-windows)
       (set-frame-position frame 5 25)
-      (set-frame-size frame 136 45))))
+      (set-frame-size frame 170 45)
+      (split-window-horizontally))))
 
 (defun huge ()
   "Create a large window suitable for coding on a 20 inch cinema display"
@@ -69,7 +70,8 @@
 (defun myshell ()
   "Create a shell buffer that is properly named (shell-<N>)"
   (interactive)
-  (shell "shell")
+  (shell)		  ; use these two instead of (shell "shell")
+  (rename-buffer "shell") ; as it plays with multipl windows better
   (rename-uniquely))
 
 (defun hard-tabs ()
