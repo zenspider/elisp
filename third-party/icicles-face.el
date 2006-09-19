@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:19:43 2006
 ;; Version: 22.0
-;; Last-Updated: Fri Apr 28 17:08:32 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Fri Jun 30 07:12:08 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 82
+;;     Update #: 89
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-face.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -36,12 +36,14 @@
 ;;    `icicle-search-current-input',
 ;;    `icicle-search-main-regexp-current',
 ;;    `icicle-search-main-regexp-others',
-;;    `icicle-whitespace-highlight'.
+;;    `icicle-whitespace-highlight', `minibuffer-prompt'.
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change log:
 ;;
+;; 2006/06/30 dadams
+;;     Added: minibuffer-prompt for Emacs < 22 (e.g. Emacs 21.4 has propertize).
 ;; 2006/04/28 dadams
 ;;     Added: icicle-whitespace-highlight.
 ;; 2006/04/14 dadams
@@ -163,7 +165,13 @@ face is not used."
   "*Face used to highlight initial whitespace in minibuffer input."
   :group 'icicles :group 'faces)
 
-
+;; This is defined in `faces.el', Emacs 22.  This is for Emacs < 22.  This is used
+;; only for versions of Emacs that have `propertize' but don't have this face.
+(unless (facep 'minibuffer-prompt)
+  (defface minibuffer-prompt '((((background dark)) (:foreground "cyan"))
+                               (t (:foreground "dark blue")))
+    "Face for minibuffer prompts."
+    :group 'basic-faces))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

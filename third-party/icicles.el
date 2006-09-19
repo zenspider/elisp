@@ -7,9 +7,9 @@
 ;; Copyright (C) 1996-2006, Drew Adams, all rights reserved.
 ;; Created: Tue Aug  1 14:21:16 1995
 ;; Version: 22.0
-;; Last-Updated: Fri May 26 18:43:30 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Sat Jul 08 01:49:03 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 17986
+;;     Update #: 18319
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -19,9 +19,9 @@
 ;;
 ;;   `apropos', `apropos-fn+var', `cl', `color-theme', `cus-face',
 ;;   `easymenu', `hexrgb', `icicles-cmd', `icicles-face',
-;;   `icicles-fn', `icicles-keys', `icicles-mac', `icicles-menu',
-;;   `icicles-mode', `icicles-opt', `icicles-var', `misc-fns',
-;;   `subr-21', `thingatpt', `thingatpt+', `wid-edit', `widget'.
+;;   `icicles-fn', `icicles-mac', `icicles-mode', `icicles-opt',
+;;   `icicles-var', `misc-fns', `thingatpt', `thingatpt+',
+;;   `wid-edit', `widget'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -72,11 +72,6 @@
 ;;      `icicles-mode.el'
 ;;      `icicles-opt.el'
 ;;      `icicles-var.el'
-;;
-;;    If you want Icicles to bind some top-level Icicles commands for
-;;    you, then you will also need library `icicles-keys.el'.  If you
-;;    do not want this, then you will need to set (e.g. customize)
-;;    user option `icicle-bind-top-level-commands-flag' to nil.
 ;;
 ;;    After startup, you can turn Icicle mode on or off at any time
 ;;    interactively, using command `icy-mode' (aka `icicle-mode' -
@@ -144,8 +139,8 @@
 ;;
 ;;   Commands to be used mainly in the minibuffer or *Completions*:
 ;; 
-;;    `icicle-abort-minibuffer-input', `icicle-apropos-complete',
-;;    `icicle-apropos-complete-no-display',
+;;    `icicle-abort-minibuffer-input', `icicle-alternative-sort',
+;;    `icicle-apropos-complete', `icicle-apropos-complete-no-display',
 ;;    `icicle-apropos-complete-and-exit',
 ;;    `icicle-backward-delete-char-untabify',
 ;;    `icicle-backward-kill-paragraph',
@@ -221,6 +216,7 @@
 ;;
 ;;  User options defined in Icicles (in Custom group `icicles'):
 ;;
+;;    `icicle-alternative-sort-function',
 ;;    `icicle-arrows-respect-completion-type-flag',
 ;;    `icicle-bind-top-level-commands-flag', `icicle-buffer-configs',
 ;;    `icicle-buffer-extras',
@@ -269,7 +265,8 @@
 ;;    `icicle-delete-if-not', `icicle-delete-whitespace-from-string',
 ;;    `icicle-display-Completions',
 ;;    `icicle-display-candidates-in-Completions',
-;;    `icicle-execute-extended-command-1', `icicle-file-directory-p',
+;;    `icicle-execute-extended-command-1', `icicle-expand-file-name',
+;;    `icicle-file-directory-p',
 ;;    `icicle-file-name-apropos-candidates',
 ;;    `icicle-file-name-directory-w-default',
 ;;    `icicle-file-name-input-p', `icicle-file-name-nondirectory',
@@ -278,7 +275,8 @@
 ;;    `icicle-filter-alist', `icicle-filter-wo-input',
 ;;    `icicle-find-file-w-wildcards',
 ;;    `icicle-find-file-other-window-w-wildcards', `icicle-frames-on',
-;;    `icicle-highlight-complete-input', `icicle-imenu-in-buffer-p',
+;;    `icicle-highlight-complete-input',
+;;    `icicle-historical-alphabetic-p', `icicle-imenu-in-buffer-p',
 ;;    `icicle-increment-cand-nb+signal-end',
 ;;    `icicle-increment-color-hue', `icicle-increment-color-value',
 ;;    `icicle-insert-input', `icicle-insert-thesaurus-entry-cand-fn',
@@ -329,7 +327,7 @@
 ;;    `icicle-common-match-string', `icicle-complete-input-overlay',
 ;;    `icicle-completion-candidates' `icicle-completion-help-string',
 ;;    `icicle-current-completion-candidate-overlay',
-;;    `icicle-current-input', `icicle-current-regexp-input',
+;;    `icicle-current-input', `icicle-current-raw-input',
 ;;    `icicle-default-directory',
 ;;    `icicle-default-thing-insertion-flipped-p',
 ;;    `icicle-extra-candidates', `icicle-icompleting-p',
@@ -1354,18 +1352,16 @@
 ;;
 ;;  If you use standard Emacs command `switch-to-buffer' then `RET'
 ;;  does not behave this way; it simply accepts your input, `new', and
-;;  creates a new buffer with that name.  If you set user option
-;;  `icicle-bind-top-level-commands-flag' to nil, then Icicles will
-;;  not change any of your global bindings, and, in that case, when
-;;  you use `C-x b' you get the `switch-to-buffer' behavior in the
-;;  context of Icicles.
+;;  creates a new buffer with that name.  
 ;;
-;;  By default, Icicles command `icicle-buffer' behaves the same way
-;;  as `switch-to-buffer' in this regard.  However, you can obtain the
-;;  complete-and-exit behavior with `icicle-buffer' by setting option
-;;  `icicle-buffer-require-match-flag' to `partial-match-ok'.  This
-;;  value overrides the REQUIRE-MATCH argument to `completing-read',
-;;  in effect forcing it to `t'.
+;;  By default, Icicles command `icicle-buffer', not
+;;  `switch-to-buffer', is bound to `C-x b' in Icicle mode.  The
+;;  default behavior of `icicle-buffer' is the same as the behavior of
+;;  `switch-to-buffer' with respect to `RET'.  However, you can obtain
+;;  the complete-and-exit `RET' behavior with `icicle-buffer' by
+;;  setting option `icicle-buffer-require-match-flag' to
+;;  `partial-match-ok'.  This value overrides the REQUIRE-MATCH
+;;  argument to `completing-read', in effect forcing it to `t'.
 ;;
 ;;  Whenever completion *requires* a match against one of the
 ;;  completion candidates (typically, an existing file or buffer
@@ -1376,6 +1372,10 @@
 ;;  specific to Icicles and uses apropos completion.  For example, you
 ;;  can type `idea' followed by `S-RET' to switch to buffer
 ;;  `new-ideas.txt'.
+;;
+;;  Note: If you set user option `icicle-bind-top-level-commands-flag'
+;;  to nil, then `C-x b' remains bound to `switch-to-buffer', even in
+;;  Icicle mode.
 
 ;;
 ;;
@@ -1608,19 +1608,47 @@
 ;;  Multi-Commands
 ;;  --------------
 ;;
-;;  Certain Icicles commands let you make multiple input choices in a
-;;  single command execution.  In effect, you can choose multiple
-;;  items from a set of choices, using buffer *Completions* as a
-;;  multiple-choice "menu".  (It's not necessary to display
-;;  *Completions*, however.)
+;;  ** What Is a Multi-Command? **
 ;;
-;;  I call such multiple-choice commands "multi-commands".  When a
-;;  multi-command prompts you for input, you can make a single choice
-;;  and press `RET' to confirm it, as usual, or you can choose any
-;;  number of completion candidates, using `C-RET' (or `C-mouse-2')
-;;  for each.  You can thus act on multiple candidates, or even
-;;  multiple times on the same candidate, during the same execution of
-;;  the command.
+;;  A multi-command is a command that lets you make multiple input
+;;  choices in a single command execution: a multiple-choice command.
+;;  You can choose multiple items from a set of choices, using buffer
+;;  *Completions* as a multiple-choice "menu".  (It's not necessary to
+;;  display *Completions*, however.)  Instead of asking you "Which
+;;  file do you want to delete?", a multi-command asks you, in effect,
+;;  "Which file(S) do you want to delete?".
+;;
+;;  Nothing especially new here. Any Emacs command could be defined to
+;;  use an input loop, asking for file names until you do something to
+;;  signal that you're done inputting. It could provide for file-name
+;;  completion by calling `read-file-name' to read your input.
+;;
+;;  * But what if you could also filter the domain of discourse on the
+;;    fly, so that the candidate files were only those matching a
+;;    regular expression (regexp) that you typed? Then, the command
+;;    definition would need to provide for that behavior too.
+;;
+;;  * And what if you could then take the complement of that set of
+;;    candidate file names, with respect to the complete set of files
+;;    in the directory? Or subtract (exclude) some set of file names
+;;    from the set of matching names, to get the set of possible
+;;    choices?
+;;
+;;  * And what if the set of potential candidates at each step (regexp
+;;    match, complement, set difference) could also be displayed in a
+;;    multiple-choice menu?
+;;
+;;  For such multi-command functionality you need Icicles.
+;;
+;;  ** How Does a Multi-Command Work? **
+;;
+;;  When an Icicles multi-command prompts you for input, you can make
+;;  a single choice and press `RET' to confirm it, as usual, or you
+;;  can choose any number of completion candidates, using `C-RET' (or
+;;  `C-mouse-2') for each.  You can thus act on multiple candidates,
+;;  or even multiple times on the same candidate, during the same
+;;  execution of the command. But you don't have to - you can use any
+;;  multi-command just as if it were a normal, single-choice command.
 ;;
 ;;  For example, command `icicle-delete-file' lets you delete a single
 ;;  file or a set of files that match your minibuffer input - all in
@@ -1635,16 +1663,8 @@
 ;;  You make multiple choices this way by cycling through the
 ;;  candidate completions, as usual, and hitting `C-RET' whenever you
 ;;  want to choose (act on) the current cycle candidate.  Or, just
-;;  press and hold Control while clicking each candidate with
+;;  press and hold Control while clicking each chosen candidate with
 ;;  `mouse-2'.
-;;
-;;  Sound familiar?  This is the same thing that you do to access help
-;;  on a candidate (see previous section).  A multi-command is just
-;;  any command that has a special action defined for use with `C-RET'
-;;  (command `icicle-candidate-action') on the current cycle
-;;  candidate.  If no such special action is defined, then help on the
-;;  candidate is displayed - displaying help is just the default
-;;  action, used when no other action is defined.
 ;;
 ;;  Similarly, you can use `C-next', `C-prior', `C-down', and `C-up'
 ;;  to both choose (that is, act on) the current candidate and move
@@ -1668,6 +1688,14 @@
 ;;  multi-command are easily reversible, `C-g' will often restore
 ;;  things to the way they were before performing the actions.
 ;;
+;;  Does this all sound familiar?  Using a multi-command is just like
+;;  accessing to access help on a candidate (see "Help on Candidates",
+;;  above).  A multi-command is any command that has a special action
+;;  defined for use with `C-RET' (command `icicle-candidate-action')
+;;  on the current cycle candidate.  If no such special action is
+;;  defined, then help on the candidate is displayed - displaying help
+;;  is just the default action, used when no other action is defined.
+;;
 ;;  You can also cycle among elements of a set, performing actions, if
 ;;  you use my libraries `doremi.el', `doremi-cmd.el', and
 ;;  `doremi-frm.el'.  Like Icicles, DoReMi lets you see the effect of
@@ -1679,8 +1707,8 @@
 ;;    - restoration after making changes, letting you preview changes
 ;;      without actually applying them
 ;;
-;;  See also: "Defining Multi-Commands" for how to define your own
-;;  multi-commands.
+;;  See also: "Defining Icicles Commands (Including Multi-Commands)"
+;;  for how to define your own multi-commands.
 
 ;;
 ;;
@@ -2243,6 +2271,22 @@
 ;;
 ;;  If this all sounds confusing, just give it a try; it is much
 ;;  harder to describe than it is to experience.
+;;
+;;  One final thing to note: During completion, `M-,' sorts completion
+;;  candidates in an alternative order, as determined by option
+;;  `icicle-alternative-sort-function'.  This sorting method holds
+;;  only for the duration of the current command.  The default
+;;  alternative sort (function `icicle-historical-alphabetic-p') puts
+;;  all previously used inputs first, before the candidates you have
+;;  not yet used.  Each of these groups, used and unused candidates,
+;;  is sorted alphabetically, separately.  So, with the default
+;;  alternative sort, you can see all matching candidates (used and
+;;  unused), but you privilege those used previously - they are the
+;;  first listed in *Completions* and the first available for cycling.
+;;  If you prefer, you can use `icicle-historical-alphabetic-p' as the
+;;  main sort function (option `icicle-sort-function') and some other
+;;  sort function (e.g. `string-lessp') as the alternative sort
+;;  function.
 
 ;;
 ;;
@@ -2869,8 +2913,7 @@
 ;;  features.  You can use it to complete a word in a text buffer to
 ;;  any word or phrase in the thesaurus.  If user option
 ;;  `icicle-bind-top-level-commands-flag' is non-nil (which it is by
-;;  default), then this is bound to `C-c /'; if it is nil, then
-;;  Icicles makes no global bindings.
+;;  default), then this is bound to `C-c /' in Icicle mode.
 ;;
 ;;  Tip: You can use `icicle-complete-thesaurus-entry' to quickly
 ;;  check the spelling of a word.  If it is correctly spelled, then it
@@ -3003,7 +3046,9 @@
 ;;    behavior of `insert'.  I recommend that you try `insert' for a
 ;;    while, before giving up on it.  If you leave this as nil,
 ;;    remember that you can always insert the default value manually
-;;    with `M-n'.
+;;    with `M-n'.  If you do set this to a non-nil value, you can
+;;    always use `M-p' to remove the default value from the
+;;    minibuffer.
 ;;
 ;;  * The particular non-nil value of `icicle-init-value-flag'
 ;;    controls whether or not the initial value is preselected, and,
@@ -3114,6 +3159,16 @@
 ;;    programmer and you write new commands using Icicles
 ;;    functionalities, you can bind `icicle-sort-function' temporarily
 ;;    to any sort function you need.
+;;
+;;  * User option `icicle-alternative-sort-function' is an alternative
+;;    to `icicle-sort-function' that is used temporarily, when you hit
+;;    `M-,' in the minibuffer.  It can be any string predicate.  By
+;;    default, it is `icicle-historical-alphabetic-p', a function that
+;;    sorts previously used completion candidates before candidates
+;;    that have not yet been used, and sorts alphabetically within
+;;    each of these groups of candidates.  In other words, it places
+;;    inputs that you have used previously at the top of buffer
+;;    *Completions* and makes them available for completion first.
 ;;
 ;;  * User options `icicle-require-match-flag' and
 ;;    `icicle-buffer-require-match-flag' let you override the value of
@@ -3257,17 +3312,18 @@
 ;;    it will be used next time.
 ;;
 ;;  * Non-nil user option `icicle-expand-input-to-common-match-flag'
-;;    means that `S-TAB' (`apropos-complete') expands your minibuffer
-;;    input to the longest common match among all completion
-;;    candidates.  This replaces your regexp input, completing it as
-;;    far as possible.  If you want to edit your original regexp
-;;    input, use `C-l'.  If your input has been expanded, then hit
-;;    `C-l' twice: once to replace a completion candidate (from, say,
-;;    `next') with the common match string, and a second time to
-;;    replace the common match string with your original regexp input.
-;;    If you want to always work with a regexp in the minibuffer, then
-;;    set this option to nil.  See "Longest-Common-Match Completion",
-;;    above.
+;;    means that completion commands `TAB' and `S-TAB' expand your
+;;    minibuffer input to the longest common match among all
+;;    completion candidates.  This replaces the input you typed,
+;;    completing it as far as possible.  If you want to edit your
+;;    original, raw input, use `C-l'.  If your input has been
+;;    expanded, then hit `C-l' twice: once to replace a completion
+;;    candidate (from, say, `next') with the common match string, and
+;;    a second time to replace the common match string with your
+;;    original input.  The main reason you might want to set this to
+;;    nil is for apropos completion, if you want to always work with a
+;;    regexp in the minibuffer.  See "Longest-Common-Match
+;;    Completion", above.
 ;;
 ;;  * Non-nil user option `icicle-arrows-respect-completion-type-flag'
 ;;    causes the vertical arrow keys (`up' and `down') to act
@@ -3294,16 +3350,11 @@
 ;;    highlighting it is easy to not notice the whitespace.
 ;;
 ;;  * Non-nil option `icicle-bind-top-level-commands-flag' binds
-;;    several top-level Icicles commands to key sequences.  It does
-;;    this by loading library `icicles-keys.el'.  Top-level commands
-;;    are commands that are not used only in the minibuffer.  Be aware
-;;    that this changes some standard key bindings.  For example, it
-;;    substitutes `icicle-kill-buffer' for `kill-buffer' (binding it
-;;    to whatever `kill-buffer' was bound to).  If you want to bind
-;;    top-level Icicles commands but you want different bindings from
-;;    those defined in `icicles-keys.el', then you can add your own
-;;    bindings, either in place of, or after, loading library
-;;    `icicles-keys.el'.
+;;    several top-level Icicles commands when you are in Icicle mode.
+;;    For example, it substitutes `icicle-kill-buffer' for
+;;    `kill-buffer' (binding it to whatever `kill-buffer' is bound to
+;;    globally).  Top-level commands are commands that are not used
+;;    only in the minibuffer.
 
 ;;
 ;;
@@ -3410,31 +3461,16 @@
 ;;  Key Bindings
 ;;  ------------
 ;;
-;;  Icicles makes three kinds of key bindings:
-;;
-;;  1. global bindings (optional)
-;;  2. Icicle-mode bindings
-;;  3. minibuffer local bindings
-;;
-;;  These are discussed here in two sections, one for the optional
-;;  bindings (#1) and one for the others (#2, #3).
-;;
-;;  Note that #2 and #3 are also optional in the sense that you can
-;;  override them with any bindings you like.  You can prevent global
-;;  bindings (#1) from being made in the first place.
-;;
-;;
 ;;  ** Global Bindings **
 ;;
-;;  Global bindings are changed by Icicles only if user option
-;;  `icicle-bind-top-level-commands-flag' is non-nil (which it is by
-;;  default).  If you set this option to nil, then Icicles will _not
-;;  change any of your global key bindings_.
+;;  Icicles does not change your global key bindings. It changes some
+;;  minibuffer bindings, and it adds some bindings for Icicle mode,
+;;  but it does not change your global bindings.
 ;;
 ;;  There is an exception: In Icicle mode, various Icicles commands
 ;;  are added to menu-bar menus.  File commands are added to the File
 ;;  menu, and so on.  Those that do not belong naturally to any
-;;  existing menu-bar menu are added to a new Icicles menu and
+;;  existing menu-bar menu are added to a new Icicles menu and to
 ;;  existing menu Minibuf.  Whatever the menu they appear in, however,
 ;;  Icicles menu items are enabled only when Icicle mode is active.
 ;;  Those that are in a menu other than the Icicles menu have "[Icy]"
@@ -3444,16 +3480,18 @@
 ;;  and Icicles, then set option `icicle-touche-pas-aux-menus' to
 ;;  non-nil.  See "Customizing Key Bindings", below.
 ;;
-;;  There is one more thing to say about Icicles global bindings,
-;;  should you decide to accept them: they are pretty innocuous.
-;;  Either the same key sequences are not bound in vanilla Emacs or
-;;  they are bound to similar commands.  And, in the latter case, the
-;;  Icicles commands generally revert to doing what the standard
-;;  commands do when you are not in Icicle mode.  In particular, the
-;;  Icicles versions are multi-commands (see "Multi-Commands", above)
-;;  that simply act as normal commands except in Icicle mode.
+;;  ** Icicles-Mode Bindings **
 ;;
-;;  Icicles makes the following global bindings:
+;;  Most Icicle-mode bindings are in the Icicles menubar menu.  If
+;;  user option `icicle-bind-top-level-commands-flag' is non-nil
+;;  (which it is by default), then additional, non-menu bindings are
+;;  made in Icicle mode.  Some of these take the place of similar,
+;;  global bindings when you are in Icicle mode.  Typically, the
+;;  Icicles commands are multi-command versions of the vanilla Emacs
+;;  commands (see "Multi-Commands", above).
+;;
+;;  Icicles makes the following Icicle-mode bindings, in addition to
+;;  Icicles-menu bindings:
 ;;
 ;;  * `C-c C-s'        - `icicle-search'
 ;;  * `C-c C-s'        - `icicle-compilation-search' (in grep etc.)
@@ -3462,12 +3500,13 @@
 ;;  * `ESC M-x', `M-`' - `icicle-execute-menu-command'
 ;;
 ;;  Icicles also substitutes all of the key bindings for some standard
-;;  commands.  For example, instead of simply binding `icicle-buffer'
-;;  to `C-x b', it binds it to all keys originally bound to standard
-;;  command `switch-to-buffer'.  The following standard commands have
-;;  their bindings coopted this way by Icicles commands:
+;;  commands.  For example, instead of binding `icicle-buffer' to `C-x
+;;  b' in Icicle mode, Icicles binds `icicle-buffer' to all keys that
+;;  are globally bound to standard command `switch-to-buffer'.  The
+;;  following standard commands have their bindings co-opted this way
+;;  by Icicles (multi-)commands:
 ;;
-;;  Standard Command                   Icicles Command
+;;  Standard Command                   Icicles (Multi-)Command
 ;;
 ;;  `switch-to-buffer'.................`icicle-buffer'
 ;;  `switch-to-buffer-other-window'....`icicle-buffer-other-window'
@@ -3476,7 +3515,7 @@
 ;;  `kill-buffer'......................`icicle-kill-buffer'
 ;;
 ;;  Here are some other Icicles commands that you might want to bind
-;;  to keys:
+;;  to keys in Icicle mode - they are not bound by Icicles:
 ;;
 ;;  `icicle-add-buffer-candidate' -
 ;;                          Add buffer to those always shown
@@ -3523,16 +3562,7 @@
 ;;  `icicle-vardoc'       - Display the doc of a variable
 ;;
 ;;
-;;  ** Minibuffer and Icicle-mode Bindings **
-;;
-;;  Again, other than the following exceptions, Icicles binds keys
-;;  only in the Icicle-mode keymap and in minibuffer local keymaps:
-;;
-;;  * If `icicle-bind-top-level-commands-flag' is non-nil, then some
-;;    Icicles commands are bound globally to keyboard key sequences.
-;;
-;;  * If `icicle-touche-pas-aux-menus' is nil, then some Icicles
-;;    commands are added to menu-bar menus such as File and Options.
+;;  ** Minibuffer Bindings **
 ;;
 ;;  The following key bindings are made for the minibuffer completion
 ;;  keymaps.  They are in effect whenever you are using the minibuffer
@@ -3607,7 +3637,7 @@
 ;;
 ;;  `C-l' also has another important use: You can use it to retrieve
 ;;  your last input in case you never actually entered that input (via
-;;  `RET').  For example, suppose that you used `C-h v RET hook' to
+;;  `RET').  For example, suppose that you used `C-h v hook' to
 ;;  examine various hook variables, and you did this using`C-next' to
 ;;  display their documentation.  If you finished the command by just
 ;;  typing `C-g', then your input (`hook') was never really entered,
@@ -3659,6 +3689,7 @@
 ;;  The following minibuffer bindings let you toggle Icicles options.
 ;;
 ;;    `C-,'     - `icicle-toggle-sorting'
+;;    `M-,'     - `icicle-alternative-sort' (duration of command only)
 ;;    `C-.'     - `icicle-toggle-ignored-extensions': file extensions
 ;;    `C-^'     - `icicle-toggle-ignored-space-prefix'
 ;;    `C-#'     - `icicle-toggle-incremental-completion'
@@ -3800,22 +3831,426 @@
 
 ;;
 ;;
-;;  Defining Multi-Commands
-;;  -----------------------
+;;  Defining Icicles Commands (Including Multi-Commands)
+;;  ----------------------------------------------------
 ;;
-;;  If you are an Emacs-Lisp programmer, you can define your own
-;;  multi-commands (see "Multi-Commands", above).  You define a
-;;  function that acts on a single object, and then use that function
-;;  in a multi-command to act on either a single object or multiple
-;;  objects.  There are lots of possible applications.
+;;  This section is for Emacs-Lisp programmers.
 ;;
-;;  To write your own multi-command, make the command do this:
+;;  ** Nothing To It! **
+;;
+;;  Defining a command that uses Icicles completion and cycling is
+;;  simple: just call `completing-read' or `read-file-name' to read
+;;  input, then act on that input.
+;;
+;;  Nothing could be simpler - just use `completing-read'or
+;;  `read-file-name'!  Icicles does the rest.  This is the most
+;;  important thing to learn about defining Icicles commands: you
+;;  don't need to do anything except call `completing-read' or
+;;  `read-file-name' as you would normally anyway.
+;;
+;;  Or at least as I HOPE you would normally.  I fear that many
+;;  Emacs-Lisp programmers don't take sufficient advantage of
+;;  `completing-read' when they could, using instead a function such
+;;  as (quel horreur !)  `read-string' to read user input.
+;;
+;;  ** Multi-Commands Are Easy To Define Too **
+;;
+;;  If defining an Icicles command is trivial, so is defining an
+;;  Icicles multi-command.  For the same effort it takes to define a
+;;  command that acts on a single input choice, you can have a command
+;;  that acts on any number of input choices.  A multi-command takes
+;;  advantage of an action function when cycling candidates, as
+;;  described in "Multi-Commands" and "Choose All Completion
+;;  Candidates", above.
+;;
+;;  In fact, there is no reason NOT to define your commands as
+;;  multi-commands - you lose nothing, and you gain a lot.  Whenever
+;;  it is appropriate for a user to possibly want to act on multiple
+;;  objects, define a multi-command that does that.
+;;
+;;  Macros `icicle-define-command' and `icicle-define-file-command'
+;;  make it easy to define a multi-command.  Without them, it is not
+;;  so easy - see "Defining Multi-Commands the Hard Way", below, for a
+;;  taste of what is involved.  If you read that section first, make
+;;  sure you come back here to see how easy things can be.
+;;
+;;  Here is how you might define a multi-command to delete one or more
+;;  files or directories:
+;;
+;;  1. Define the multi-command, `my-delete-file':
+;;
+;;  (icicle-define-file-command
+;;   my-delete-file                  ; Command name
+;;   "Delete a file or directory."   ; Doc string
+;;   my-delete-file-or-directory     ; Function to perform the action
+;;   "Delete file or directory: "    ; `read-file-name' arguments...
+;;   default-directory nil t)
+;;
+;;  2. Define the action function that deletes a single file:
+;;
+;;  (defun my-delete-file-or-directory (file)
+;;    "Delete file (or directory) FILE."
+;;    (condition-case i-delete-file
+;;        (if (eq t (car (file-attributes file)))
+;;            (delete-directory file)
+;;          (delete-file file))
+;;      (error (message (error-message-string i-delete-file))
+;;             (error (error-message-string i-delete-file)))))
+;;
+;;  There are two parts to the definition of `my-delete-file':
+;;
+;;  1. The definition of the command itself, using
+;;     `icicle-define-file-command'.
+;;
+;;  2. The definition of a helper, action function,
+;;     `my-delete-file-or-directory', which deletes a single file (or
+;;     directory), given its name.
+;;
+;;  It is #1 that is of interest here, because that is essentially
+;;  what you do to define any multi-command.
+;;
+;;  The details of #2 are less interesting, even if more complex in
+;;  this case: `my-delete-file-or-directory' checks whether its
+;;  argument is a file or directory, and then tries to delete it. If
+;;  an error occurs, it prints the error message and then returns the
+;;  message, so that the calling command can report on all deletion
+;;  errors.
+;;
+;;  In #1, the arguments to `icicle-define-file-command' are
+;;  straightforward:
+;;
+;;  * The name of the command being defined `my-delete-file'.
+;;
+;;  * Its doc string.
+;;
+;;  * The function that actually performs the action on the input file
+;;    name - `my-delete-file-or-directory'.
+;;
+;;  * The arguments that you would supply anyway to `read-file-name'
+;;    to read a single file name.
+;;
+;;  These are the SAME things you would need if you were defining a
+;;  simple command to delete a SINGLE file or directory. The only
+;;  differences here are that you:
+;;
+;;  * Use `icicle-define-file-command' instead of `defun' with an
+;;    `interactive' spec.
+;;
+;;  * Separate the action code into a separate function (here,
+;;    `my-delete-file-or-directory') that acts on a single object
+;;    (here, a file).
+;;
+;;  When you use `icicle-define-file-command', the action function is
+;;  called on the result of `read-file-name', and it is also bound to
+;;  `icicle-candidate-action-fn', so that it will be applied to the
+;;  current candidate via `C-RET' (or `C-next' and so on).
+;;
+;;  Command `icicle-all-candidates-action' (`C-!' -- see "Choose All
+;;  Completion Candidates", above) reports in buffer *Help* on the
+;;  objects that it did not act upon successfully.  For this
+;;  reporting, the function bound to `icicle-candidate-action-fn'
+;;  (e.g. `my-delete-file-or-directory', above) should return `nil'
+;;  for "success" and non-`nil' (for example, an error message) for
+;;  "failure", whatever "success" and "failure" might mean in the
+;;  particular context of use.  This is not a requirement, except if
+;;  you want to take advantage of such reporting.  For a command that
+;;  deletes files, it is important to let the user know which
+;;  deletions failed when s?he tries to delete all matching
+;;  candidates at once.
+;;
+;;  If the command you want to define acts on objects other than
+;;  files, then use `icicle-define-command' instead of
+;;  `icicle-define-file-command' - the only difference is that you
+;;  then supply the arguments for `completing-read' instead of those
+;;  for `read-file-name'.
+;;
+;;  To let users know that a command is a multi-command, and how to
+;;  use it as such, `icicle-define-command' and
+;;  `icicle-define-file-command' add this explanation to the doc
+;;  string you provide for the multi-command:
+;;
+;;  ---
+;;  Read input, then call `<your action function name>' to act on it.
+;;
+;;  Input-candidate completion and cycling are available.  While
+;;  cycling, these keys act on the current candidate:
+;;
+;;  `C-RET'  - Act on current completion candidate only
+;;  `C-next' - Act, then move to next prefix-completion candidate
+;;  `C-prior'- Act, then move to previous prefix-completion candidate
+;;  `next'   - Act, then move to next apropos-completion candidate
+;;  `prior'  - Act, then move to previous apropos-completion candidate
+;;  `C-!'    - Act on *all* candidates, successively (careful!)
+;;
+;;  Use `RET' or `S-RET' to finally choose a candidate, or `C-g' to
+;;  quit.  This is an Icicles command - see `icicle-mode'.
+;;  ---
+;;
+;;  Notice that the doc string of your new multi-command references
+;;  your action function (e.g. `my-delete-file-or-directory').  The
+;;  doc string you provide for the multi-command can thus be a little
+;;  more abstract, leaving any detailed explanation of the action to
+;;  the doc string of your action function.
+;;
+;;  To provide more flexibility, `icicle-define-command' and
+;;  `icicle-define-file-command' provide some predefined bindings and
+;;  allow for additional arguments.
+;;
+;;  Here is a definition of a multi-command, `change-font', that reads
+;;  a font name and changes the selected frame to use that font.
+;;
+;;  1  (icicle-define-command
+;;  2   change-font "Change font of current frame."
+;;  3   (lambda (font)
+;;  4     (modify-frame-parameters orig-frame
+;;  5                              (list (cons 'font font))))
+;;  6   "Font: " (mapcar #'list (x-list-fonts "*"))
+;;  7   nil t nil nil nil nil
+;;  8   ((orig-frame (selected-frame))
+;;  9    (orig-font (frame-parameter nil 'font)))
+;;  10  nil
+;;  11  (modify-frame-parameters orig-frame
+;;  12                           (list (cons 'font orig-font)))
+;;  13  nil)
+;;
+;;  The arguments to `icicle-define-command' here are as follows:
+;;
+;;  Command name    (line 2)
+;;  Doc string      (line 2)
+;;  Action function (lines 3-5)
+;;  Args passed to `completing-read' (lines 6-7)
+;;  Additional bindings (lines 8-9)
+;;  Additional initialization code (line 10)
+;;  "Undo" code to run in case of error or user quit (lines 11-12)
+;;  Additional code to run at the end (line 13)
+;;
+;;  The following bindings are predefined - you can refer to them in
+;;  the command body:
+;;
+;;   `orig-buff'   is bound to (current-buffer)
+;;   `orig-window' is bound to (selected-window)
+;;
+;;  Before running any "undo" code that you supply, the original
+;;  buffer is restored, in case of error or user quit (`C-g').
+;;
+;;  Most of the arguments to `icicle-define-command' are optional.  In
+;;  this case, optional arguments were provided to save (lines 8-9)
+;;  and then restore (lines 11-12) the original font and frame.
+;;
+;;  Several top-level Icicles commands have been defined using
+;;  `icicle-define-command' and `icicle-define-file-command'.  You can
+;;  use their definitions as models for your own multi-commands.
+;;
+;;  `icicle-add-buffer-candidate' - Add buffer to those always shown
+;;  `icicle-add-buffer-config' - Add to `icicle-buffer-configs'
+;;  `icicle-bookmark'     - Jump to a bookmark
+;;  `icicle-buffer'       - Switch to another buffer
+;;  `icicle-buffer-config' - Choose a config for `icicle-buffer'
+;;  `icicle-buffer-list'  - Choose a list of buffer names
+;;  `icicle-clear-option' - Set the value of a binary option to nil
+;;  `icicle-color-theme'  - Change color theme
+;;  `icicle-delete-file'  - Delete a file or directory
+;;  `icicle-doc'          - Display the doc of a function or variable
+;;  `icicle-execute-extended-command' -
+;;                          A multi-command version of `M-x'
+;;  `icicle-find-file'    - Open a file or directory
+;;  `icicle-font'         - Change the frame font
+;;  `icicle-frame-bg'     - Change the frame background color
+;;  `icicle-frame-fg'     - Change the frame foreground color
+;;  `icicle-fundoc'       - Display the doc of a function
+;;  `icicle-insert-thesaurus-entry' -
+;;                          Insert thesaurus entry(s)
+;;  `icicle-kill-buffer'  - Kill a buffer
+;;  `icicle-locate-file'  - Open a file located anywhere
+;;  `icicle-recent-file'  - Open a recently used file
+;;  `icicle-remove-buffer-candidate' - 
+;;                          Remove buffer from those always shown
+;;  `icicle-remove-buffer-config' - 
+;;                          Remove from `icicle-buffer-configs'
+;;  `icicle-reset-option-to-nil' -
+;;                          Set value of binary option to nil
+;;  `icicle-set-option-to-t' -
+;;                          Set value of binary option to t
+;;  `icicle-toggle-option' - Toggle the value of a binary option
+;;  `icicle-vardoc'       - Display the doc of a variable
+;;
+;;  For simplicity, the descriptions of these commands are singular
+;;  actions (e.g. "kill a buffer"), but each of them can be used to
+;;  act on any number of items any number of times (e.g. kill one or
+;;  more buffers).  I recommend that you follow a similar naming
+;;  convention - remember that the doc string will let users know that
+;;  the command can be used on multiple objects.
+;;
+;;  ** Are Users Dependent on Icicles To Use Multi-Commands? **
+;;
+;;  For users to be able to take advantage of the Icicles features
+;;  that your multi-command provides, they must load Icicles. You can
+;;  do this for them, by adding (require 'icicles nil t) to your
+;;  code. The last two arguments mean that no error will be raised if
+;;  for some reason Icicles cannot be found or successfully loaded.
+;;
+;;  But that brings up another question: What happens to your
+;;  multi-command if Icicles is not available for a user, or s?he
+;;  doesn't want to load it? No problem - your multi-command then
+;;  automatically turns into a normal, single-choice command -
+;;  graceful degradation.
+;;
+;;  Similarly, users can always turn off `icicle-mode' at any time, to
+;;  return to the standard Emacs behavior.
+;;
+;;  Users will, in any case, need to load Icicles at compile time, in
+;;  order to byte-compile your library that calls macro
+;;  `icicle-define-command' or `icicle-define-file-command' - either
+;;  that, or you can duplicate the definition of the macro in your
+;;  library. To let users load Icicles at (only) compile time, add
+;;  this to your library that defines multi-commands:
+;;
+;;  (eval-when-compile '(require icicles))
+;;
+;;  See also:
+;;
+;;  * Library `synonyms.el', which uses `icicle-define-command' to
+;;    define command `synonyms'.  This command lets you use Icicles
+;;    completion on input regexps when you search a thesaurus.
+;;
+;;  * Library `palette.el', which uses `icicle-define-command' to
+;;    define command `palette-pick-color-by-name-multi'.  This command
+;;    lets you use Icicles completion on input regexps when you choose
+;;    a palette color by name.
+
+;;
+;;
+;;  Defining Multiple-Choice Menus
+;;  ------------------------------
+;;
+;;  Icicles multi-commands (see "Multi-Commands", above) can be used
+;;  provide users with multiple-choice menus.  While the possible
+;;  choices can be accessed by minibuffer completion or cycling, a
+;;  user can also display them in buffer *Completions* using `TAB' or
+;;  `S-TAB', and click them there to choose them.
+;;
+;;  That is, buffer *Completions* can act as a multiple-choice menu.
+;;
+;;  Simple use case: Suppose that you use special characters (Greek
+;;  letters, math symbols, accented letters in another language...),
+;;  but only occasionally - you don't want to take the trouble to
+;;  learn a special input method for them or flip to a different soft
+;;  keyboard.  One simple way to handle this is to create a menu of
+;;  such special characters - Greek letters, for instance.  You only
+;;  need to create the menu once, providing the necessary completions
+;;  as, say, Unicode characters.  When you need to input such a
+;;  character, just use your command that pops up buffer *Completions*
+;;  with the available special characters.  Even if you don't know how
+;;  to type them on your keyboard, you can cycle through them or use
+;;  `mouse-2' to choose them.
+;;
+;;  Here's a simple example of defining a command that uses a
+;;  multiple-choice menu.  (Other examples given above, such as
+;;  `my-delete-file-or-directory' are also examples, but this one uses
+;;  menu items that look more like menu items.)
+;;
+;;  (icicle-define-command my-menu-command
+;;      "Display menu and act on choice(s)."
+;;      my-menu-action
+;;      "`TAB' for menu.  `C-mouse-2' to choose. "
+;;      my-menu-items nil t)
+;;
+;;  (defvar my-menu-items 
+;;    '(("Foobar" . foobar-fn) ("Toto" . toto-fn) ("Titi" . titi-fn))
+;;    "Alist of menu items and their associated commands.")  
+;;
+;;  (defun my-menu-action (item)
+;;    "Call function associated with menu-item ITEM."
+;;    (funcall (cdr (assoc item my-menu-items))))
+;;
+;;  (defun foobar-fn () (message "Foobar chosen"))                    
+;;  (defun toto-fn () (message "Toto chosen"))                     
+;;  (defun titi-fn () (message "Titi chosen"))
+;;
+;;  A user does `M-x my-menu-command' and hits `TAB' to display this
+;;  menu in the *Completions* buffer:
+;;
+;;  Click mouse-2 on a completion to select it.  (C-h: help)
+;;
+;;  Possible completions are:
+;;  Foobar          Titi
+;;  Toto
+;;
+;;  The user presses and holds the Control key.  S?he clicks `Foobar'
+;;  - message "Foobar chosen" appears.  S?he clicks `Toto - message
+;;  "Toto chosen" appears.
+;;
+;;  And so on - all while holding Control pressed. Any number of menu
+;;  items can be chosen, any number of times. The command is finally
+;;  exited with `RET' or `C-g'.
+;;
+;;  The `TABLE' argument passed to `completing-read' here is
+;;  `my-menu-items', an alist of key-value pairs, where the key is a
+;;  menu-item name and the value is the function that implements the
+;;  menu item. For example, menu item `Foobar' is implemented by
+;;  function `foobar-fn', and the alist element is therefore
+;;  ("Foobar" . foobar-fn).
+;;
+;;  Function `my-menu-action' is executed when a user clicks
+;;  `C-mouse-2' on a menu item. It just looks up the menu item's
+;;  function in alist `my-menu-items', and then calls that function.
+;;
+;;  What? You think it's odd that the user must hit `TAB' to display
+;;  the menu? Then just use this code instead:
+;;
+;;  (icicle-define-command
+;;   my-menu-command
+;;   "Display menu and act on choice(s)."
+;;   my-menu-action
+;;   "`C-mouse-2' or `C-RET' to choose menu items"
+;;   my-menu-items nil t nil nil nil nil
+;;   ((icicle-show-*Completions*-initially-flag t)))
+;;
+;;  This just adds a binding for
+;;  `icicle-show-*Completions*-initially-flag', so that *Completions*
+;;  is displayed initially.
+;;
+;;  Granted, the *Completions* display doesn't exactly look like your
+;;  average menu. And the header line doesn't mention the
+;;  multiple-choice possibility (holding Control while clicking). But
+;;  the header does say to use `C-h' for help, and that help does
+;;  mention `C-mouse-2' (as does the prompt). And the menu does act
+;;  like a menu. And the doc string of `my-menu-command' can provide
+;;  more help, as needed.
+;;
+;;  There are also some freebie advantages of using such menus,
+;;  besides the feature of multiple-choice. These include choosing
+;;  menu items from the keyboard, with completion, and cycling among
+;;  menu items. The additional features are all explained when the
+;;  user hits `C-h'.
+
+;;
+;;  
+;;  Defining Multi-Commands the Hard Way
+;;  ------------------------------------
+;;
+;;  This section is for Emacs-Lisp programmers.  It gives you a taste
+;;  of what is involved behind the scene when you effortlessly use
+;;  `icicle-define-command' or `icicle-define-file-command' to define
+;;  a multi-command (see "Defining Icicles Commands (Including
+;;  Multi-Commands)", above).
+;;
+;;  It can be good to know this, if only for the rare case where you
+;;  need to define a multi-command that has special behavior not
+;;  provided by `icicle-define(-file)-command' out of the box.  For
+;;  example, if you want the normal, single-choice `RET' behavior to
+;;  be different from the multiple-choice `C-RET' behavior, then you
+;;  might want to roll your own.
+;;
+;;  To write your own multi-command, you must make the command do
+;;  this:
 ;;
 ;;  1. Call `completing-read' or `read-file-name', and perform some
 ;;     action on the completed input.
 ;;
 ;;  2. Bind `icicle-candidate-action-fn' to a function that performs
-;;     an action on a completion candidate - possibly the same action.
+;;     an action on a completion candidate - possibly the same action
+;;     as #1.
 ;;
 ;;  #1 just lets people use the command normally, to perform the #1
 ;;  action on a completion candidate entered with `RET'.  Because of
@@ -3828,62 +4263,11 @@
 ;;  the default action is performed: display help on the current
 ;;  completion candidate.
 ;;
-;;  As a illustration of what is involved, here is the definition of a
-;;  command similar to `icicle-delete-file':
-;;
-;;  (defun delete-one-or-more-files ()
-;;    "Delete one or more files that match the current input."
-;;    (interactive)
-;;    (let* ((icicle-candidate-action-fn
-;;            'my-delete-file-or-directory) ; Action #2
-;;           (the-file
-;;            (condition-case fail
-;;                (completing-read
-;;                 "Delete file: "
-;;                 (mapcar #'list (directory-files default-directory))
-;;                 nil t)
-;;              (error (error-message-string fail)))))
-;;      (when the-file
-;;        (icicle-delete-file-or-directory the-file)))) ; Action #1
-;;
-;;  Here, the function that acts on a single object (file) is
-;;  `my-delete-file-or-directory'.  It is called on the result of
-;;  `completing-read' (action #1), and it is also bound to
-;;  `icicle-candidate-action-fn' (action #2), so that it will be
-;;  applied to the current candidate via `C-RET'.
-;;
-;;  Command `icicle-all-candidates-action' (`C-!' -- see "Choose All
-;;  Completion Candidates", above) reports (in buffer `*Help*') on the
-;;  objects that it did not act upon successfully.  For this
-;;  reporting, the function bound to `icicle-candidate-action-fn'
-;;  (e.g. `my-delete-file-or-directory', above) should return `nil'
-;;  for "success" and non-`nil' (for example, an error message) for
-;;  "failure", whatever "success" and "failure" might mean in the
-;;  context of use.
-;;
-;;  As illustrated by the definition of `delete-one-or-more-files',
-;;  the logic of a multi-command implementation is a bit complex.  In
-;;  fact, the necessary logic is more complex that what is shown here.
-;;  There is, fortunately, an easier way to define such a command, as
-;;  explained in section "Defining Icicles Commands", below.  It
-;;  introduces simple-to-use macros that implement both #1 and #2 for
-;;  you.
-
-;;
-;;
-;;  Defining Icicles Commands
-;;  -------------------------
-;;
-;;  This section is for Emacs-Lisp programmers.
-;;
-;;  ** Nothing To It! **
-;;
-;;  Defining a command that uses Icicles completion and cycling is
-;;  simple: just call `completing-read' or `read-file-name' to read
-;;  input, then act on that input.  Here, for instance, is a simple
-;;  command that reads a font name and then changes the selected frame
-;;  to use that font.  Completion and cycling are available, using all
-;;  available font names as the pool of candidates.
+;;  Here is a definition of a simple (not multi-) command that reads a
+;;  font name and then changes the selected frame to use that font.
+;;  By virtue of calling `completing-read', Icicles completion and
+;;  cycling are available, using all available font names as the pool
+;;  of candidates.
 ;;
 ;;  (defun change-font ()
 ;;    "Change font of selected frame."
@@ -3893,26 +4277,8 @@
 ;;                        "Font: " (mapcar #'list (x-list-fonts "*"))
 ;;                        nil t)))))
 ;;
-;;  Nothing could be simpler - just use `completing-read'!  Icicles
-;;  does the rest.  This is the most important thing to learn about
-;;  defining Icicles commands: you don't need to do anything except
-;;  call `completing-read' or `read-file-name' as you would normally.
-;;  Or at least as I ''hope'' you would normally.  I fear that many
-;;  Emacs-Lisp programmers don't take advantage of `completing-read'
-;;  when they could, using instead a function such as `read-string'.
-;;
-;;  ** Multi-Commands Are Not So Easy To Get Right **
-;;
-;;  Although defining a command that takes advantage of most Icicles
-;;  features is effortless, what if you want to define a multi-command
-;;  - that is, a command that takes advantage of an action function
-;;  when cycling candidates, as described in "Multi-Commands" and
-;;  "Choose All Completion Candidates", above?  In that case, things
-;;  get much trickier, as hinted at in "Defining Multi-Commands",
-;;  above.
-;;
-;;  Here's a definition of command `change-font' that takes advantage
-;;  of an action function when cycling candidates:
+;;  Here's a definition of a multi-command `change-font' that takes
+;;  advantage of an action function when cycling candidates:
 ;;
 ;;  1  (defun change-font ()
 ;;  2    "Change font of current frame."
@@ -3940,8 +4306,8 @@
 ;;  24         (list (cons 'font orig-font)))))))
 ;;
 ;;  As you can see, there is a lot more going on here than in the
-;;  previous version, above.  These are the points to keep in mind,
-;;  when defining such a command:
+;;  simple-command version.  These are the points to keep in mind,
+;;  when defining a multi-command by hand:
 ;;
 ;;  1. Save anything you need to restore, so you can, in effect, undo
 ;;     the action in case of `C-g' (lines 4-5).
@@ -4006,117 +4372,11 @@
 ;;                orig-frame (list (cons 'font orig-font)))
 ;;               (error (error-message-string act-on-choice))))))
 ;;
-;;  ** Help Is On the Way **
-;;
 ;;  That's a lot of (error-prone) work!  You obviously don't want to
-;;  be doing that a lot.  Fortunately, help is on the way: macro
-;;  `icicle-define-command'.  Here is how it could be used to define
-;;  `change-font'.  The resulting generated code is similar to the
-;;  mess shown above.
-;;
-;;  1  (icicle-define-command
-;;  2   change-font "Change font of current frame."
-;;  3   (lambda (font)
-;;  4     (modify-frame-parameters orig-frame
-;;  5                              (list (cons 'font font))))
-;;  6   "Font: " (mapcar #'list (x-list-fonts "*"))
-;;  7   nil t nil nil nil nil
-;;  8   ((orig-frame (selected-frame))
-;;  9    (orig-font (frame-parameter nil 'font)))
-;;  10  nil
-;;  11  (modify-frame-parameters orig-frame
-;;  12                           (list (cons 'font orig-font)))
-;;  13  nil)
-;;
-;;  That might not look very readable, but it is straightforward to
-;;  use `icicle-define-command'.  The arguments to it are as follows:
-;;
-;;  Command name    (line 2)
-;;  Doc string      (line 2)
-;;  Action function (lines 3-5)
-;;  Args passed to `completing-read' (lines 6-7)
-;;  Additional bindings (lines 8-9)
-;;  Additional initialization code (line 10)
-;;  "Undo" code to run in case of error or quit (lines 11-12)
-;;  Additional code to run at the end (line 13)
-;;
-;;  The following bindings are pre-included - you can refer to them in
-;;  the command body:
-;;
-;;   `orig-buff'   is bound to (current-buffer)
-;;   `orig-window' is bound to (selected-window)
-;;
-;;  Before running any "undo" code that you supply, the original
-;;  buffer is restored, in case of error or user quit.
-;;
-;;  Most of the arguments to `icicle-define-command' are optional.  In
-;;  this case, optional arguments were provided to save (lines 8-9)
-;;  and then restore (lines 11-12) the original font and frame.
-;;
-;;  If the action function that you use to define a multi-command acts
-;;  on a file name or a directory name, then you will want to use
-;;  `icicle-define-file-command', instead of `icicle-define-command'.
-;;  It defines commands that use `read-file-name', rather than
-;;  `completing-read', to read their input.  As an example of its use,
-;;  here is the definition of `icicle-find-file':
-;;
-;;  (icicle-define-file-command
-;;   icicle-find-file "Visit a file or directory."
-;;   find-file "File or directory: ")
-;;
-;;  See how easy it is to turn standard command `find-file' into an
-;;  Icicles multi-command?  The arguments to
-;;  `icicle-define-file-command' are the same as those to
-;;  `icicle-define-command', except for arguments that are passed to
-;;  `read-file-name' instead of `completing-read'.
-;;
-;;  Several top-level Icicles commands have been defined using
-;;  `icicle-define-command' and `icicle-define-file-command'.  You can
-;;  use their definitions as models.
-;;
-;;  `icicle-add-buffer-candidate' - Add buffer to those always shown
-;;  `icicle-add-buffer-config' - Add to `icicle-buffer-configs'
-;;  `icicle-bookmark'     - Jump to a bookmark
-;;  `icicle-buffer'       - Switch to another buffer
-;;  `icicle-buffer-config' - Choose a config for `icicle-buffer'
-;;  `icicle-buffer-list'  - Choose a list of buffer names
-;;  `icicle-clear-option' - Set the value of a binary option to nil
-;;  `icicle-color-theme'  - Change color theme
-;;  `icicle-delete-file'  - Delete a file or directory
-;;  `icicle-doc'          - Display the doc of a function or variable
-;;  `icicle-execute-extended-command' -
-;;                          A multi-command version of `M-x'
-;;  `icicle-find-file'    - Open a file or directory
-;;  `icicle-font'         - Change the frame font
-;;  `icicle-frame-bg'     - Change the frame background color
-;;  `icicle-frame-fg'     - Change the frame foreground color
-;;  `icicle-fundoc'       - Display the doc of a function
-;;  `icicle-insert-thesaurus-entry' -
-;;                          Insert thesaurus entry(s)
-;;  `icicle-kill-buffer'  - Kill a buffer
-;;  `icicle-locate-file'  - Open a file located anywhere
-;;  `icicle-recent-file'  - Open a recently used file
-;;  `icicle-remove-buffer-candidate' - 
-;;                          Remove buffer from those always shown
-;;  `icicle-remove-buffer-config' - 
-;;                          Remove from `icicle-buffer-configs'
-;;  `icicle-reset-option-to-nil' -
-;;                          Set value of binary option to nil
-;;  `icicle-set-option-to-t' -
-;;                          Set value of binary option to t
-;;  `icicle-toggle-option' - Toggle the value of a binary option
-;;  `icicle-vardoc'       - Display the doc of a variable
-;;
-;;  For simplicity, the descriptions of these commands are singular
-;;  actions (e.g. "kill a buffer"), but each of them can be used to
-;;  act on any number of items any number of times (e.g. kill one or
-;;  more buffers).
-;;
-;;
-;;  See also: library `synonyms.el', which uses macro
-;;  `icicle-define-command' to define command `synonyms'.  This
-;;  command lets you use Icicles completion on input regexps when you
-;;  search a thesaurus.
+;;  be doing that a lot.  Whenever you can, you should use macro
+;;  `icicle-define-command' or `icicle-define-file-command' to define
+;;  your multi-commands.  See "Defining Icicles Commands (Including
+;;  Multi-Commands)" for the easy way to define `change-font'.
 
 ;;
 ;;
@@ -4261,8 +4521,8 @@
 ;;  4. In many cases, it makes sense to define a multi-command, rather
 ;;     than a simple command.  People can always use a multi-command
 ;;     as a simple command, but not vice versa.  See "Multi-Commands",
-;;     "Defining Multi-Commands", and "Defining Icicles Commands",
-;;     above.
+;;     "Defining Icicles Commands (Including Multi-Commands)", and
+;;     "Defining Multi-Commands the Hard Way", above.
 ;;
 ;;  5. If the potential number of completion candidates is enormous,
 ;;     then icompletion display in *Completions* can be slow.  In that
@@ -4283,8 +4543,9 @@
 ;;
 ;;  See also:
 ;;
-;;     * "Defining Icicles Commands"
-;;     * "Defining Multi-Commands"
+;;     * "Multi-Commands"
+;;     * "Defining Icicles Commands (Including Multi-Commands)"
+;;     * "Defining Multi-Commands the Hard Way"
 ;;     * "Global Filters"
 ;;     * "Multi-Completions"
 
@@ -4407,6 +4668,14 @@
 ;;
 ;;; Change log:
 ;;
+;; 2006/06/17 dadams
+;;     Rewrote Multi-Commands, Defining Icicles Commands (Including
+;;       Multi-Commands), and Defining Multi-Commands the Hard Way.
+;;     Renamed: Defining Icicles Commands: + (Including Multi-Commands).
+;;              Defining Multi-Commands: + the Hard Way.
+;;     Added: Defining Multiple-Choice Menus.
+;; 2006/06/08 dadams
+;;     Removed require of icicle-keys.el (obsolete).
 ;; 2006/05/26 dadams
 ;;     Mention M-k as icicle-erase-minibuffer-or-history-element.
 ;;     Don't mention M-S-backspace and M-S-delete any more.
@@ -5527,7 +5796,6 @@
 (require 'icicles-mac)
 (require 'icicles-cmd)
 (require 'icicles-fn)
-(when icicle-bind-top-level-commands-flag (require 'icicles-keys))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 

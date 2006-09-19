@@ -19,6 +19,8 @@
 (setq ecb-toggle-layout-sequence '("left10" "left9" "left6"))
 (icicle-mode 1)
 
+(setq compilation-error-regexp-alist '(bash java gcc-include gnu))
+
 ;; ============================================================
 ;; Ruby:
 
@@ -34,8 +36,22 @@
 (defun autotest ()
   (interactive)
   (let ((buffer (shell "autotest")))
-    (compilation-shell-minor-mode)
     (define-key shell-mode-map "\C-c\C-a" 'autotest-switch)
+
+    (set (make-local-variable 'comint-output-filter-functions)
+	 '(comint-truncate-buffer comint-postoutput-scroll-to-bottom))
+    (set (make-local-variable 'comint-buffer-maximum-size) 5000)
+    (set (make-local-variable 'comint-scroll-show-maximum-output) t)
+    (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
+
+    (set (make-local-variable 'compilation-error-regexp-alist)
+	 '(
+	   ("^ +\\([^:]+\\):\\([0-9]+\\)" 1 2)
+	   ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
+	   ; ("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in" 1 2)
+	   ))
+
+    (compilation-shell-minor-mode)
     (comint-send-string buffer "autotest\n")))
 
 (defun autotest-switch ()
@@ -77,6 +93,15 @@
 	 (expand-parse name (cdr l) str (cons (1+ (length str)) pos)))
 	(t (expand-parse name (cdr l) (concat str (car l)) pos))))
 
+(defun insert-modeline ()
+  (interactive)
+  (let ((mode (symbol-name major-mode)))
+    (insert "-*- ")
+    (comment-region (line-beginning-position) (line-end-position))
+    (insert (substring mode 0 (- (length mode) 5)))
+    (insert " -*-")
+    (insert "\n")))
+
 (defconst ruby-expand-list
   (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
 	  '(
@@ -96,12 +121,12 @@
 
 (setq save-abbrevs nil)
 
-(add-to-list 'compilation-error-regexp-alist 
-     '("test[a-zA-Z0-9_]*([A-Z][a-zA-Z0-9_]*) \\[\\(.*\\):\\([0-9]+\\)\\]:"
-       1 2))
-(add-to-list 'compilation-error-regexp-alist 
-	     '("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in"
-	       1 2))
+;(add-to-list 'compilation-error-regexp-alist 
+;     '("test[a-zA-Z0-9_]*([A-Z][a-zA-Z0-9_]*) \\[\\(.*\\):\\([0-9]+\\)\\]:"
+;       1 2))
+;(add-to-list 'compilation-error-regexp-alist 
+;	     '("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in"
+;	       1 2))
 
 ; steve_molitor -- Here's some elisp that uses the Emacs compile command to navigate to error / unit test failure locations.
 
@@ -155,6 +180,10 @@
 	 ("Tables" "^\\s-*create\\s-+table\\s-+\\(\\w+\\)" 1)))
 
 (setq ruby-program-name "/usr/local/bin/irb")
+
+(add-hook 'python-mode-hook
+	  '(lambda ()
+	     (define-key python-mode-map "\M-\C-x" 'bury-buffer)))
 
 (add-hook 'ruby-mode-hook
           '(lambda ()

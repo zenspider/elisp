@@ -6,11 +6,7 @@
       indent-tabs-mode t
       truncate-partial-width-windows nil
       visible-bell t
-      find-file-visit-truename t
-)
-
-(if (string= (getenv "DOMAIN") "amazon.com")
-    (setq lpr-switches '("-Pcow")))
+      find-file-visit-truename t)
 
 (if (featurep 'xemacs)
     (setq isearch-highlight t)

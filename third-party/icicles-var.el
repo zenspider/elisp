@@ -1,5 +1,5 @@
 ;;; icicles-var.el --- Internal variables for Icicles
-;; 
+;;
 ;; Filename: icicles-var.el
 ;; Description: Internal variables for Icicles
 ;; Author: Drew Adams
@@ -7,14 +7,14 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:23:26 2006
 ;; Version: 22.0
-;; Last-Updated: Sun Apr 30 13:17:22 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Wed Jul 05 17:04:03 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 178
+;;     Update #: 191
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-var.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
 ;; Compatibility: GNU Emacs 20.x, GNU Emacs 21.x, GNU Emacs 22.x
-;; 
+;;
 ;; Features that might be required by this library:
 ;;
 ;;   `apropos', `apropos-fn+var', `cl', `color-theme', `cus-face',
@@ -22,22 +22,22 @@
 ;;   `wid-edit', `widget'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;;; Commentary: 
-;; 
+;;
+;;; Commentary:
+;;
 ;;  This is a helper library for library `icicles.el'.  It defines
 ;;  internal variables (not to be modified by users.  See `icicles.el'
 ;;  for documentation.
-;; 
+;;
 ;;  Internal variables defined here:
 ;;
-;;    `icicle-candidate-action-fn', `icicle-candidate-entry-fn',
-;;    `icicle-candidate-nb', `icicle-candidates-alist',
-;;    `icicle-cmd-calling-for-completion',
+;;    `icicle-apropos-completing-p', `icicle-candidate-action-fn',
+;;    `icicle-candidate-entry-fn', `icicle-candidate-nb',
+;;    `icicle-candidates-alist', `icicle-cmd-calling-for-completion',
 ;;    `icicle-common-match-string', `icicle-complete-input-overlay',
 ;;    `icicle-completion-candidates' `icicle-completion-help-string',
 ;;    `icicle-current-completion-candidate-overlay',
-;;    `icicle-current-input', `icicle-current-regexp-input',
+;;    `icicle-current-input', `icicle-current-raw-input',
 ;;    `icicle-default-directory',
 ;;    `icicle-default-thing-insertion-flipped-p',
 ;;    `icicle-extra-candidates', `icicle-icompleting-p',
@@ -64,9 +64,13 @@
 ;;    `icicle-thing-at-pt-fns-pointer'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;;
 ;;; Change log:
 ;;
+;; 2006/07/05 dadams
+;;     Renamed: icicle-current-regexp-input to icicle-current-raw-input.
+;; 2006/06/18 dadams
+;;     Added: icicle-apropos-completing-p.
 ;; 2006/04/30 dadams
 ;;     Added: icicle-candidate-entry-fn.
 ;;     Renamed: icicle-search-candidates to icicle-candidates-alist.
@@ -94,30 +98,30 @@
 ;;     Moved options stuff to Options menu, when available.
 ;;     Moved apropos stuff to Apropos menu, when available.
 ;;     Moved describe stuff to Describe menu, when available.
-;; 2006/03/03 dadams 
+;; 2006/03/03 dadams
 ;;     Added to Icicles menu: icicle-complete-thesaurus-entry, icicle-apropos*,
 ;;       option-setting cmds, buffer-config cmds icicle-(var|fun)doc.
 ;;     Require apropos-fn+var.el.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
-;; any later version.
-;; 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;; 
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program; see the file COPYING.  If not, write to the
-;; Free Software Foundation, Inc., 51 Franklin Street, Fifth
-;; ;; Floor, Boston, MA 02110-1301, USA.
-;; 
+;; along with this program; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+;; Floor, Boston, MA 02110-1301, USA.
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
+;;
 ;;; Code:
 
 (when (< emacs-major-version 21)     ;; for Emacs < 21: push
@@ -140,10 +144,8 @@
 (defvar font-lock-keyword-face 'font-lock-keyword-face ; Defined in `font-lock.el'.
   "Face name to use for keywords.")
 
-(defvar icicle-icompleting-p nil
-  "Internal flag: non-nil when editing text in minibuffer.
-This is really non-nil when inside simple character-editing commands
-such as `icicle-self-insert' and `icicle-delete-backward-char'.")
+(defvar icicle-apropos-completing-p nil
+  "Internal flag: non-nil when apropos-completing.")
 
 (defvar icicle-candidate-action-fn nil
   "Function to be applied to current completion candidate.
@@ -169,23 +171,20 @@ The cdr is some other data to be used when the candidate is chosen.")
   "Longest common match among all completion candidates.
 Nil means no such common match is available.")
 
+(defvar icicle-complete-input-overlay nil
+  "Overlay used to highlight minibuffer input when it is complete.")
+
 (defvar icicle-completion-candidates nil "Current list of completion candidates.")
 
 (defvar icicle-completion-help-string ""
   "Description of minibuffer bindings.")
 
-(defvar icicle-extra-candidates nil
-  "A list of extra completion candidates (strings).")
-
 (defvar icicle-current-completion-candidate-overlay nil
   "Overlay used to highlight current completion candidate.")
 
-(defvar icicle-complete-input-overlay nil
-  "Overlay used to highlight minibuffer input when it is complete.")
-
 (defvar icicle-current-input "" "Current minibuffer input.")
 
-(defvar icicle-current-regexp-input "" "Current minibuffer regexp input.
+(defvar icicle-current-raw-input "" "Current minibuffer raw (unexpanded) input.
 This can be different from `icicle-current-input' only when
 `icicle-expand-input-to-common-match-flag' is non-nil.")
 
@@ -198,10 +197,13 @@ Set whenever minibuffer is entered or input is completed.")
 This means that the meaning of `icicle-default-thing-insertion' has
 been reversed.")
 
-(defvar icicle-incremental-completion-p nil
-  "Takes the place of `icicle-incremental-completion-flag' during input.
-The program updates this to `always' from `t' after *Completions* has
-been displayed.")
+(defvar icicle-extra-candidates nil
+  "A list of extra completion candidates (strings).")
+
+(defvar icicle-icompleting-p nil
+  "Internal flag: non-nil when editing text in minibuffer.
+This is really non-nil when inside simple character-editing commands
+such as `icicle-self-insert' and `icicle-delete-backward-char'.")
 
 (defvar icicle-ignored-extensions completion-ignored-extensions
   "Copy of `completion-ignored-extensions', serving as a control flag.
@@ -215,17 +217,22 @@ When `completion-ignored-extensions' changes, we remake
 If this is nil, then no file extensions are ignored.
 The ignored file extensions come from `completion-ignored-extensions'.")
 
+(defvar icicle-incremental-completion-p nil
+  "Takes the place of `icicle-incremental-completion-flag' during input.
+The program updates this to `always' from `t' after *Completions* has
+been displayed.")
+
 (defvar icicle-initial-value ""
   "Initial value used in minibuffer completion.
 Any function that reads from the minibuffer and accepts a default
 value or initial value should, before reading, put that value in
 `icicle-initial-value'.  For example, `completing-read' does that.")
 
-(defvar icicle-insert-string-at-pt-start 0
-  "Position of start of text `icicle-insert-string-at-point' inserted.")
-
 (defvar icicle-insert-string-at-pt-end 0
   "Position of end of text `icicle-insert-string-at-point' inserted.")
+
+(defvar icicle-insert-string-at-pt-start 0
+  "Position of start of text `icicle-insert-string-at-point' inserted.")
 
 (defvar icicle-last-completion-candidate ""
   "Last completion candidate used in minibuffer completion.")
@@ -233,7 +240,7 @@ value or initial value should, before reading, put that value in
 ;; This is used to be able to ignore `handle-switch-frame'.
 (defvar icicle-last-completion-command nil "Last completion command used.")
 
-(defvar icicle-last-input "" "Last minibuffer input.")
+(defvar icicle-last-input "" "Last minibuffer input typed (not from cycling).")
 
 (defvar icicle-last-sort-function (or icicle-sort-function 'string-lessp)
   "Local copy of `icicle-sort-function', so we can restore it.")

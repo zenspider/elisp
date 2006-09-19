@@ -5,10 +5,16 @@
 ; lib/blah.rb <-> test/test_blah.rb
 
 (defcustom toggle-mappings
-  '(("app/models/\\(.*\\).rb" . "test/unit/\\1_test.rb")
-    ("test/unit/\\(.*\\)_test.rb" . "app/models/\\1.rb")
-    ("app/controllers/\\(.*\\).rb" . "test/functional/\\1_test.rb")
-    ("test/functional/\\(.*\\)_test.rb" . "app/controllers/\\1.rb")
+  '(
+    ; rails (with test rails)
+    ("app/controllers/\\(.*\\).rb"       . "test/controllers/\\1_test.rb")
+    ("app/views/\\(.*\\).rb"             . "test/views/\\1_test.rb")
+    ("app/models/\\(.*\\).rb"            . "test/unit/\\1_test.rb")
+    ("test/controllers/\\(.*\\)_test.rb" . "app/controllers/\\1.rb")
+    ("test/views/\\(.*\\)_test.rb"       . "app/views/\\1.rb")
+    ("test/unit/\\(.*\\)_test.rb"        . "app/models/\\1.rb")
+    ; ("app/controllers/\\(.*\\).rb" . "test/functional/\\1_test.rb")
+    ; plain ruby
     ("lib/\\(.*\\).rb" . "test/test_\\1.rb")
     ("test/test_\\(.*\\).rb" . "lib/\\1.rb")
     ("test_\\(.*\\).rb" . "\\1.rb")

@@ -29,7 +29,9 @@
 	 (pushnew (expand-file-name path) load-path :test 'string=))
       (list 
        "/usr/share/emacs/site-lisp/"
-       (if (featurep 'xemacs) "/usr/local/lib/xemacs/site-lisp/" "/usr/local/lib/emacs/site-lisp/")
+       (if (featurep 'xemacs)
+	   "/usr/local/lib/xemacs/site-lisp/"
+	 "/usr/local/lib/emacs/site-lisp/")
        "~/Bin/elisp/"
        "~/Bin/elisp/third-party/"
        ))
@@ -40,8 +42,7 @@
 			    (not (string-match "\\.$" o))))
 		     (append (directory-files "~/Bin/elisp/third-party" t)
 			     (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3" t)
-			     (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3/semantic" t)
-			     )))
+			     (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3/semantic" t))))
 
 (if (featurep 'xemacs)
     t
@@ -69,7 +70,7 @@
  '(ecb-layout-window-sizes (quote (("left9" (0.325 . 0.975)))))
  '(ecb-options-version "2.32")
  '(global-font-lock-mode t nil (font-core))
- '(icicle-reminder-prompt-flag 12)
+ '(icicle-reminder-prompt-flag 0)
  '(indicate-empty-lines t)
  '(inhibit-splash-screen t)
  '(mouse-wheel-mode t nil (mwheel))

@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:22:14 2006
 ;; Version: 22.0
-;; Last-Updated: Fri May 19 22:09:32 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Sat Jul 08 00:50:05 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 245
+;;     Update #: 277
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-opt.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -29,6 +29,7 @@
 ;;
 ;;  User options defined here (in Custom group `icicles'):
 ;;
+;;    `icicle-alternative-sort-function',
 ;;    `icicle-arrows-respect-completion-type-flag',
 ;;    `icicle-bind-top-level-commands-flag', `icicle-buffer-configs',
 ;;    `icicle-buffer-extras',
@@ -63,13 +64,22 @@
 ;;
 ;;  Functions defined here:
 ;;
-;;    `icicle-buffer-sort-*...*-last', `icicle-increment-color-hue',
+;;    `icicle-buffer-sort-*...*-last',
+;;    `icicle-historical-alphabetic-p', `icicle-increment-color-hue',
 ;;    `icicle-increment-color-value'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change log:
 ;;
+;; 2006/07/07 dadams
+;;     Added: icicle-alternative-sort-function, icicle-historical-alphabetic-p.
+;; 2006/07/04 dadams
+;;     icicle-expand-input-to-common-match-flag: Updated doc string.
+;; 2006/06/09 dadams
+;;     icicle-region-background: Use nil in defcustom.  Initialize separately.
+;; 2006/06/08 dadams
+;;     icicle-bind-top-level-commands-flag: Updated doc string.
 ;; 2006/05/19 dadams
 ;;     Renamed icicle-inhibit-reminder* to icicle-reminder*.
 ;;       Changed its functionality to use a countdown.
@@ -147,6 +157,38 @@
 ;;; User Options (alphabetical, except for dependencies) ---
 
 ;;;###autoload
+(defcustom icicle-alternative-sort-function 'icicle-historical-alphabetic-p
+  "*An alternative sort function, in place of `icicle-sort-function'.
+This works just like `icicle-sort-function', but it is used only for
+the duration of the current command, and only when you initiate it via
+command `icicle-alternative-sort'."
+  :type 'function :group 'icicles)
+
+(defun icicle-historical-alphabetic-p (s1 s2)
+  "S1 < S2 if S1 is a previous input and S2 is not or S1 string-lessp S2.
+Returns non-nil if S1 is a previous input and either S2 is not or
+\(string-lessp S1 S2).  S1 and S2 must be strings.
+
+When used as a comparison function for completion candidates, this
+make matching previous inputs available first (at the top of buffer
+*Completions*).  Candidates are effectively in two groups, each of
+which is sorted alphabetically separately: matching previous inputs,
+followed by matching candidates that have not yet been used."
+  ;; We could use `icicle-delete-duplicates' to shorten the history, but that takes time too.
+  ;; And, starting in Emacs 22, histories will not contain duplicates anyway.
+  (let ((hist (and (symbolp minibuffer-history-variable)
+                   (symbol-value minibuffer-history-variable)))
+        (dir (and (icicle-file-name-input-p) (file-name-directory icicle-last-input))))
+    (if (not (consp hist))
+        (string-lessp s1 s2)
+      (when dir (setq s1 (expand-file-name s1 dir) s2 (expand-file-name s2 dir)))
+      (let ((s1-previous-p (member s1 hist))
+            (s2-previous-p (member s2 hist)))
+        (or (and (not s1-previous-p) (not s2-previous-p) (string-lessp s1 s2))
+            (and s1-previous-p (not s2-previous-p))
+            (and s1-previous-p s2-previous-p (string-lessp s1 s2)))))))
+
+;;;###autoload
 (defcustom icicle-arrows-respect-completion-type-flag nil
   "*Non-nil means `TAB', `S-TAB' change the behavior of vertical arrows.
 Nil means that `up' and `down' always cycle prefix completions.
@@ -166,7 +208,7 @@ way to traverse the history is via `M-p' and `M-n'."
 ;;;###autoload
 (defcustom icicle-bind-top-level-commands-flag t
   "*Non-nil means to bind top-level Icicles commands.
-This is done by loading `icicles-keys.el'."
+That is done in `icicle-define-icicle-mode-map'."
   :type 'boolean :group 'icicles)
 
 ;;;###autoload
@@ -291,16 +333,18 @@ inserted."
   "*Non-nil means that `\\<minibuffer-local-completion-map>\\[icicle-apropos-complete]' \
 expands your minibuffer input to the
 longest common match among all completion candidates.  This replaces
-your regexp input, completing it as far as possible.
+your input, completing it as far as possible.
 
-If you want to edit your original regexp input, use `\\[icicle-retrieve-last-input]'.
+If you want to edit your original input, use `\\[icicle-retrieve-last-input]'.
 If your input has been expanded, then hit `\\[icicle-retrieve-last-input]' twice:
 once to replace a completion candidate (from, say, [next]) with the
 common match string, and a second time to replace the common match
-string with your original regexp input.
+string with your original input.
 
-If you want to always work with a regexp in the minibuffer, then set
-this option to nil."
+For apropos completion, your input is, in general, a regexp.  Setting
+this option to nil will let you always work with a regexp in the
+minibuffer for apropos completion - your regexp is then never replaced
+by the longest common match.."
   :type 'boolean :group 'icicles)
 
 ;;;###autoload
@@ -360,9 +404,13 @@ these functions is non-nil and the initial-input argument is nil or
 \"\", the default value is inserted in the minibuffer as the initial
 input.
 
-This has the advantage of not requiring you to use `M-n' to retrieve
-the default value.  It has the disadvantage of making you empty the
-minibuffer if you do not want to use or edit the default value.
+This has the advantage of not requiring you to use `M-n' to
+retrieve the default value.  It has the disadvantage of making
+you use `M-p' (or do something else) to get rid of the default
+value in the minibuffer if you do not want to use or edit it.  If
+you often want to use or edit the default value, then set
+`icicle-init-value-flag' to non-nil; if you rarely do so, then
+set it to nil.
 
 The particular non-nil value determines whether or not the value is
 preselected and, if preselected, where the cursor is left: at the
@@ -536,17 +584,22 @@ toggle this option at any time."
 ;; prefer highlighting background to be slightly darker instead of a slightly different hue.
 ;;
 ;;;###autoload
-(defcustom icicle-region-background
-  (if (featurep 'hexrgb)
-      (icicle-increment-color-hue     ; Use a slightly different hue than frame background.
-       (or (and (boundp '1on1-active-minibuffer-frame-background)
-                1on1-active-minibuffer-frame-background) ; In `oneonone.el'.
-           (cdr (assq 'background-color (frame-parameters)))
-           (face-background 'region))
-       24)
-    (cdr (assq 'background-color (frame-parameters)))) ; Invisible, if no `hexrgb.el'.
+(defcustom icicle-region-background nil
   "*Background color to use for region during minibuffer cycling."
   :type 'string :group 'icicles)
+
+;; Do it this way, not inside `defcustom', to avoid processing by
+;; `customize-update-all' run on idle timer by `cus-edit+.el'.
+(setq icicle-region-background
+      (or icicle-region-background      ; Don't redefine, if user has set it.
+          (if (featurep 'hexrgb)
+              (icicle-increment-color-hue ; Use a slightly different hue than frame background.
+               (or (and (boundp '1on1-active-minibuffer-frame-background)
+                        1on1-active-minibuffer-frame-background) ; In `oneonone.el'.
+                   (cdr (assq 'background-color (frame-parameters)))
+                   (face-background 'region))
+               24)
+            (cdr (assq 'background-color (frame-parameters)))))) ; Invisible, if no `hexrgb.el'.
 
 ;;;###autoload
 (defcustom icicle-reminder-prompt-flag 20
@@ -554,7 +607,7 @@ toggle this option at any time."
 Nil means never use the reminder.
 Non-nil means use the reminder, if space permits:
  An integer value means use only for that many Emacs sessions.
- T means always use it."
+ t means always use it."
   :type '(choice
           (const   :tag "Never use a reminder in the prompt"                  nil)
           (const   :tag "Always use a reminder in the prompt"                 t)
@@ -634,14 +687,15 @@ initially)."
 (defcustom icicle-sort-function 'string-lessp
   "*Comparison function passed to `sort', to sort completion candidates.
 This sorting determines the order of candidates when cycling and their
-order in buffer *Completions*.  If the value nil, no sorting is done.
+order in buffer *Completions*.  If the value is nil, then no sorting
+is done.
 
 When `icicle-cycle-into-subdirs-flag' is non-nil, you might want to
 use a function such as `icicle-sort-dirs-last' for this option, to
 prevent cycling into subdirectories depth first.
 
 You can toggle sorting at any time using command
-`icicle-toggle-sorting', bound to `C-,' in the minibuffer"
+`icicle-toggle-sorting', bound to `C-,' in the minibuffer."
   :type 'function :group 'icicles)
 
 ;;;###autoload

@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 10:21:10 2006
 ;; Version: 22.0
-;; Last-Updated: Fri May 19 22:34:28 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Thu Jun 08 15:46:40 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 121
+;;     Update #: 130
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-mode.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -38,6 +38,9 @@
 ;;
 ;;; Change log:
 ;;
+;; 2006/06/08 dadams
+;;     Converted global bindings in icicles-keys.el to icicle-mode-map bindings here.
+;;     Added f10 binding for icicle-execute-menu-command.
 ;; 2006/05/19 dadams
 ;;     icicle-mode: (add-hook 'kill-emacs-hook 'icicle-control-reminder-prompt).
 ;; 2006/05/18 dadams
@@ -505,6 +508,37 @@ when the minibuffer is active."
     (put 'icicle-search 'menu-enable
          '(and icicle-mode
            (not (window-minibuffer-p (frame-selected-window menu-updating-frame)))))
+
+    ;; Optional bindings - governed by `icicle-bind-top-level-commands-flag'.
+    (when icicle-bind-top-level-commands-flag
+      (define-key map "\C-c\C-s" 'icicle-search)
+      (define-key map "\C-c/"    'icicle-complete-thesaurus-entry)
+      
+      ;; Replace some standard bindings - use Icicles multi-commands instead.
+      (define-key map "\M-x"     'icicle-execute-extended-command)
+      (substitute-key-definition 'switch-to-buffer 'icicle-buffer map global-map)
+      (substitute-key-definition 'switch-to-buffer-other-window 'icicle-buffer-other-window
+                                 map global-map)
+      (substitute-key-definition 'find-file 'icicle-find-file map global-map)
+      (substitute-key-definition 'find-file-other-window 'icicle-find-file-other-window
+                                 map global-map)
+      (substitute-key-definition 'kill-buffer 'icicle-kill-buffer map global-map)
+      (substitute-key-definition 'kill-buffer-and-its-windows 'icicle-kill-buffer map global-map)
+      
+      ;; These are not Icicle mode bindings, but it's convenient to do this here.
+      (add-hook 'compilation-minor-mode-hook
+                (lambda () (define-key compilation-minor-mode-map
+                               "\C-c\C-s" 'icicle-compilation-search)))
+      (add-hook 'compilation-mode-hook
+                (lambda () (define-key compilation-mode-map
+                               "\C-c\C-s" 'icicle-compilation-search)))
+      
+      ;; This is for Icicles Menu, not Icicles, but it's convenient to do this here.
+      (when (fboundp 'icicle-execute-menu-command) ; Defined in `icicles-menu.el'.
+        (define-key map [?\e ?\M-x] 'icicle-execute-menu-command)
+        (define-key map [?\M-`] 'icicle-execute-menu-command)
+        (define-key map [f10] 'icicle-execute-menu-command))) ; Replaces `tmm-menu'.
+
     (push (cons 'icicle-mode map) minor-mode-map-alist)
     (setq icicle-mode-map map)))
 
