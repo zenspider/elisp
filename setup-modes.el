@@ -243,6 +243,12 @@ ruby on the file I'm visiting."
 		   'nxml-mode))
 
 ;; ============================================================
+;; Subversion:
+
+(require 'vc-svn)
+(add-to-list 'vc-handled-backends 'SVN)
+
+;; ============================================================
 ;; Perforce:
 
 (p4-set-my-clients '(ryand ryand-itsy ryand-greed ryand-amzn ryand-amzn2))

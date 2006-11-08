@@ -81,6 +81,7 @@
  '(tool-bar-mode nil nil (tool-bar))
  '(tooltip-mode nil)
  '(transient-mark-mode t)
+ '(vc-path (quote ("/opt/local/bin" "/usr/local/bin")))
  '(which-function-mode nil))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
