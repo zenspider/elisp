@@ -22,6 +22,7 @@
       (set-frame-size frame 80 45))))
 
 (defun medium ()
+  "Create a large window suitable for coding on a macbook"
   (interactive)
 
   (let ((frame (current-frame)))
@@ -32,15 +33,14 @@
       (split-window-horizontally))))
 
 (defun huge ()
-  "Create a large window suitable for coding on a 20 inch cinema display"
+  "Create a large single window for a macbook"
   (interactive)
 
   (let ((frame (current-frame)))
     (progn
       (delete-other-windows)
       (set-frame-position frame 5 25)
-      (set-frame-size frame 199 60)
-      (split-window-horizontally))))
+      (set-frame-size frame 170 45))))
 
 (defun my-clean-windows ()
   (interactive)

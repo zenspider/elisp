@@ -119,6 +119,17 @@
 		    "  end\nend"))))
   "Expansions for Ruby mode")
 
+(defun parse-tree ()
+  (interactive)
+  (expand-add-abbrevs ruby-mode-abbrev-table
+		      (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
+			      '(
+				("vc" ("[:vcall, " p "], "))
+				("dp" ("  def process_" p "(exp)" n
+				       "  abort exp.inspect" n
+				       "  end"))
+				))))
+
 (setq save-abbrevs nil)
 
 ;(add-to-list 'compilation-error-regexp-alist 
@@ -144,6 +155,10 @@
 ;; 	    (ruby-send-region (line-beginning-position) (line-end-position)))))))
 
 ;; ;; run the current test function
+
+(add-to-list 'vc-handled-backends 'SVN)
+(custom-set-variables
+ '(vc-svn-program-name "/opt/local/bin/svn"))
 
 (defun ruby-test-function ()
   "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."

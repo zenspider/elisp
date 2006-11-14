@@ -29,7 +29,7 @@
 (global-set-key "\C-c\C-r" 'recompile)
 (global-set-key "\C-x\C-b" 'bs-show)
 (global-set-key "\C-x\C-t" 'toggle-buffer)
-(global-set-key "\C-c#" 'comment-or-uncomment-region)
+(global-set-key "\C-c\C-;" 'comment-or-uncomment-region)
 
 (defun prev-window ()
   (interactive)
