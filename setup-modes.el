@@ -39,17 +39,17 @@
     (define-key shell-mode-map "\C-c\C-a" 'autotest-switch)
 
     (set (make-local-variable 'comint-output-filter-functions)
-	 '(comint-truncate-buffer comint-postoutput-scroll-to-bottom))
+         '(comint-truncate-buffer comint-postoutput-scroll-to-bottom))
     (set (make-local-variable 'comint-buffer-maximum-size) 5000)
     (set (make-local-variable 'comint-scroll-show-maximum-output) t)
     (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
 
     (set (make-local-variable 'compilation-error-regexp-alist)
-	 '(
-	   ("^ +\\([^:]+\\):\\([0-9]+\\)" 1 2)
-	   ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
-	   ; ("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in" 1 2)
-	   ))
+         '(
+           ("^ +\\([^:]+\\):\\([0-9]+\\)" 1 2)
+           ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
+           ; ("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in" 1 2)
+           ))
 
     (compilation-shell-minor-mode)
     (comint-send-string buffer "autotest\n")))
@@ -85,13 +85,13 @@
 
 (defun expand-parse (name l &optional str pos)
   (cond ((null l)
-	 (list name str (reverse pos)))
-	((equal 'n (car l))
-	 (expand-parse name (cdr l) (concat str "\n")
-		       (cons (1+ (length str)) pos)))
-	((equal 'p (car l))
-	 (expand-parse name (cdr l) str (cons (1+ (length str)) pos)))
-	(t (expand-parse name (cdr l) (concat str (car l)) pos))))
+         (list name str (reverse pos)))
+        ((equal 'n (car l))
+         (expand-parse name (cdr l) (concat str "\n")
+                       (cons (1+ (length str)) pos)))
+        ((equal 'p (car l))
+         (expand-parse name (cdr l) str (cons (1+ (length str)) pos)))
+        (t (expand-parse name (cdr l) (concat str (car l)) pos))))
 
 (defun insert-modeline ()
   (interactive)
@@ -104,40 +104,40 @@
 
 (defconst ruby-expand-list
   (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
-	  '(
-	    ("shebang" ("#!/usr/local/bin/ruby -w\n\n"))
-	    ("cls" ("class " n
-		    "  def initialize\n"
-		    "    " n
-		    "  end\nend"))
-	    ("tst" ("class Test" p " < Test::Unit::TestCase\n"
-		    "  def setup\n"
-		    "    " n
-		    "  end\n\n"
-		    "  def test_" n
-		    "    " n
-		    "  end\nend"))))
+          '(
+            ("shebang" ("#!/usr/local/bin/ruby -w\n\n"))
+            ("cls" ("class " n
+                    "  def initialize\n"
+                    "    " n
+                    "  end\nend"))
+            ("tst" ("class Test" p " < Test::Unit::TestCase\n"
+                    "  def setup\n"
+                    "    " n
+                    "  end\n\n"
+                    "  def test_" n
+                    "    " n
+                    "  end\nend"))))
   "Expansions for Ruby mode")
 
 (defun parse-tree ()
   (interactive)
   (expand-add-abbrevs ruby-mode-abbrev-table
-		      (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
-			      '(
-				("vc" ("[:vcall, " p "], "))
-				("dp" ("  def process_" p "(exp)" n
-				       "  abort exp.inspect" n
-				       "  end"))
-				))))
+                      (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
+                              '(
+                                ("vc" ("[:vcall, " p "], "))
+                                ("dp" ("  def process_" p "(exp)" n
+                                       "  abort exp.inspect" n
+                                       "  end"))
+                                ))))
 
 (setq save-abbrevs nil)
 
-;(add-to-list 'compilation-error-regexp-alist 
+;(add-to-list 'compilation-error-regexp-alist
 ;     '("test[a-zA-Z0-9_]*([A-Z][a-zA-Z0-9_]*) \\[\\(.*\\):\\([0-9]+\\)\\]:"
 ;       1 2))
-;(add-to-list 'compilation-error-regexp-alist 
-;	     '("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in"
-;	       1 2))
+;(add-to-list 'compilation-error-regexp-alist
+;            '("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in"
+;              1 2))
 
 ; steve_molitor -- Here's some elisp that uses the Emacs compile command to navigate to error / unit test failure locations.
 
@@ -146,13 +146,13 @@
 ;; (defun ruby-send-block-or-line ()
 ;;   (save-excursion
 ;;     (if (re-search-backward "[\n\t ]\\(.*\\)[\n\t ]" nil t)
-;; 	(let ((foo (match-string 0)))
-;; 	  (set-text-properties 0 (length foo) nil foo)
-;; 	  (if (string= foo "end")
-;; 	      (begin
-;; 	       (previous-line -1)
-;; 	       (ruby-send-definition))
-;; 	    (ruby-send-region (line-beginning-position) (line-end-position)))))))
+;;      (let ((foo (match-string 0)))
+;;        (set-text-properties 0 (length foo) nil foo)
+;;        (if (string= foo "end")
+;;            (begin
+;;             (previous-line -1)
+;;             (ruby-send-definition))
+;;          (ruby-send-region (line-beginning-position) (line-end-position)))))))
 
 ;; ;; run the current test function
 
@@ -164,16 +164,16 @@
   "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."
   (interactive)
   (let* ((funname (which-function))
-	 (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname))))
+         (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname))))
     (compile (concat "ruby " (file-name-nondirectory (buffer-file-name)) " --name " fn))))
 
 (defun ruby-find-view ()
   "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."
   (interactive)
   (let* ((funname (which-function))
-	 (cls (and (string-match "\\(.*\\)Controller#" funname) (downcase (match-string 1 funname))))
-	 (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname)))
-	 (appdir (file-name-directory (directory-file-name (file-name-directory (buffer-file-name))))))
+         (cls (and (string-match "\\(.*\\)Controller#" funname) (downcase (match-string 1 funname))))
+         (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname)))
+         (appdir (file-name-directory (directory-file-name (file-name-directory (buffer-file-name))))))
     (find-file (concat appdir "views/" cls "/" fn ".rhtml"))))
 
 ;; ;; run the current test function using F8 key
@@ -181,36 +181,36 @@
 
 (add-hook 'foo-mode-hook
            (lambda ()
-	     (set (make-local-variable imenu-generic-expression)
+             (set (make-local-variable imenu-generic-expression)
                    '(("Comments" "^\\s-*#" 1)
                      ...))))
 
 (setq sql-imenu-generic-expression
        '(("Comments" "^-- \\(.+\\)" 1)
-	 ("Function Definitions" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
+         ("Function Definitions" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
  [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]+\\)?[ai]s\\b" 2)
-	 ("Function Prototypes" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
+         ("Function Prototypes" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
  [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]*\\)?;" 2)
-	 ("Indexes" "^\\s-*create\\s-+index\\s-+\\(\\w+\\)" 1)
-	 ("Tables" "^\\s-*create\\s-+table\\s-+\\(\\w+\\)" 1)))
+         ("Indexes" "^\\s-*create\\s-+index\\s-+\\(\\w+\\)" 1)
+         ("Tables" "^\\s-*create\\s-+table\\s-+\\(\\w+\\)" 1)))
 
 (setq ruby-program-name "/usr/local/bin/irb")
 
 (add-hook 'python-mode-hook
-	  '(lambda ()
-	     (define-key python-mode-map "\M-\C-x" 'bury-buffer)))
+          '(lambda ()
+             (define-key python-mode-map "\M-\C-x" 'bury-buffer)))
 
 (add-hook 'ruby-mode-hook
           '(lambda ()
              (inf-ruby-keys)
-	     (which-function)
-	     (define-key ruby-mode-map "\M-\C-x" 'bury-buffer)
-	     (define-key ruby-mode-map "\C-c\C-a" 'autotest-switch)
-	     (define-key ruby-mode-map "\C-c\C-a" 'autotest-switch)
-	     (expand-add-abbrevs ruby-mode-abbrev-table ruby-expand-list)
-	     (abbrev-mode)
-	     (outline-minor-mode)
-	     (set (make-local-variable 'outline-regexp) "^ *\\(def\\|class\\|module\\)")))
+             (which-function)
+             (define-key ruby-mode-map "\M-\C-x" 'bury-buffer)
+             (define-key ruby-mode-map "\C-c\C-a" 'autotest-switch)
+             (define-key ruby-mode-map "\C-c\C-a" 'autotest-switch)
+             (expand-add-abbrevs ruby-mode-abbrev-table ruby-expand-list)
+             (abbrev-mode)
+             (outline-minor-mode)
+             (set (make-local-variable 'outline-regexp) "^ *\\(def\\|class\\|module\\)")))
 
 (autoload 'ruby-index "ri.el" "ri utility" t)
 (autoload 'ri "ri.el" "ri utility" t)
@@ -253,9 +253,9 @@ ruby on the file I'm visiting."
 ;; XML:
 
 (add-to-list 'auto-mode-alist
-	     (cons (concat "\\." (regexp-opt '("xml" "xsd" "sch" "rng"
-					       "xslt" "svg" "rss") t) "\\'")
-		   'nxml-mode))
+             (cons (concat "\\." (regexp-opt '("xml" "xsd" "sch" "rng"
+                                               "xslt" "svg" "rss") t) "\\'")
+                   'nxml-mode))
 
 ;; ============================================================
 ;; Subversion:
@@ -288,8 +288,8 @@ ruby on the file I'm visiting."
     :match-face (("<%#" . mmm-comment-submode-face)
                  ("<%=" . mmm-output-submode-face)
                  ("<%"  . mmm-code-submode-face))
-    :front "<%[#=]?" 
-    :back "%>" 
+    :front "<%[#=]?"
+    :back "%>"
     :insert ((?% erb-code       nil @ "<%"  @ " " _ " " @ "%>" @)
              (?# erb-comment    nil @ "<%#" @ " " _ " " @ "%>" @)
              (?= erb-expression nil @ "<%=" @ " " _ " " @ "%>" @))
@@ -306,21 +306,21 @@ ruby on the file I'm visiting."
 
 (add-to-list 'auto-mode-alist '("\\.bash.*$" . ksh-mode))
 (add-to-list 'auto-mode-alist
-	     '("^I?\\(M\\|m\\|GNUm\\)akefile.*$" . makefile-mode))
+             '("^I?\\(M\\|m\\|GNUm\\)akefile.*$" . makefile-mode))
 
 (add-hook 'shell-mode-hook
           '(lambda ()
-	     (define-key shell-mode-map 
-	       (kbd "<M-return>") 'shell-resync-dirs)))
+             (define-key shell-mode-map
+               (kbd "<M-return>") 'shell-resync-dirs)))
 
 (add-hook 'text-mode-hook
           '(lambda ()
-	     (turn-on-auto-fill)
-	     (define-key text-mode-map "\M-s" 'fixup-whitespace)))
+             (turn-on-auto-fill)
+             (define-key text-mode-map "\M-s" 'fixup-whitespace)))
 
 (add-hook 'c-mode-hook
-	  '(lambda ()
-	     (local-set-key "\C-\c\C-r" 'recompile)))
+          '(lambda ()
+             (local-set-key "\C-\c\C-r" 'recompile)))
 
 (turn-on-auto-revert-mode)
 (global-auto-revert-mode)
@@ -339,8 +339,6 @@ ruby on the file I'm visiting."
 (define-trivial-mode "gv" "\\.ps$")
 (define-trivial-mode "gv" "\\.pdf$")
 
-(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
-
 (autoload 'semantic-load-enable-code-helpers "semantic" "semantic lib" t)
 (defun my-load-cedet ()
   (interactive)
@@ -351,6 +349,18 @@ ruby on the file I'm visiting."
 
 (global-set-key (kbd "M-<return>") 'complete-tag)
 
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Whitespace Issues:
 
+; (standard-display-ascii ?\t "^I")
 
+(require 'show-wspace)
+
+(mapcar (lambda (hook)
+          (add-hook hook
+                    '(lambda ()
+                       (highlight-tabs)
+                       (highlight-trailing-whitespace))))
+          '(ruby-mode-hook))

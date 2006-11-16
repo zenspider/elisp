@@ -12,40 +12,30 @@
 (defun current-frame ()
   (car (car (last (cdr (current-frame-configuration))))))
 
-(defun small ()
-  (interactive)
-
+(defun arrange-frame (w h &optional nosplit)
+  "Rearrange the current frame to a custom width and height and split unless prefix."
   (let ((frame (current-frame)))
     (progn
       (delete-other-windows)
       (set-frame-position frame 5 25)
-      (set-frame-size frame 80 45))))
+      (set-frame-size frame w h)
+      (if (not nosplit)
+          (split-window-horizontally)))))
 
-(defun medium ()
+(defun small (&optional split)
+  "Create a small window suitable for coding on anything"
+  (interactive "P")
+  (arrange-frame 80 45 (not split)))
+
+(defun medium (&optional nosplit)
   "Create a large window suitable for coding on a macbook"
-  (interactive)
+  (interactive "P")
+  (arrange-frame 170 45 nosplit))
 
-  (let ((frame (current-frame)))
-    (progn
-      (delete-other-windows)
-      (set-frame-position frame 5 25)
-      (set-frame-size frame 170 45)
-      (split-window-horizontally))))
-
-(defun huge ()
-  "Create a large single window for a macbook"
-  (interactive)
-
-  (let ((frame (current-frame)))
-    (progn
-      (delete-other-windows)
-      (set-frame-position frame 5 25)
-      (set-frame-size frame 170 45))))
-
-(defun my-clean-windows ()
-  (interactive)
-  (delete-other-frames)
-  (small))
+(defun huge (&optional nosplit)
+  "Create a really large window suitable for coding on a 20 inch cinema display"
+  (interactive "P")
+  (arrange-frame 199 60 nosplit))
 
 (defun my-recompile-init ()
   (interactive)

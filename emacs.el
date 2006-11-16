@@ -71,6 +71,7 @@
  '(ecb-options-version "2.32")
  '(global-font-lock-mode t nil (font-core))
  '(icicle-reminder-prompt-flag 0)
+ '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(inhibit-splash-screen t)
  '(mouse-wheel-mode t nil (mwheel))
@@ -82,6 +83,7 @@
  '(tooltip-mode nil)
  '(transient-mark-mode t)
  '(vc-path (quote ("/opt/local/bin" "/usr/local/bin")))
+ '(vc-svn-program-name "/opt/local/bin/svn")
  '(which-function-mode nil))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
