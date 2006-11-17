@@ -10,6 +10,7 @@
 (require 'mmm-auto)
 (require 'autorevert)
 (require 'icicles)
+(require 'autotest)
 
 ;; ============================================================
 ;; Simple mode toggles:
@@ -32,33 +33,6 @@
   "Run an inferior Ruby process")
 (autoload 'inf-ruby-keys "inf-ruby"
   "Set local key defs for inf-ruby in ruby-mode")
-
-(defun autotest ()
-  (interactive)
-  (let ((buffer (shell "autotest")))
-    (define-key shell-mode-map "\C-c\C-a" 'autotest-switch)
-
-    (set (make-local-variable 'comint-output-filter-functions)
-         '(comint-truncate-buffer comint-postoutput-scroll-to-bottom))
-    (set (make-local-variable 'comint-buffer-maximum-size) 5000)
-    (set (make-local-variable 'comint-scroll-show-maximum-output) t)
-    (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
-
-    (set (make-local-variable 'compilation-error-regexp-alist)
-         '(
-           ("^ +\\([^:]+\\):\\([0-9]+\\)" 1 2)
-           ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
-           ; ("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in" 1 2)
-           ))
-
-    (compilation-shell-minor-mode)
-    (comint-send-string buffer "autotest\n")))
-
-(defun autotest-switch ()
-  (interactive)
-  (if (equal "autotest" (buffer-name))
-      (switch-to-buffer nil)
-    (switch-to-buffer "autotest")))
 
 ; TODO: add something to be smart about this
 (setenv "PATH" (concat "/usr/local/bin" ":" (getenv "PATH")))
@@ -119,6 +93,7 @@
                     "  end\nend"))))
   "Expansions for Ruby mode")
 
+(setq ruby-mode-abbrev-table '())
 (defun parse-tree ()
   (interactive)
   (expand-add-abbrevs ruby-mode-abbrev-table
