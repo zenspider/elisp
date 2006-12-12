@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:24:28 2006
 ;; Version: 22.0
-;; Last-Updated: Tue May 16 17:28:37 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Sat Oct 14 15:13:16 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 54
+;;     Update #: 105
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-mac.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -29,7 +29,11 @@
 ;;  Macros defined here:
 ;;
 ;;    `icicle-define-command', `icicle-define-file-command'.
-;; 
+;;
+;;  Functions defined here:
+;;
+;;    `icicle-try-switch-buffer'.
+;;
 ;;  Standard Emacs function defined here for older Emacs versions:
 ;;
 ;;    `select-frame-set-input-focus'.
@@ -38,6 +42,18 @@
 ;; 
 ;;; Change log:
 ;;
+;; 2006/10/14 dadams
+;;     Require icicles-var.el.
+;;     Moved conditional eval-when-compile to top level.
+;; 2006/09/24 dadams
+;;     icicle-define(-file)-command: Corrected bindings mentioned in doc strings.
+;; 2006/08/27 dadams
+;;     icicle-define(-file)-command: Ensure orig-window is live before using it.
+;; 2006/08/23 dadams
+;;     Added: icicle-try-switch-buffer.  Use it in icicle-define(-file)-command.
+;; 2006/08/03 dadams
+;;     icicle-define(-file)-command:
+;;       (error (error-message-string...)) -> (error "%s" (error-message-string...)).
 ;; 2006/05/16 dadams
 ;;     icicle-define(-file)-command: Treat cases where user wiped out orig-buff or orig-window.
 ;; 2006/03/31 dadams
@@ -80,7 +96,9 @@
 ;;
 ;; the function x-focus-frame is not known to be defined.
 
-(when (< emacs-major-version 20) (eval-when-compile (require 'cl))) ;; when, unless
+(eval-when-compile (when (< emacs-major-version 20) (require 'cl))) ;; when, unless
+
+(eval-when-compile (require 'icicles-var)) ;; icicle-last-input
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -95,10 +113,10 @@
      bindings first-sexp undo-sexp last-sexp)
   ;; Hard-code these in doc string, because \\[...] prefers ASCII
   ;; `C-RET'   instead of `\\[icicle-candidate-action]'
-  ;; `C-next'  instead of `\\[icicle-next-prefix-candidate-action]'
-  ;; `C-prior' instead of `\\[icicle-previous-prefix-candidate-action]'
-  ;; `next'    instead of `\\[icicle-next-apropos-candidate-action]'
-  ;; `prior'   instead of `\\[icicle-previous-apropos-candidate-action]'
+  ;; `C-down'  instead of `\\[icicle-next-prefix-candidate-action]'
+  ;; `C-up'    instead of `\\[icicle-previous-prefix-candidate-action]'
+  ;; `C-next'  instead of `\\[icicle-next-apropos-candidate-action]'
+  ;; `C-prior' instead of `\\[icicle-previous-apropos-candidate-action]'
   "Define COMMAND with DOC-STRING based on FUNCTION.
 COMMAND is a symbol.  DOC-STRING is a string.
 FUNCTION is a function that takes one argument, read as input.
@@ -112,7 +130,8 @@ BINDINGS is a list of `let*' bindings added around the command code.
   `orig-buff'   is bound to (current-buffer)
   `orig-window' is bound to (selected-window)
 
-In case of error or user quit, the original buffer is restored.
+In case of user quit (`C-g') or error, an attempt is made to restore
+the original buffer.
 
 FIRST-SEXP is a sexp evaluated before the main body of the command.
 UNDO-SEXP is a sexp evaluated in case of error or if the user quits.
@@ -145,13 +164,13 @@ these keys act on the current candidate:
 
 \\<minibuffer-local-completion-map>\
 `C-RET'   - Act on current completion candidate only
+`C-down'  - Act, then move to next \
+prefix-completion candidate
+`C-up'    - Act, then move to previous \
+prefix-completion candidate
 `C-next'  - Act, then move to next \
-prefix-completion candidate
-`C-prior' - Act, then move to previous \
-prefix-completion candidate
-`next'    - Act, then move to next \
 apropos-completion candidate
-`prior'   - Act, then move to previous \
+`C-prior' - Act, then move to previous \
 apropos-completion candidate
 `\\[icicle-all-candidates-action]'     - Act on *all* candidates, successively (careful!)
 
@@ -181,21 +200,22 @@ This is an Icicles command - see `icicle-mode'.")
                                  (funcall ',function candidate)))
                            (error (unless (string= "Cannot switch buffers in minibuffer window"
                                                    (error-message-string in-action-fn))
-                                    (error (error-message-string in-action-fn)))
-                                  (select-frame-set-input-focus (window-frame orig-window))
+                                    (error "%s" (error-message-string in-action-fn)))
+                                  (when (window-live-p orig-window)
+                                    (select-frame-set-input-focus (window-frame orig-window)))
                                   (funcall ',function candidate)))
                          (select-frame-set-input-focus (window-frame (minibuffer-window)))
                          nil)           ; Return nil for success.
-                     (error (error-message-string action-fn-return))) ; Return error msg.
+                     (error "%s" (error-message-string action-fn-return))) ; Return error msg.
                 (select-frame-set-input-focus (window-frame (minibuffer-window)))))))
       
       ,first-sexp
       (condition-case act-on-choice
           (funcall ',function (completing-read ,prompt ,table ,predicate ,require-match
                                                ,initial-input ,hist ,def ,inherit-input-method))
-        (quit (when (buffer-live-p orig-buff) (switch-to-buffer orig-buff)) ,undo-sexp)
-        (error (when (buffer-live-p orig-buff) (switch-to-buffer orig-buff)) ,undo-sexp
-               (error (error-message-string act-on-choice))))
+        (quit  (icicle-try-switch-buffer orig-buff) ,undo-sexp)
+        (error (icicle-try-switch-buffer orig-buff) ,undo-sexp
+               (error "%s" (error-message-string act-on-choice))))
       ,last-sexp)))
 
 (defmacro icicle-define-file-command
@@ -204,10 +224,10 @@ This is an Icicles command - see `icicle-mode'.")
      bindings first-sexp undo-sexp last-sexp)
   ;; Hard-code these in doc string, because \\[...] prefers ASCII
   ;; `C-RET'   instead of `\\[icicle-candidate-action]'
-  ;; `C-next'  instead of `\\[icicle-next-prefix-candidate-action]'
-  ;; `C-prior' instead of `\\[icicle-previous-prefix-candidate-action]'
-  ;; `next'    instead of `\\[icicle-next-apropos-candidate-action]'
-  ;; `prior'   instead of `\\[icicle-previous-apropos-candidate-action]'
+  ;; `C-down'  instead of `\\[icicle-next-prefix-candidate-action]'
+  ;; `C-up'    instead of `\\[icicle-previous-prefix-candidate-action]'
+  ;; `C-next'  instead of `\\[icicle-next-apropos-candidate-action]'
+  ;; `C-prior' instead of `\\[icicle-previous-apropos-candidate-action]'
   "Define COMMAND with DOC-STRING based on FUNCTION.
 COMMAND is a symbol.  DOC-STRING is a string.
 FUNCTION is a function that takes one file-name or directory-name
@@ -221,7 +241,8 @@ BINDINGS is a list of `let*' bindings added around the command code.
   `orig-buff'   is bound to (current-buffer)
   `orig-window' is bound to (selected-window)
 
-In case of error or user quit, the original buffer is restored.
+In case of user quit (`C-g') or error, an attempt is made to restore
+the original buffer.
 
 FIRST-SEXP is a sexp evaluated before the main body of the command.
 UNDO-SEXP is a sexp evaluated in case of error or if the user quits.
@@ -254,13 +275,13 @@ these keys act on the current candidate:
 
 \\<minibuffer-local-completion-map>\
 `C-RET'   - Act on current completion candidate only
+`C-down'  - Act, then move to next \
+prefix-completion candidate
+`C-up'    - Act, then move to previous \
+prefix-completion candidate
 `C-next'  - Act, then move to next \
-prefix-completion candidate
-`C-prior' - Act, then move to previous \
-prefix-completion candidate
-`next'    - Act, then move to next \
 apropos-completion candidate
-`prior'   - Act, then move to previous \
+`C-prior' - Act, then move to previous \
 apropos-completion candidate
 `\\[icicle-all-candidates-action]'     - Act on *all* candidates, successively (careful!)
 
@@ -292,12 +313,13 @@ This is an Icicles command - see `icicle-mode'.")
                                  (funcall ',function candidate)))
                            (error (unless (string= "Cannot switch buffers in minibuffer window"
                                                    (error-message-string in-action-fn))
-                                    (error (error-message-string in-action-fn)))
-                                  (select-frame-set-input-focus (window-frame orig-window))
+                                    (error "%s" (error-message-string in-action-fn)))
+                                  (when (window-live-p orig-window)
+                                    (select-frame-set-input-focus (window-frame orig-window)))
                                   (funcall ',function candidate)))
                          (select-frame-set-input-focus (window-frame (minibuffer-window)))
                          nil)           ; Return nil for success.
-                     (error (error-message-string action-fn-return))) ; Return error msg.
+                     (error "%s" (error-message-string action-fn-return))) ; Return error msg.
                 (select-frame-set-input-focus (window-frame (minibuffer-window)))))))
       ,first-sexp
       (condition-case act-on-choice
@@ -307,10 +329,26 @@ This is an Icicles command - see `icicle-mode'.")
                (read-file-name ,prompt ,dir ,default-filename ,require-match ,initial-input)
              (read-file-name ,prompt ,dir ,default-filename ,require-match
                              ,initial-input ,predicate)))
-        (quit  (when (buffer-live-p orig-buff) (switch-to-buffer orig-buff)) ,undo-sexp)
-        (error (when (buffer-live-p orig-buff) (switch-to-buffer orig-buff)) ,undo-sexp
-               (error (error-message-string act-on-choice))))
+        (quit  (icicle-try-switch-buffer orig-buff) ,undo-sexp)
+        (error (icicle-try-switch-buffer orig-buff) ,undo-sexp
+               (error "%s" (error-message-string act-on-choice))))
       ,last-sexp)))
+
+
+;;; Functions  ---------------------------------------------
+
+(defun icicle-try-switch-buffer (buffer)
+  "Try to switch to BUFFER, first in same window, then in other window."
+  (when (buffer-live-p buffer)
+    (condition-case err-switch-to
+        (switch-to-buffer buffer)
+      (error (and (string= "Cannot switch buffers in minibuffer window"
+                           (error-message-string err-switch-to))
+                  ;; Try another window.  Don't bother if the buffer to switch to is a minibuffer.
+                  (condition-case err-switch-other
+                      (unless (string-match "\\` \\*Minibuf-[0-9]+\\*\\'" (buffer-name buffer))
+                        (switch-to-buffer-other-window buffer))
+                    (error "%s" (error-message-string err-switch-other))))))))
 
 (unless (fboundp 'select-frame-set-input-focus) ; Defined in Emacs 22.
   (defun select-frame-set-input-focus (frame)
@@ -321,6 +359,9 @@ This is an Icicles command - see `icicle-mode'.")
     (cond ((eq window-system 'x) (x-focus-frame frame))
           ((eq window-system 'w32) (w32-focus-frame frame)))
     (cond (focus-follows-mouse (set-mouse-position (selected-frame) (1- (frame-width)) 0)))))
+
+
+;;; Miscellaneous  -----------------------------------------
 
 ;; Make Emacs-Lisp mode fontify definitions of Icicles commands.
 (font-lock-add-keywords

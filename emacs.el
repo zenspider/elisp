@@ -2,7 +2,7 @@
 
 (setq running-xemacs (featurep 'xemacs))
 
-(if (featurep 'xemacs)
+(if running-xemacs
     (progn
       (message "you are running xemacs... good")
       ;; Extend Info directories - TODO: needs counterpart for GNU emacs
@@ -22,21 +22,17 @@
 	      'comint-watch-for-password-prompt)
     ))
 
-;; EVIL - can't cntl-c a proccess in a shell! (setq process-connection-type nil)
 (put 'erase-buffer 'disabled nil) ;; nukes stupid warning
 
 (mapc '(lambda (path)
 	 (pushnew (expand-file-name path) load-path :test 'string=))
       (list 
-       "/usr/share/emacs/site-lisp/"
-       (if (featurep 'xemacs)
-	   "/usr/local/lib/xemacs/site-lisp/"
-	 "/usr/local/lib/emacs/site-lisp/")
        "~/Bin/elisp/"
        "~/Bin/elisp/third-party/"
        ))
 
-(mapc '(lambda (path) (pushnew (expand-file-name path) load-path :test 'string=))
+(mapc '(lambda (path)
+         (pushnew (expand-file-name path) load-path :test 'string=))
       (remove-if-not (lambda (o)
 		       (and (file-directory-p o)
 			    (not (string-match "\\.$" o))))
@@ -44,7 +40,7 @@
 			     (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3" t)
 			     (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3/semantic" t))))
 
-(if (featurep 'xemacs)
+(if running-xemacs
     t
   (require 'vc-hooks))
 

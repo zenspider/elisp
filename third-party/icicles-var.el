@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:23:26 2006
 ;; Version: 22.0
-;; Last-Updated: Wed Jul 05 17:04:03 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Thu Nov 09 13:23:09 2006 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 191
+;;     Update #: 225
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-var.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -31,14 +31,14 @@
 ;;
 ;;  Internal variables defined here:
 ;;
-;;    `icicle-apropos-completing-p', `icicle-candidate-action-fn',
+;;    `icicle-pre-minibuffer-buffer', `icicle-candidate-action-fn',
 ;;    `icicle-candidate-entry-fn', `icicle-candidate-nb',
 ;;    `icicle-candidates-alist', `icicle-cmd-calling-for-completion',
 ;;    `icicle-common-match-string', `icicle-complete-input-overlay',
 ;;    `icicle-completion-candidates' `icicle-completion-help-string',
 ;;    `icicle-current-completion-candidate-overlay',
-;;    `icicle-current-input', `icicle-current-raw-input',
-;;    `icicle-default-directory',
+;;    `icicle-current-completion-mode', `icicle-current-input',
+;;    `icicle-current-raw-input', `icicle-default-directory',
 ;;    `icicle-default-thing-insertion-flipped-p',
 ;;    `icicle-extra-candidates', `icicle-icompleting-p',
 ;;    `icicle-ignored-extensions', `icicle-ignored-extensions-regexp',
@@ -47,9 +47,9 @@
 ;;    `icicle-insert-string-at-pt-start',
 ;;    `icicle-last-completion-candidate',
 ;;    `icicle-last-completion-command', `icicle-last-input',
-;;    `icicle-last-sort-function', `icicle-menu-items-alist',
-;;    `icicle-must-match-regexp', `icicle-must-not-match-regexp',
-;;    `icicle-must-pass-predicate',
+;;    `icicle-last-sort-function', `icicle-last-transform-function',
+;;    `icicle-menu-items-alist', `icicle-must-match-regexp',
+;;    `icicle-must-not-match-regexp', `icicle-must-pass-predicate',
 ;;    `icicle-nb-of-other-cycle-candidates',
 ;;    `icicle-post-command-hook', `icicle-pre-command-hook',
 ;;    `icicle-prompt', `icicle-prompt-suffix', `icicle-re-no-dot',
@@ -58,7 +58,8 @@
 ;;    `icicle-saved-ignored-extensions',
 ;;    `icicle-saved-regexp-search-ring-max',
 ;;    `icicle-saved-region-background',
-;;    `icicle-saved-search-ring-max', `icicle-search-current-overlay',
+;;    `icicle-saved-search-ring-max', `icicle-search-command',
+;;    `icicle-search-current-overlay', `icicle-search-final-choice',
 ;;    `icicle-search-overlays', `icicle-search-refined-overlays',
 ;;    `icicle-successive-grab-count',
 ;;    `icicle-thing-at-pt-fns-pointer'.
@@ -67,6 +68,28 @@
 ;;
 ;;; Change log:
 ;;
+;; 2006/11/09 dadams
+;;     icicle-search-refined-overlays: Updated doc string: icicle-search-highlight-threshold.
+;; 2006/10/14 dadams
+;;     Moved conditional eval-when-compile to top level.
+;; 2006/09/24 dadams
+;;     icicle-last-transform-function: Corrected default value.
+;; 2006/09/12 dadams
+;;     Added: icicle-pre-minibuffer-buffer.
+;; 2006/08/20 dadams
+;;     icicle-current-completion-mode: Updated doc string.
+;; 2006/08/04 dadams
+;;     Removed icicle-apropos-completing-p (not used).
+;; 2006/07/23 dadams
+;;     Added: icicle-last-transform-function.
+;; 2006/07/22 dadams
+;;     Added: icicle-search-command, icicle-search-final-choice.
+;; 2006/07/20 dadams
+;;     Renamed icicle-arrows-respect-* to icicle-cycling-respects-completion-mode-flag.
+;; 2006/07/19 dadams
+;;     Applied patch from Damien Elmes <emacs@repose.cx>:
+;;       Added: icicle-current-completion-type.
+;;     Renamed: icicle-current-completion-type to icicle-current-completion-mode.
 ;; 2006/07/05 dadams
 ;;     Renamed: icicle-current-regexp-input to icicle-current-raw-input.
 ;; 2006/06/18 dadams
@@ -124,8 +147,8 @@
 ;;
 ;;; Code:
 
-(when (< emacs-major-version 21)     ;; for Emacs < 21: push
-  (eval-when-compile (require 'cl))) ;; for Emacs < 20: when, unless
+(eval-when-compile                               ;; for Emacs < 21: push
+ (when (< emacs-major-version 21) (require 'cl)));; for Emacs < 20: when, unless
 
 (require 'apropos-fn+var nil t) ;; (no error if not found): apropos-command, apropos-function,
                                 ;; apropos-option, apropos-variable
@@ -144,8 +167,8 @@
 (defvar font-lock-keyword-face 'font-lock-keyword-face ; Defined in `font-lock.el'.
   "Face name to use for keywords.")
 
-(defvar icicle-apropos-completing-p nil
-  "Internal flag: non-nil when apropos-completing.")
+(defvar icicle-pre-minibuffer-buffer nil
+  "Buffer that was current before the minibuffer became active.")
 
 (defvar icicle-candidate-action-fn nil
   "Function to be applied to current completion candidate.
@@ -181,6 +204,9 @@ Nil means no such common match is available.")
 
 (defvar icicle-current-completion-candidate-overlay nil
   "Overlay used to highlight current completion candidate.")
+
+(defvar icicle-current-completion-mode nil
+  "Symbol `prefix' or `apropos', specifying the current completion mode.")
 
 (defvar icicle-current-input "" "Current minibuffer input.")
 
@@ -245,6 +271,9 @@ value or initial value should, before reading, put that value in
 (defvar icicle-last-sort-function (or icicle-sort-function 'string-lessp)
   "Local copy of `icicle-sort-function', so we can restore it.")
 
+(defvar icicle-last-transform-function (or icicle-transform-function 'icicle-remove-duplicates)
+  "Local copy of `icicle-transform-function', so we can restore it.")
+
 (defvar icicle-menu-items-alist nil)    ; Defined in `icicles-menu.el'.
 
 (defvar icicle-must-match-regexp nil
@@ -279,7 +308,8 @@ Use command `icy-mode' (aka `icicle-mode') to set this up properly.")
   "Functions added to `pre-command-hook' when in Icicle mode.
 Use command `icy-mode' (aka `icicle-mode') to set this up properly.")
 
-(defvar icicle-prompt "")
+(defvar icicle-prompt ""
+  "Prompt used for completion.  See also `icicle-prompt-suffix'.")
 
 (defvar icicle-prompt-suffix ""
   "String to append to the input-completion prompt, if there is room.
@@ -307,16 +337,25 @@ Used for completion in `icicle-candidate-set-retrieve-from-variable'.")
 (defvar icicle-saved-search-ring-max search-ring-max
   "Saved value of `search-ring-max', so it can be restored.")
 
+(defvar icicle-search-command 'icicle-search
+  "Command to use for Icicles searches.
+You can set a buffer-local value of this variable, to use a specific
+search command in a particular mode.")
+
 (defvar icicle-search-current-overlay nil
   "Overlay used to highlight current match of `icicle-search' regexp arg.")
+
+(defvar icicle-search-final-choice nil
+  "Final user input from `icicle-search'.
+This might or might not be one of the possible search candidates.")
 
 (defvar icicle-search-overlays nil
   "Overlays used to highlight match of `icicle-search' regexp argument.")
 
 (defvar icicle-search-refined-overlays nil
   "Overlay(s) used to highlight match of current input for `icicle-search'.
-If `icicle-search-highlight-all-flag' is nil, then this is a single
-overlay (or nil).  Otherwise, this is a list of overlays.")
+If `icicle-search-highlight-threshold' is less than one, then this is
+a single overlay (or nil).  Otherwise, this is a list of overlays.")
 
 (defvar icicle-successive-grab-count 0
   "Number of text things to be grabbed by next `\\<minibuffer-local-map>\

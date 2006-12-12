@@ -127,19 +127,6 @@
   (progn
     (insert (buffer-name))))
 
-(defun insert-shell-command (cmd)
-  "Execute and insert results of a command in current buffer."
-  (shell-command-on-region (point) (point) cmd nil t))
-
-(defun insert-shell-command-interactive (s)
-  "Execute and insert results of a command in current buffer."
-  (interactive "sShell Command: ")
-  (insert-shell-command s))
-
-(defun windoze-sucks ()
-  (interactive)
-  (set-buffer-file-coding-system 'unix))
-
 (defun reload-safari ()
   (interactive)
   (shell-command "printf 'tell application \"System Events\"\nclick button \"Stop\" of first window of process \"Safari\"\nend tell' | osascript" nil nil))

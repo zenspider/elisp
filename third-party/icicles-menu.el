@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005-2006, Drew Adams, all rights reserved.
 ;; Created: Fri Aug 12 17:18:02 2005
 ;; Version: 22.0
-;; Last-Updated: Thu Mar 16 11:10:50 2006 (-28800 Pacific Standard Time)
+;; Last-Updated: Mon Oct 16 11:51:12 2006 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 346
+;;     Update #: 351
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-menu.el
 ;; Keywords: menu-bar, menu, command, help, abbrev, minibuffer, keys,
 ;;           completion, matching, local, internal, extensions,
@@ -23,7 +23,8 @@
 ;;
 ;;; Commentary:
 ;;
-;;  Execute menu items as commands, with completion.
+;;  Execute menu items as commands, with completion.  Use this, for
+;;  example, instead of standard library `tmm.el'.
 ;;
 ;;  Type a menu item.  Completion is available.  Completion candidates
 ;;  are of the form menu > submenu > subsubmenu...  For example:
@@ -178,6 +179,8 @@
 ;;
 ;;; Change log:
 ;;
+;; 2006/10/16 dadams
+;;      icicle-get-overall-menu-item-alist: Include minor-mode keymaps.
 ;; 2006/03/16 dadams
 ;;      Added to Commentary.
 ;; 2006/02/18 dadams
@@ -312,11 +315,14 @@ Type a menu item.  Completion is available."
     (setq icicle-menu-items-alist nil))) ; Reset it.
 
 (defun icicle-get-overall-menu-item-alist ()
-  "Alist formed from menu items in current local and global keymaps.
+  "Alist formed from menu items in current active keymaps.
 See `icicle-get-a-menu-item-alist' for the structure."
   (let ((alist
-         (nconc (icicle-get-a-menu-item-alist (assq 'menu-bar (current-local-map)))
-                (icicle-get-a-menu-item-alist (assq 'menu-bar (current-global-map))))))
+         (apply #'nconc
+                (icicle-get-a-menu-item-alist (assq 'menu-bar (current-local-map)))
+                (icicle-get-a-menu-item-alist (assq 'menu-bar (current-global-map)))
+                (mapcar (lambda (map) (icicle-get-a-menu-item-alist (assq 'menu-bar map)))
+                        (current-minor-mode-maps)))))
     (if nil;; icicle-sort-menu-bar-order-flag ; Not yet implemented.
         (setq alist (sort alist))
       alist)))

@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:25:04 2006
 ;; Version: 22.0
-;; Last-Updated: Sat Jul 08 17:08:05 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Fri Nov 10 22:05:51 2006 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 2816
+;;     Update #: 5518
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-cmd.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -17,7 +17,13 @@
 ;;
 ;; Features that might be required by this library:
 ;;
-;;   `apropos', `apropos-fn+var', `misc-fns'.
+;;   `apropos', `apropos-fn+var', `avoid', `cl', `custom', `dired',
+;;   `dired+', `dired-aux', `dired-x', `easymenu', `ediff-diff',
+;;   `ediff-help', `ediff-init', `ediff-merg', `ediff-mult',
+;;   `ediff-util', `ediff-wind', `fit-frame', `frame-cmds',
+;;   `frame-fns', `info', `info+', `misc-fns', `mkhtml',
+;;   `mkhtml-htmlize', `pp', `pp+', `strings', `thingatpt',
+;;   `thingatpt+', `widget'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -37,40 +43,56 @@
 ;;    `icicle-apropos-option', `icicle-apropos-variable',
 ;;    `icicle-apropos-zippy', `icicle-bookmark', `icicle-buffer',
 ;;    `icicle-buffer-config', `icicle-buffer-list',
-;;    `icicle-buffer-other-window', `icicle-color-theme',
-;;    `icicle-compilation-search', `icicle-complete-thesaurus-entry',
-;;    `icicle-clear-option', `icicle-customize-icicles-group',
-;;    `icicle-dabbrev-completion', `icicle-delete-file',
-;;    `icicle-dired-saved-file-candidates',
+;;    `icicle-buffer-other-window', `icicle-clear-option',
+;;    `icicle-color-theme', `icicle-comint-command',
+;;    `icicle-comint-search', `icicle-compilation-search',
+;;    `icicle-complete-keys', `icicle-complete-thesaurus-entry',
+;;    `icicle-customize-icicles-group', `icicle-dabbrev-completion',
+;;    `icicle-delete-file', `icicle-delete-window',
+;;    `icicle-delete-windows', `icicle-dired-saved-file-candidates',
 ;;    `icicle-dired-saved-file-candidates-other-window', `icicle-doc',
 ;;    `icicle-execute-extended-command', `icicle-find-file',
 ;;    `icicle-find-file-other-window', `icicle-font',
 ;;    `icicle-frame-bg', `icicle-frame-fg', `icicle-fundoc',
-;;    `icicle-imenu', `icicle-insert-string-from-variable',
-;;    `icicle-insert-thesaurus-entry', `icicle-kill-buffer',
-;;    `icicle-lisp-complete-symbol', `icicle-locate-file',
-;;    `icicle-locate-file-other-window', `icicle-map' `icicle-mode',
-;;    `icy-mode', `icicle-occur', `icicle-recent-file',
+;;    `icicle-generic-S-tab', `icicle-imenu', `icicle-Info-goto-node',
+;;    `icicle-Info-goto-node-cmd', `icicle-Info-index',
+;;    `icicle-Info-index-cmd', `icicle-insert-char',
+;;    `icicle-insert-kill', `icicle-insert-thesaurus-entry',
+;;    `icicle-kill-buffer', `icicle-lisp-complete-symbol',
+;;    `icicle-locate-file', `icicle-locate-file-other-window',
+;;    `icicle-map' `icicle-mode', `icy-mode', `icicle-occur',
+;;    `icicle-plist' `icicle-read-kbd-macro', `icicle-recent-file',
 ;;    `icicle-recent-file-other-window',
 ;;    `icicle-remove-buffer-candidate', `icicle-remove-buffer-config',
 ;;    `icicle-remove-saved-completion-set',
 ;;    `icicle-repeat-complex-command', `icicle-reset-option-to-nil',
 ;;    `icicle-save-string-to-variable', `icicle-search',
-;;    `icicle-search-highlight-cleanup', `icicle-set-option-to-t',
+;;    `icicle-search-generic', `icicle-search-highlight-cleanup',
+;;    `icicle-set-option-to-t', `icicle-switch-to/from-minibuffer',
+;;    `icicle-toggle-alternative-sorting',
+;;    `icicle-toggle-angle-brackets',
+;;    `icicle-toggle-case-sensitivity',
+;;    `icicle-toggle-highlight-all-current',
 ;;    `icicle-toggle-ignored-extensions',
 ;;    `icicle-toggle-ignored-space-prefix',
 ;;    `icicle-toggle-incremental-completion',
-;;    `icicle-toggle-regexp-quote', `icicle-toggle-sorting',
-;;    `icicle-vardoc', `toggle-icicle-ignored-extensions',
+;;    `icicle-toggle-regexp-quote', `icicle-toggle-search-cleanup',
+;;    `icicle-toggle-sorting', `icicle-toggle-transforming',
+;;    `icicle-vardoc', `icicle-yank-insert',
+;;    `toggle-icicle-alternative-sorting',
+;;    `toggle-icicle-angle-brackets',
+;;    `toggle-icicle-case-sensitivity',
+;;    `toggle-icicle-ignored-extensions',
 ;;    `toggle-icicle-ignored-space-prefix',
 ;;    `toggle-icicle-incremental-completion',
-;;    `toggle-icicle-regexp-quote', `toggle-icicle-sorting'.
+;;    `toggle-icicle-regexp-quote', `toggle-icicle-search-cleanup',
+;;    `toggle-icicle-sorting', `toggle-icicle-transforming'.
 ;;
 ;;   Commands to be used mainly in the minibuffer or *Completions*:
 ;;
-;;    `icicle-abort-minibuffer-input', `icicle-alternative-sort',
-;;    `icicle-apropos-complete', `icicle-apropos-complete-no-display',
+;;    `icicle-abort-minibuffer-input', `icicle-apropos-complete',
 ;;    `icicle-apropos-complete-and-exit',
+;;    `icicle-apropos-complete-no-display',
 ;;    `icicle-backward-delete-char-untabify',
 ;;    `icicle-backward-kill-paragraph',
 ;;    `icicle-backward-kill-sentence', `icicle-backward-kill-sexp',
@@ -91,10 +113,15 @@
 ;;    `icicle-customize-apropos-groups',
 ;;    `icicle-customize-apropos-options',
 ;;    `icicle-delete-backward-char', `icicle-delete-char',
-;;    `icicle-delete-windows-on', `icicle-erase-minibuffer',
+;;    `icicle-delete-windows-on', `icicle-dispatch-C-.',
+;;    `icicle-erase-minibuffer',
 ;;    `icicle-erase-minibuffer-or-history-element',
 ;;    `icicle-exit-minibuffer', `icicle-help-on-candidate',
-;;    `icicle-history', `icicle-insert-string-at-point',
+;;    `icicle-help-on-next-apropos-candidate',
+;;    `icicle-help-on-previous-apropos-candidate',
+;;    `icicle-help-on-next-prefix-candidate',
+;;    `icicle-help-on-previous-prefix-candidate', `icicle-history',
+;;    `icicle-insert-completion', `icicle-insert-string-at-point',
 ;;    `icicle-insert-string-from-variable', `icicle-isearch-complete',
 ;;    `icicle-keep-only-past-inputs', `icicle-kill-line',
 ;;    `icicle-kill-paragraph', `icicle-kill-region',
@@ -103,51 +130,80 @@
 ;;    `icicle-minibuffer-complete-and-exit',
 ;;    `icicle-mouse-candidate-action',
 ;;    `icicle-mouse-choose-completion',
+;;    `icicle-mouse-help-on-candidate'
 ;;    `icicle-move-to-next-completion',
 ;;    `icicle-move-to-previous-completion',
 ;;    `icicle-narrow-candidates', `icicle-next-apropos-candidate',
-;;    `icicle-next-apropos-candidate-action', `icicle-next-line',
+;;    `icicle-next-apropos-candidate-action',
+;;    `icicle-next-candidate-per-mode', `icicle-next-line',
 ;;    `icicle-next-prefix-candidate',
-;;    `icicle-next-prefix-candidate-action', `icicle-prefix-complete',
+;;    `icicle-next-prefix-candidate-action',
+;;    `icicle-pp-eval-expression', `icicle-prefix-complete',
 ;;    `icicle-prefix-complete-no-display',
 ;;    `icicle-previous-apropos-candidate',
 ;;    `icicle-previous-apropos-candidate-action',
-;;    `icicle-previous-line', `icicle-previous-prefix-candidate',
+;;    `icicle-previous-candidate-per-mode', `icicle-previous-line',
+;;    `icicle-previous-prefix-candidate',
 ;;    `icicle-previous-prefix-candidate-action',
 ;;    `icicle-retrieve-candidates-from-set',
-;;    `icicle-retrieve-last-input', `icicle-self-insert',
-;;    `icicle-send-bug-report', `icicle-switch-to-Completions-buf',
-;;    `icicle-switch-to-completions', `icicle-switch-to-minibuffer',
+;;    `icicle-retrieve-last-input', `icicle-scroll-Completions',
+;;    `icicle-self-insert', `icicle-send-bug-report',
+;;    `icicle-switch-to-Completions-buf',
+;;    `icicle-switch-to-completions',
+;;    `icicle-switch-to/from-minibuffer',
+;;    `icicle-toggle-alternative-sorting',
+;;    `icicle-toggle-angle-brackets',
+;;    `icicle-toggle-case-sensitivity',
+;;    `icicle-toggle-highlight-all-current',
 ;;    `icicle-toggle-ignored-extensions',
 ;;    `icicle-toggle-ignored-space-prefix',
 ;;    `icicle-toggle-incremental-completion',
-;;    `icicle-toggle-regexp-quote', `icicle-toggle-sorting',
-;;    `toggle-icicle-ignored-extensions', `icicle-transpose-chars',
-;;    `icicle-transpose-sexps', `icicle-transpose-words',
-;;    `icicle-yank', `icicle-yank-pop', `old-completing-read',
-;;    `old-choose-completion-string', `old-completion-setup-function',
-;;    `old-exit-minibuffer', `old-minibuffer-complete-and-exit',
-;;    `old-read-file-name', `old-switch-to-completions',
+;;    `icicle-toggle-regexp-quote', `icicle-toggle-search-cleanup',
+;;    `icicle-toggle-sorting', `icicle-toggle-transforming',
+;;    `icicle-transpose-chars', `icicle-transpose-sexps',
+;;    `icicle-transpose-words', `icicle-yank', `icicle-yank-pop',
+;;    `old-completing-read', `old-choose-completion-string',
+;;    `old-completion-setup-function', `old-exit-minibuffer',
+;;    `old-minibuffer-complete-and-exit', `old-read-file-name',
+;;    `old-switch-to-completions',
+;;    `toggle-icicle-alternative-sorting',
+;;    `toggle-icicle-angle-brackets',
+;;    `toggle-icicle-case-sensitivity',
 ;;    `toggle-icicle-ignored-extensions',
 ;;    `toggle-icicle-ignored-space-prefix',
 ;;    `toggle-icicle-incremental-completion',
-;;    `toggle-icicle-regexp-quote', `toggle-icicle-sorting'.
+;;    `toggle-icicle-regexp-quote', `toggle-icicle-search-cleanup',
+;;    `toggle-icicle-sorting', `toggle-icicle-transforming'.
 ;;
-;;  Non interactive functions defined here:
+;;  Non-interactive functions defined here:
 ;;
+;;    `custom-variable-p', `icicle-add-key+cmd',
 ;;    `icicle-apropos-complete-1', `icicle-binary-option-p',
+;;    `icicle-comint-get-final-choice',
+;;    `icicle-comint-get-minibuffer-input',
+;;    `icicle-comint-send-input', `icicle-complete-keys-1',
+;;    `icicle-complete-keys-action',
 ;;    `icicle-current-completion-in-Completions',
-;;    `icicle-delete-file-or-directory',
+;;    `icicle-delete-file-or-directory', `icicle-edmacro-parse-keys',
 ;;    `icicle-execute-extended-command-1', `icicle-filter-alist',
 ;;    `icicle-find-file-other-window-w-wildcards',
 ;;    `icicle-find-file-w-wildcards', `icicle-imenu-in-buffer-p',
-;;    `icicle-insert-input', `icicle-insert-thing',
-;;    `icicle-isearch-resume', `icicle-kill-a-buffer',
+;;    `icicle-Info-goto-node-action', `icicle-Info-index-action',
+;;    `icicle-insert-for-yank', `icicle-insert-input',
+;;    `icicle-insert-thing', `icicle-isearch-resume',
+;;    `icicle-keys+cmds-w-prefix', `icicle-kill-a-buffer',
 ;;    `icicle-map-action', `icicle-nb-of-candidate-in-Completions',
 ;;    `icicle-non-whitespace-string-p', `icicle-prefix-complete-1',
-;;    `icicle-read-from-minibuf-nil-default', `icicle-search-action',
+;;    `icicle-raise-Completions-frame',
+;;    `icicle-read-from-minibuf-nil-default',
+;;    `icicle-read-single-key-description', `icicle-search-action',
 ;;    `icicle-search-highlight-all-input-matches',
-;;    `icicle-select-minibuffer-contents', `icicle-signum'.
+;;    `icicle-search-regexp-scan', `icicle-search-region',
+;;    `icicle-signum', `icicle-this-command-keys-prefix'.
+;;
+;;  Internal variables defined here:
+;;
+;;    `icicle-complete-keys-alist'.
 ;;
 ;;
 ;;  ***** NOTE: These EMACS PRIMITIVES have been REDEFINED HERE:
@@ -160,7 +216,7 @@
 ;;              been REDEFINED HERE:
 ;;
 ;;  `dabbrev-completion' - Use Icicles completion when you repeat
-;;                         (`M-C-/').
+;;                         (`C-M-/').
 ;;
 ;;
 ;;  ***** NOTE: The following functions defined in `lisp.el' have
@@ -181,10 +237,6 @@
 ;;
 ;;  `switch-to-completions' - Always selects *Completions* window.
 ;;
-;;  `next-history-element' (advised only) -
-;;     Depending on `icicle-init-value-flag', select minibuffer
-;;     contents.
-;;
 ;;  `repeat-complex-command' - Use `completing-read' to read command.
 ;;
 ;;
@@ -202,6 +254,258 @@
 ;;
 ;;; Change log:
 ;;
+;; 2006/11/10 dadams
+;;    icicle-mouse-candidate-action: read-event to swallow mouse up event.
+;;    icicle-map-action: Don't use icicle-filter-alist - find string in icicle-candidates-alist.
+;;                       Unwind-protect to reselect minibuffer frame.
+;;                       Don't bind case-fold-search.
+;;    icicle-map: enable-recursive-minibuffers.
+;; 2006/11/09 dadams
+;;    icicle-nb-of-candidate-in-Completions: Redefined using binary search, for better performance.
+;;    icicle-toggle-ignored-space-prefix: Update doc string to use icicle-dispatch-C-^.
+;;    icicle-search:
+;;      Bind icicle-update-input-hook unconditionally, after icicle-search-regexp-scan.
+;;    icicle-search-regexp-scan: Highlight up to icicle-search-highlight-threshold.
+;;    icicle-search-highlight-all-input-matches:
+;;      Only update input and highlight if icicle-search-highlight-all-current-flag.
+;;    icicle-search-action: Don't use icicle-filter-alist - find string in icicle-candidates-alist.
+;;    icicle-search-highlight-cleanup: Bind inhibit-quit to t.
+;; 2006/11/07 dadams
+;;    Added: icicle-toggle-highlight-all-current.
+;; 2006/11/06 dadams
+;;    icicle-search-action:
+;;      Highlight icicle-current-input, not icicle-current-raw-input (not updated).
+;;    Renamed icicle-search-highlight-all-flag to icicle-search-highlight-threshold.
+;; 2006/11/05 dadams
+;;    Added: icicle-search-regexp-scan.
+;;    icicle-search:
+;;      Added buffers arg.  Updated doc string.
+;;      Use icicle-search-regexp-scan:  Scan each buffer in buffers.
+;;                                      Add marker, not position, to icicle-candidates-alist.
+;;      Go to candidate in its buffer.
+;;      Added progress message.
+;;    icicle-search-action: Pop to buffer of candidate (marker) and raise frame.
+;;    icicle-occur: Added buffers arg.  Updated doc string.  Call icicle-search-highlight-cleanup.
+;;    icicle-search-highlight-all-input-matches: set-buffer for each ov in dolist (minor opt.).
+;;    icicle-search-highlight-cleanup: Added progress messages.  Minor optimization.
+;; 2006/10/22 dadams
+;;    icicle-complete-keys-action:
+;;      Set last-nonmenu-event to non-mouse info, to ignore *Completions* click.
+;;    icicle-complete-keys-1: Don't use a default value for completing-read.
+;; 2006/10/21 dadams
+;;    Added: icicle-insert-char.
+;;    icicle-add-key+cmd: Respect icicle-complete-keys-self-insert-flag.
+;; 2006/10/20 dadams
+;;    icicle-map, icicle-delete-window: Corrected doc string.
+;; 2006/10/16 dadams
+;;    icicle-add-key+cmd: Protect :enable's eval with condition-case.
+;;    icicle-complete-keys-1: No longer use icicle-extra-candidates.
+;;                            Use default value of .. for completing-read (except at top level).
+;;    icicle-complete-keys-action: Correct no-match case: must match whole and part.
+;;    icicle-keys+cmds-w-prefix: Add .. to icicle-complete-keys-alist unless at top level.
+;; 2006/10/15 dadams
+;;    icicle-complete-keys:
+;;      Bind icicle-complete-keys-action, not icicle-complete-keys-help, to icicle-*-action-fn.
+;;      Bind orig-buff, orig-window, and icicle-completing-keys-p, for use elsewhere.
+;;    Added: icicle-complete-keys-action.  Initial definition from code in icicle-complete-keys.
+;;    icicle-complete-keys-action:
+;;      Use orig-buff and orig-window; restore to originally selected window.
+;;      Error if candidate doesn't match template xxx  =  yyy.
+;;    icicle-complete-keys-1:
+;;      Call icicle-complete-keys-action on chosen candidate.
+;;    icicle-help-on-candidate: Treat key completion also.
+;;    Added from cus-edit+.el: custom-variable-p.
+;;    Moved to icicles-mode.el: icicle-select-minibuffer-contents, next-history-element.
+;;    Moved here from icicles-mode.el: icicle-generic-S-tab.
+;;    icicle-generic-S-tab (bug fix): Do not set last-command to icicle-apropos-complete.
+;;    Added: eval-when-compile's.
+;; 2006/10/13 dadams
+;;    icicle-add-key+cmd:
+;;      Add actual key to icicle-complete-keys-alist.  Thx to Stefan Monnier.
+;;      Don't filter out index (Imenu) keymap.
+;;      Treat :enable condition.
+;;    icicle-complete-keys-1:
+;;      Use actual key recorded in icicle-complete-keys-alist. Don't convert to key description.
+;;      Treat digit-argument and negative-argument.
+;;    icicle-complete-keys-alist: Updated doc string for new structure.
+;; 2006/10/08 dadams
+;;    Added: icicle-add-key+cmd, icicle-read-single-key-description.
+;;    Added: icicle-complete-keys-alist.
+;;           Use in icicle-complete-keys-1, icicle-keys+cmds-w-prefix, icicle-add-key+cmd.
+;;    icicle-add-key+cmd: Update binding, depending on its type (menu item etc.).
+;;      Push (cons candidate binding), not just candidate, onto icicle-complete-keys-alist.
+;;    icicle-complete-keys-1:
+;;      Use binding, not just command name.  Call it and put it in (this|last)-command.
+;;      Flipped (corrected) use of icicle-key-descriptions-use-<>-flag.
+;;      Use icicle-read-single-key-description.
+;;    icicle-prefix-keys-first-p, icicle-complete-keys-1, icicle-complete-keys-help,
+;;      icicle-keys+cmds-w-prefix: Don't use icicle-list-*-string.
+;; 2006/10/05 dadams
+;;    icicle-complete-keys-1: Remove icicle-special-candidate property from all candidates.
+;;    icicle-keys+cmds-w-prefix:
+;;      Intern candidate and, if local binding, put icicle-special-candidate property on it.
+;;      Use single string for candidate (don't use multi-completion).
+;; 2006/10/03 dadams
+;;     icicle-complete-keys-1: Treat "..".
+;;     icicle-complete-keys: Updated doc string accordingly.
+;;     icicle-prefix-keys-first-p: ".." is less than all other strings.  Don't hard-code "= ".
+;;     icicle-keys+cmds-w-prefix:
+;;       Filtered out shadowed bindings, icicle-generic-S-tab, and icicle-complete-keys.
+;;       Use only map-keymap & lookup-key, not accessible-keymaps, current-active-maps, map-keymap.
+;; 2006/10/01 dadams
+;;     icicle-complete-keys: Bind sort functions, to put prefix keys first, by default.
+;;                           Set last-command, before recursing.
+;;     Replaced icicle-alternative-sort with icicle-toggle-alternative-sorting (new).
+;;     icicle-(apropos|prefix)-complete-1:
+;;       Ensure icicle-(current|last)-input are strings, before compare.
+;;     icicle-keys+cmds-w-prefix: Tolerate empty local and global maps.
+;; 2006/09/30 dadams
+;;     Added: icicle-read-kbd-macro, icicle-edmacro-parse-keys, icicle-toggle-angle-brackets.
+;;     icicle-complete-keys-1, icicle-dabbrev-completion:
+;;       key-description -> icicle-key-description, with icicle-key-descriptions-use-<>-flag.
+;;     icicle-complete-keys-1:
+;;       read-kbd-macro -> icicle-read-kbd-macro, with icicle-key-descriptions-use-<>-flag.
+;;       Got rid of extra space in prompt before colon, when no prefix.
+;;     icicle-keys+cmds-w-prefix: Use single-key-description with icicle-*-use-<>-flag.
+;;     icicle-insert-key-description:
+;;       Change arg to a toggle, and use icicle-key-descriptions-use-<>-flag.
+;;     Bind icicle-candidate-set-retrieve, icicle-candidate-set-save to C-M-<, C-M->, not C-<, C->.
+;;     icicle-dired-saved-file-candidates*:
+;;       Changed doc strings and messages to use dynamic binding of icicle-candidate-set-save.
+;; 2006/09/24 dadams
+;;     Added: icicle-complete-keys-help.
+;;     icicle-complete-keys:
+;;       Bind icicle-*-action-fn to icicle-complete-keys-help.  Mention help keys in docstring.
+;;     icicle-complete-keys-1:
+;;       Set last-command to command, so completion doesn't think candidate was last-command.
+;;     icicle-keys+cmds-w-prefix: Provide placeholder for future insertion of generic characters.
+;; 2006/09/23 dadams
+;;     icicle-complete-keys-1:
+;;       Error if there are no keys for the prefix.
+;;       Error, not self-insert-command, for key read-kbd-macro can't convert. Use condition-case.
+;;       Report error if calling cmd fails.
+;;       Use vconcat for recursive call.
+;;       Read cmd, don't intern it - it might be a lambda or byte-compiled function.
+;;       Remove duplicates.
+;;       Provide KEYS arg to call-interactively, for error reporting. 
+;;       No longer bind icicle-must-not-match-regexp to "^Character set .*=  self-insert-command"
+;;     icicle-keys+cmds-w-prefix:
+;;       Treat also local keymap and current minor maps.
+;;       Do nothing if keys+maps is nil.
+;;       Only map-keymap if the target is a keymap.
+;;       Use keymapp, not functionp, as the binding test.
+;;       Only add binding if it is a command or keymap.
+;;       Only add self-insert-command binding if the key is char-valid-p.
+;;       Use format %S, not %s for a command binding.
+;;     icicle-insert-key-description: Added no-angle-brackets-p arg.
+;; 2006/09/22 dadams
+;;     icicle-complete-keys-1: Filter out keys described "Character set ...= self-insert-command".
+;; 2006/09/20 dadams
+;;     icicle-complete-keys-1: Treat self-insert-command specially.
+;; 2006/09/17 dadams
+;;     Added: icicle-complete-keys(-1), icicle-*-keys-prefix, icicle-keys+cmds-w-prefix, 
+;;     icicle-doc: Removed one \n from each candidate.
+;; 2006/09/12 dadams
+;;     Renamed icicle-switch-to-minibuffer to icicle-insert-completion.
+;;     Added: icicle-switch-to/from-minibuffer.
+;;     icicle-completion-help: Keep focus in the minibuffer after displaying help.
+;; 2006/09/02 dadams
+;;     icicle-help-on-(next|previous)-(apropos|prefix)-candidate,
+;;       icicle-(next|previous)-(apropos|prefix)-candidate-action:
+;;       Use save-selected-window, not save-window-excursion.
+;;     icicle-find-file*: In Dired, ignore errors picking up current-line's file name.
+;;     icicle-mouse-choose-completion: Error if minibuffer is not active.
+;; 2006/08/27 dadams
+;;     icicle-abort-minibuffer-input: If minibuffer is not active, just kill buffer *Completions*.
+;;     icicle-execute-extended-command-1, icicle-insert-thesaurus-entry, icicle-search-action:
+;;       Ensure orig-window is live before using it.
+;; 2006/08/23 dadams
+;;     Added: icicle-delete-window(s).
+;;     Added soft require of frame-cmds.el.
+;; 2006/08/22 dadams
+;;     icicle-execute-extended-command-1: Bind this-command, don't assign it (fixes C-next).
+;;     icicle-help-on-candidate: If no last candidate, then reset to first matching candidate.
+;;     icicle-*-*-candidate-action, icicle-help-on-*-*-candidate: save-window-excursion. (good?)
+;; 2006/08/20 dadams
+;;     icicle-find-file*: Use diredp-find-a-file* in Dired mode (Emacs 22 or later).
+;;     Bug fix: icicle-candidate-action: Use icicle-*-candidates, not icicle-next-*-candidate.
+;;              icicle-next-*-candidate(-action): Set icicle-current-completion-mode.
+;; 2006/08/18 dadams
+;;     Added: icicle-Info-goto-node(-(action|cmd)).
+;;     icicle-candidate-action: If no icicle-last-completion-candidate, use the first candidate.
+;; 2006/08/15 dadams
+;;     Added: icicle-help-on-*-*-candidate,icicle-mouse-help-on-candidate.
+;;     No longer put icicle-candidate-action-command property on symbols (not used).
+;;     Added: icicle-raise-Completions-frame.
+;;     icicle*-candidate-action, icicle-help-on-candidate: Use icicle-raise-Completions-frame.
+;;     icicle-help-on-candidate: Can use it from *Completions* too now.
+;;                               Use icicle-barf-if-outside-Completions-and-minibuffer.
+;; 2006/08/13 dadams
+;;     Added: icicle-Info-index(-(action|cmd)).
+;; 2006/08/04 dadams
+;;     icicle-*-complete-1, icicle-prefix-word-complete, icicle-keep-only-past-inputs:
+;;       Set icicle-last-completion-command to the explicit command, not this-command.
+;;     icicle-history: Call icicle-last-completion-command, not icicle-apropos-complete.
+;;     icicle-apropos-complete-1, icicle-narrow-candidates:
+;;       Removed binding of icicle-apropos-completing-p (not used).
+;;     Added: icicle-plist, icicle-remove-Completions-window, icicle-pp-eval-expression.
+;;     Added soft require of pp+.el.
+;;     icicle-exit-minibuffericicle-minibuffer-complete-and-exit, icicle-mouse-choose-completion,
+;;     icicle-abort-minibuffer-input, icicle-(apropos|prefix)-complete-1,
+;;     icicle-keep-only-past-inputs, icicle-insert-thesaurus-entry-cand-fn:
+;;       Use icicle-remove-Completions-window.
+;;     icicle-doc: Treat doc of faces also.
+;;     icicle-non-whitespace-string-p: Added doc string.
+;; 2006/08/03 dadams
+;;     Added:
+;;       icicle-comint-command, icicle-insert-kill, icicle-insert-for-yank,icicle-yank-insert.
+;;     Bound icicle-comint-command to C-c TAB in comint-mode.
+;;     icicle-search, icicle-comint-search: Cleaned up doc string.
+;; 2006/08/02 dadams
+;;     icicle-comint-search: Mention *-prompt-pattern.  Thx to Kevin Rodgers.
+;;     icicle-insert-string-from-variable: Added some more variables to the completing-read alist.
+;; 2006/07/29 dadams
+;;     Added: icicle-dispatch-C-., toggle-icicle-search-cleanup, icicle-toggle-search-cleanup.
+;; 2006/07/23 dadams
+;;     Added: icicle-toggle-transforming.
+;;     icicle-comint-search: Bind icicle-transform-function to icicle-remove-duplicates.
+;; 2006/07/22 dadams
+;;     Added: icicle-comint-search, icicle-comint-send-input, icicle-comint-get-minibuffer-input,
+;;            icicle-comint-get-final-choice, icicle-search-generic.
+;;     icicle-search: Added require-match arg for non-interactive calls.
+;;                    Run the hooks if no match and no match required, and if we didn't cycle.
+;;                    Return final choice as value (not used yet).
+;;     icicle-insert-string-from-variable: Use buffer-local value of variable, if there is one.
+;;     icicle-insert-string-from-variable:
+;;       Make sure we use the buffer-local value of the variable, if there is one
+;;       Added comint-prompt-regexp to regexp list.
+;;     Added mode hooks for icicle-compilation-search and icicle-comint-send-input.
+;; 2006/07/20 dadams
+;;     Renamed icicle-arrows-respect-* to icicle-cycling-respects-completion-mode-flag.
+;; 2006/07/19 dadams
+;;     Applied patch from Damien Elmes <emacs@repose.cx>:
+;;       Added: icicle-(next|previous)-context-candidate, icicle-scroll-completions.
+;;       icicle-switch-to-completions, icicle-switch-to-Completions-buf,
+;;         icicle-move-to-next-completion, icicle-map-action, icicle-search-action:
+;;           Use icicle-start-of-completions.
+;;       icicle-(apropos|prefix)-complete-1:
+;;         Set icicle-current-completion-type vs use icicle-arrows-respect-completion-type-flag.
+;;         Use icicle-scroll-completions.
+;;       icicle-current-completion-in-Completions: Use point-min if no previous prop change.
+;;       icicle-keep-only-past-inputs: Use icicle-scroll-completions.
+;;     Renamed icicle-start-of-completions to icicle-start-of-candidates-in-Completions,
+;;             icicle-current-completion-type to icicle-current-completion-mode,
+;;             icicle-*-context-candidate to icicle-(next|previous)-candidate-per-mode,
+;;             icicle-scroll-completions to icicle-scroll-Completions.
+;;     icicle-(next|previous)-context-candidate: Use icicle-barf-if-outside-minibuffer.
+;;     icicle-scroll-Completions: Changed with-selected-window to Emacs 20 equivalent.
+;; 2006/07/18 dadams
+;;     icicle-search: Bind completion-ignore-case to case-fold-search.
+;;     icicle-search-highlight-all-input-matches, icicle-search-action:
+;;       Put search inside condition-case, for bad regexp.
+;;     Added: icicle-toggle-case-sensitivity, toggle-icicle-case-sensitivity.
+;; 2006/07/10 dadams
+;;     Added: icicle-search-region.  Use in search functions.  Thx to Le Wang.
 ;; 2006/07/08 dadams
 ;;     icicle-search-highlight-all-input-matches: Bug fix - Use *-current-*, not *-current-raw-*.
 ;;     icicle-execute-extended-command-1:
@@ -210,7 +514,7 @@
 ;; 2006/07/07 dadams
 ;;     Added: icicle-alternative-sort.
 ;;     icicle-imenu: Show *Completions* initially for submenu choice (only).
-;;     icicle-execute-extended-command: Echo prefix arg in prompt.  Thx to *.dhcp.mdsn.wi.charter.com
+;;     icicle-execute-extended-command: Echo prefix arg in prompt.  Thx: *.dhcp.mdsn.wi.charter.com
 ;; 2006/07/06 dadams
 ;;     Added (eval-when-compile (require 'icicles-mac)).
 ;; 2006/07/05 dadams
@@ -223,13 +527,13 @@
 ;;     icicle-(apropos|prefix)-complete-1, icicle-prefix-word-complete,
 ;;     icicle-switch-to-Completions-buf, icicle-keep-only-past-inputs, icicle-history:
 ;;       Use icicle-cycling-command property.
-;;     icicle-apropos-complete-1: Removed regexp-p argument in call to icicle-save-or-restore-input.
+;;     icicle-apropos-complete-1: Removed regexp-p arg in call to icicle-save-or-restore-input.
 ;; 2006/07/03 dadams
 ;;     icicle-(apropos|prefix)-complete-1: deactivate mark after inserting current input.
 ;; 2006/06/18 dadams
 ;;     icicle-apropos-complete-1, icicle-narrow-candidates: Bind icicle-apropos-completing-p.
 ;; 2006/06/09 dadams
-;;     Bug fixes: Picked up matching subdir as default dir, even if there were other matching files. 
+;;     Bug fixes: Picked up matching subdir as default dir, even if there other files match. 
 ;;                  Thx to Andrey Zhdanov.
 ;;                Empty directory not treated as a match.
 ;;     icicle-(apropos|prefix)-complete-1:
@@ -281,7 +585,7 @@
 ;;     icicle-retrieve-last-input, icicle-(apropos|prefix)-complete-1:
 ;;       Use icicle-highlight-initial-whitespace.
 ;; 2006/04/25 dadams
-;;     icicle-completion-help: Bug fix: Emacs 21.3's help-insert-xref-button signature is different.
+;;     icicle-completion-help: Emacs 21.3's help-insert-xref-button signature is different.
 ;; 2006/04/16 dadams
 ;;     Added: icicle-search-imenu.
 ;;     icicle-search: Bug fixes:
@@ -345,7 +649,7 @@
 ;;     icicle-candidate-set-complement: Use icicle-maybe-sort-and-strip-candidates.
 ;;     Mention in doc strings of minibuffer and *Completions* functions: where, key.
 ;; 2006/03/22 dadams
-;;     icicle-find-file*: Use default-directory as default value, so opens directory on empty input.
+;;     icicle-find-file*: Use default-directory as default, so opens directory on empty input.
 ;;     icicle-prefix-complete:
 ;;       Save icicle-current-regexp-input.
 ;;       Set icicle-current-input to common prefix.  Use it everywhere here.
@@ -371,7 +675,7 @@
 ;; 2006/03/16 dadams
 ;;     Added: icicle*-saved-completion-set.
 ;; 2006/03/14 dadams
-;;     icicle-narrow-candidates: Handle no-catch error.  Don't use icicle-icicle-completing-p.
+;;     icicle-narrow-candidates: Handle no-catch error.  Don't use icicle-completing-p.
 ;;     icicle-candidate-set-complement:
 ;;       Do what we do in icicle-candidate-set-retrieve: call icicle-narrow-candidates.
 ;;     icicle-candidate-set-(retrieve|complement): Msg when display.
@@ -388,7 +692,7 @@
 ;;       Reverted to simple form (moved directory control to icicles-mac.el).
 ;;     icicle-keep-only-past-inputs: Expand file name relative to directory of last input.
 ;; 2006/03/10 dadams
-;;     icicle-find-file*, icicle-delete-file*: Expand file name relative to directory of last input.
+;;     icicle-find-file*, icicle-delete-file*: Expand file name relative to dir of last input.
 ;;     Renamed icicle-minibuffer-contents to icicle-minibuffer-contents-from-minibuffer.
 ;; 2006/03/09 dadams
 ;;     icicle-barf-if-outside-*: Removed argument - use this-command instead.
@@ -439,36 +743,56 @@
 ;;
 ;;; Code:
 
-(when (< emacs-major-version 21) (eval-when-compile (require 'cl))) ;; dolist, pop, push
-                                                                    ;; for Emacs < 20: when, unless
+(eval-when-compile (require 'cl)) ;; loop
+                                  ;; plus, for Emacs < 21: dolist, pop, push
+                                  ;; plus, for Emacs < 20: when, unless
+(eval-when-compile (when (>= emacs-major-version 22) (require 'edmacro))) ;; edmacro-subseq
+(eval-when-compile (when (>= emacs-major-version 21) (require 'recentf))) ;; recentf-mode
+
+(eval-when-compile (require 'dabbrev))
+  ;; dabbrev-case-fold-search, dabbrev-upcase-means-case-search, dabbrev--last-obarray,
+  ;; dabbrev--last-completion-buffer, dabbrev--last-abbreviation, dabbrev--check-other-buffers,
+  ;; dabbrev-case-replace, dabbrev--reset-global-variables, dabbrev--abbrev-at-point,
+  ;; dabbrev--minibuffer-origin, dabbrev--find-all-expansions, dabbrev--substitute-expansion
+(eval-when-compile (require 'cus-edit))
+  ;; custom-buffer-create, custom-buffer-order-groups, custom-sort-items
+(eval-when-compile (require 'bookmark))
+  ;; bookmark-all-names, bookmark-buffer-name, bookmark-current-bookmark
+(eval-when-compile (require 'comint))
+  ;; comint-prompt-regexp, comint-input-ring, comint-mode-map, comint-check-proc,
+  ;; comint-copy-old-input, comint-send-input
+(eval-when-compile (require 'imenu)) ;; imenu-syntax-alist
+(eval-when-compile (require 'compile)) ;; compilation-find-buffer
+(eval-when-compile (require 'info)) ;; Info-goto-node
+
+(eval-when-compile (require 'synonyms nil t)) ;; (no error if not found):
+  ;; synonyms-ensure-synonyms-read-from-cache, synonyms-obarray
+(eval-when-compile (require 'misc-cmds nil t)) ;; (no error if not found):
+  ;; kill-buffer-and-its-windows
+
 (eval-when-compile (require 'icicles-mac)) ;; icicle-define-command, icicle-define-file-command
+(eval-when-compile (require 'icicles-mode)) ;; icicle-completing-p
+
 (require 'misc-fns nil t)   ;; (no error if not found): another-buffer
 (require 'apropos-fn+var nil t) ;; (no error if not found): apropos-command, apropos-function,
                                 ;; apropos-option, apropos-variable
+(require 'pp+ nil t) ;; (no error if not found): pp-eval-expression
+(require 'dired+ nil t) ;; (no error if not found):
+                        ;; diredp-find-a-file, diredp-find-a-file-other-window
+(require 'frame-cmds nil t) ;; (no error if not found): delete-windows-on
 
-;; Byte-compiling this file, you will likely get some error or warning
-;; messages. All of the following are benign.  They are due to
-;; differences between different versions of Emacs.
-;;
-;; Compiling in Emacs 20:
-;;
-;; describe-mode called with 1 argument, but accepts only 0
-;; The following functions are not known to be defined:
-;;   minibuffer-prompt-end, delete-minibuffer-contents, recentf-mode
-;;
-;; Warnings about various functions not known to be defined.
-;; Warnings about references and assignments to dabbrev-* variables.
-;; You might also get warnings about function icicle-apropos-zippy.
+;; Byte-compiling this file, you will likely get some byte-compiler warning messages.
+;; These are probably benign - ignore them.  Icicles is designed to work with multiple
+;; versions of Emacs, and that fact provokes compiler warnings.  If you get byte-compiler
+;; errors (not warnings), then please report a bug, using `M-x icicle-send-bug-report'.
 
-
-;;; Defvars to quiet byte-compilers (Emacs 20 - 22)
+;;; Some defvars to quiet byte-compiler a bit:
 
 (defvar recentf-list)
 (defvar yow-file)
 (defvar yow-load-message)
 (defvar yow-after-load-message)
 (defvar cookie-cache)
-
 (defvar icicle-track-pt) ;; Defined in icicle-insert-thesaurus-entry
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -493,7 +817,7 @@
 (fset 'old-dabbrev-completion (symbol-function 'dabbrev-completion)))
 
 ;;;###autoload
-(defun icicle-dabbrev-completion (&optional arg) ; Bound to `M-C-/' globally.
+(defun icicle-dabbrev-completion (&optional arg) ; Bound to `C-M-/' globally.
   "Completion on current word.
 Like \\[dabbrev-expand], but finds all expansions in the current buffer
 and presents suggestions for completion.
@@ -562,7 +886,8 @@ if there is a suitable one already."
             (not (string-equal (downcase init) (downcase abbrev))))
        (if (> (length (all-completions init my-obarray)) 1)
            (message "Use `%s' again to complete further"
-                    (key-description (this-command-keys)))
+                    (icicle-key-description (this-command-keys)
+                                            (not icicle-key-descriptions-use-<>-flag)))
          (message "Completed (no other completions)"))
        (if (< emacs-major-version 21)
            (dabbrev--substitute-expansion nil abbrev init)
@@ -591,11 +916,10 @@ if there is a suitable one already."
 (fset 'old-exit-minibuffer (symbol-function 'exit-minibuffer)))
 
 ;;;###autoload
-(defun icicle-exit-minibuffer ()        ; Bound to `C-m' and `\n' in minibuffer.
-  "Terminate this minibuffer argument.
-Removes *Completions* window."
+(defun icicle-exit-minibuffer ()        ; Bound to `C-m' (`RET') and `\n' in minibuffer.
+  "Terminate this minibuffer argument.  Removes *Completions* window."
   (interactive)
-  (icicle-delete-windows-on "*Completions*")
+  (icicle-remove-Completions-window)
   (old-exit-minibuffer))
 
 
@@ -658,7 +982,7 @@ Otherwise try to complete it.  If completion leads to a valid completion,
 a repetition of this command will exit.
 Removes *Completions* window."
   (interactive)
-  (save-excursion (icicle-delete-windows-on "*Completions*"))
+  (save-excursion (icicle-remove-Completions-window))
   (old-minibuffer-complete-and-exit))
 
 
@@ -675,6 +999,7 @@ Removes *Completions* window."
   "Click a completion candidate in buffer `*Completions*', to choose it.
 Returns the number of the candidate - 0 for first, 1 for second, ..."
   (interactive "e")
+  (unless (active-minibuffer-window) (error "Minibuffer is not active"))
   ;; Give temporary modes such as isearch a chance to turn off.
   (run-hooks 'mouse-leave-buffer-hook)
   (let* ((buffer (window-buffer))
@@ -694,28 +1019,43 @@ Returns the number of the candidate - 0 for first, 1 for second, ..."
                 end    (or (next-single-property-change end 'mouse-face) (point-max))
                 choice (buffer-substring beg end)))))
     (if (eq orig-buffer (get-buffer "*Completions*"))
-        (icicle-delete-windows-on "*Completions*")
-      (save-selected-window (icicle-delete-windows-on "*Completions*")))
-    (setq icicle-candidate-nb
-          (icicle-nb-of-candidate-in-Completions (posn-point (event-start event))))
+        (icicle-remove-Completions-window)
+      (save-selected-window (icicle-remove-Completions-window)))
+    (setq icicle-candidate-nb (icicle-nb-of-candidate-in-Completions
+                               (posn-point (event-start event))))
     (choose-completion-string choice buffer base-size)))
 
 (defun icicle-nb-of-candidate-in-Completions (position)
-  "Return number of completion candidate at POSITION in *Completions*."
+  "Return number of completion candidate at POSITION in *Completions*.
+POSITION is a buffer position."
   (let ((compl-buf (get-buffer "*Completions*")))
     (unless compl-buf (error "No *Completions* buffer"))
     (save-window-excursion
       (set-buffer compl-buf)
-      (let ((cand-nb 0)
-            last-pos)
-        (goto-char position)
-        (setq last-pos (point))
-        (while (<= (point) last-pos)
-          (icicle-move-to-next-completion -1 t)
-          (setq cand-nb (1+ cand-nb))
-          (setq last-pos (min last-pos (point))))
+      (goto-char position)
+      ;; If in a completion, move to its start, and set POSITION there.
+      (let ((prop (get-text-property (1- (point)) 'mouse-face)))
+        (when (and prop (eq prop (get-text-property (point) 'mouse-face)))
+          (goto-char (previous-single-property-change
+                      (point) 'mouse-face nil (icicle-start-of-candidates-in-Completions)))))
+      (setq position (point))
+      ;; Binary search.
+      (let ((cand-nb (/ (length icicle-completion-candidates) 2))
+            (last-nb 0))
+        (goto-char (point-min))
+        (icicle-move-to-next-completion cand-nb t)
+        (while (/= (point) position)
+          (let ((delta (max 1 (/ (abs (- cand-nb last-nb)) 2))))
+            (cond ((< (point) position)                 
+                   (icicle-move-to-next-completion delta t)
+                   (setq cand-nb (+ cand-nb delta)))
+                  (t
+                   (icicle-move-to-next-completion (- delta) t)
+                   (setq cand-nb (- cand-nb delta))))
+            (setq last-nb cand-nb)))
         (set-buffer-modified-p nil)
         (1- cand-nb)))))
+
 
 
 ;;; REPLACE ORIGINAL `switch-to-completions' defined in `simple.el',
@@ -735,21 +1075,7 @@ Returns the number of the candidate - 0 for first, 1 for second, ..."
   (let ((window (get-buffer-window "*Completions*" 0))) ; Added 0 arg.
     (when window
       (select-window window)
-      (goto-char (point-min))
-      (forward-line 3))))
-
-(defun icicle-select-minibuffer-contents ()
-  "Select minibuffer contents and leave point at its beginning."
-  (set-mark (if (eq 'preselect-start icicle-init-value-flag) (point-max) (point-min)))
-  (goto-char (if (fboundp 'minibuffer-prompt-end)
-                 (minibuffer-prompt-end)
-               (if (eq 'preselect-start icicle-init-value-flag) (point-min) (point-max)))))
-
-(defadvice next-history-element (after icicle-select-minibuffer-contents activate)
-  "Select minibuffer contents and leave point at its beginning."
-  (when (and icicle-mode (memq icicle-init-value-flag '(preselect-start preselect-end)))
-    (icicle-select-minibuffer-contents)
-    (setq deactivate-mark nil)))
+      (goto-char (icicle-start-of-candidates-in-Completions)))))
 
 ;;; The branch that deletes a history element is based on Juri Linkov's
 ;;; `delete-history-element', proposed for Emacs 22 but rejected by RMS.
@@ -847,6 +1173,12 @@ you see what items will be available in the customize buffer."
       (custom-buffer-create (custom-sort-items found t custom-buffer-order-groups)
                             "*Customize Apropos*"))))
 
+;; Define this for Emacs 20 and 21
+(unless (fboundp 'custom-variable-p)
+  (defun custom-variable-p (variable)
+    "Return non-nil if VARIABLE is a custom variable."
+    (or (get variable 'standard-value) (get variable 'custom-autoload))))
+
 
 
 ;;; REPLACE ORIGINAL `customize-apropos-faces' defined in `cus-edit.el',
@@ -921,9 +1253,8 @@ you see what items will be available in the customize buffer."
 ;;; REPLACE ORIGINAL `repeat-complex-command' defined in `simple.el',
 ;;; saving it for restoration when you toggle `icicle-mode'.
 ;;;
-;;; Uses `completing-read' to read the command to repeat, letting you
-;;; use `S-TAB' and `TAB' to see the history list and `C-,' to toggle
-;;; sorting that display.
+;;; Uses `completing-read' to read the command to repeat, letting you use `S-TAB' and
+;;; `TAB' to see the history list and `C-,' to toggle sorting that display.
 ;;;
 (or (fboundp 'old-repeat-complex-command)
 (fset 'old-repeat-complex-command (symbol-function 'repeat-complex-command)))
@@ -953,20 +1284,16 @@ you the functionality of `repeat-matching-complex-command'."
                       (minibuffer-history-position arg)
                       (minibuffer-history-sexp-flag (1+ (minibuffer-depth))))
                   (unwind-protect
-                      (read (completing-read
-                             "Redo: " (mapcar (lambda (entry) (list (prin1-to-string entry)))
-                                              command-history)
-                             nil nil (prin1-to-string elt) (cons 'command-history arg)
-                             (prin1-to-string elt)))
-
-                    ;; If command was added to command-history as a
-                    ;; string, get rid of that.  We want only
-                    ;; evaluable expressions there.
+                       (read (completing-read
+                              "Redo: " (mapcar (lambda (entry) (list (prin1-to-string entry)))
+                                               command-history)
+                              nil nil (prin1-to-string elt) (cons 'command-history arg)
+                              (prin1-to-string elt)))
+                    ;; If command was added to command-history as a string, get rid of that.
+                    ;; We want only evaluable expressions there.
                     (if (stringp (car command-history))
                         (setq command-history (cdr command-history))))))
-
-          ;; If command to be redone does not match front of history,
-          ;; add it to the history.
+          ;; If command to be redone does not match front of history, add it to the history.
           (or (equal newcmd (car command-history))
               (setq command-history (cons newcmd command-history)))
           (eval newcmd))
@@ -976,7 +1303,7 @@ you the functionality of `repeat-matching-complex-command'."
 
 
 
-
+ 
 ;;; Icicles commands........................................
 
 ;;; Minibuffer editing commands  . . . . . . . . . . . . . .
@@ -992,7 +1319,7 @@ See description of `backward-delete-char-untabify'."
   (icicle-call-then-update-Completions #'backward-delete-char-untabify n killflag))
 
 ;;;###autoload
-(defun icicle-delete-backward-char (n &optional killflag) ; Bound to `DEL' (backspace) in minibuffer.
+(defun icicle-delete-backward-char (n &optional killflag) ; Bound to `DEL' in minibuffer.
   "`delete-backward-char' and update *Completions* with input matches.
 See description of `delete-backward-char'."
   (interactive "*p\nP")
@@ -1020,14 +1347,14 @@ See description of `kill-word'."
   (icicle-call-then-update-Completions #'kill-word arg))
 
 ;;;###autoload
-(defun icicle-backward-kill-sexp (arg)  ; Bound to `M-C-backspace' in minibuffer.
+(defun icicle-backward-kill-sexp (arg)  ; Bound to `C-M-backspace' in minibuffer.
   "`backward-kill-sexp' and update *Completions* with input matches.
 See description of `backward-kill-sexp'."
   (interactive "p")
   (icicle-call-then-update-Completions #'backward-kill-sexp arg))
 
 ;;;###autoload
-(defun icicle-kill-sexp (arg)           ; Bound to `M-C-delete' and `M-C-k' in minibuffer.
+(defun icicle-kill-sexp (arg)           ; Bound to `C-M-delete' and `C-M-k' in minibuffer.
   "`kill-sexp' and update *Completions* with regexp input matches.
 See description of `kill-sexp'."
   (interactive "p")
@@ -1099,7 +1426,7 @@ See description of `transpose-words'."
   (icicle-call-then-update-Completions #'transpose-words arg))
 
 ;;;###autoload
-(defun icicle-transpose-sexps (arg)    ; Bound to `M-C-t' in minibuffer.
+(defun icicle-transpose-sexps (arg)    ; Bound to `C-M-t' in minibuffer.
   "`transpose-sexps' and update *Completions* with regexp input matches.
 See description of `transpose-sexps'."
   (interactive "*p")
@@ -1147,8 +1474,8 @@ To use this, bind it to some key sequence in keymaps
 
 
 
-
-;;; Other commands to be used mainly in the minibuffer . . .
+ 
+;;; Other commands to be used mainly in the minibuffer . . . . . . .
 
 ;; $$ Probably need to do something to work around problem of Windows
 ;; selecting the new frame, when `pop-up-frames' is non-nil.  Need to
@@ -1156,13 +1483,13 @@ To use this, bind it to some key sequence in keymaps
 ;; is, for now, in hopes Emacs will eventually fix this.
 ;;
 ;;;###autoload
-(defun icicle-completion-help ()        ; Bound to `C-h' in minibuffer.
+(defun icicle-completion-help ()        ; Bound to `C-?' in minibuffer.
   "Describe minibuffer bindings for completion."
   (interactive)
   (with-output-to-temp-buffer "*Help*"
     (princ icicle-completion-help-string))
   ;; Don't bother to do this for Emacs 21.3.  Its `help-insert-xref-button' signature is different.
-  (when (and (featurep 'help-mode) (fboundp 'help-insert-xref-button))
+  (when (and (featurep 'help-mode) (fboundp 'help-insert-xref-button)) ; Defined in `help-mode.el'.
     (save-excursion
       (with-current-buffer (get-buffer "*Help*")
         (let ((buffer-read-only nil))
@@ -1177,27 +1504,32 @@ To use this, bind it to some key sequence in keymaps
           (insert "                   ")
           (help-insert-xref-button "[Icicles Options & Faces]" 'icicle-customize-button)
           (insert "\n\n")
-          (goto-char (point-min)))))))
+          (goto-char (point-min))))))
+  (select-frame-set-input-focus (window-frame (minibuffer-window))))
 
-(when (fboundp 'define-button-type)
+(when (fboundp 'define-button-type)     ; Defined in `button.el'.
   (define-button-type 'icicle-help-button
       :supertype 'help-xref
       'help-function #'(lambda () (browse-url "http://www.emacswiki.org/cgi-bin/wiki/Icicles"))
       'help-echo
-      (purecopy "mouse-2, RET: Icicles documentation on the Emacs Wiki (requires Internet access)"))
+      (purecopy
+       "mouse-2, RET: Icicles documentation on the Emacs Wiki (requires Internet access)"))
   (define-button-type 'icicle-customize-button
       :supertype 'help-xref
       'help-function #'(lambda () (customize-group-other-window 'icicles))
       'help-echo (purecopy "mouse-2, RET: Customize/Browse Icicles Options & Faces")))
 
 ;;;###autoload
-(defun icicle-abort-minibuffer-input () ; Bound to `C-g', in minibuffer, `C-g', `q' in *Completions*.
+(defun icicle-abort-minibuffer-input () ; Bound to `C-g' in minibuffer, `C-g', `q' in *Completions*
   "Abort minibuffer input.
-Remove \"*Completions*\" frame, if any, before aborting minibuffer
-input via `abort-recursive-edit'."
+Remove \"*Completions*\" window, if any, before aborting minibuffer
+input via `abort-recursive-edit'.
+If the minibuffer is not active, then just kill buffer *Completions*."
   (interactive)
-  (icicle-delete-windows-on "*Completions*")
-  (abort-recursive-edit))
+  (if (not (active-minibuffer-window))
+      (when (get-buffer "*Completions*") (kill-buffer (get-buffer "*Completions*")))
+    (icicle-remove-Completions-window)
+    (abort-recursive-edit)))
 
 ;; This is just the macro expansion of the following:
 ;; `(def-completion-wrapper icicle-abort-minibuffer-input :minibuffer-separator)'.
@@ -1240,11 +1572,11 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
                         (memq last-command (list this-command 'handle-switch-frame)))
                    icicle-current-raw-input
                  icicle-current-input)))
-    (icicle-highlight-initial-whitespace input) ; Highlight initial whitespace (probably user typo).
+    (icicle-highlight-initial-whitespace input) ; Highlight initial whitespace (e.g. user typo).
     (icicle-place-cursor input))
   (deactivate-mark))
 
-;; $$ No longer used.  To be removed later.
+;; $$ No longer used.
 (defun icicle-insert-input (input)
   "Insert INPUT.  Prepend the directory if appropriate."
   (insert (if (and (icicle-file-name-input-p) insert-default-directory)
@@ -1435,23 +1767,50 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
                      #'list
                      (mapcar 'symbol-name
                              '(adaptive-fill-first-line-regexp adaptive-fill-regexp
-                               add-log-current-defun-header-regexp
+                               add-log-current-defun-header-regexp ange-ftp-gateway-prompt-pattern
                                allout-bullets-string allout-line-boundary-regexp allout-regexp
-                               comment-start-skip comment-end
+                               comment-start-skip comment-end comint-prompt-regexp
                                ffap-url-regexp find-face-regexp find-function-regexp
-                               find-variable-regexp
-                               imenu-example--function-name-regexp-c
+                               find-variable-regexp imenu-example--function-name-regexp-c
                                org-plain-time-of-day-regexp outline-heading-end-regexp
-                               outline-line-boundary-regexp
-                               outline-plain-bullets-string outline-regexp
-                               page-delimiter paragraph-separate paragraph-start
-                               sentence-end
-                               thing-at-point-url-regexp
-                               )))
+                               outline-line-boundary-regexp outline-plain-bullets-string
+                               outline-regexp page-delimiter paragraph-separate paragraph-start
+                               rmail-mime-charset-pattern sentence-end shell-prompt-pattern
+                               telnet-prompt-pattern temp-file-name-pattern
+                               thing-at-point-url-regexp)))
                     (lambda (cand) (boundp (intern (car cand)))))))
-             (text (symbol-value var)))
+             ;; Make sure we use the buffer-local value of the variable, if there is one.
+             (text (with-current-buffer (cadr (buffer-list)) (symbol-value var))))
         (icicle-insert-thing text))
     (icicle-insert-thing icicle-input-string)))
+
+;;;###autoload
+(defun icicle-insert-key-description (toggle-angle-brackets-p) ; Bound to `M-q' in minibuffer.
+  "Read key and insert its description.
+For example, if the key read is ^F, then \"C-f\" is inserted.
+
+`icicle-key-descriptions-use-<>-flag' determines whether angle
+brackets (`<', `>') are used for named keys, such as function
+keys, but a prefix argument reverses the meaning of
+`icicle-key-descriptions-use-<>-flag'."
+  (interactive "P")
+  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (let* ((enable-recursive-minibuffers t)
+         (key (progn (minibuffer-message " [Quoting key]") (read-event))))
+    (insert (single-key-description key (if toggle-angle-brackets-p
+                                            icicle-key-descriptions-use-<>-flag
+                                          (not icicle-key-descriptions-use-<>-flag))))))
+                                      
+;;;###autoload
+(defun icicle-pp-eval-expression ()     ; Bound to `M-:' in minibuffer.
+  "Evaluate an expression and pretty-print its value.
+This just calls `pp-eval-expression' from a recursive minibuffer."
+  (interactive)
+  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (let ((enable-recursive-minibuffers t)
+        (icicle-reminder-prompt-flag nil))
+    (call-interactively 'pp-eval-expression))
+  (select-frame-set-input-focus (window-frame (minibuffer-window))))
 
 (put 'icicle-previous-prefix-candidate 'icicle-cycling-command t)
 (put 'icicle-previous-prefix-candidate 'icicle-prefix-cycling-command t)
@@ -1480,6 +1839,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 \\[icicle-next-prefix-candidate]')."
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (setq icicle-current-completion-mode 'prefix)
   (icicle-next-candidate nth (if (icicle-file-name-input-p)
                                  'icicle-file-name-prefix-candidates
                                'icicle-prefix-candidates)))
@@ -1511,6 +1871,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 \\[icicle-next-apropos-candidate]')."
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (setq icicle-current-completion-mode 'apropos)
   (icicle-next-candidate nth (if (icicle-file-name-input-p)
                                  'icicle-file-name-apropos-candidates
                                'icicle-apropos-candidates)
@@ -1518,7 +1879,6 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 
 (put 'icicle-previous-prefix-candidate-action 'icicle-cycling-command t)
 (put 'icicle-previous-prefix-candidate-action 'icicle-prefix-cycling-command t)
-(put 'icicle-previous-prefix-candidate-action 'icicle-candidate-action-command t)
 ;;;###autoload
 (defun icicle-previous-prefix-candidate-action (&optional nth) ; Bound to `C-up', `M-{' in minibuf.
   "`icicle-candidate-action', then `icicle-previous-prefix-candidate'.
@@ -1528,12 +1888,11 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 \\[icicle-previous-prefix-candidate-action]')."
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-minibuffer))
-  (save-excursion (icicle-candidate-action))
+  (save-excursion (save-selected-window (icicle-candidate-action)))
   (icicle-previous-prefix-candidate nth))
 
 (put 'icicle-next-prefix-candidate-action 'icicle-cycling-command t)
 (put 'icicle-next-prefix-candidate-action 'icicle-prefix-cycling-command t)
-(put 'icicle-next-prefix-candidate-action 'icicle-candidate-action-command t)
 ;;;###autoload
 (defun icicle-next-prefix-candidate-action (&optional nth) ; Bound to `C-down', `M-}' in minibuf.
   "`icicle-candidate-action', then `icicle-next-prefix-candidate'.
@@ -1543,12 +1902,12 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 \\[icicle-next-prefix-candidate-action]')."
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-minibuffer))
-  (save-excursion (icicle-candidate-action))
+  (setq icicle-current-completion-mode 'prefix)
+  (save-excursion (save-selected-window (icicle-candidate-action)))
   (icicle-next-prefix-candidate nth))
 
 (put 'icicle-previous-apropos-candidate-action 'icicle-cycling-command t)
 (put 'icicle-previous-apropos-candidate-action 'icicle-apropos-cycling-command t)
-(put 'icicle-previous-apropos-candidate-action 'icicle-candidate-action-command t)
 ;;;###autoload
 (defun icicle-previous-apropos-candidate-action (&optional nth) ; Bound to `C-prior', `C-x >'.
   "`icicle-candidate-action', then `icicle-previous-apropos-candidate'.
@@ -1558,14 +1917,13 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 \\[icicle-previous-apropos-candidate-action]')."
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-minibuffer))
-  (save-excursion (icicle-candidate-action))
+  (save-excursion (save-selected-window (icicle-candidate-action)))
   (icicle-previous-apropos-candidate nth))
 
 (put 'icicle-next-apropos-candidate-action 'icicle-cycling-command t)
 (put 'icicle-next-apropos-candidate-action 'icicle-apropos-cycling-command t)
-(put 'icicle-next-apropos-candidate-action 'icicle-candidate-action-command t)
 ;;;###autoload
-(defun icicle-next-apropos-candidate-action (&optional nth) ; Bound to `C-next', `C-x <' in minibuf.
+(defun icicle-next-apropos-candidate-action (&optional nth) ; Bound to `C-next', `C-x <' in minibuf
   "`icicle-candidate-action', then `icicle-next-apropos-candidate'.
 Optional argument NTH is as for `icicle-next-apropos-candidate'.
 
@@ -1573,7 +1931,64 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 \\[icicle-next-apropos-candidate-action]')."
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-minibuffer))
-  (save-excursion (icicle-candidate-action))
+  (setq icicle-current-completion-mode 'apropos)
+  (save-excursion (save-selected-window (icicle-candidate-action)))
+  (icicle-next-apropos-candidate nth))
+
+(put 'icicle-help-on-previous-prefix-candidate 'icicle-cycling-command t)
+(put 'icicle-help-on-previous-prefix-candidate 'icicle-prefix-cycling-command t)
+;;;###autoload
+(defun icicle-help-on-previous-prefix-candidate (&optional nth) ; Bound to `C-M-up' in minibuf.
+  "`icicle-help-on-candidate', then `icicle-previous-prefix-candidate'.
+Optional argument NTH is as for `icicle-previous-prefix-candidate'.
+
+You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
+\\[icicle-help-on-previous-prefix-candidate]')."
+  (interactive)
+  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (save-excursion (save-selected-window (icicle-help-on-candidate)))
+  (icicle-previous-prefix-candidate nth))
+
+(put 'icicle-help-on-next-prefix-candidate 'icicle-cycling-command t)
+(put 'icicle-help-on-next-prefix-candidate 'icicle-prefix-cycling-command t)
+;;;###autoload
+(defun icicle-help-on-next-prefix-candidate (&optional nth) ; Bound to `C-M-down' in minibuf.
+  "`icicle-help-on-candidate', then `icicle-next-prefix-candidate'.
+Optional argument NTH is as for `icicle-next-prefix-candidate'.
+
+You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
+\\[icicle-help-on-next-prefix-candidate]')."
+  (interactive)
+  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (save-excursion (save-selected-window (icicle-help-on-candidate)))
+  (icicle-next-prefix-candidate nth))
+
+(put 'icicle-help-on-previous-apropos-candidate 'icicle-cycling-command t)
+(put 'icicle-help-on-previous-apropos-candidate 'icicle-apropos-cycling-command t)
+;;;###autoload
+(defun icicle-help-on-previous-apropos-candidate (&optional nth) ; Bound to `C-M-prior' in minibuf.
+  "`icicle-help-on-candidate', then `icicle-previous-apropos-candidate'.
+Optional argument NTH is as for `icicle-previous-apropos-candidate'.
+
+You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
+\\[icicle-help-on-previous-apropos-candidate]')."
+  (interactive)
+  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (save-excursion (save-selected-window (icicle-help-on-candidate)))
+  (icicle-previous-apropos-candidate nth))
+
+(put 'icicle-help-on-next-apropos-candidate 'icicle-cycling-command t)
+(put 'icicle-help-on-next-apropos-candidate 'icicle-apropos-cycling-command t)
+;;;###autoload
+(defun icicle-help-on-next-apropos-candidate (&optional nth) ; Bound to `C-M-next' in minibuf.
+  "`icicle-help-on-candidate', then `icicle-next-apropos-candidate'.
+Optional argument NTH is as for `icicle-next-apropos-candidate'.
+
+You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
+\\[icicle-help-on-next-apropos-candidate]')."
+  (interactive)
+  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (save-excursion (save-selected-window (icicle-help-on-candidate)))
   (icicle-next-apropos-candidate nth))
 
 (put 'icicle-prefix-complete 'icicle-completing-command t)
@@ -1596,7 +2011,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 
 (put 'icicle-prefix-complete-no-display 'icicle-completing-command t)
 ;;;###autoload
-(defun icicle-prefix-complete-no-display () ; Bound to `M-C-TAB' in minibuffer.
+(defun icicle-prefix-complete-no-display () ; Bound to `C-M-TAB' in minibuffer.
   "Like `icicle-prefix-complete', but without displaying *Completions*.
 
 You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
@@ -1610,26 +2025,22 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
   "Helper function for `icicle-prefix-complete(-no-display)'.
 Optional argument NO-DISPLAY-P non-nil means do not display buffer
 *Completions*.  Returns the list of completion candidates."
-  (when icicle-arrows-respect-completion-type-flag
-    (dolist (map (if (boundp 'minibuffer-local-filename-completion-map)
-                     (list minibuffer-local-completion-map minibuffer-local-filename-completion-map
-                           minibuffer-local-must-match-map)
-                   (list minibuffer-local-completion-map minibuffer-local-must-match-map)))
-      (define-key map [up]   'icicle-previous-prefix-candidate)
-      (define-key map [down] 'icicle-next-prefix-candidate)))
+  (setq icicle-current-completion-mode 'prefix)
   (setq icicle-current-input
-        (if (get last-command 'icicle-cycling-command) ; $$ Previously didn't allow the -action's.
-            icicle-last-input
+        (if (and (symbolp last-command) (get last-command 'icicle-cycling-command))
+            icicle-last-input ; $$ Previously didn't allow the -action's.
           (icicle-minibuffer-contents-from-minibuffer)))
-  (unless (and (string= icicle-current-input icicle-last-input)
+  (unless (and (stringp icicle-current-input) (stringp icicle-last-input)
+               (string= icicle-current-input icicle-last-input)
                (eq last-command 'icicle-prefix-complete))
-    (setq icicle-completion-candidates (if (icicle-file-name-input-p)
-                                           (icicle-file-name-prefix-candidates icicle-current-input)
-                                         (icicle-prefix-candidates icicle-current-input))))
+    (setq icicle-completion-candidates
+          (if (icicle-file-name-input-p)
+              (icicle-file-name-prefix-candidates icicle-current-input)
+            (icicle-prefix-candidates icicle-current-input))))
   (icicle-save-or-restore-input)
   (cond ((null icicle-completion-candidates)
          (setq icicle-nb-of-other-cycle-candidates 0)
-         (save-selected-window (icicle-delete-windows-on "*Completions*"))
+         (save-selected-window (icicle-remove-Completions-window))
          (minibuffer-message "  [No prefix completions]"))
         ((null (cdr icicle-completion-candidates)) ;Single candidate. Update minibuffer.
          (setq icicle-nb-of-other-cycle-candidates 0)
@@ -1639,11 +2050,12 @@ Optional argument NO-DISPLAY-P non-nil means do not display buffer
             (setq icicle-last-completion-candidate
                   (if (and (icicle-file-name-input-p) insert-default-directory)
                       (expand-file-name (car icicle-completion-candidates)
-                                        (icicle-file-name-directory-w-default icicle-current-input))
+                                        (icicle-file-name-directory-w-default
+                                         icicle-current-input))
                     (car icicle-completion-candidates))))
            (when (icicle-file-directory-p (expand-file-name icicle-last-completion-candidate))
              (setq icicle-default-directory (expand-file-name icicle-last-completion-candidate))))
-         (save-selected-window (icicle-delete-windows-on "*Completions*"))
+         (save-selected-window (icicle-remove-Completions-window))
          (icicle-highlight-complete-input)
          (if icicle-icompleting-p
              (minibuffer-message (format "  [One prefix completion: %s]"
@@ -1664,11 +2076,7 @@ Optional argument NO-DISPLAY-P non-nil means do not display buffer
                   (if (and (eq icicle-last-completion-command 'icicle-prefix-complete)
                            (memq last-command '(icicle-prefix-complete handle-switch-frame)))
                       ;; Second TAB in a row.  Scroll window around.
-                      (save-selected-window
-                        (select-window (get-buffer-window "*Completions*" 0))
-                        (condition-case nil
-                            (scroll-up nil)
-                          (end-of-buffer (goto-char (point-min)) (forward-line 3))))
+                      (icicle-scroll-Completions)
                     ;; Did something else (e.g. changed input).  Update the display.
                     (icicle-display-candidates-in-Completions nil no-display-p)))
                  ;; No window yet.  If 2nd TAB or no chars can be completed, show window.
@@ -1682,7 +2090,7 @@ Optional argument NO-DISPLAY-P non-nil means do not display buffer
                         ((and (string= icicle-current-raw-input icicle-current-input)
                               completion-auto-help)
                          (icicle-display-candidates-in-Completions nil no-display-p))))))))
-  (setq icicle-last-completion-command this-command)
+  (setq icicle-last-completion-command 'icicle-prefix-complete)
   icicle-completion-candidates)
 
 (put 'icicle-prefix-word-complete 'icicle-completing-command t)
@@ -1701,8 +2109,8 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-minibuffer))
   (setq icicle-current-input
-        (if (get last-command 'icicle-cycling-command) ; $$ Previously didn't allow the -action's.
-            icicle-last-input
+        (if (and (symbolp last-command) (get last-command 'icicle-cycling-command))
+            icicle-last-input           ; $$ Previously didn't allow the -action's.
           (icicle-minibuffer-contents-from-minibuffer)))
   (let ((return-value (minibuffer-complete-word)))
     (setq icicle-completion-candidates
@@ -1711,7 +2119,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
             (icicle-prefix-candidates icicle-current-input)))
     (when (get-buffer-window "*Completions*" 0)
       (icicle-display-candidates-in-Completions))
-    (setq icicle-last-completion-command this-command)
+    (setq icicle-last-completion-command 'icicle-prefix-word-complete)
     return-value))
 
 (put 'icicle-apropos-complete 'icicle-completing-command t)
@@ -1747,7 +2155,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 
 (put 'icicle-apropos-complete-no-display 'icicle-completing-command t)
 ;;;###autoload
-(defun icicle-apropos-complete-no-display () ; Bound to `S-M-C-TAB' in minibuffer.
+(defun icicle-apropos-complete-no-display () ; Bound to `S-C-M-TAB' in minibuffer.
   "Like `icicle-apropos-complete', but without displaying *Completions*.
 
 You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
@@ -1772,87 +2180,77 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 This does everything, except deal with regexp-match errors.
 Optional argument NO-DISPLAY-P non-nil means do not display buffer
 *Completions*.  Returns the list of completion candidates."
-  (let ((icicle-apropos-completing-p t)) ; Prevent icomplete from issuing its messages.
-    (when icicle-arrows-respect-completion-type-flag
-      (dolist (map (if (boundp 'minibuffer-local-filename-completion-map)
-                       (list minibuffer-local-completion-map minibuffer-local-filename-completion-map
-                             minibuffer-local-must-match-map)
-                     (list minibuffer-local-completion-map minibuffer-local-must-match-map)))
-        (define-key map [up]   'icicle-previous-apropos-candidate)
-        (define-key map [down] 'icicle-next-apropos-candidate)))
-    (setq icicle-current-input
-          (if (get last-command 'icicle-cycling-command)
-              icicle-last-input
-            (icicle-minibuffer-contents-from-minibuffer)))
-    (unless (and (string= icicle-current-input icicle-last-input)
-                 (eq last-command 'icicle-apropos-complete))
-      (setq icicle-completion-candidates
-            (if (icicle-file-name-input-p)
-                (icicle-file-name-apropos-candidates icicle-current-input)
-              (icicle-apropos-candidates icicle-current-input))))
-    ;; If input matches an empty directory, then use that directory as the sole completion.
-    (when (and (icicle-file-name-input-p) (null icicle-completion-candidates)
-               (string-match "/$" icicle-current-input))
-      (setq icicle-completion-candidates '("")))
-    (icicle-save-or-restore-input)
-    (cond ((null icicle-completion-candidates)
-           (setq icicle-nb-of-other-cycle-candidates 0)
-           (save-selected-window (icicle-delete-windows-on "*Completions*"))
-           (minibuffer-message "  [No apropos completion]"))
-          ((null (cdr icicle-completion-candidates)) ; Single candidate. Update minibuffer.
-           (setq icicle-nb-of-other-cycle-candidates 0)
-           (unless icicle-icompleting-p
-             (icicle-clear-minibuffer)
-             (insert
-              (setq icicle-last-completion-candidate
-                    (if (and (icicle-file-name-input-p) insert-default-directory)
-                        (expand-file-name
-                         (car icicle-completion-candidates)
-                         (icicle-file-name-directory-w-default icicle-current-input))
-                      (car icicle-completion-candidates))))
-             (when (icicle-file-directory-p (expand-file-name icicle-last-completion-candidate))
-               (setq icicle-default-directory (expand-file-name icicle-last-completion-candidate))))
-           (save-selected-window (icicle-delete-windows-on "*Completions*"))
-           (unless (boundp 'icicle-apropos-complete-and-exit-p)
-             (icicle-highlight-complete-input)
-             (if icicle-icompleting-p
-                 (minibuffer-message (format "  [One apropos completion: %s]"
-                                             (car icicle-completion-candidates)))
-               (minibuffer-message "  [Sole apropos completion]"))))
-          (t                            ; Multiple candidates.
+  (setq icicle-current-completion-mode 'apropos)
+  (setq icicle-current-input
+        (if (and (symbolp last-command) (get last-command 'icicle-cycling-command))
+            icicle-last-input
+          (icicle-minibuffer-contents-from-minibuffer)))
+  (unless (and (stringp icicle-current-input) (stringp icicle-last-input)
+               (string= icicle-current-input icicle-last-input)
+               (eq last-command 'icicle-apropos-complete))
+    (setq icicle-completion-candidates
+          (if (icicle-file-name-input-p)
+              (icicle-file-name-apropos-candidates icicle-current-input)
+            (icicle-apropos-candidates icicle-current-input))))
+  ;; If input matches an empty directory, then use that directory as the sole completion.
+  (when (and (icicle-file-name-input-p) (null icicle-completion-candidates)
+             (string-match "/$" icicle-current-input))
+    (setq icicle-completion-candidates '("")))
+  (icicle-save-or-restore-input)
+  (cond ((null icicle-completion-candidates)
+         (setq icicle-nb-of-other-cycle-candidates 0)
+         (save-selected-window (icicle-remove-Completions-window))
+         (minibuffer-message "  [No apropos completion]"))
+        ((null (cdr icicle-completion-candidates)) ; Single candidate. Update minibuffer.
+         (setq icicle-nb-of-other-cycle-candidates 0)
+         (unless icicle-icompleting-p
+           (icicle-clear-minibuffer)
+           (insert
+            (setq icicle-last-completion-candidate
+                  (if (and (icicle-file-name-input-p) insert-default-directory)
+                      (expand-file-name
+                       (car icicle-completion-candidates)
+                       (icicle-file-name-directory-w-default icicle-current-input))
+                    (car icicle-completion-candidates))))
+           (when (icicle-file-directory-p (expand-file-name icicle-last-completion-candidate))
+             (setq icicle-default-directory (expand-file-name icicle-last-completion-candidate))))
+         (save-selected-window (icicle-remove-Completions-window))
+         (unless (boundp 'icicle-apropos-complete-and-exit-p)
+           (icicle-highlight-complete-input)
            (if icicle-icompleting-p
-               (icicle-display-candidates-in-Completions nil no-display-p)
-             (icicle-clear-minibuffer)
-             (insert icicle-current-input) ; Update minibuffer.
-             (deactivate-mark)
-             (icicle-highlight-initial-whitespace icicle-current-input)
-             (when (and (icicle-file-name-input-p)
-                        (icicle-file-directory-p icicle-last-completion-candidate))
-               (setq icicle-default-directory (expand-file-name icicle-last-completion-candidate)))
-             (when (member icicle-current-input icicle-completion-candidates)
-               (icicle-highlight-complete-input))
-             (if (get-buffer-window "*Completions*" 0)
-                 (if (and (eq icicle-last-completion-command 'icicle-apropos-complete)
-                          (memq last-command '(icicle-apropos-complete handle-switch-frame)))
-                     ;; Second `S-TAB' in a row.  Scroll window around.
-                     (save-selected-window
-                       (select-window (get-buffer-window "*Completions*" 0))
-                       (condition-case nil
-                           (scroll-up nil)
-                         (end-of-buffer (goto-char (point-min)) (forward-line 3))))
-                   ;; Did something else (e.g. changed input).  Update the display.
-                   (icicle-display-candidates-in-Completions nil no-display-p))
-               ;; No window yet.  Show window.
-               (icicle-display-candidates-in-Completions nil no-display-p)))))
-    (setq icicle-last-completion-command this-command)
-    icicle-completion-candidates))
+               (minibuffer-message (format "  [One apropos completion: %s]"
+                                           (car icicle-completion-candidates)))
+             (minibuffer-message "  [Sole apropos completion]"))))
+        (t                              ; Multiple candidates.
+         (if icicle-icompleting-p
+             (icicle-display-candidates-in-Completions nil no-display-p)
+           (icicle-clear-minibuffer)
+           (insert icicle-current-input) ; Update minibuffer.
+           (deactivate-mark)
+           (icicle-highlight-initial-whitespace icicle-current-input)
+           (when (and (icicle-file-name-input-p)
+                      (icicle-file-directory-p icicle-last-completion-candidate))
+             (setq icicle-default-directory (expand-file-name icicle-last-completion-candidate)))
+           (when (member icicle-current-input icicle-completion-candidates)
+             (icicle-highlight-complete-input))
+           (if (get-buffer-window "*Completions*" 0)
+               (if (and (eq icicle-last-completion-command 'icicle-apropos-complete)
+                        (memq last-command '(icicle-apropos-complete handle-switch-frame)))
+                   ;; Second `S-TAB' in a row.  Scroll window around.
+                   (icicle-scroll-Completions)
+                 ;; Did something else (e.g. changed input).  Update the display.
+                 (icicle-display-candidates-in-Completions nil no-display-p))
+             ;; No window yet.  Show window.
+             (icicle-display-candidates-in-Completions nil no-display-p)))))
+  (setq icicle-last-completion-command 'icicle-apropos-complete)
+  icicle-completion-candidates)
 
 ;;;###autoload
 (defun icicle-switch-to-Completions-buf () ; Bound to `insert' in minibuffer.
   "Select the completion list window.
 The cursor is placed on the first occurrence of the current minibuffer
 content.  You can use \\<completion-list-mode-map>\
-`\\[icicle-switch-to-minibuffer]' to get back to the minibuffer.
+`\\[icicle-insert-completion]' to get back to the minibuffer.
 
 You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
 \\[icicle-switch-to-Completions-buf]')."
@@ -1868,13 +2266,12 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
     (when window
       (select-window window)
       (let ((case-fold-search completion-ignore-case))
-        (goto-char (point-min))
-        (forward-line 3)
+        (goto-char (icicle-start-of-candidates-in-Completions))
         (when (icicle-file-name-input-p)
           (setq icicle-current-input (icicle-file-name-nondirectory icicle-current-input)))
         (when (and (eq icicle-last-completion-command 'icicle-apropos-complete)
                    ;; $$ Previously allowed the -action's.
-                   (not (get last-command 'icicle-cycling-command)))
+                   (not (and (symbolp last-command) (get last-command 'icicle-cycling-command))))
           (setq search-fn 're-search-forward)) ; Use regexp search: input is not yet complete.
         (while (and (not (eobp))
                     (save-restriction
@@ -1893,15 +2290,15 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
            (current-buffer)))))))
 
 ;;;###autoload
-(defun icicle-switch-to-minibuffer ()   ; Bound to `insert' in *Completions*.
-  "Select the active minibuffer window.
+(defun icicle-insert-completion ()   ; Bound to `insert' in *Completions*.
+  "Select the active minibuffer window.  Insert current completion.
 The current candidate in *Completions* (under the cursor) is inserted
 into the minibuffer as the current input.  You can use \\<minibuffer-local-completion-map>\
 `\\[icicle-switch-to-Completions-buf]'
 to switch to the *Completions* window.
 
 You can use this command only from buffer *Completions* (`\\<completion-list-mode-map>\
-\\[icicle-switch-to-minibuffer]')."
+\\[icicle-insert-completion]')."
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-Completions))
   (when (active-minibuffer-window)
@@ -1923,9 +2320,20 @@ The name is returned as a string."
     (when (and (not (bobp)) (get-text-property (1- (point)) 'mouse-face))
       (setq end (1- (point)) beg (point)))
     (when (null beg) (error "No completion here"))
-    (setq beg (previous-single-property-change beg 'mouse-face)
+    (setq beg (or (previous-single-property-change beg 'mouse-face) (point-min))
           end (or (next-single-property-change end 'mouse-face) (point-max)))
     (buffer-substring beg end)))
+
+;;;###autoload
+(defun icicle-switch-to/from-minibuffer () ; Bound to `pause' in minibuffer.
+  "Switch to minibuffer or previous buffer, in other window.
+If current buffer is the minibuffer, then switch to the buffer that
+was previously current.  Otherwise, switch to the minibuffer."
+  (interactive)
+  (when (active-minibuffer-window)
+    (if (eq (selected-window) (active-minibuffer-window))
+        (switch-to-buffer-other-window icicle-pre-minibuffer-buffer)
+      (select-window (active-minibuffer-window)))))
 
 
 ;; Replaces `previous-completion' (defined in `simple.el').
@@ -1958,7 +2366,7 @@ You can use this command only from buffer *Completions* (`\\<completion-list-mod
   (interactive "p")
   (when (interactive-p) (icicle-barf-if-outside-Completions))
   (setq n (or n 0))
-  (let ((beg (save-excursion (goto-char (point-min)) (forward-line 3) (point)))
+  (let ((beg (icicle-start-of-candidates-in-Completions))
         (end (point-max)))
     (while (and (> n 0) (not (eobp)))
       ;; If in a completion, move to the end of it.
@@ -1987,7 +2395,7 @@ You can use this command only from buffer *Completions* (`\\<completion-list-mod
      'icicle-current-completion-candidate-overlay 'icicle-current-candidate-highlight
      (current-buffer)))
   (unless no-minibuffer-follow-p
-    (save-excursion (save-window-excursion (icicle-switch-to-minibuffer)))))
+    (save-excursion (save-window-excursion (icicle-insert-completion)))))
 
 ;;;###autoload
 (defun icicle-previous-line ()          ; Bound to `up' *Completions*.
@@ -2058,7 +2466,6 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
                 failures))))
   (icicle-abort-minibuffer-input))
 
-(put 'icicle-candidate-action 'icicle-candidate-action-command t)
 ;;;###autoload
 (defun icicle-candidate-action ()       ; Bound to `C-RET' and `C-o' in minibuffer.
   "Take action on the current minibuffer-completion candidate.
@@ -2073,24 +2480,21 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
 \\[icicle-candidate-action]')."
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-minibuffer))
-  (if icicle-candidate-action-fn
-      (funcall icicle-candidate-action-fn icicle-last-completion-candidate)
-    (icicle-help-on-candidate))
-  ;; Raise *Completions* frame, if displayed.  This helps keep *Completions* on top.
-  (let ((compl-win (get-buffer-window "*Completions*" 'visible)))
-    (when compl-win
-      (save-window-excursion
-        (select-window compl-win)
-        ;; Move frame to the right, out of the way.
-        (when (and (one-window-p t) icicle-Completions-frame-at-right-flag)
-          (modify-frame-parameters
-           (selected-frame)                 ; Hard-code 7 here - what does it depend on?
-           `((left . ,(- (x-display-pixel-width) (+ (frame-pixel-width) 7))))))
-        (raise-frame)))))
+  ;; If no last candidate, then reset to first candidate matching input.
+  (unless (stringp icicle-last-completion-candidate)
+    (setq icicle-last-completion-candidate icicle-current-input)
+    (setq last-command 'icicle-candidate-action)
+    (icicle-next-candidate 1 (if (eq icicle-current-completion-mode 'prefix)
+                                 'icicle-prefix-candidates
+                               'icicle-apropos-candidates)
+                           (eq icicle-current-completion-mode 'apropos)))
+  (if (not icicle-candidate-action-fn)
+      (icicle-help-on-candidate)
+    (funcall icicle-candidate-action-fn icicle-last-completion-candidate)
+    (icicle-raise-Completions-frame)))
 
-(put 'icicle-candidate-action 'icicle-candidate-action-command t)
 ;;;###autoload
-(defun icicle-mouse-candidate-action (event) ; Bound to `C-mouse-2' in *Completions*.
+(defun icicle-mouse-candidate-action (event) ; Bound to `C-down-mouse-2' in *Completions*.
   "Take action on the minibuffer-completion candidate clicked by mouse.
 If `icicle-candidate-action-fn' is non-nil, it is a function to apply
 to the clicked candidate, to perform the action.
@@ -2105,6 +2509,7 @@ performed: display help on the candidate - see
         (posn-col (car (posn-col-row (event-start event))))
         (posn-row (cdr (posn-col-row (event-start event))))
         choice base-size)
+    (read-event)                        ; Swallow mouse up event.
     (save-excursion
       (set-buffer (window-buffer posn-win))
       (when completion-reference-buffer (setq buffer completion-reference-buffer))
@@ -2121,18 +2526,119 @@ performed: display help on the candidate - see
     (setq icicle-candidate-nb (icicle-nb-of-candidate-in-Completions
                                (posn-point (event-start event)))
           icicle-last-completion-candidate choice)
-    (if icicle-candidate-action-fn
-        (funcall icicle-candidate-action-fn icicle-last-completion-candidate)
-      (icicle-help-on-candidate))
-    ;; Raise *Completions* frame, if displayed.  This helps keep *Completions* on top.
-    (let ((compl-win (get-buffer-window "*Completions*" 'visible)))
-      (when compl-win
-        (save-window-excursion
-          (select-window compl-win)
-          (raise-frame)
-          ;; Do this because `icicle-candidate-action-fn' calls `select-frame-set-input-focus',
-          ;; which can position mouse pointer on minibuffer frame.
-          (set-mouse-position (selected-frame) posn-col posn-row))))))
+    (if (not icicle-candidate-action-fn)
+        (icicle-help-on-candidate)
+      (funcall icicle-candidate-action-fn icicle-last-completion-candidate)
+      (icicle-raise-Completions-frame posn-col posn-row))))
+
+;;;###autoload
+(defun icicle-mouse-help-on-candidate (event) ; Bound to `C-M-mouse-2' in minibuffer.
+  "Display help on the minibuffer-completion candidate clicked by mouse."
+  (interactive "e")
+  (let ((icicle-candidate-action-fn nil))
+    (icicle-mouse-candidate-action event)))
+
+;;;###autoload
+(defun icicle-help-on-candidate ()      ; Bound to `C-M-RET', `C-help', and `C-f1' in minibuffer.
+                                        ; Bound to `C-M-RET' in *Completions.
+  "Display help on the current minibuffer-completion candidate.
+The help displayed depends on the type of candidate, as follows:
+
+ menu item - the corresponding command is described using
+             `describe-function' (available only if `icicles-menu.el'
+             is loaded)
+ command or other function - described using `describe-function'
+ user option or other variable - described using `describe-variable'
+ face - described using `describe-face'
+ property list - described using `apropos-describe-plist'
+ buffer name - modes described using `describe-mode' (Emacs > 20).
+
+In the minibuffer, you can also use `\\<minibuffer-local-completion-map>\
+\\[icicle-help-on-next-apropos-candidate]', `\\[icicle-help-on-previous-apropos-candidate]',
+`\\[icicle-help-on-next-prefix-candidate]', and \
+`\\[icicle-help-on-previous-prefix-candidate]', to display help on the candidate and then
+move to the next or previous candidate.  See, for example,
+`icicle-help-on-next-apropos-candidate'.
+\
+You can use this command only from the minibuffer or *Completions*
+\(`\\[icicle-help-on-candidate]')."
+  (interactive)                         ; Interactively, just describes itself.
+  (when (interactive-p) (icicle-barf-if-outside-Completions-and-minibuffer))
+  (let ((frame-with-focus (selected-frame))
+        cand-symb)
+    (if (eq (current-buffer) (get-buffer "*Completions*"))
+        (setq cand-symb (intern-soft (icicle-current-completion-in-Completions)))
+
+      ;; If no last candidate, then reset to first candidate matching input.
+      (unless (stringp icicle-last-completion-candidate)
+        (setq icicle-last-completion-candidate icicle-current-input)
+        (setq last-command 'icicle-help-on-candidate)
+        (icicle-next-candidate 1 (if (eq icicle-current-completion-mode 'prefix)
+                                     'icicle-prefix-candidates
+                                   'icicle-apropos-candidates)
+                               (eq icicle-current-completion-mode 'apropos)))
+      (setq cand-symb (intern-soft icicle-last-completion-candidate)))
+
+    ;; If this is a call to `icicle-execute-menu-command' (defined in `icicles-menu.el'), then 
+    ;; use command associated with a menu item.  `icicle-menu-items-alist' is set in
+    ;; `icicles-menu.el'.  If non-nil, then `icicle-execute-menu-command' is being called.
+    (when (consp icicle-menu-items-alist)
+      (setq cand-symb (cdr (assoc icicle-last-completion-candidate icicle-menu-items-alist)))
+      (unless (symbolp cand-symb) (setq cand-symb nil))) ; Menu item with lambda definition.
+
+    ;; If this is a key-completion candidate, then get the true command from the candidate.
+    (when (boundp 'icicle-completing-keys-p)
+      (string-match "\\(.+\\)  =  \\(.+\\)" icicle-last-completion-candidate)
+      (setq cand-symb (intern-soft (substring icicle-last-completion-candidate
+                                              (match-beginning 2) (match-end 2)))))
+
+    ;; Provide the help appropriate for the given type of candidate.
+    (cond (cand-symb
+           (cond ((functionp cand-symb) (describe-function cand-symb))
+                 ((boundp cand-symb) (describe-variable cand-symb))
+                 ((facep cand-symb) (describe-face cand-symb))
+                 ((symbol-plist cand-symb) (apropos-describe-plist cand-symb))
+                 (t (icicle-msg-maybe-in-minibuffer "No help"))))
+          (t                            ; Not a symbol - treat string itself.
+           (cond ((and (bufferp (get-buffer icicle-last-completion-candidate))
+                       (condition-case nil ; Emacs 21+ `describe-mode' takes arg; not Emacs 20
+                           (describe-mode icicle-last-completion-candidate)
+                         (wrong-number-of-arguments nil))))
+                 (t (icicle-msg-maybe-in-minibuffer "No help")))))
+    (icicle-raise-Completions-frame)
+    ;; This is a hack for MS Windows - otherwise, we can't continue to get more candidates,
+    ;; because the *Help* frame takes the focus away from the minibuffer frame.
+    ;; MS Windows always gives focus to a newly created frame - in this case, *Help*.
+    (let* ((help-window (get-buffer-window "*Help*" t))
+           (help-frame (and help-window (window-frame help-window))))
+      (when help-frame (redirect-frame-focus help-frame frame-with-focus))))
+  (message nil))                        ; Let minibuffer contents show immmediately.
+
+(defun icicle-raise-Completions-frame (&optional mouse-col mouse-row)
+  "Raise *Completions* frame, if displayed.
+This helps keep *Completions* on top.
+
+If `icicle-Completions-frame-at-right-flag' is non-nil and
+*Completions* is in its own frame, then move that frame to the right,
+out of the way.
+
+Non-nil optional args MOUSE-COL and MOUSE-ROW move the mouse pointer
+to column MOUSE-COL and row MOUSE-ROW.  Do this because
+`icicle-candidate-action-fn' can call `select-frame-set-input-focus',
+which can position mouse pointer on a standalone minibuffer frame."
+  ;; Raise *Completions* frame, if displayed.  This helps keep *Completions* on top.
+  (let ((compl-win (get-buffer-window "*Completions*" 'visible)))
+    (when compl-win
+      (save-window-excursion
+        (select-window compl-win)
+        ;; Move frame to the right, out of the way.
+        (when (and (one-window-p t) icicle-Completions-frame-at-right-flag)
+          (modify-frame-parameters
+           (selected-frame)             ; Hard-code 7 here - what does it depend on?
+           `((left . ,(- (x-display-pixel-width) (+ (frame-pixel-width) 7))))))
+        (raise-frame)
+        (when (and (integerp mouse-col) (integerp mouse-row))
+          (set-mouse-position (selected-frame) mouse-col mouse-row))))))
 
 ;;;###autoload
 (defun icicle-narrow-candidates ()      ; Bound to `M-*' in minibuffer.
@@ -2145,15 +2651,15 @@ narrowing the set of matches.
 
 You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
 \\[icicle-narrow-candidates]')."
-  ;; We handle `no-catch' errors here because `old-completing-read' and `old-read-file-file-name'
-  ;; can still be called in Icicle mode by, for instance, an `interactive' spec
-  ;; (e.g. (interactive "bBuffer: ")).  In that case, we throw to a non-existant catch.
-  ;; After doing that, we just insert the result, to pass it to the next-higher recursive minibuffer.
+  ;; We handle `no-catch' errors here because `old-completing-read' and
+  ;; `old-read-file-file-name' can still be called in Icicle mode by, for instance, an
+  ;; `interactive' spec (e.g. (interactive "bBuffer: ")).  In that case, we throw to a
+  ;; non-existant catch.  After doing that, we just insert the result, to pass it to the
+  ;; next-higher recursive minibuffer.
   (interactive)
   (when (interactive-p) (icicle-barf-if-outside-minibuffer))
   (let ((enable-recursive-minibuffers t)
-        (icicle-reminder-prompt-flag nil) ; Inhibit reminder.
-        (icicle-apropos-completing-p t)) ; Prevent icomplete from issuing its messages.
+        (icicle-reminder-prompt-flag nil)) ; Inhibit reminder.
     (cond ((null icicle-completion-candidates)
            (error
             (substitute-command-keys
@@ -2272,7 +2778,8 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
          icicle-completion-candidates))
   (icicle-maybe-sort-and-strip-candidates)
   (message "Displaying completion candidates...")
-  (with-output-to-temp-buffer "*Completions*" (display-completion-list icicle-completion-candidates))
+  (with-output-to-temp-buffer "*Completions*"
+    (display-completion-list icicle-completion-candidates))
   (minibuffer-message "  [Set of candidates COMPLEMENTED]")
   (icicle-narrow-candidates))
 
@@ -2296,7 +2803,7 @@ Use `icicle-add/update-saved-completion-set'" set-name))
     file-name))                         ; Return cache-file name.
 
 ;;;###autoload
-(defun icicle-candidate-set-retrieve (&optional arg) ; Bound to `C-<' in minibuffer.
+(defun icicle-candidate-set-retrieve (&optional arg) ; Bound to `C-M-<' in minibuffer.
   "Retrieve a saved set of completion candidates, making it current.
 This retrieves candidates saved with `\\<minibuffer-local-completion-map>\
 \\[icicle-candidate-set-save]', `\\[icicle-candidate-set-save-to-variable]', or \
@@ -2335,7 +2842,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
     (icicle-narrow-candidates)))
 
 ;;;###autoload
-(defun icicle-candidate-set-retrieve-from-variable () ; Bound to `M-C-{' in minibuffer.
+(defun icicle-candidate-set-retrieve-from-variable () ; Bound to `C-M-{' in minibuffer.
   "Retrieve a saved set of completion candidates, making it current.
 This retrieves candidates saved with `\\<minibuffer-local-completion-map>\
 \\[icicle-candidate-set-save-to-variable]' (or `\\[icicle-candidate-set-save]' with a numeric
@@ -2358,7 +2865,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
   (icicle-candidate-set-retrieve '(1)))
 
 ;;;###autoload
-(defun icicle-candidate-set-save (&optional arg) ; Bound to `C->' in minibuffer.
+(defun icicle-candidate-set-save (&optional arg) ; Bound to `C-M->' in minibuffer.
   "Save the set of current completion candidates, for later recall.
 Saves candidates in variable `icicle-saved-completion-candidates', by
 default.
@@ -2391,13 +2898,13 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
                                             file-name)))
             (let ((var-name (completing-read "Save candidates in variable: "
                                              icicle-saved-candidates-variables-obarray)))
-              (intern var-name icicle-saved-candidates-variables-obarray) ; For retrieval completion.
+              (intern var-name icicle-saved-candidates-variables-obarray) ; For retrieval.
               (set (intern var-name) candidates))))
       (setq icicle-saved-completion-candidates candidates))
     (minibuffer-message "  [Current candidates SAVED]")))
 
 ;;;###autoload
-(defun icicle-candidate-set-save-to-variable () ; Bound to `M-C-}' in minibuffer.
+(defun icicle-candidate-set-save-to-variable () ; Bound to `C-M-}' in minibuffer.
   "Save the set of current completion candidates in a variable you choose.
 You can retrieve the saved set of candidates with `\\<minibuffer-local-completion-map>\
 \\[icicle-candidate-set-retrieve-from-variable]' (or `\\[icicle-candidate-set-retrieve]'
@@ -2471,11 +2978,13 @@ This does not remove the associated cache file." ; Doc string
 
 ;;;###autoload
 (defun icicle-dired-saved-file-candidates (prompt-for-dir-p)
-  "Open Dired on the set of completion candidates saved with `C->'.
+  "Open Dired on the set of completion candidates saved with \\<minibuffer-local-completion-map>\
+`\\[icicle-candidate-set-save]'.
 With a prefix argument, you are prompted for the directory."
   (interactive "P")
   (unless icicle-saved-completion-candidates
-    (error "No saved completion candidates.  Use `C->' to save candidates"))
+    (error "No saved completion candidates.  Use \\<minibuffer-local-completion-map>\
+`\\[icicle-candidate-set-save]' to save candidates"))
   (let* ((default-directory (if prompt-for-dir-p
                                 (read-file-name "Directory: " nil default-directory nil)
                               default-directory))
@@ -2492,12 +3001,14 @@ With a prefix argument, you are prompted for the directory."
 
 ;;;###autoload
 (defun icicle-dired-saved-file-candidates-other-window (prompt-for-dir-p)
-  "Open Dired on the set of completion candidates saved with `C->'.
+  "Open Dired on the set of completion candidates saved with \\<minibuffer-local-completion-map>\
+`\\[icicle-candidate-set-save]'.
 Open in another window.
 With a prefix argument, you are prompted for the directory."
   (interactive "P")
   (unless icicle-saved-completion-candidates
-    (error "No saved completion candidates.  Use `C->' to save candidates"))
+    (error "No saved completion candidates.  Use \\<minibuffer-local-completion-map>\
+`\\[icicle-candidate-set-save]' to save candidates"))
   (let* ((default-directory (if prompt-for-dir-p
                                 (read-file-name "Directory: " nil default-directory nil)
                               default-directory))
@@ -2513,51 +3024,6 @@ With a prefix argument, you are prompted for the directory."
           (kill-buffer-and-its-windows existing-dired-buffer) ; Defined in `misc-cmds.el'
         (kill-buffer existing-dired-buffer)))
     (dired-other-window (cons default-directory icicle-saved-completion-candidates))))
-
-;;;###autoload
-(defun icicle-help-on-candidate ()      ; Bound to `C-help' and `C-f1' in minibuffer.
-  "Display help on current minibuffer-completion candidate.
-The help displayed depends on the type of candidate, as follows:
-
- menu item - the corresponding command is described using
-             `describe-function' (available only if `icicles-menu.el'
-             is loaded)
- command or other function - described using `describe-function'
- user option or other variable - described using `describe-variable'
- face - described using `describe-face'
- property list - described using `apropos-describe-plist'
- buffer name - modes described using `describe-mode' (Emacs > 20).
-
-You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
-\\[icicle-help-on-candidate]')."
-  (interactive)                         ; Interactively, just describes itself.
-  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
-  (let ((frame-with-focus (selected-frame))
-        (cand-symb (intern-soft icicle-last-completion-candidate)))
-    ;; Use command associated with a menu item.  `icicle-menu-items-alist' is set in
-    ;; `icicles-menu.el'.  If non-nil, then `icicle-execute-menu-command' is being called.
-    (when (consp icicle-menu-items-alist) ; This is a call to `icicle-execute-menu-command'.
-      (setq cand-symb (cdr (assoc icicle-last-completion-candidate icicle-menu-items-alist)))
-      (unless (symbolp cand-symb) (setq cand-symb nil))) ; Menu item with lambda definition.
-    (cond (cand-symb
-           (cond ((functionp cand-symb) (describe-function cand-symb))
-                 ((boundp cand-symb) (describe-variable cand-symb))
-                 ((facep cand-symb) (describe-face cand-symb))
-                 ((symbol-plist cand-symb) (apropos-describe-plist cand-symb))
-                 (t (icicle-msg-maybe-in-minibuffer "No help"))))
-          (t                            ; Not a symbol - treat string itself.
-           (cond ((and (bufferp (get-buffer icicle-last-completion-candidate))
-                       (condition-case nil ; Emacs 21+ `describe-mode' takes arg; not Emacs 20
-                           (describe-mode icicle-last-completion-candidate)
-                         (wrong-number-of-arguments nil))))
-                 (t (icicle-msg-maybe-in-minibuffer "No help")))))
-    ;; This is a hack for MS Windows - otherwise, we can't continue to get more candidates,
-    ;; because the *Help* frame takes the focus away from the minibuffer frame.
-    ;; MS Windows always gives focus to a newly created frame - in this case, *Help*.
-    (let* ((help-window (get-buffer-window "*Help*" t))
-           (help-frame (and help-window (window-frame help-window))))
-      (when help-frame (redirect-frame-focus help-frame frame-with-focus))))
-  (message nil))                        ; Let minibuffer contents show immmediately.
 
 ;;;###autoload
 (defun icicle-keep-only-past-inputs ()  ; Bound to`M-pause' in minibuffer.
@@ -2582,19 +3048,19 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
                (member candidate (symbol-value minibuffer-history-variable)))
              icicle-completion-candidates))
       (cond ((null icicle-completion-candidates)
-             (save-selected-window (icicle-delete-windows-on "*Completions*"))
+             (save-selected-window (icicle-remove-Completions-window))
              (minibuffer-message "  [None of the completions have been used before]"))
             (t
              (setq icicle-current-input
-                   (if (get last-command 'icicle-cycling-command) 
+                   (if (and (symbolp last-command) (get last-command 'icicle-cycling-command))
                        icicle-last-input ; $$ Previously didn't allow the -action's.
                      (icicle-minibuffer-contents-from-minibuffer)))
              (icicle-retrieve-last-input)
              (cond ((null icicle-completion-candidates)
                     (setq icicle-nb-of-other-cycle-candidates 0)
-                    (save-selected-window (icicle-delete-windows-on "*Completions*"))
+                    (save-selected-window (icicle-remove-Completions-window))
                     (minibuffer-message "  [No matching history element]"))
-                   ((null (cdr icicle-completion-candidates)) ; Single candidate. Update minibuffer.
+                   ((null (cdr icicle-completion-candidates)) ; Single candidate. Update minibuffer
                     (setq icicle-nb-of-other-cycle-candidates 0)
                     (icicle-clear-minibuffer)
                     (insert (setq icicle-last-completion-candidate
@@ -2603,7 +3069,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
                                                         (icicle-file-name-directory-w-default
                                                          (car icicle-completion-candidates)))
                                     (car icicle-completion-candidates))))
-                    (save-selected-window (icicle-delete-windows-on "*Completions*"))
+                    (save-selected-window (icicle-remove-Completions-window))
                     (icicle-highlight-complete-input)
                     (minibuffer-message (format "  [One matching history element]")))
                    (t
@@ -2614,11 +3080,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
                                  (memq last-command
                                        '(icicle-keep-only-past-inputs handle-switch-frame)))
                             ;; Second `S-TAB' in a row.  Scroll window around.
-                            (save-selected-window
-                              (select-window (get-buffer-window "*Completions*" 0))
-                              (condition-case nil
-                                  (scroll-up nil)
-                                (end-of-buffer (goto-char (point-min)) (forward-line 3))))
+                            (icicle-scroll-Completions)
                           ;; Did something else (e.g. changed input).  Update the display.
                           (icicle-display-candidates-in-Completions))
                       ;; No window yet.  Show window.
@@ -2626,7 +3088,7 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
                     (save-window-excursion
                       (select-window (active-minibuffer-window))
                       (minibuffer-message "  [Filtered to (matching) historical candidates]"))))
-             (setq icicle-last-completion-command this-command))))
+             (setq icicle-last-completion-command 'icicle-keep-only-past-inputs))))
     icicle-completion-candidates))
 
 ;;;###autoload
@@ -2671,13 +3133,14 @@ You can use this command only from the minibuffer (`\\<minibuffer-local-completi
              (consp (symbol-value minibuffer-history-variable)))
     (setq minibuffer-completion-table
           (mapcar #'list (icicle-remove-duplicates (symbol-value minibuffer-history-variable)))))
-  (setq icicle-last-completion-command "") ; Force redisplay of *Completions* even if displayed.
-  (setq icicle-current-input
-        (if (get last-command 'icicle-cycling-command) ; $$ Previously didn't allow the -action's.
-            icicle-last-input
-          (icicle-minibuffer-contents-from-minibuffer)))
-  (icicle-retrieve-last-input)
-  (icicle-apropos-complete))
+  (let ((last-completion-cmd (or icicle-last-completion-command 'icicle-apropos-complete)))
+    (setq icicle-last-completion-command "") ; Force redisplay of *Completions* even if displayed.
+    (setq icicle-current-input
+          (if (and (symbolp last-command) (get last-command 'icicle-cycling-command))
+              icicle-last-input         ; $$ Previously didn't allow the -action's.
+            (icicle-minibuffer-contents-from-minibuffer)))
+    (icicle-retrieve-last-input)
+    (funcall last-completion-cmd)))
 
 ;; This is not actually a minibuffer command, since `isearch' technically uses the echo area.
 ;;;###autoload
@@ -2709,31 +3172,19 @@ CASE-FOLD non-nil means the search was case-insensitive."
 	isearch-case-fold-search case-fold)
   (isearch-search-and-update))
 
-(defun icicle-alternative-sort ()       ; Bound to `M-,' in the minibuffer.
-  "Use alternative sorting for minibuffer completion candidates.
-Sort with `icicle-alternative-sort-function' instead of
-`icicle-sort-function', for the duration of the current command.
 
-Note: To get back to sorting with `icicle-sort-function' in the same
-command, you can use \\<minibuffer-local-completion-map>`\\[icicle-toggle-sorting]' twice.
+(defalias 'toggle-icicle-alternative-sorting 'icicle-toggle-alternative-sorting)
 
-You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
-\\[icicle-alternative-sort]')."
+;;;###autoload
+(defun icicle-toggle-alternative-sorting () ; Bound to `M-,' in the minibuffer.
+  "Toggle alternative sorting of minibuffer completion candidates.
+This swaps `icicle-alternative-sort-function' and `icicle-sort-function'."
   (interactive)
-  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
-  (let ((icicle-sort-function (or icicle-alternative-sort-function icicle-sort-function)))
-    (when icicle-last-completion-command
-      (let ((candidates-fn
-             (case icicle-last-completion-command
-               ((icicle-prefix-complete icicle-prefix-word-complete)
-                (if (icicle-file-name-input-p)
-                    'icicle-file-name-prefix-candidates
-                  'icicle-prefix-candidates))
-               (icicle-apropos-complete (if (icicle-file-name-input-p)
-                                            'icicle-file-name-apropos-candidates
-                                          'icicle-apropos-candidates)))))
-        (setq icicle-completion-candidates (funcall candidates-fn icicle-current-input))))
-    (icicle-update-completions)))
+  (let ((alt-sort-fn icicle-alternative-sort-function))
+    (setq icicle-alternative-sort-function (or icicle-sort-function icicle-last-sort-function)
+          icicle-sort-function (or alt-sort-fn icicle-last-sort-function))
+    (icicle-update-completions)
+    (icicle-msg-maybe-in-minibuffer "Alternative sorting toggled")))
 
 
 (defalias 'toggle-icicle-sorting 'icicle-toggle-sorting)
@@ -2751,6 +3202,38 @@ When sorting is active, comparison is done by `icicle-sort-function'."
   (icicle-msg-maybe-in-minibuffer (if icicle-sort-function
                                       "Completion-candidate sorting is now ON"
                                     "Completion-candidate sorting is now OFF")))
+
+(defalias 'toggle-icicle-angle-brackets 'icicle-toggle-angle-brackets)
+
+;;;###autoload
+(defun icicle-toggle-angle-brackets () ; Bound to `C-<' in the minibuffer.
+  "Toggle `icicle-key-descriptions-use-<>-flag'."
+  (interactive)
+  (setq icicle-key-descriptions-use-<>-flag (not icicle-key-descriptions-use-<>-flag))
+  (icicle-update-completions)
+  (icicle-msg-maybe-in-minibuffer (if icicle-key-descriptions-use-<>-flag
+                                      "Displaying <...> in key descriptions is now ON"
+                                    "Displaying <...> in key descriptions is now OFF")))
+
+(defalias 'toggle-icicle-transforming 'icicle-toggle-transforming)
+
+;;;###autoload
+(defun icicle-toggle-transforming ()    ; Bound to `C-$' in the minibuffer.
+  "Toggle transforming of minibuffer completion candidates.
+When transforming is active, it is done by `icicle-transform-function'.
+
+By default, transformation, if active, simply removes duplicate
+candidates.  Icicles commands already \"do the right thing\" when it
+comes to duplicate removal, so you might never need this command."
+  (interactive)
+  (if icicle-transform-function
+      (setq icicle-last-transform-function icicle-transform-function ; Save it, for restoring.
+            icicle-transform-function      nil)
+    (setq icicle-transform-function icicle-last-transform-function)) ; Restore it.
+  (icicle-update-completions)
+  (icicle-msg-maybe-in-minibuffer (if icicle-transform-function
+                                      "Completion-candidate transformation is now ON"
+                                    "Completion-candidate transformation is now OFF")))
 
 
 (defalias 'toggle-icicle-incremental-completion 'icicle-toggle-incremental-completion)
@@ -2772,13 +3255,13 @@ This command never sets the value to non-nil and non-t."
 (defalias 'toggle-icicle-ignored-space-prefix 'icicle-toggle-ignored-space-prefix)
 
 ;;;###autoload
-(defun icicle-toggle-ignored-space-prefix ()    ; Bound to `C-^' in the minibuffer.
+(defun icicle-toggle-ignored-space-prefix () ; Bound to `C-^' in the minibuffer.
   "Toggle `icicle-ignore-space-prefix-flag'.
 Note: If the current command binds `icicle-ignore-space-prefix-flag'
 locally, then it is the local, not the global, value that is changed.
 For example, `icicle-buffer' binds it to the value of
 `icicle-buffer-ignore-space-prefix-flag'.  If that is non-nil, then
-\\<minibuffer-local-completion-map>`\\[icicle-toggle-ignored-space-prefix]' toggles \
+\\<minibuffer-local-completion-map>`\\[icicle-dispatch-C-^]' toggles \
 `icicle-ignore-space-prefix-flag' to nil only for the
 duration of `icicle-buffer'."
   (interactive)
@@ -2788,11 +3271,34 @@ duration of `icicle-buffer'."
                                       "Ignoring space prefix is now ON"
                                     "Ignoring space prefix is now OFF")))
 
+(defalias 'toggle-icicle-highlight-all-current 'icicle-toggle-highlight-all-current)
+
+;;;###autoload
+(defun icicle-toggle-highlight-all-current () ; Bound to `C-^' in the minibuffer.
+  "Toggle `icicle-search-highlight-all-current-flag'."
+  (interactive)
+  (setq icicle-search-highlight-all-current-flag (not icicle-search-highlight-all-current-flag))
+  (icicle-erase-minibuffer)
+  (icicle-retrieve-last-input)
+  (icicle-msg-maybe-in-minibuffer
+   (if icicle-search-highlight-all-current-flag
+       "Highlighting current input match in each main search hit is now ON"
+     "Highlighting current input match in each main search hit is now OFF")))
+
+(defun icicle-dispatch-C-^ ()           ; Bound to `C-^' in the minibuffer.
+  "Do the right thing for `C-^'
+When Icicles searching, call `icicle-toggle-highlight-all-current'.
+Otherwise, call `icicle-toggle-ignored-space-prefix'."
+  (interactive)
+  (if (eq icicle-candidate-action-fn 'icicle-search-action)
+      (icicle-toggle-highlight-all-current)
+    (icicle-toggle-ignored-space-prefix)))
+
 
 (defalias 'toggle-icicle-ignored-extensions 'icicle-toggle-ignored-extensions)
 
 ;;;###autoload
-(defun icicle-toggle-ignored-extensions () ; Bound to `C-.' in the minibuffer.
+(defun icicle-toggle-ignored-extensions () ; Bound to `C-.' in minibuffer during file-name input.
   "Toggle respect of `completion-ignored-extensions'."
   (interactive)
   (if (consp completion-ignored-extensions)
@@ -2810,6 +3316,28 @@ duration of `icicle-buffer'."
                                       "Ignoring selected file extensions is now ON"
                                     "Ignoring selected file extensions is now OFF")))
 
+(defalias 'toggle-icicle-search-cleanup 'icicle-toggle-search-cleanup)
+
+;;;###autoload
+(defun icicle-toggle-search-cleanup () ; Bound to `C-.' in minibuffer, except for file-name input.
+  "Toggle removal of `icicle-search' highlighting after a search.
+This toggles option `icicle-search-cleanup-flag'."
+  (interactive)
+  (setq icicle-search-cleanup-flag (not icicle-search-cleanup-flag))
+  (icicle-update-completions)
+  (icicle-msg-maybe-in-minibuffer (if icicle-search-cleanup-flag
+                                      "Removal of Icicles search highlighting is now ON"
+                                    "Removal of Icicles search highlighting is now OFF")))
+
+(defun icicle-dispatch-C-. ()           ; Bound to `C-.' in the minibuffer.
+  "Do the right thing for `C-.'
+When completing a file name, call `icicle-toggle-ignored-extensions'.
+Otherwise, call `icicle-toggle-search-cleanup'."
+  (interactive)
+  (if (icicle-file-name-input-p)
+      (icicle-toggle-ignored-extensions)
+    (icicle-toggle-search-cleanup)))
+
 (defalias 'toggle-icicle-regexp-quote 'icicle-toggle-regexp-quote)
 
 ;;;###autoload
@@ -2822,29 +3350,55 @@ duration of `icicle-buffer'."
                                       "Escaping of regexp special characters is now ON"
                                     "Escaping of regexp special characters is now OFF")))
 
+(defalias 'toggle-icicle-case-sensitivity 'icicle-toggle-case-sensitivity)
+
+;;;###autoload
+(defun icicle-toggle-case-sensitivity () ; Bound to `S-C-a' in the minibuffer, that is, `C-A'.
+  "Toggle case sensitivity.
+This toggles both `completion-ignore-case' and `case-fold-search'.
+More precisely, it toggles `case-fold-search', and then it sets
+`completion-ignore-case' to the value of `case-fold-search'.
+
+Note: Some commands bind one or both of these variables, so toggling
+them during command execution will not necessarily toggle the global
+values of both variables."
+  (interactive)
+  (setq case-fold-search (not case-fold-search))
+  (setq completion-ignore-case case-fold-search)
+  (icicle-update-completions)
+  (icicle-msg-maybe-in-minibuffer (if case-fold-search
+                                      "Case-sensitive comparison is now OFF"
+                                    "Case-sensitive comparison is now ON")))
+
+(defun icicle-remove-Completions-window () ; Bound to `C-x 0' in the minibuffer.
+  "Remove the *Completions* window."
+  (interactive) (icicle-delete-windows-on "*Completions*"))
 
 
-
+
+
+ 
 ;;; Commands to be used mainly at top level  . . . . . . . .
 
 
 ;;; Icicles multi-commands .   .   .   .   .   .   .   .   .
 
-;; Suggested global binding: `M-x'
-(icicle-define-command icicle-execute-extended-command ; Command name
+(icicle-define-command icicle-execute-extended-command ; Bound to `M-x' in Icicle mode.
                        "Read command name, then read its arguments and call it.
 This is `execute-extended-command', turned into a multi-command." ; Doc string
                        icicle-execute-extended-command-1 ; Function to perform the action
                        (format "Execute command%s: " ; `completing-read' args
                                (if current-prefix-arg
-                                   (format " (prefix %d)" (prefix-numeric-value current-prefix-arg))
+                                   (format " (prefix %d)"
+                                           (prefix-numeric-value current-prefix-arg))
                                  ""))
                        obarray 'commandp t nil 'extended-command-history nil nil
                        ((last-cmd last-command))) ; Save the last command.
 
 (defun icicle-execute-extended-command-1 (cmd-name)
   "Candidate action function for `icicle-execute-extended-command'."
-  (set-buffer orig-buff) (select-window orig-window) ; These are free variables here.
+  (when (get-buffer orig-buff) (set-buffer orig-buff)) ; `orig-buff', `orig-window' are free vars.
+  (when (window-live-p orig-window) (select-window orig-window))
 
   ;; Rebind `icicle-candidate-action-fn' to a function that calls the
   ;; candidate CMD-NAME on a single argument that it reads.  This is
@@ -2861,9 +3415,8 @@ This is `execute-extended-command', turned into a multi-command." ; Doc string
               (wrong-type-argument      ; If that didn't work, use a symbol or number candidate.
                (funcall cmd (car (read-from-string x)))))
             (select-frame-set-input-focus (window-frame (minibuffer-window))))))
-    (setq last-command last-cmd         ; Restore last real command. `last-cmd' is free here.
-          this-command cmd)             ; Establish this command.
-    (call-interactively cmd 'record-it)))
+    (setq last-command last-cmd)        ; Restore last real command. `last-cmd' is free here.
+    (let ((this-command cmd)) (call-interactively cmd 'record-it)))) ; Establish this command.
 
 (icicle-define-command icicle-set-option-to-t ; Command name
                        "Set option to t.  This makes sense for binary (toggle) options.
@@ -2932,8 +3485,40 @@ candidates, as follows:
                                               bookmark-current-bookmark)
                                          (bookmark-buffer-name)))
 
-;; Suggested global binding: `C-x k'.
-(icicle-define-command icicle-kill-buffer ; Command name
+(icicle-define-command icicle-delete-windows ; Command name
+                       "Delete windows showing a buffer, anywhere." ; Doc string
+                       delete-windows-on ; Function to perform the action
+                       "Delete windows on buffer: "
+                       (let ((all-bufs (buffer-list))
+                             (cand-bufs nil))
+                         (dolist (buf all-bufs)
+                           (when (get-buffer-window buf t)
+                             (push (list (buffer-name buf)) cand-bufs)))
+                         cand-bufs)
+                       nil t nil 'minibuffer-history (buffer-name (current-buffer)) t)
+
+(defun icicle-delete-window (bufferp)   ; Bound to `C-x 0' in Icicle mode.
+  "`delete-window' or prompt for buffer and delete all its windows.
+With no prefix arg, delete the selected window.
+With a prefix arg, prompt for a buffer and delete all windows, on any
+  frame, that show that buffer.
+
+With a prefix arg, this is an Icicles multi-command - see
+`icicle-mode'.  Input-candidate completion and cycling are available.
+While cycling, these keys act on the current candidate:
+
+`C-RET'   - Act on current completion candidate only
+`C-next'  - Act, then move to next prefix-completion candidate
+`C-prior' - Act, then move to previous prefix-completion candidate
+`next'    - Move to next apropos-completion candidate
+`prior'   - Move to previous apropos-completion candidate
+`C-!'     - Act on *all* candidates, successively (careful!)
+
+Use `RET' or `S-RET' to finally choose a candidate, or `C-g' to quit."
+  (interactive "P")
+  (if bufferp (icicle-delete-windows) (delete-window)))
+
+(icicle-define-command icicle-kill-buffer ; Bound to `C-x k' in Icicle mode.
                        "Kill a buffer." ; Doc string
                        icicle-kill-a-buffer ; Function to perform the action
                        "Kill buffer: "  ; `completing-read' args
@@ -2966,9 +3551,7 @@ candidates, as follows:
         (error nil))
     (message "No such live buffer: `%s'" buf)))
 
-
-;; Suggested global binding: `C-x b'.
-(icicle-define-command icicle-buffer    ; Command name
+(icicle-define-command icicle-buffer ; Bound to `C-x b' in Icicle mode.
                        "Switch to a different buffer.
 These options, when non-nil, control candidate matching and filtering:
 
@@ -3002,8 +3585,7 @@ See also command `icicle-buffer-config'." ; Doc string
                         (icicle-require-match-flag icicle-buffer-require-match-flag)
                         (icicle-ignore-space-prefix-flag icicle-buffer-ignore-space-prefix-flag)))
 
-;; Suggested global binding: `C-x 4 b'.
-(icicle-define-command icicle-buffer-other-window ; Command name
+(icicle-define-command icicle-buffer-other-window ; Bound to `C-x 4 b' in Icicle mode.
                        "Switch to a different buffer in another window.
 These options, when non-nil, control candidate matching and filtering:
 
@@ -3142,6 +3724,24 @@ available from http://www.emacswiki.org/cgi-bin/wiki.pl?ColorTheme." ; Doc strin
                        (lambda (theme) (funcall (intern theme))) ; Action - just call the theme.
                        "Theme: " icicle-color-themes nil t) ; `completing-read' args
 
+(icicle-define-command icicle-insert-kill "Insert previously killed text from the `kill-ring'.
+This is like `yank', but it does not rotate the `kill-ring'."
+                       icicle-insert-for-yank "Insert: " (mapcar #'list kill-ring) nil t nil nil
+                       (car kill-ring) nil ((icicle-transform-function 'icicle-remove-duplicates)))
+
+(defun icicle-insert-for-yank (string)
+  "`insert-for-yank', if defined; else, `insert' with `read-only' removed."
+  (if (fboundp 'insert-for-yank)        ; Defined in `subr.el' (not required).
+      (insert-for-yank string)
+    (let ((opoint (point)))
+      (insert string)
+      (let ((inhibit-read-only t)) (remove-text-properties opoint (point) '(read-only nil))))))
+
+(defun icicle-yank-insert (&optional arg) ;  Bound to `C-y' (or whatever `yank' was bound to).
+  "`icicle-insert-kill', if prefix arg < 0; otherwise, `yank'."
+  (interactive "*P")
+  (if (wholenump (prefix-numeric-value arg)) (yank arg) (icicle-insert-kill)))
+
 (icicle-define-file-command icicle-delete-file ; Command name
                             "Delete a file or directory." ; Doc string
                             icicle-delete-file-or-directory ; Function to perform the action
@@ -3157,26 +3757,39 @@ available from http://www.emacswiki.org/cgi-bin/wiki.pl?ColorTheme." ; Doc strin
     (error (message (error-message-string i-delete-file))
            (error (error-message-string i-delete-file)))))
 
-;; Suggested global binding: `C-x C-f'.
-(icicle-define-file-command icicle-find-file ; Command name
+(icicle-define-file-command icicle-find-file ; Bound to `C-x C-f' in Icicle mode.
                             "Visit a file or directory." ; Doc string
                             icicle-find-file-w-wildcards ; Function to perform the action
-                            "File or directory: " nil default-directory) ; `read-file-name' args
+                            "File or directory: " nil ; `read-file-name' args
+                            (if (and (eq major-mode 'dired-mode)
+                                     (fboundp 'diredp-find-a-file)) ; Defined in `dired+.el'.
+                                (condition-case nil ; E.g. error because not on file line (ignore)
+                                    (abbreviate-file-name (dired-get-file-for-visit))
+                                  (error default-directory))
+                              default-directory))
 
 (defun icicle-find-file-w-wildcards (filename)
   "Find file FILENAME, where the name possibly includes shell wildcards."
-  (find-file filename t))
+  (if (and (eq major-mode 'dired-mode) (fboundp 'diredp-find-a-file))
+      (diredp-find-a-file filename t)
+    (find-file filename t)))
 
-;; Suggested global binding: `C-x 4 f'.
-(icicle-define-file-command icicle-find-file-other-window ; Command name
+(icicle-define-file-command icicle-find-file-other-window ; Bound to `C-x 4 f' in Icicle mode.
                             "Visit a file or directory in another window." ; Doc string
-                            icicle-find-file-other-window-w-wildcards
-                                        ; Function to perform the action
-                            "File or directory: " nil default-directory) ; `read-file-name' args
+                            icicle-find-file-other-window-w-wildcards ; Action function
+                            "File or directory: " nil ; `read-file-name' args
+                            (if (and (eq major-mode 'dired-mode)
+                                     (fboundp 'diredp-find-a-file-other-window)) ; In `dired+.el'.
+                                (condition-case nil ; E.g. error because not on file line (ignore)
+                                    (abbreviate-file-name (dired-get-file-for-visit))
+                                  (error default-directory))
+                              default-directory))
 
 (defun icicle-find-file-other-window-w-wildcards (filename)
   "Find file FILENAME, where the name possibly includes shell wildcards."
-  (find-file-other-window filename t))
+  (if (and (eq major-mode 'dired-mode) (fboundp 'diredp-find-a-file-other-window))
+      (diredp-find-a-file-other-window filename t)
+    (find-file-other-window filename t)))
 
 (icicle-define-command icicle-recent-file ; Command name
                        "Open a recently used file." ; Doc string
@@ -3281,6 +3894,54 @@ You can then retrieve quickly them later using `\\[icicle-candidate-set-retrieve
                                                 (list (cons 'foreground-color orig-bg)))
                        nil)             ; Additional code at end
 
+;; Bind this, not `icicle-Info-index', to `i' in Info mode,
+;; so plain `Info-index' will be used when not also in Icicle mode.
+(defun icicle-Info-index-cmd ()
+  "If in Icicle mode, run `icicle-Info-index'; else, run `Info-index'.
+Note: In Emacs versions prior to version 22, this runs `Info-index'."
+  (interactive)
+  (call-interactively
+   (if (and icicle-mode (> emacs-major-version 21)) 'icicle-Info-index 'Info-index)))
+
+(defun icicle-Info-index ()
+  "Like `Info-index', but you can use Icicles keys `C-RET', `C-up' etc."
+  (interactive)
+  (let ((info-buf (current-buffer))
+        (info-window (selected-window))
+        (icicle-candidate-action-fn 'icicle-Info-index-action))
+    (call-interactively 'Info-index)))
+
+(defun icicle-Info-index-action (topic)
+  "Completion action function for `icicle-Info-index'."
+  (let ((minibuf-win (selected-window)))
+    (set-buffer info-buf)               ; `info-buf', `info-window' defined in `icicle-Info-index'.
+    (select-window info-window)
+    (Info-index topic)
+    (select-window minibuf-win)))
+
+;; Bind this, not `icicle-Info-goto-node', to `g' in Info mode,
+;; so plain `Info-goto-node' will be used when not also in Icicle mode.
+(defun icicle-Info-goto-node-cmd ()
+  "In Icicle mode, run `icicle-Info-goto-node'; else, `Info-goto-node'."
+  (interactive)
+  (call-interactively (if icicle-mode 'icicle-Info-goto-node 'Info-goto-node)))
+
+(defun icicle-Info-goto-node ()
+  "Like `Info-goto-node', but you can use keys `C-RET', `C-up' etc."
+  (interactive)
+  (let ((info-buf (current-buffer))
+        (info-window (selected-window))
+        (icicle-candidate-action-fn 'icicle-Info-goto-node-action))
+    (call-interactively 'Info-goto-node)))
+
+(defun icicle-Info-goto-node-action (node)
+  "Completion action function for `icicle-Info-goto-node'."
+  (let ((minibuf-win (selected-window)))
+    (set-buffer info-buf) ; `info-buf', `info-window' defined in `icicle-Info-goto-node'.
+    (select-window info-window)
+    (Info-goto-node node)
+    (select-window minibuf-win)))
+
 (icicle-define-command icicle-insert-thesaurus-entry ; Command name
                        "Insert an entry from a thesaurus.
 Library `synonyms.el' is needed for this.  If you have never used
@@ -3299,21 +3960,23 @@ Remember that you can use `\\<minibuffer-local-completion-map>\
                          (unless (or (boundp 'synonyms-obarray) (require 'synonyms nil t))
                            (error "You must first load library `synonyms.el'"))
                          (synonyms-ensure-synonyms-read-from-cache))
-                       (progn (select-frame-set-input-focus (window-frame orig-window))
-                              (goto-char icicle-track-pt)) ; Undo sexp
-                       (progn (select-frame-set-input-focus (window-frame orig-window))
-                              (goto-char icicle-track-pt))) ; Last sexp
+                       (when (window-live-p orig-window)
+                         (select-frame-set-input-focus (window-frame orig-window))
+                         (goto-char icicle-track-pt)) ; Undo sexp
+                       (when (window-live-p orig-window)
+                         (select-frame-set-input-focus (window-frame orig-window))
+                         (goto-char icicle-track-pt))) ; Last sexp
 
 (defun icicle-insert-thesaurus-entry-cand-fn (string)
   "Action function for `icicle-insert-thesaurus-entry'.
 Insert STRING, followed by a space, at position TRACK-PT of buffer
 ORIG-BUFF."
-  (set-buffer orig-buff)
+  (set-buffer orig-buff)                ; `orig-buff' is a free variable here.
   (goto-char icicle-track-pt)
   (insert string " ")
   (setq icicle-track-pt (point))
   (save-excursion (set-buffer (window-buffer (minibuffer-window))) (icicle-clear-minibuffer))
-  (save-selected-window (icicle-delete-windows-on "*Completions*")))
+  (save-selected-window (icicle-remove-Completions-window)))
 
 (defun icicle-delete-windows-on (buffer) ; From `remove-windows-on' in `frame-cmds.el'.
   "Delete all windows showing BUFFER."
@@ -3331,7 +3994,7 @@ ORIG-BUFF."
         (dolist (fr frames)
           (delete-window (get-buffer-window buffer t)))))))
 
-(defun icicle-complete-thesaurus-entry (word) ; Suggested global binding: `C-c /'.
+(defun icicle-complete-thesaurus-entry (word) ; Bound to `C-c /' in Icicle mode.
   "Complete WORD to an entry from a thesaurus.
 The default value of WORD is the word at the cursor.
 Library `synonyms.el' is needed for this.  If you have never used
@@ -3349,6 +4012,31 @@ build a cache file of synonyms that are used for completion.  See
   (insert (completing-read "Thesaurus entry to match: " synonyms-obarray
                            nil nil word nil word))
   (unless (looking-at "\\s-") (insert " ")))
+
+(icicle-define-command icicle-plist     ; Command name
+                       "Choose a symbol and property list.
+Each candidate for completion is a symbol name plus its property list
+\(as a string).  They are separated by `icicle-list-join-string'
+\(^G^J, by default).  You can match an input regexp against the symbol
+name or the property list or both.  Use `C-q C-g C-q C-j' to input the
+default separator.
+
+Remember that you can use `[^^G]' to match any character except ^G,
+which includes newline. Remember also that you can use `\\<minibuffer-local-completion-map>\
+\\[icicle-toggle-incremental-completion] to toggle incremental completion."
+                       (lambda (entry)
+                         (with-output-to-temp-buffer "*Help*" (princ entry)))
+                       "SYMB `C-q C-g C-q C-j' PLIST (`RET' when done): "
+                       (let ((result nil)) ; TABLE arg is an alist with items ((symb plist-string))
+                         (mapatoms
+                          (lambda (symb) ; That is, each completion candidate is a list of strings.
+                            (let ((plist (symbol-plist symb)))
+                              (when plist
+                                (push (list (list (symbol-name symb) (format "%s" plist)))
+                                      result)))))
+                         result)
+                       nil nil nil nil nil nil nil
+                       (message "Gathering property lists...")) ; First code
 
 (icicle-define-command icicle-vardoc    ; Command name
                        "Choose a variable description.
@@ -3420,33 +4108,33 @@ Remember that you can use `\\<minibuffer-local-completion-map>\
                        nil nil nil nil nil nil nil
                        (message "Gathering function descriptions...")) ; First code
 
-;; $$ Extend to faces too?  Other objects too?
 (icicle-define-command icicle-doc       ; Command name
-                       "Choose documentation for a function or variable.
-Each candidate for completion is the description of a function or
-variable.  Displays the documentation and returns the function or
-variable (a symbol).
+                       "Choose documentation for a symbol.
+Each candidate for completion is the description of a function,
+variable, or face.  Displays the documentation and returns the
+symbol.
 
 Remember that you can use `\\<minibuffer-local-completion-map>\
 \\[icicle-toggle-incremental-completion] to toggle incremental completion." ; Doc string
                        (lambda (entry)  ; Action function: display the doc.
-                         (let ((fn-or-var (cdr (assoc entry minibuffer-completion-table))))
-                           (when (and fn-or-var (boundp fn-or-var)) (describe-variable fn-or-var))
-                           (when (fboundp fn-or-var) (describe-function fn-or-var))
-                           fn-or-var))  ; Return the function or variable (symbol).
+                         (let ((symb (cdr (assoc entry minibuffer-completion-table))))
+                           (when (and symb (boundp symb)) (describe-variable symb))
+                           (when (fboundp symb) (describe-function symb))
+                           (when (facep symb) (describe-face symb))
+                           symb))  ; Return the symbol.
                        "Find doc with regexp: " ; `completing-read' args
                        (let ((result nil)
                              doc)
                          (mapatoms
                           (lambda (symb) ; TABLE arg is an alist whose items are (doc . symb).
                             (when (fboundp symb) ; That is, the completions are the doc strings.
-                              (setq doc (concat (documentation symb) "\n\n\n"))
+                              (setq doc (concat (documentation symb) "\n\n"))
                               (when (icicle-non-whitespace-string-p doc)
                                 (push (cons doc symb) result)))
                             (when (boundp symb)
                               (setq doc (concat
                                          (documentation-property symb 'variable-documentation)
-                                         "\n\n\n"))
+                                         "\n\n"))
                               (when (icicle-non-whitespace-string-p doc)
                                 (push (cons doc symb) result)))))
                          ;; `icicle-candidate-action-fn' is used in the main body of command
@@ -3458,6 +4146,8 @@ Remember that you can use `\\<minibuffer-local-completion-map>\
                        (message "Gathering documentation..."))
 
 (defun icicle-non-whitespace-string-p (string)
+  "Returns non-nil if STRING contains a non-whitespace character.
+The `standard-syntax-table' definition of whitespace is used."
   (interactive "s")
   (let ((orig-syntable (syntax-table)))
     (unwind-protect
@@ -3596,7 +4286,9 @@ Returns the list of matches."
 ;;;###autoload
 (defun icicle-map (alist fn)
   "Selectively apply a function to items in an alist.
-FN is a function.  ALIST is a variable whose value is an alist.
+FN is a function.  ALIST is an alist - interactively, it is a variable
+whose value is an alist.
+
 You are prompted for both arguments.  Completion is available.
 The completion list for ALIST is a set of variables whose value is a
 cons.  With no prefix arg, the names of these variables must end with
@@ -3617,14 +4309,10 @@ During completion you can use these keys also.  Each displays the
 value of applying FN to the current completion candidate.
 \\<minibuffer-local-completion-map>\
 `C-RET'   - Act on current completion candidate only
-`C-next'  - Act, then move to next \
-prefix-completion candidate
-`C-prior' - Act, then move to previous \
-prefix-completion candidate
-`next'    - Act, then move to next \
-apropos-completion candidate
-`prior'   - Act, then move to previous \
-apropos-completion candidate
+`C-next'  - Act, then move to next prefix-completion candidate
+`C-prior' - Act, then move to previous prefix-completion candidate
+`next'    - Move to next apropos-completion candidate
+`prior'   - Move to previous apropos-completion candidate
 `\\[icicle-all-candidates-action]'     - Act on *all* candidates, successively
 
 Use `RET' or `S-RET' to finally choose a candidate, or `C-g' to quit.
@@ -3633,14 +4321,16 @@ This is an Icicles command - see `icicle-mode'.
 `icicle-map' overrides `icicle-ignore-space-prefix-flag', binding it
 to nil so that candidates with initial spaces can be matched."
   (interactive
-   (list (symbol-value (intern (completing-read
-                                "Alist (variable): " obarray
-                                `(lambda (symb) (and (boundp symb)
-                                                 (consp (symbol-value symb))
-                                                 ,(if current-prefix-arg
-                                                      '(consp (car (symbol-value symb)))
-                                                      '(string-match "alist$" (symbol-name symb)))))
-                                t)))
+   (list (symbol-value
+          (intern (completing-read
+                   "Alist (variable): " obarray
+                   `(lambda (symb)
+                     (and
+                      (boundp symb) (consp (symbol-value symb))
+                      ,(if current-prefix-arg
+                           '(consp (car (symbol-value symb)))
+                           '(string-match "alist$" (symbol-name symb)))))
+                   t)))
          (read (completing-read "Function: " obarray 'functionp))))
   (setq icicle-candidates-alist         ; Make keys of ALIST be strings.  Save in global variable.
         (mapcar (lambda (key+val) (cons (format "%s" (car key+val)) (cdr key+val))) alist))
@@ -3648,7 +4338,8 @@ to nil so that candidates with initial spaces can be matched."
   (let ((icicle-candidate-action-fn 'icicle-map-action)
         (icicle-incremental-completion-flag 'always)
         (icicle-sort-function nil)
-        (icicle-ignore-space-prefix-flag nil))
+        (icicle-ignore-space-prefix-flag nil)
+        (enable-recursive-minibuffers t))
     (condition-case failure
         (let ((cand-nb 0)
               candidate-entries result)
@@ -3657,10 +4348,12 @@ to nil so that candidates with initial spaces can be matched."
                                                        icicle-candidates-alist))
           (cond ((not (wholenump icicle-candidate-nb)) ; Didn't cycle to choose the candidate.
                  (when (cdr candidate-entries) ; Multiple entries with the same key
-                   (error (substitute-command-keys "Ambiguous choice. Try again."))))
+                   (error (substitute-command-keys "Ambiguous choice. Try again.")))
+                 ;; Do nothing here if only one entry with the chosen key.
+                 )
                 (t
                  (setq cand-nb (mod icicle-candidate-nb (length icicle-candidates-alist)))
-                 ;; If cycling with action functions, then add or subtract one from candidate #.
+                 ;; If cycling with action functions, add or subtract one from candidate #.
                  (when (memq last-command '(icicle-next-apropos-candidate-action
                                             icicle-next-prefix-candidate-action))
                    (setq cand-nb (1- cand-nb))
@@ -3677,49 +4370,66 @@ to nil so that candidates with initial spaces can be matched."
       (error (error (error-message-string failure))))))
 
 (defun icicle-map-action (string)
-  (condition-case icicle-map-action
-      (progn
-        ;; Highlight the current candidate in *Completions*.
-        (let ((compl-win (get-buffer-window "*Completions*" t))
-              curr-candidate-pos)
-          (when compl-win
-            (save-window-excursion
-              (select-window compl-win)
-              (let ((case-fold-search completion-ignore-case))
-                (goto-char (point-min))
-                (forward-line 3)
-                (icicle-move-to-next-completion icicle-candidate-nb t)
-                (set-buffer-modified-p nil)
-                (setq curr-candidate-pos (point))))
-            (set-window-point compl-win curr-candidate-pos)))
-        ;; Apply function to candidate entry and display it.
-        (if icicle-candidate-nb
-            (message "Key: %s,  Result: %s"
-                     (car (elt icicle-candidates-alist icicle-candidate-nb))
-                     (funcall icicle-candidate-entry-fn
-                              (elt (icicle-filter-alist icicle-completion-candidates
-                                                        icicle-candidates-alist)
-                                   icicle-candidate-nb)))
-          (error "No such occurrence"))
-        t)                              ; Return non-nil for success.
-    (error nil)))                       ; Return nil for failure.
+  "Completion action function for `icicle-map'."
+  (unwind-protect
+       (condition-case icicle-map-action
+           (let (curr-cand-string)
+             ;; Highlight the current candidate in *Completions*.
+             (let ((compl-win (get-buffer-window "*Completions*" t))
+                   curr-cand-pos)
+               (when compl-win
+                 (save-window-excursion
+                   (select-window compl-win)
+                   (goto-char (icicle-start-of-candidates-in-Completions))
+                   (icicle-move-to-next-completion icicle-candidate-nb t)
+                   (set-buffer-modified-p nil)
+                   (setq curr-cand-pos (point))
+                   (setq curr-cand-string (icicle-current-completion-in-Completions)))
+                 (set-window-point compl-win curr-cand-pos)))
+             ;; Apply function to candidate entry and display it.
+             (if icicle-candidate-nb
+                 (let ((key+result (assoc curr-cand-string icicle-candidates-alist)))
+                   (message "Key: %s,  Result: %s" (car key+result)
+                            (funcall icicle-candidate-entry-fn key+result)))
+               (error "No such occurrence"))
+             t)                         ; Return non-nil for success.
+         (error nil)))                  ; Return nil for failure.
+  (select-frame-set-input-focus (window-frame (minibuffer-window))))
 
 ;;;###autoload
-(defun icicle-search (beg end regexp)
-  "Search for a regexp match, with completion and completion cycling.
-The active region is searched, or, if none, the buffer is searched.
+(defun icicle-search-generic ()         ; Bound to `C-x `'.
+  "Run `icicle-search-command'."
+  (interactive)
+  (call-interactively icicle-search-command))
+
+;;;###autoload
+(defun icicle-search (beg end regexp require-match &optional buffers) ; Bound to `C-c `'.
+  "Search for regexp matches, with completion and completion cycling.
 You are prompted for a regexp, which you enter using `RET'.  Matches
 are available as completion candidates.  You can then use apropos
 completion to filter the candidates using a different regexp.
 
-The use of completion here is a bit special.  It is not unusual in
-this context to have multiple completion candidates that are identical
-- only the positions of their occurrences in the search buffer differ.
-In that case, you cannot choose one by completing it in the
-minibuffer, because the destination would be ambiguous.  That is,
-simply completing your input and entering the completion with `RET'
-will not take you to its occurrence in the search buffer unless it is
-unique.
+By default, search only the current buffer.  Search the active region,
+or, if there is none, the entire buffer.  With a prefix argument, you
+are prompted for the buffers to search.  You can choose buffers using
+completion (`C-RET' and so on).
+
+BEG is the beginning of the region to search; END is the end.
+REGEXP is the regexp that determines the set of initial candidates.
+REQUIRE-MATCH is passed to `completing-read'.
+BUFFERS is the list of buffers to search.
+
+Sets `icicle-search-final-choice' to the final user choice, which
+might not be one of the search candidates, if REQUIRE-MATCH is nil.
+
+The use of completion for this command is a bit special.  It is not
+unusual in this context to have multiple completion candidates that
+are identical - only the positions of their occurrences in the search
+buffer differ.  In that case, you cannot choose one by completing it
+in the minibuffer, because the destination would be ambiguous.  That
+is, simply completing your input and entering the completion with
+`RET' will not take you to its occurrence in the search buffer unless
+it is unique.
 
 Instead, cycle among the candidates and choose one: cycling tracks the
 search-buffer position.  To move to each occurrence in the search
@@ -3740,6 +4450,9 @@ when you use `next', but for `C-next' it corresponds to the following
 candidate.  You do not usually want to go to the following candidate,
 so the `RET' is ignored.
 
+After you accept a completion candidate, and go to it, the hooks in
+variable `icicle-search-hook' are run.
+
 In the search buffer, `icicle-search':
 
  Highlights the current match for the initial regexp using face
@@ -3748,16 +4461,17 @@ In the search buffer, `icicle-search':
  Highlights the match for your current input (e.g. a different regexp
  from the initial one) using face `icicle-search-current-input'.
 
- Highlights all of the matches for your initial regexp using face
- `icicle-search-main-regexp-others', provided
- `icicle-search-highlight-all-flag' is non-nil.
+ Highlights the first `icicle-search-highlight-threshold' matches for
+ your initial regexp, using face `icicle-search-main-regexp-others'.
 
 If user option `icicle-search-cleanup-flag' is non-nil (the default),
 then all search highlighting is removed from the search buffer when
 you are finished searching.  If it is nil, then you can remove this
 highlighting later using command `icicle-search-highlight-cleanup'.
+You can toggle `icicle-search-cleanup-flag' at any time using `\\<minibuffer-local-completion-map>\
+\\[icicle-toggle-search-cleanup]' in the minibuffer.
 
-You can use `\\<minibuffer-local-completion-map>\\[icicle-insert-string-from-variable]' (command \
+You can use `\\[icicle-insert-string-from-variable]' (command \
 `icicle-insert-string-from-variable') to
 insert text (e.g. a regexp) from a variable into the minibuffer.
 For example, you can search for ends of sentences by using \
@@ -3775,147 +4489,191 @@ regexps from variables.
 
 `icicle-search' overrides `icicle-ignore-space-prefix-flag', binding
 it to nil so that candidates with initial spaces can be matched."
-  (interactive
-   (let ((regx (read-from-minibuffer "Search for (regexp): " nil nil nil 'regexp-history)))
-     (if (or (null (mark)) (= (point) (mark)) (not mark-active))
-         (list (point-min) (point-max) regx)
-       (if (< (point) (mark)) (list (point) (mark) regx) (list (mark) (point) regx)))))
+  (interactive `(,@(icicle-search-region)
+                 ,(read-from-minibuffer "Search for (regexp): " nil nil nil 'regexp-history)
+                 t
+                 ,(and current-prefix-arg (mapcar #'get-buffer (icicle-buffer-list)))))
   (setq regexp (or regexp
                    (read-from-minibuffer "Search for (regexp): " nil nil nil 'regexp-history)))
   (let ((icicle-incremental-completion-flag 'always)
         (icicle-sort-function nil)
         (icicle-ignore-space-prefix-flag nil)
+        (completion-ignore-case case-fold-search)
         (orig-point (point))
         (orig-window (selected-window))
-        (last-beg nil)
-        (mark-active nil)               ; So region highlighting doesn't hide highlighting here.
-        (icicle-update-input-hook (if icicle-search-highlight-all-flag
-                                      (list 'icicle-search-highlight-all-input-matches)
-                                    icicle-update-input-hook)))
+        (mark-active nil))              ; So region highlighting doesn't hide highlighting here.
     (setq icicle-candidates-alist nil)
-    ;; Build `icicle-candidates-alist'.  Highlight matches if `icicle-search-highlight-all-flag'.
-    (save-excursion
-      (goto-char beg)
-      (while (and beg (< beg end))
-        (while (and (setq beg (re-search-forward regexp end t)) (eq last-beg beg))
-          (forward-char) (setq beg (1+ beg))) ; Matched again at same place.  Advance 1 char.
-        (when beg                       ; Add (strg . pos) to candidates.
-          (push (cons (buffer-substring-no-properties (match-beginning 0) (match-end 0)) beg)
-                icicle-candidates-alist)
-          ;; Highlight candidate in (original) buffer.
-          (when icicle-search-highlight-all-flag
-            (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
-              (push ov icicle-search-overlays)
-              (overlay-put ov 'priority 200) ; > ediff's 100+, but < isearch overlays
-              (overlay-put ov 'face 'icicle-search-main-regexp-others))))
-        (setq last-beg beg)))
+    ;; Build `icicle-candidates-alist'. Highlight up to `icicle-search-highlight-threshold' matches
+    (message "Finding matches...")
+    (if buffers
+        (dolist (buf buffers) (icicle-search-regexp-scan buf regexp))
+      (icicle-search-regexp-scan (current-buffer) regexp beg end))
     (setq icicle-candidates-alist (nreverse icicle-candidates-alist))
     (unless icicle-candidates-alist (error "No match for regexp `%s'" regexp))
-    (let ((icicle-candidate-action-fn 'icicle-search-action))
+    (let ((icicle-candidate-action-fn 'icicle-search-action)
+          (icicle-update-input-hook (list 'icicle-search-highlight-all-input-matches)))
+      (setq icicle-search-final-choice nil)
       (unwind-protect
            (condition-case failure
                (let (candidate-entries)
-                 (completing-read "Choose an occurrence: " icicle-candidates-alist nil t)
-                 (setq candidate-entries (icicle-filter-alist icicle-completion-candidates
+                 (setq icicle-search-final-choice (completing-read
+                                                   "Choose an occurrence: "
+                                                   icicle-candidates-alist nil require-match)
+                       candidate-entries (icicle-filter-alist icicle-completion-candidates
                                                               icicle-candidates-alist))
-                 (cond ((not (wholenump icicle-candidate-nb))
-                        (if (cdr candidate-entries)
-                            (error (substitute-command-keys "Ambiguous choice. Try again using \
+                 (cond
+                   ;; No match required, and not a match - just run the hook.
+                   ((and (not require-match) (null icicle-completion-candidates))
+                    (run-hooks 'icicle-search-hook))
+                   ;; Didn't cycle - completed.
+                   ((not (wholenump icicle-candidate-nb))
+                    (if (cdr candidate-entries)
+                        (error (substitute-command-keys "Ambiguous choice. Try again using \
 \\<minibuffer-local-completion-map>\\[icicle-next-apropos-candidate-action] to browse."))
-                          (goto-char (cdr (car candidate-entries)))))
-                       (t
-                        (let ((cand-nb (mod icicle-candidate-nb (length icicle-candidates-alist)))
-                              position)
-                          ;; If cycling with action functions, add or subtract one from candidate #.
-                          (when (memq last-command '(icicle-next-apropos-candidate-action
-                                                     icicle-next-prefix-candidate-action))
-                            (setq cand-nb (1- cand-nb))
-                            (when (< cand-nb 0) (setq cand-nb 0)))
-                          (when (memq last-command '(icicle-previous-apropos-candidate-action
-                                                     icicle-previous-prefix-candidate-action))
-                            (setq cand-nb (1+ cand-nb))
-                            (when (> cand-nb (length icicle-candidates-alist))
-                              (setq cand-nb (length icicle-candidates-alist))))
-                          (setq position (cdr (elt candidate-entries cand-nb)))
-                          (unless position (error "No such occurrence"))
-                          (goto-char position)
-                          (run-hooks 'icicle-search-hook)))))
+                      (goto-char (cdr (car candidate-entries))) ; Go to sole completion.
+                      (run-hooks 'icicle-search-hook)))
+                   ;; Cycled.
+                   (t
+                    (let ((cand-nb (mod icicle-candidate-nb (length icicle-candidates-alist)))
+                          marker buf)
+                      ;; If cycling with action functions, add or subtract one from candidate #.
+                      (when (memq last-command '(icicle-next-apropos-candidate-action
+                                                 icicle-next-prefix-candidate-action))
+                        (setq cand-nb (1- cand-nb))
+                        (when (< cand-nb 0) (setq cand-nb 0)))
+                      (when (memq last-command '(icicle-previous-apropos-candidate-action
+                                                 icicle-previous-prefix-candidate-action))
+                        (setq cand-nb (1+ cand-nb))
+                        (when (> cand-nb (length icicle-candidates-alist))
+                          (setq cand-nb (length icicle-candidates-alist))))
+                      (setq marker (cdr (elt candidate-entries cand-nb)))
+                      (unless marker (error "No such occurrence"))
+                      (setq buf (marker-buffer marker))
+                      (unless (bufferp buf) (error "No such buffer: %s" buf))
+                      (set-buffer buf)
+                      (goto-char (marker-position marker))
+                      (run-hooks 'icicle-search-hook)))))
              (quit (goto-char orig-point))
              (error (goto-char orig-point) (error (error-message-string failure))))
-        (when icicle-search-cleanup-flag (icicle-search-highlight-cleanup))))))
+        (when icicle-search-cleanup-flag (icicle-search-highlight-cleanup)))
+      icicle-search-final-choice)))
+
+(defun icicle-search-region ()
+    "Return the start and end of the search region as a list.
+If the region is not active or empty, then bob and eob are used."
+  (if (or (not mark-active) (null (mark)) (= (point) (mark)))
+      (list (point-min) (point-max))
+    (if (< (point) (mark)) (list (point) (mark)) (list (mark) (point)))))
+
+(defun icicle-search-regexp-scan (buffer regexp &optional beg end)
+  "Scan BUFFER for REGEXP.
+Highlight matches in face `icicle-search-main-regexp-others'.
+If BEG and END are non-nil, scan only between positions BEG and END."
+  (when (bufferp buffer)
+    (let ((last-beg nil))
+      (set-buffer buffer)
+      (unless (and beg end) (setq beg (point-min) end (point-max)))
+      (condition-case icicle-search-regexp-scan
+          (save-excursion
+            (goto-char beg)
+            (while (and beg (< beg end))
+              (while (and (setq beg (re-search-forward regexp end t)) (eq last-beg beg))
+                (forward-char) (setq beg (1+ beg))) ; Matched again, same place.  Advance 1 char.
+              (when beg              ; Add (strg . pos) to candidates.
+                (push (cons (buffer-substring-no-properties (match-beginning 0) (match-end 0))
+                            (copy-marker beg))
+                      icicle-candidates-alist)
+                ;; Highlight candidate in buffer.
+                (when (<= (length icicle-candidates-alist) icicle-search-highlight-threshold)
+                  (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
+                    (push ov icicle-search-overlays)
+                    (overlay-put ov 'priority 200) ; > ediff's 100+, but < isearch overlays
+                    (overlay-put ov 'face 'icicle-search-main-regexp-others))))
+              (setq last-beg beg)))
+        (quit (when icicle-search-cleanup-flag (icicle-search-highlight-cleanup)))
+        (error (when icicle-search-cleanup-flag (icicle-search-highlight-cleanup))
+               (error (error-message-string icicle-search-regexp-scan)))))))
 
 (defun icicle-search-highlight-all-input-matches (&optional input)
   "Highlight, inside each search regexp match, what current input matches."
-  (setq input (or input icicle-current-input))
-  (unless (or (string= "" input) (null icicle-search-overlays))
-    (save-excursion
-      (set-buffer (overlay-buffer (car icicle-search-overlays)))
-      ;; Update by deleting (if it exists) and then creating.  If a single overlay exists, user just
-      ;; changed `icicle-search-highlight-all-flag' to t.  Otherwise, it's nil or a list of overlays.
-      (when (overlayp icicle-search-refined-overlays)
-        (delete-overlay icicle-search-refined-overlays)
-        (setq icicle-search-refined-overlays nil))
-      (while icicle-search-refined-overlays
-        (let ((ov (pop icicle-search-refined-overlays)))
-          (when (overlayp ov) (delete-overlay ov))))
-      (dolist (ov icicle-search-overlays)
-        (save-restriction               ; Search within the current search regexp match.
-          (narrow-to-region (overlay-start ov) (overlay-end ov))
-          (goto-char (point-min))
-          (when (re-search-forward input nil t)
-            (setq ov (make-overlay (match-beginning 0) (match-end 0)))
-            (push ov icicle-search-refined-overlays)
-            (overlay-put ov 'priority 204)
-            (overlay-put ov 'face 'icicle-search-current-input)))))))
+  (save-excursion
+    ;; Update by deleting (if it exists) and then creating.
+    ;; If a single overlay exists, it means that the user just changed
+    ;; `icicle-search-highlight-threshold' to non-zero.
+    ;; Otherwise, it's nil or a list of overlays.
+    (when (overlayp icicle-search-refined-overlays)
+      (delete-overlay icicle-search-refined-overlays)
+      (setq icicle-search-refined-overlays nil))
+    (while icicle-search-refined-overlays
+      (delete-overlay (car icicle-search-refined-overlays))
+      (setq icicle-search-refined-overlays (cdr icicle-search-refined-overlays))))
+  (when icicle-search-highlight-all-current-flag
+    (setq input (or input icicle-current-input))
+    (unless (or (string= "" input) (null icicle-search-overlays))
+      (save-excursion
+        (dolist (ov icicle-search-overlays)
+          (set-buffer (overlay-buffer ov))
+          (save-restriction             ; Search within the current search regexp match.
+            (narrow-to-region (overlay-start ov) (overlay-end ov))
+            (goto-char (point-min))
+            (when (condition-case nil
+                      (re-search-forward input nil t)
+                    (error nil))
+              (setq ov (make-overlay (match-beginning 0) (match-end 0)))
+              (push ov icicle-search-refined-overlays)
+              (overlay-put ov 'priority 204)
+              (overlay-put ov 'face 'icicle-search-current-input))))))))
 
 (defun icicle-search-action (string)
-  "Action function for command `icicle-search'.
+  "Completion action function for command `icicle-search'.
 1. Highlight the current candidate in *Completions*.
 2. Move to the regexp match in the original buffer and highlight it.
-3. If `icicle-search-highlight-all-flag' is nil, highlight what the
+3. If `icicle-search-highlight-threshold' is zero, highlight what the
    current input matches, inside the match of the initial regexp."
   (unwind-protect
        (condition-case icicle-search-action
-           (progn
+           (let (curr-cand-string)
              ;; Highlight the current candidate in *Completions*.
              (let ((compl-win (get-buffer-window "*Completions*" t))
-                   curr-candidate-pos)
+                   curr-cand-pos)
                (when compl-win
                  (save-window-excursion
                    (select-window compl-win)
-                   (let ((case-fold-search completion-ignore-case))
-                     (goto-char (point-min))
-                     (forward-line 3)
+                   (let ((completion-ignore-case case-fold-search))
+                     (goto-char (icicle-start-of-candidates-in-Completions))
                      (icicle-move-to-next-completion icicle-candidate-nb t)
                      (set-buffer-modified-p nil)
-                     (setq curr-candidate-pos (point))))
-                 (set-window-point compl-win curr-candidate-pos)))
-
+                     (setq curr-cand-pos (point))
+                     (setq curr-cand-string (icicle-current-completion-in-Completions))))
+                 (set-window-point compl-win curr-cand-pos)))
              ;; Move cursor to the match in the original buffer and highlight it.
-             (let* ((cand+pos (and icicle-candidate-nb
-                                   (elt (icicle-filter-alist icicle-completion-candidates
-                                                             icicle-candidates-alist)
-                                        icicle-candidate-nb)))
-                    (candidate (car-safe cand+pos))
-                    (position (cdr-safe cand+pos)))
-               (unless position (error "No such occurrence"))
+             (let* ((cand+mrker (assoc curr-cand-string icicle-candidates-alist))
+                    (candidate (car-safe cand+mrker))
+                    (marker (cdr-safe cand+mrker)))
+               (unless marker (error "No such occurrence"))
                (save-selected-window
-                 (select-window orig-window)
-                 (let ((case-fold-search completion-ignore-case))
-                   (goto-char position)
-                   (icicle-place-overlay (- position (length candidate)) position
+                 (when (window-live-p orig-window) (select-window orig-window))
+                 (let ((completion-ignore-case case-fold-search)
+                       buf)
+                   (setq buf (marker-buffer marker))
+                   (unless (bufferp buf) (error "No such buffer: %s" buf))
+                   (pop-to-buffer buf)
+                   (raise-frame)
+                   (goto-char (marker-position marker))
+                   (icicle-place-overlay (- marker (length candidate)) marker
                                          'icicle-search-current-overlay
                                          'icicle-search-main-regexp-current
                                          (current-buffer))
                    (overlay-put icicle-search-current-overlay 'priority 202)
-                   (unless (or icicle-search-highlight-all-flag
+                   (unless (or (> 0 icicle-search-highlight-threshold)
                                (string= "" icicle-current-raw-input))
                      ;; Highlight, inside search regexp match, what current input matches.
                      (save-excursion
                        (save-restriction ; Search within the current search regexp match.
-                         (narrow-to-region (- position (length candidate)) position)
+                         (narrow-to-region (- marker (length candidate)) marker)
                          (goto-char (point-min))
-                         (when (re-search-forward icicle-current-raw-input nil t)
+                         ;; Use `icicle-current-input' here, so get only the matched part.
+                         (when (re-search-forward icicle-current-input nil t)
                            (icicle-place-overlay
                             (match-beginning 0) (point) 'icicle-search-refined-overlays
                             'icicle-search-current-input (current-buffer))
@@ -3933,47 +4691,140 @@ The original ALIST is not altered; a copy is filtered and returned."
 (defun icicle-search-highlight-cleanup ()
   "Remove all highlighting from the last use of `icicle-search'."
   (interactive)
-  (while icicle-search-overlays
-    (let ((ov (pop icicle-search-overlays))) (when (overlayp ov) (delete-overlay ov))))
-  (when (overlayp icicle-search-current-overlay)
-    (delete-overlay icicle-search-current-overlay))
-  (when (overlayp icicle-search-refined-overlays)
-    (delete-overlay icicle-search-refined-overlays)
-    (setq icicle-search-refined-overlays nil))
-  (while icicle-search-refined-overlays
-    (let ((ov (pop icicle-search-refined-overlays)))
-      (when (overlayp ov) (delete-overlay ov)))))
+  (let ((inhibit-quit t))
+    (message "Removing search highlighting...")
+    (while icicle-search-overlays
+      (delete-overlay (car icicle-search-overlays))
+      (setq icicle-search-overlays (cdr icicle-search-overlays)))
+    (when (overlayp icicle-search-current-overlay)
+      (delete-overlay icicle-search-current-overlay))
+    (when (overlayp icicle-search-refined-overlays)
+      (delete-overlay icicle-search-refined-overlays)
+      (setq icicle-search-refined-overlays nil))
+    (while icicle-search-refined-overlays
+      (delete-overlay (car icicle-search-refined-overlays))
+      (setq icicle-search-refined-overlays (cdr icicle-search-refined-overlays)))
+    (message "Removing search highlighting...done")))
 
 ;;;###autoload
-(defun icicle-occur (beg end)
+(defun icicle-occur (beg end &optional buffers) ; Bound to `C-c ''.
   "`icicle-search' with a regexp of \".*\".  An `occur' with icompletion.
 Type a regexp to match within each line of the buffer.  Use `S-TAB' to
 show matching lines.  Use `C-RET' or `C-mouse-2' to go to the line of
 the current candidate.  Use `C-next', `C-prior', `C-down', or`C-up' to
 cycle among the matching lines.
 
+By default, search only the current buffer.  Search the active region,
+or, if none, the entire buffer.  With a prefix argument, you are
+prompted for the buffers to search.  You can choose buffers using
+completion (`C-RET' and so on).
+
 You can use `M-*' to further narrow the match candidates, typing
 additional regexps to match."
-  (interactive
-   (if (or (null (mark)) (= (point) (mark)) (not mark-active))
-       (list (point-min) (point-max))
-     (if (< (point) (mark))
-         (list (point) (mark))
-       (list (mark) (point)))))
+  (interactive `(,@(icicle-search-region)
+                 ,(and current-prefix-arg (mapcar #'get-buffer (icicle-buffer-list)))))
   (let ((fg (face-foreground 'icicle-search-main-regexp-others))
         (bg (face-background 'icicle-search-main-regexp-others)))
     (unwind-protect
          (progn
            (set-face-foreground 'icicle-search-main-regexp-others nil)
            (set-face-background 'icicle-search-main-regexp-others nil)
-           (icicle-search beg end ".*"))
+           (icicle-search beg end ".*" t buffers))
+      (when icicle-search-cleanup-flag (icicle-search-highlight-cleanup))
       (set-face-foreground 'icicle-search-main-regexp-others fg)
       (set-face-background 'icicle-search-main-regexp-others bg))))
 
+;;;###autoload
+(defun icicle-comint-search (beg end)   ; Bound to `C-x `' in `comint-mode'.
+  "Use `icicle-search' to pick up a previous input for reuse.
+Use this in a `comint-mode' buffer, such as *shell* or
+*inferior-lisp*.  This searches your interactive history in the buffer
+for a match to your current input, which you can change dynamically.
+When you choose a previous input, it is copied to the current prompt,
+for reuse.  If the region is active, then only it is searched;
+otherwise, the entire buffer is searched.
 
+Use `C-RET' or `C-mouse-2' to choose a previous input for reuse.  Use
+`C-next', `C-prior', `C-down', or `C-up' to cycle among your previous
+inputs.
+
+As for other Icicles search commands, your current input narrows the
+set of possible candidates.  See `icicle-search' for more
+information.
+
+You can use `M-*' to further narrow the match candidates, typing
+additional regexps to match.
+
+Note, depending on your shell, you might want to customize variables
+such as the following:
+
+`shell-prompt-pattern',`telnet-prompt-pattern'.
+
+Being a search command, `icicle-comint-search' cannot give you access
+to previous commands that are not visible in the current buffer.  See
+also \\<comint-mode-map>\\[icicle-comint-command] for another way to
+reuse commands, including those from previous sessions."
+  (interactive (icicle-search-region))
+  ;; Is there a better test we can use, to make sure the current mode inherits from `comint-mode'?
+  (unless (where-is-internal 'comint-send-input (keymap-parent (current-local-map)))
+    (error "Current mode must be derived from comint mode"))
+  (let ((orig-search-hook icicle-search-hook)
+        (icicle-transform-function 'icicle-remove-duplicates))
+    (add-hook 'icicle-search-hook 'icicle-comint-send-input)
+    (icicle-search beg end (concat comint-prompt-regexp "\\S-.*") nil) ; Match not required (edit).
+    (remove-hook 'icicle-search-hook 'icicle-comint-send-input))
+  (goto-char (point-max)))
+
+(defun icicle-comint-send-input ()
+  "Grab current completion input and use that for comint input."
+  (unless (comint-check-proc (current-buffer))
+    (error "No live process associated with this buffer"))
+  (let ((comint-get-old-input
+         (if (minibuffer-window-active-p (minibuffer-window))
+             'icicle-comint-get-minibuffer-input ; Use minibuffer input (e.g. for action fn).
+           'icicle-comint-get-final-choice))) ; Use final choice.
+    (comint-copy-old-input))
+  (comint-send-input))
+
+(defun icicle-comint-get-minibuffer-input ()
+  "Return the minibuffer input, beyond the prompt."
+  (let* ((cand (icicle-minibuffer-contents))
+         (input-start (and (string-match comint-prompt-regexp cand) (match-end 0))))
+    (if input-start (substring cand input-start) cand)))
+
+(defun icicle-comint-get-final-choice ()
+  "Return the final choice, beyond the prompt."
+  (let ((input-start (and (string-match comint-prompt-regexp icicle-search-final-choice)
+                          (match-end 0))))
+    (if input-start
+        (substring icicle-search-final-choice input-start)
+      icicle-search-final-choice)))
 
 ;;;###autoload
-(defun icicle-compilation-search (beg end)
+(icicle-define-command icicle-comint-command ; Bound to `C-c TAB' in `comint-mode'.
+                       "Retrieve a previously used command.
+Use this in a `comint-mode' buffer such as *shell* or *inferior-lisp*.
+
+Note, depending on your shell, you might want to customize variables
+such as the following:
+
+`shell-prompt-pattern',`telnet-prompt-pattern'.
+
+See also \\<comint-mode-map>\\[icicle-comint-search] for another way to reuse commands."
+                       insert
+                       "Choose a previous command: "
+                       (mapcar #'list (cddr comint-input-ring)) nil nil nil nil
+                       (aref (cddr comint-input-ring) 0) nil
+                       ((icicle-transform-function 'icicle-remove-duplicates)))
+
+(add-hook 'comint-mode-hook
+          (lambda ()
+            (set (make-local-variable 'icicle-search-command) 'icicle-comint-search)
+            (define-key comint-mode-map "\C-c\C-i" 'icicle-comint-command)
+            (define-key comint-mode-map [(control ?c) tab] 'icicle-comint-command)))
+
+;;;###autoload
+(defun icicle-compilation-search (beg end) ; Bound to `C-c `' in `compilation(-minor)-mode'.
   "Like `icicle-search', but shows the matching compilation-buffer
 hit.  Use this in a compilation buffer, such as `*grep*', searching
 for a regexp as with `icicle-search'.  Use `C-RET' or `C-mouse-2' to
@@ -3981,33 +4832,35 @@ show the target-buffer hit corresponding to the current completion
 candidate.  Use `C-next', `C-prior', `C-down', or `C-up' to cycle
 among the target-buffer hits.
 
-As for `icicle-search', you can further narrow the match candidates
-by typing a second regexp to search for among the first matches.
+As for `icicle-search', you can further narrow the match candidates by
+typing a second regexp to search for among the first matches.  See
+`icicle-search' for more information.
 
 Altogether, using this with `grep' gives you two or three levels of
 regexp searching: 1) the `grep' regexp, 2) the major `icicle-search'
 regexp, and optionally 3) the refining `icicle-search' regexp."
-  (interactive
-   (if (or (null (mark)) (= (point) (mark)) (not mark-active))
-       (list (point-min) (point-max))
-     (if (< (point) (mark)) (list (point) (mark)) (list (mark) (point)))))
-  (unless
-      (condition-case nil
-          (eq (current-buffer) (compilation-find-buffer))
-        (error nil))
+  (interactive (icicle-search-region))
+  (unless (condition-case nil
+              (eq (current-buffer) (compilation-find-buffer))
+            (error nil))
     (error "Current buffer must be a compilation buffer"))
   (let ((orig-search-hook icicle-search-hook))
     (add-hook 'icicle-search-hook 'compile-goto-error)
-    (icicle-search beg end nil)
+    (icicle-search beg end nil t)
     (remove-hook 'icicle-search-hook 'compile-goto-error)))
+
+(add-hook 'compilation-minor-mode-hook
+          (lambda () (set (make-local-variable 'icicle-search-command)
+                          'icicle-compilation-search)))
+(add-hook 'compilation-mode-hook
+          (lambda () (set (make-local-variable 'icicle-search-command)
+                          'icicle-compilation-search)))
 
 ;;;###autoload
 (defun icicle-imenu (beg end)
   "Go to an Imenu entry using `icicle-search'.
 See `icicle-search' for usage notes."
-  (interactive (if (or (null (mark)) (= (point) (mark)) (not mark-active))
-                   (list (point-min) (point-max))
-                 (if (< (point) (mark)) (list (point) (mark)) (list (mark) (point)))))
+  (interactive (icicle-search-region))
   (unless imenu-generic-expression (error "No Imenu for this buffer"))
   (let ((case-fold-search (if (or (local-variable-p 'imenu-case-fold-search)
 				  (not (local-variable-p 'font-lock-defaults)))
@@ -4032,7 +4885,7 @@ See `icicle-search' for usage notes."
                              (completing-read "Choose: " menus nil t)))
                   (regexp (cadr (assoc submenu menus))))
              (unless (stringp regexp) (error "No match"))
-             (icicle-search beg end regexp)))
+             (icicle-search beg end regexp t)))
       (set-syntax-table old-table))))
 
 (defun icicle-imenu-in-buffer-p (menu)
@@ -4071,6 +4924,470 @@ variable."
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
 Don't forget to mention your Emacs and Icicles library versions.")))
+
+;;;###autoload
+(defun icicle-scroll-Completions ()
+  "Scroll the *Completions* window."
+  (interactive)
+  (save-selected-window
+    (select-window (get-buffer-window "*Completions*" 0))
+    (if (not (= (window-end) (point-max)))
+        (scroll-up nil)
+      (unless (= (window-start) (point-min))
+        (goto-char (icicle-start-of-candidates-in-Completions))))))
+
+;;;###autoload
+(defun icicle-next-candidate-per-mode (&optional nth)
+  "Replace input by NTH next completion candidate.
+Default value of NTH is 1, meaning use the next candidate.
+Negative NTH means use a previous, not subsequent, candidate.
+
+Uses the next prefix or apropos completion command, depending on
+`icicle-current-completion-mode'.  If that is nil and
+`icicle-cycling-respects-completion-mode-flag' is non-nil, use the
+next history element instead.
+
+You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
+\\[icicle-next-candidate-per-mode]')."
+  (interactive)
+  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (cond ((eq icicle-current-completion-mode 'prefix)
+         (setq this-command 'icicle-next-prefix-candidate)
+         (icicle-next-prefix-candidate nth))
+        ((eq icicle-current-completion-mode 'apropos)
+         (setq this-command 'icicle-next-apropos-candidate)
+         (icicle-next-apropos-candidate nth))
+        ((and (eq icicle-current-completion-mode nil) icicle-cycling-respects-completion-mode-flag)
+         (next-history-element (or nth 1)))))
+
+;;;###autoload
+(defun icicle-previous-candidate-per-mode (&optional nth)
+  "Replace input by NTH previous completion candidate.
+Default value of NTH is 1, meaning use the previous candidate.
+Negative NTH means use a subsequent, not previous, candidate.
+
+Uses the previous prefix or apropos completion command, depending on
+`icicle-current-completion-mode'. If that is nil and
+`icicle-cycling-respects-completion-mode-flag' is non-nil, use the
+previous history element instead.
+
+You can use this command only from the minibuffer (`\\<minibuffer-local-completion-map>\
+\\[icicle-previous-candidate-per-mode]')."
+  (interactive)
+  (when (interactive-p) (icicle-barf-if-outside-minibuffer))
+  (icicle-next-candidate-per-mode (- (or nth 1))))
+
+
+;;; Other top-level Icicles commands   .   .   .   .   .   .
+
+;;;###autoload
+(when (fboundp 'map-keymap)             ; Emacs 22.
+
+  (defvar icicle-complete-keys-alist nil "Alist of keys and their bindings.
+Each alist element is of the form (NAME KEY . BINDING), where:
+ NAME is a symbol naming the key and its binding, whose name has form:
+   KEYNAME  =  BINDING-NAME
+ KEY is the actual key sequence
+ BINDING is the actual binding of KEY.")
+
+  (defun icicle-generic-S-tab ()
+    "Treat `S-TAB' in minibuffer, *Completions*, and elsewhere.
+Bound to `S-TAB' by default, but whatever it is bound to, does this:
+ - Call `icicle-apropos-complete' if in minibuffer during completion.
+ - Call `icicle-move-to-previous-completion' if in *Completions*.
+ - Call `icicle-complete-keys', otherwise.
+
+If you do not use the default minibuffer completion binding of
+`S-TAB' for `icicle-apropos-complete', then you can simply bind
+\[S-tab] to nil in `icicle-mode-map' in `icicle-mode-hook'."
+    (interactive)
+    (cond ((icicle-completing-p)
+           (setq this-command 'icicle-apropos-complete)
+           (icicle-apropos-complete))   ; Defined in `icicles-cmd.el'
+          ((eq (get-buffer "*Completions*") (current-buffer))
+           (setq this-command 'icicle-move-to-previous-completion)
+           (icicle-move-to-previous-completion (prefix-numeric-value current-prefix-arg)))
+          (t
+           (setq this-command 'icicle-complete-keys)
+           (icicle-complete-keys))))
+
+  ;; This is a quick-and-dirty definition, not an efficient one.
+  ;; It gathers all key bindings and then throws most of them away!  Good enough.
+  (defun icicle-insert-char ()
+    "Insert a character, using key completion.
+Keys bound to `self-insert-command' are completion candidates."
+    (interactive)
+    (barf-if-buffer-read-only)
+    (let ((icicle-complete-keys-self-insert-flag t)
+          (icicle-must-match-regexp "^.+  =  self-insert-command"))
+      (icicle-complete-keys)))
+
+  (defun icicle-complete-keys () ; Bound to prefix keys followed by `S-TAB' (unless defined).
+    "Complete a key sequence for the currently invoked prefix key.
+Input-candidate completion and cycling are available.
+
+You can navigate the key-binding hierarchy (prefix-key hierarchy),
+just as would navigate a file-system hierarchy (to complete directory
+and file names) or a menu hierarchy (to complete submenu and menu-item
+names).
+
+Completion candidates generally have the form `KEY  =  COMMAND'.
+
+If COMMAND is `...', then KEY is a prefix key; choosing it updates the
+completion candidates list to the keys under that prefix.  For
+example, choosing `C-x = ...' changes the candidates to those with
+prefix `C-x'.
+
+The special candidate `..' means to go up one level of the key-binding
+hierarchy and complete candidates there.  For example, if you are
+currently completing prefix key `C-x 5', and you choose candidate
+`..', then you will be completing prefix `C-x', the parent of `C-x 5'.
+
+Except at the top level, the default value for completion is `..'.
+
+If option `icicle-complete-keys-self-insert-flag' is non-nil, then
+keys bound to `self-insert-command' are included as possible
+completion candidates; otherwise (the default), they are not.  Command
+`icicle-insert-char' works like `icicle-complete-keys', but in
+includes only keys bound to `self-insert-command' - use it to insert a
+character that is difficult or impossible to type with your keyboard.
+
+While cycling, these keys describe the command of the current
+candidate:
+
+`C-RET'   - Describe command of current completion candidate only
+`C-down'  - Describe; move to next prefix-completion candidate
+`C-up'    - Describe; move to previous prefix-completion candidate
+`C-next'  - Describe; move to next apropos-completion candidate
+`C-prior' - Describe; move to previous apropos-completion candidate
+`C-!'     - Describe *all* candidates, successively - use the [back]
+            button in buffer *Help* to visit the descriptions
+
+Use `RET' or `S-RET' to finally choose a candidate, or `C-g' to quit.
+This is an Icicles command - see `icicle-mode'."
+    (interactive)
+    (let* ((icicle-transform-function 'icicle-remove-duplicates)
+           (icicle-show-Completions-initially-flag t)
+           (icicle-candidate-action-fn 'icicle-complete-keys-action)
+           (icicle-alternative-sort-function (or icicle-sort-function
+                                                 icicle-alternative-sort-function))
+           (icicle-sort-function 'icicle-prefix-keys-first-p)
+           (enable-recursive-minibuffers t)
+           (orig-buff (current-buffer)) ; Used as free var in `icicle-complete-keys-action'.
+           (orig-window (selected-window)) ; Used as free var in `icicle-complete-keys-action'.
+           (icicle-completing-keys-p t)) ; Provide a condition to test key completion. 
+      (icicle-complete-keys-1 (icicle-this-command-keys-prefix))))
+
+  (defun icicle-prefix-keys-first-p (s1 s2)
+    "S1 < S2 if S1 is a prefix key and S2 is not or S1 sorts < S2 normally.
+Returns non-nil if S1 is a prefix key and either S2 is not or S1 < S2
+in the normal sort order (`icicle-sort-function').  S1 and S2 must be
+strings.  For this function, a prefix key is represented by a string
+that ends in \"...\".
+
+When used as a comparison function for completion candidates, this
+makes prefix keys that match your input available first (at the top of
+buffer *Completions*).  Candidates are effectively in two groups, each
+of which is sorted alphabetically separately: prefix keys, followed by
+non-prefix keys.
+
+The special key representation \"..\" is less than all other keys,
+including prefix keys."
+    (let* ((prefix-string "  =  \\.\\.\\.$")
+           (parent-string "..")
+           (s1-prefix-p (string-match prefix-string s1))
+           (s2-prefix-p (string-match prefix-string s2)))
+      (and (not (string= parent-string s2))
+           (or (string= parent-string s1)
+               (and (not s1-prefix-p) (not s2-prefix-p) (string-lessp s1 s2))
+               (and s1-prefix-p (not s2-prefix-p))
+               (and s1-prefix-p s2-prefix-p (string-lessp s1 s2))))))
+
+  (defun icicle-this-command-keys-prefix ()
+    "Return the prefix of the currently invoked key sequence."
+    (let ((this-key (this-command-keys))) (substring this-key 0 (1- (length this-key)))))
+
+  (defun icicle-complete-keys-1 (prefix) ; PREFIX is a free var in `icicle-complete-keys-action'.
+    "Complete a key sequence for prefix key PREFIX (a vector)."
+    (let ((orig-extra-candidates icicle-extra-candidates)) ; Free in `icicle-complete-keys-action'.
+      (unwind-protect
+           (progn
+             (icicle-keys+cmds-w-prefix prefix)
+             (unless icicle-complete-keys-alist (error "No keys for prefix `%s'" prefix))
+             (let* ((this-cmd-keys ; For error report - e.g. mouse cmd.
+                     (this-command-keys-vector)) ; Free var in `icicle-complete-keys-action'.
+                    (prefix-description
+                     (icicle-key-description prefix (not icicle-key-descriptions-use-<>-flag)))
+                    (candidate (completing-read
+                                (concat "Complete keys" (and (not (string= "" prefix-description))
+                                                             (concat " " prefix-description))
+                                        ": ")
+                                icicle-complete-keys-alist nil t nil nil
+                                ;;$$ (if (equal [] prefix) nil "\\.\\.")
+                                )))
+               (icicle-complete-keys-action candidate)))
+        (mapc (lambda (cand) (put (car cand) 'icicle-special-candidate nil))
+              icicle-complete-keys-alist))))
+
+  (defun icicle-complete-keys-action (candidate)
+    "Completion action function for `icicle-complete-keys'."
+    (let* ((key+binding (cdr-safe (assq (intern candidate) icicle-complete-keys-alist)))
+           (key (car-safe key+binding))
+           (binding (cdr-safe key+binding))
+           (cmd-name nil)
+           (action-window (selected-window)))
+      (unwind-protect
+           (progn
+             ;; `orig-buff' and `orig-window' are free here.  Defined in `icicle-complete-keys'.
+             (set-buffer orig-buff)
+             (select-window orig-window)
+             (if (string= ".." candidate)
+                 (setq cmd-name "..")
+               (unless (and (string-match "\\(.+\\)  =  \\(.+\\)" candidate) (match-beginning 2))
+                 (error "No match"))
+               (setq cmd-name (substring candidate (match-beginning 2) (match-end 2))))      
+             ;; `prefix', `orig-extra-candidates', and `this-cmd-keys' are free vars here.
+             ;; They are defined in `icicle-complete-keys-1'.
+             (cond ((string= ".." cmd-name) ; Go back up to parent prefix.
+                    (setq last-command 'icicle-complete-keys)
+                    (icicle-complete-keys-1 (vconcat (nbutlast (append prefix nil)))))
+                   ((and key (string= "..." cmd-name)) ; Go down to prefix.
+                    (setq last-command 'icicle-complete-keys)
+                    (icicle-complete-keys-1 (vconcat prefix key)))
+                   (t
+                    (setq this-command binding last-command binding)
+                    (setq icicle-extra-candidates orig-extra-candidates) ; Restore it.
+                    (when (eq 'self-insert-command binding)
+                      (unless key (error "Cannot insert `%s'" key))
+                      (setq last-command-char (aref key 0)))
+                    (when (eq 'digit-argument binding)
+                      (setq last-command-char (aref key 0))
+                      (icicle-msg-maybe-in-minibuffer "Numeric argument"))
+                    (when (eq 'negative-argument binding)
+                      (icicle-msg-maybe-in-minibuffer "Negative argument"))
+                    (setq last-nonmenu-event 1) ; So *Completions* mouse-click info is ignored.
+                    (condition-case try-command
+                        (call-interactively binding nil this-cmd-keys)
+                      (error (error (error-message-string try-command)))))))
+        (select-window action-window))))
+
+  (defun icicle-keys+cmds-w-prefix (prefix)
+    "Fill `icicle-complete-keys-alist' for prefix key PREFIX (a vector)."
+    (let ((prefix-map nil))
+      (setq icicle-complete-keys-alist nil)
+      (dolist (map (current-active-maps t))
+        (setq prefix-map (lookup-key map prefix))
+        ;; NOTE: `icicle-add-key+cmd' Uses `prefix' and `map' as free vars.
+        (when (keymapp prefix-map) (map-keymap #'icicle-add-key+cmd prefix-map)))
+      (unless (equal [] prefix) (push (list '\.\.) icicle-complete-keys-alist))
+      icicle-complete-keys-alist))
+
+  (defun icicle-add-key+cmd (event binding)
+    "Add completion for EVENT and BINDING to `icicle-complete-keys-alist'."
+    (cond
+      ;; (menu-item ITEM-STRING): non-selectable item - skip it.
+      ((and (eq 'menu-item (car-safe binding))
+            (null (cdr-safe (cdr-safe binding))))
+       (setq binding nil))          ; So `keymapp' test, below, fails.
+      
+      ;; (ITEM-STRING): non-selectable item - skip it.
+      ((and (stringp (car-safe binding)) (null (cdr-safe binding)))
+       (setq binding nil))          ; So `keymapp' test, below, fails.
+      
+      ;; (menu-item ITEM-STRING REAL-BINDING . PROPERTIES)
+      ((eq 'menu-item (car-safe binding))
+       (let ((enable-condition (memq ':enable (cdr-safe (cdr-safe (cdr-safe binding))))))
+         (if (or (not enable-condition)
+                 (condition-case nil ; Don't enable if we can't check the condition.
+                     (eval (cadr enable-condition))
+                   (error nil)))
+             (setq binding (car-safe (cdr-safe (cdr-safe binding))))
+           (setq binding nil))))
+      
+      ;; (ITEM-STRING . REAL-BINDING) or
+      ;; (ITEM-STRING [HELP-STRING] . REAL-BINDING) or
+      ;; (ITEM-STRING [HELP-STRING] (KEYBD-SHORTCUTS) . REAL-BINDING)
+      ((stringp (car-safe binding))
+       (setq binding (cdr binding))
+       ;; Skip HELP-STRING
+       (when (stringp (car-safe binding)) (setq binding (cdr binding)))
+       ;; Skip (KEYBD-SHORTCUTS): cached key-equivalence data for menu items.
+       (when (and (consp binding) (consp (car binding))) (setq binding (cdr binding)))))
+    
+    ;; Follow indirections to ultimate symbol naming a command.
+    (while (and (symbolp binding) (fboundp binding) (keymapp (symbol-function binding)))
+      (setq binding (symbol-function binding)))
+
+    ;; NOTE: `prefix' and `map' are free here.  They are bound in `icicle-keys+cmds-w-prefix'.
+    (cond ((and (or (keymapp binding)
+                    (and (commandp binding)
+                         (equal binding (key-binding (vconcat prefix (vector event))))
+                         (not (eq binding 'icicle-generic-S-tab))
+                         (not (eq binding 'icicle-complete-keys))))
+                (or (not (eq binding 'self-insert-command)) ; Command, keymap.
+                    (and icicle-complete-keys-self-insert-flag ; Insert normal char.
+                         (char-valid-p event))))
+           (let ((candidate
+                  (intern
+                   (concat
+                    (single-key-description event (not icicle-key-descriptions-use-<>-flag))
+                    "  =  "
+                    (if (keymapp binding) "..." (prin1-to-string binding))))))
+             (push (cons candidate (cons (vector event) binding)) icicle-complete-keys-alist)
+             (when (eq map (current-local-map)) (put candidate 'icicle-special-candidate t))))
+          ((and (integerp event) (generic-char-p event) ; Insert generic char.
+                (eq 'self-insert-command  binding))
+           (ignore))))                  ; Placeholder for future use.
+
+  ;; $$ No longer used.  Was used in `icicle-complete-keys-1'.
+  (defun icicle-read-single-key-description (string need-vector &optional no-angles)
+    "If STRING contains a space, then the vector containing the symbol named STRING.
+Otherwise, call `icicle-read-kbd-macro'.
+Other args are as for `icicle-read-kbd-macro'."
+    (cond ((and no-angles (string-match " " string)) (vector (intern string)))
+          ((string-match "^<\\([^>]* [^>]*\\)>" string)
+           (vector (intern (substring string (match-beginning 1) (match-end 1)))))
+          (t (icicle-read-kbd-macro string need-vector no-angles))))
+
+  ;; $$ No longer used.  Was used as `icicle-candidate-action-fn' in `icicle-complete-keys'.
+  (defun icicle-complete-keys-help (candidate)
+    "Describe the command associated with the current completion candidate."
+    (interactive)              ; Interactively, just describes itself.
+    (when (interactive-p) (icicle-barf-if-outside-Completions-and-minibuffer))
+    (string-match "\\(.+\\)  =  \\(.+\\)" candidate)
+    (let ((frame-with-focus (selected-frame))
+          (cmd (intern-soft (substring candidate (match-beginning 2) (match-end 2)))))
+      (if (not (functionp cmd))
+          (icicle-msg-maybe-in-minibuffer "No help")
+        (describe-function cmd))
+      (icicle-raise-Completions-frame)
+      ;; This is a hack for MS Windows - otherwise, we can't continue to get more candidates,
+      ;; because the *Help* frame takes the focus away from the minibuffer frame.
+      ;; MS Windows always gives focus to a newly created frame - in this case, *Help*.
+      (let* ((help-window (get-buffer-window "*Help*" t))
+             (help-frame (and help-window (window-frame help-window))))
+        (when help-frame (redirect-frame-focus help-frame frame-with-focus))))
+    (message nil))        ; Let minibuffer contents show immmediately.
+
+  (defun icicle-read-kbd-macro (start &optional end no-angles)
+    "Read the region as a keyboard macro definition.
+The region is interpreted as spelled-out keystrokes, e.g., \"M-x abc RET\".
+See documentation for `edmacro-mode' for details.
+Leading/trailing \"C-x (\" and \"C-x )\" in the text are allowed and ignored.
+The resulting macro is installed as the \"current\" keyboard macro.
+
+In Lisp, may also be called with a single STRING argument in which case
+the result is returned rather than being installed as the current macro.
+The result will be a string if possible, otherwise an event vector.
+Second argument NEED-VECTOR means to return an event vector always.
+
+Optional argument NO-ANGLES non-nil means to expect key
+descriptions not to use angle brackets (<...>).  For example:
+ 
+ (icicle-read-kbd-macro \"<mode-line>\" t)   returns [mode-line]
+ (icicle-read-kbd-macro  \"mode-line\"  t t) returns [mode-line]"
+    (interactive "r")
+    (if (stringp start)
+        (icicle-edmacro-parse-keys start end no-angles)
+      (setq last-kbd-macro
+            (icicle-edmacro-parse-keys (buffer-substring start end) nil no-angles))))
+
+  (defun icicle-edmacro-parse-keys (string &optional need-vector no-angles)
+    "Same as `edmacro-parse-keys', but with added NO-ANGLES argument.
+NO-ANGLES is the same as for `icicle-read-kbd-macro'."
+    (let ((case-fold-search nil)
+          (pos 0)
+          (res []))
+      (while (and (< pos (length string))
+                  (string-match "[^ \t\n\f]+" string pos))
+        (let ((word (substring string (match-beginning 0) (match-end 0)))
+              (key nil)
+              (times 1))
+          (setq pos (match-end 0))
+          (when (string-match "\\([0-9]+\\)\\*." word)
+            (setq times (string-to-number (substring word 0 (match-end 1))))
+            (setq word (substring word (1+ (match-end 1)))))
+          (cond ((string-match "^<<.+>>$" word)
+                 (setq key (vconcat (if (eq (key-binding [?\M-x])
+                                            'execute-extended-command)
+                                        [?\M-x]
+                                      (or (car (where-is-internal
+                                                'execute-extended-command))
+                                          [?\M-x]))
+                                    (substring word 2 -2) "\r")))
+                ((or (equal word "REM") (string-match "^;;" word))
+                 (setq pos (string-match "$" string pos)))
+                ((and (string-match (if no-angles
+                                        "^\\(\\([ACHMsS]-\\)*\\)\\(..+\\)$"
+                                      "^\\(\\([ACHMsS]-\\)*\\)<\\(..+\\)>$")
+                                    word)
+                      (or (not no-angles)
+                          (save-match-data (not (string-match "^\\([ACHMsS]-.\\)+$" word))))
+                      (progn
+                        (setq word (concat (substring word (match-beginning 1)
+                                                      (match-end 1))
+                                           (substring word (match-beginning 3)
+                                                      (match-end 3))))
+                        (not (string-match
+                              "\\<\\(NUL\\|RET\\|LFD\\|ESC\\|SPC\\|DEL\\)$"
+                              word))))
+                 (setq key (list (intern word))))
+                (t
+                 (let ((orig-word word) (prefix 0) (bits 0))
+                   (while (string-match "^[ACHMsS]-." word)
+                     (incf bits (cdr (assq (aref word 0)
+                                           '((?A . ?\A-\^@) (?C . ?\C-\^@)
+                                             (?H . ?\H-\^@) (?M . ?\M-\^@)
+                                             (?s . ?\s-\^@) (?S . ?\S-\^@)))))
+                     (incf prefix 2)
+                     (callf substring word 2))
+                   (when (string-match "^\\^.$" word)
+                     (incf bits ?\C-\^@)
+                     (incf prefix)
+                     (callf substring word 1))
+                   (let ((found (assoc word '(("NUL" . "\0") ("RET" . "\r")
+                                              ("LFD" . "\n") ("TAB" . "\t")
+                                              ("ESC" . "\e") ("SPC" . " ")
+                                              ("DEL" . "\177")))))
+                     (when found (setq word (cdr found))))
+                   (when (string-match "^\\\\[0-7]+$" word)
+                     (loop for ch across word
+                        for n = 0 then (+ (* n 8) ch -48)
+                        finally do (setq word (vector n))))
+                   (cond ((= bits 0)
+                          (setq key word))
+                         ((and (= bits ?\M-\^@) (stringp word)
+                               (string-match "^-?[0-9]+$" word))
+                          (setq key (loop for x across word collect (+ x bits))))
+                         ((/= (length word) 1)
+                          (error "%s must prefix a single character, not %s"
+                                 (substring orig-word 0 prefix) word))
+                         ((and (/= (logand bits ?\C-\^@) 0) (stringp word)
+                               ;; We used to accept . and ? here,
+                               ;; but . is simply wrong,
+                               ;; and C-? is not used (we use DEL instead).
+                               (string-match "[@-_a-z]" word))
+                          (setq key (list (+ bits (- ?\C-\^@)
+                                             (logand (aref word 0) 31)))))
+                         (t
+                          (setq key (list (+ bits (aref word 0)))))))))
+          (when key
+            (loop repeat times do (callf vconcat res key)))))
+      (when (and (>= (length res) 4)
+                 (eq (aref res 0) ?\C-x)
+                 (eq (aref res 1) ?\()
+                 (eq (aref res (- (length res) 2)) ?\C-x)
+                 (eq (aref res (- (length res) 1)) ?\)))
+        (setq res (edmacro-subseq res 2 -2)))
+      (if (and (not need-vector)
+               (loop for ch across res
+                  always (and (char-valid-p ch)
+                              (let ((ch2 (logand ch (lognot ?\M-\^@))))
+                                (and (>= ch2 0) (<= ch2 127))))))
+          (concat (loop for ch across res
+                     collect (if (= (logand ch ?\M-\^@) 0)
+                                 ch (+ ch 128))))
+        res))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
