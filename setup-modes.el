@@ -6,19 +6,29 @@
 (require 'ecb-autoloads)
 (require 'which-func)
 (require 'expand)
-(require 'mmm-mode)
-(require 'mmm-auto)
+; (require 'mmm-mode)
+; (require 'mmm-auto)
 (require 'autorevert)
-(require 'icicles)
+; (require 'icicles)
 (require 'autotest)
+
+(require 'pabbrev)
+(dolist (hook '(text-mode-hook 
+                html-mode-hook 
+                emacs-lisp-mode-hook 
+                latex-mode-hook
+                ruby-mode-hook))
+  (add-hook hook (lambda () (pabbrev-mode))))
 
 ;; ============================================================
 ;; Simple mode toggles:
 
-(resize-minibuffer-mode 1)
+(setq tramp-default-method "ssh")
+
+; (resize-minibuffer-mode 1)
 
 (setq ecb-toggle-layout-sequence '("left10" "left9" "left6"))
-(icicle-mode 1)
+; (icicle-mode 1)
 
 (setq compilation-error-regexp-alist '(bash java gcc-include gnu))
 
@@ -33,29 +43,6 @@
   "Run an inferior Ruby process")
 (autoload 'inf-ruby-keys "inf-ruby"
   "Set local key defs for inf-ruby in ruby-mode")
-
-; TODO: add something to be smart about this
-(setenv "PATH" (concat "/usr/local/bin" ":" (getenv "PATH")))
-
-;; (setq scheme-program-name
-;;       (or (executable-find "scheme48")
-;;           (executable-find "csi")       ; chicken
-;;           (executable-find "scheme")    ; MIT scheme
-;;           (executable-find "bigloo")
-;;           (executable-find "mzscheme")
-;;           (executable-find "rs")        ; rscheme
-;;           (executable-find "elk")
-;;           (executable-find "gosh")      ; gauche
-;;           (executable-find "guile-1.6")
-;;           (executable-find "guile1.4")
-;;           (executable-find "scsh")
-;;           (executable-find "scm")
-;;           (executable-find "sigscheme")
-;;           (executable-find "festival")))
-
-
-; TODO: evaluate this
-; (eval-after-load "dabbrev" '(defalias 'dabbrev-expand 'hippie-expand))
 
 (defun expand-parse (name l &optional str pos)
   (cond ((null l)
@@ -135,39 +122,39 @@
 (custom-set-variables
  '(vc-svn-program-name "/opt/local/bin/svn"))
 
-(defun ruby-test-function ()
-  "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."
-  (interactive)
-  (let* ((funname (which-function))
-         (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname))))
-    (compile (concat "ruby " (file-name-nondirectory (buffer-file-name)) " --name " fn))))
+;; (defun ruby-test-function ()
+;;   "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."
+;;   (interactive)
+;;   (let* ((funname (which-function))
+;;          (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname))))
+;;     (compile (concat "ruby " (file-name-nondirectory (buffer-file-name)) " --name " fn))))
 
-(defun ruby-find-view ()
-  "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."
-  (interactive)
-  (let* ((funname (which-function))
-         (cls (and (string-match "\\(.*\\)Controller#" funname) (downcase (match-string 1 funname))))
-         (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname)))
-         (appdir (file-name-directory (directory-file-name (file-name-directory (buffer-file-name))))))
-    (find-file (concat appdir "views/" cls "/" fn ".rhtml"))))
+;; (defun ruby-find-view ()
+;;   "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."
+;;   (interactive)
+;;   (let* ((funname (which-function))
+;;          (cls (and (string-match "\\(.*\\)Controller#" funname) (downcase (match-string 1 funname))))
+;;          (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname)))
+;;          (appdir (file-name-directory (directory-file-name (file-name-directory (buffer-file-name))))))
+;;     (find-file (concat appdir "views/" cls "/" fn ".rhtml"))))
 
 ;; ;; run the current test function using F8 key
 ;; (add-hook 'ruby-mode-hook (lambda () (local-set-key [f8] 'ruby-test-function)))
 
-(add-hook 'foo-mode-hook
-           (lambda ()
-             (set (make-local-variable imenu-generic-expression)
-                   '(("Comments" "^\\s-*#" 1)
-                     ...))))
+;; (add-hook 'foo-mode-hook
+;;            (lambda ()
+;;              (set (make-local-variable imenu-generic-expression)
+;;                    '(("Comments" "^\\s-*#" 1)
+;;                      ...))))
 
-(setq sql-imenu-generic-expression
-       '(("Comments" "^-- \\(.+\\)" 1)
-         ("Function Definitions" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
- [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]+\\)?[ai]s\\b" 2)
-         ("Function Prototypes" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
- [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]*\\)?;" 2)
-         ("Indexes" "^\\s-*create\\s-+index\\s-+\\(\\w+\\)" 1)
-         ("Tables" "^\\s-*create\\s-+table\\s-+\\(\\w+\\)" 1)))
+;; (setq sql-imenu-generic-expression
+;;        '(("Comments" "^-- \\(.+\\)" 1)
+;;          ("Function Definitions" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
+;;  [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]+\\)?[ai]s\\b" 2)
+;;          ("Function Prototypes" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
+;;  [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]*\\)?;" 2)
+;;          ("Indexes" "^\\s-*create\\s-+index\\s-+\\(\\w+\\)" 1)
+;;          ("Tables" "^\\s-*create\\s-+table\\s-+\\(\\w+\\)" 1)))
 
 (setq ruby-program-name "/usr/local/bin/irb")
 
@@ -252,27 +239,27 @@ ruby on the file I'm visiting."
 ;; ============================================================
 ;; MMM
 
-(setq mmm-global-mode 'maybe)
-(setq mmm-submode-decoration-level 2)
-(set-face-background 'mmm-output-submode-face  "LightBlue")
-(set-face-background 'mmm-code-submode-face    "LightCyan")
-(set-face-background 'mmm-comment-submode-face "LightCoral")
-(mmm-add-classes
- '((erb-code
-    :submode ruby-mode
-    :match-face (("<%#" . mmm-comment-submode-face)
-                 ("<%=" . mmm-output-submode-face)
-                 ("<%"  . mmm-code-submode-face))
-    :front "<%[#=]?"
-    :back "%>"
-    :insert ((?% erb-code       nil @ "<%"  @ " " _ " " @ "%>" @)
-             (?# erb-comment    nil @ "<%#" @ " " _ " " @ "%>" @)
-             (?= erb-expression nil @ "<%=" @ " " _ " " @ "%>" @))
-    )))
-(add-hook 'html-mode-hook
-          (lambda ()
-            (setq mmm-classes '(erb-code))
-            (mmm-mode-on)))
+;; (setq mmm-global-mode 'maybe)
+;; (setq mmm-submode-decoration-level 2)
+;; (set-face-background 'mmm-output-submode-face  "LightBlue")
+;; (set-face-background 'mmm-code-submode-face    "LightCyan")
+;; (set-face-background 'mmm-comment-submode-face "LightCoral")
+;; (mmm-add-classes
+;;  '((erb-code
+;;     :submode ruby-mode
+;;     :match-face (("<%#" . mmm-comment-submode-face)
+;;                  ("<%=" . mmm-output-submode-face)
+;;                  ("<%"  . mmm-code-submode-face))
+;;     :front "<%[#=]?"
+;;     :back "%>"
+;;     :insert ((?% erb-code       nil @ "<%"  @ " " _ " " @ "%>" @)
+;;              (?# erb-comment    nil @ "<%#" @ " " _ " " @ "%>" @)
+;;              (?= erb-expression nil @ "<%=" @ " " _ " " @ "%>" @))
+;;     )))
+;; (add-hook 'html-mode-hook
+;;           (lambda ()
+;;             (setq mmm-classes '(erb-code))
+;;             (mmm-mode-on)))
 (add-to-list 'auto-mode-alist '("\\.rhtml$" . html-mode))
 ;; (global-set-key [f8] 'mmm-parse-buffer)
 

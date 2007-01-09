@@ -161,3 +161,14 @@
 (defun previous-line-6 ()
   (interactive)
   (previous-line 6))
+
+(defun grep-current-word ()
+  "Grep for the current word"
+  (interactive)
+  (let ((current-prefix-arg t))
+    (call-interactively 'grep)))
+
+(defun server-stop ()
+  "Stop the server"
+  (interactive)
+  (server-start t))

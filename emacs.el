@@ -1,6 +1,7 @@
 ; Stupid compatibility checking
 
 (setq running-xemacs (featurep 'xemacs))
+(setq running-emacs (not running-xemacs))
 
 (if running-xemacs
     (progn
@@ -10,8 +11,7 @@
 	       (pushnew x Info-directory-list :test 'string=))
 	    (list 
 	     "/usr/share/info"
-	     (expand-file-name "~/Bin/elisp/third-party/tramp")
-	     )))
+	     (expand-file-name "~/Bin/elisp/third-party/tramp"))))
   (progn
     (message "Have I ever mentioned that GNU emacs sucks?")
     (defalias 'mapc 'mapcar)
@@ -19,40 +19,41 @@
     (setq apropos-do-all t)
     (transient-mark-mode 1)
     (add-hook 'comint-output-filter-functions
-	      'comint-watch-for-password-prompt)
-    ))
-
-(put 'erase-buffer 'disabled nil) ;; nukes stupid warning
+	      'comint-watch-for-password-prompt)))
 
 (mapc '(lambda (path)
 	 (pushnew (expand-file-name path) load-path :test 'string=))
-      (list 
-       "~/Bin/elisp/"
-       "~/Bin/elisp/third-party/"
-       ))
+      (append
+       (remove-if-not (lambda (o)
+			(and (file-directory-p o)
+			     (not (string-match "\\.$" o))))
+		      (append (directory-files "~/Bin/elisp/third-party" t)
+			      (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3" t)
+			      (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3/semantic" t)))
+       (list 
+	"~/Bin/elisp/third-party/"
+	"~/Bin/elisp/")))
 
-(mapc '(lambda (path)
-         (pushnew (expand-file-name path) load-path :test 'string=))
-      (remove-if-not (lambda (o)
-		       (and (file-directory-p o)
-			    (not (string-match "\\.$" o))))
-		     (append (directory-files "~/Bin/elisp/third-party" t)
-			     (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3" t)
-			     (directory-files "~/Bin/elisp/third-party/cedet-1.0pre3/semantic" t))))
-
-(if running-xemacs
-    t
-  (require 'vc-hooks))
+(if running-emacs
+    (require 'vc-hooks))
 
 ;;; Load My Stuff
-(load "toggle")
 (load "setup-aliases")
 (load "setup-keys")
 (load "setup-mail-and-news")
 (load "setup-misc")
 (load "setup-modes")
-(load "bs")
 
+(require 'icicles)
+(icicle-mode 1)
+
+
+; (load "bs")
+
+;; (load "toggle")
+(autoload 'toggle-buffer "toggle")
+
+(put 'erase-buffer 'disabled nil) ;; nukes stupid warning
 (setq explicit-shell-file-name "/bin/bash")
 
 (custom-set-variables
@@ -71,8 +72,6 @@
  '(indicate-empty-lines t)
  '(inhibit-splash-screen t)
  '(mouse-wheel-mode t nil (mwheel))
- '(quack-programs (quote ("/usr/local/bin/mzscheme" "bigloo" "csi" "csi -hygienic" "gosh" "gsi" "gsi ~~/syntax-case.scm -" "guile" "kawa" "mit-scheme" "mred -z" "mzscheme" "mzscheme -M errortrace" "rs" "scheme" "scheme48" "scsh" "sisc" "stklos" "sxi")))
- '(quack-smart-open-paren-p nil)
  '(save-place t nil (saveplace))
  '(show-paren-mode t)
  '(tool-bar-mode nil nil (tool-bar))
@@ -80,10 +79,12 @@
  '(transient-mark-mode t)
  '(vc-path (quote ("/opt/local/bin" "/usr/local/bin")))
  '(vc-svn-program-name "/opt/local/bin/svn")
- '(which-function-mode nil))
+)
+
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "slate blue")))))
+
