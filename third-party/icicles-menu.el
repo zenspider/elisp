@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005-2006, Drew Adams, all rights reserved.
 ;; Created: Fri Aug 12 17:18:02 2005
 ;; Version: 22.0
-;; Last-Updated: Mon Oct 16 11:51:12 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Fri Dec 22 14:45:36 2006 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 351
+;;     Update #: 356
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-menu.el
 ;; Keywords: menu-bar, menu, command, help, abbrev, minibuffer, keys,
 ;;           completion, matching, local, internal, extensions,
@@ -179,17 +179,20 @@
 ;;
 ;;; Change log:
 ;;
+;; 2006/12/22 dadams
+;;     icicle-convert-menu-item-function: Use choice as :type, allowing nil.
+;;     :group 'icicles -> :group 'Icicles.
 ;; 2006/10/16 dadams
-;;      icicle-get-overall-menu-item-alist: Include minor-mode keymaps.
+;;     icicle-get-overall-menu-item-alist: Include minor-mode keymaps.
 ;; 2006/03/16 dadams
-;;      Added to Commentary.
+;;     Added to Commentary.
 ;; 2006/02/18 dadams
-;;      icicle-execute-menu-command: \s -> \\s.  (Thx to dslcustomer-211-74.vivodi.gr.)
+;;     icicle-execute-menu-command: \s -> \\s.  (Thx to dslcustomer-211-74.vivodi.gr.)
 ;; 2006/01/07 dadams
-;;      Added :link for sending bug reports.
+;;     Added :link for sending bug reports.
 ;; 2006/01/06 dadams
-;;      Changed defgroup to icicles-menu from icicles.
-;;      Added :link.
+;;     Changed defgroup to icicles-menu from icicles.
+;;     Added :link.
 ;; 2005/11/08 dadams
 ;;     icicle-execute-menu-command: 
 ;;       Reset icicle-menu-items-alist in unwind-protect.
@@ -239,7 +242,7 @@
 
 (defgroup Icicles-Menu nil
   "Execute menu items as commands, with completion."
-  :prefix "icicle-" :group 'icicles
+  :prefix "icicle-" :group 'Icicles
   :link `(url-link :tag "Send Bug Report"
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=
 icicles-menu.el bug: \
@@ -257,7 +260,7 @@ Don't forget to mention your Emacs and library versions."))
 Used by `icicle-execute-menu-command'.  A typical use would be to
 remove the `&' characters used in MS Windows menus to define keyboard
 accelerators.  See `icicle-remove-w32-keybd-accelerators'."
-  :type  'function :group 'Icicles-Menu)
+  :type '(choice (const :tag "None" nil) function) :group 'Icicles-Menu)
 
 ;; $$$ NOT YET IMPLEMENTED
 ;; (defcustom icicle-sort-menu-bar-order-flag nil

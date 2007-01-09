@@ -1,12 +1,12 @@
 ;;;
 ;;;  ruby-mode.el -
 ;;;
-;;;  $Author: nobu $
-;;;  $Date: 2005/09/24 16:47:07 $
+;;;  $Author: matz $
+;;;  $Date: 2006/12/05 09:59:45 $
 ;;;  created at: Fri Feb  4 14:49:13 JST 1994
 ;;;
 
-(defconst ruby-mode-revision "$Revision: 1.94 $")
+(defconst ruby-mode-revision "$Revision: 1.97 $")
 
 (defconst ruby-mode-version
   (progn
@@ -318,7 +318,7 @@ The variable ruby-indent-level controls the amount of indentation.
 	    (and (looking-at "[!?]")
 		 (or (not (eq option 'modifier))
 		     (bolp)
-		     (save-excursion (forward-char -1) (looking-at "\\Sw"))))
+		     (save-excursion (forward-char -1) (looking-at "\\Sw$"))))
 	    (and (looking-at ruby-symbol-re)
 		 (skip-chars-backward ruby-symbol-chars)
 		 (cond
@@ -383,6 +383,8 @@ The variable ruby-indent-level controls the amount of indentation.
 	 (t
 	  (setq in-string (point))
 	  (goto-char end))))
+       ((looking-at "/=") 
+	(goto-char pnt))
        ((looking-at "/")
 	(cond
 	 ((and (not (eobp)) (ruby-expr-beg 'expr-re))

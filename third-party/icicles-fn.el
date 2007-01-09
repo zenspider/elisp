@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:25:53 2006
 ;; Version: 22.0
-;; Last-Updated: Fri Nov 10 16:39:32 2006 (-28800 Pacific Standard Time)
+;; Last-Updated: Sat Jan 06 17:09:48 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 2606
+;;     Update #: 2703
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-fn.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -28,7 +28,8 @@
 ;;
 ;;  Non-interactive functions defined here:
 ;;
-;;    `icicle-apropos-candidates',
+;;    `assq-delete-all', `icicle-abbreviate-or-expand-file-name',
+;;    `icicle-apropos-candidates', `icicle-assoc-delete-all',
 ;;    `icicle-barf-if-outside-Completions',
 ;;    `icicle-barf-if-outside-Completions-and-minibuffer',
 ;;    `icicle-barf-if-outside-minibuffer', `icicle-bind-isearch-keys',
@@ -48,13 +49,14 @@
 ;;    `icicle-filter-wo-input', `icicle-fix-default-directory',
 ;;    `icicle-frames-on', `icicle-highlight-complete-input',
 ;;    `icicle-highlight-initial-whitespace',
+;;    `icicle-historical-alphabetic-p',
 ;;    `icicle-increment-cand-nb+signal-end',
 ;;    `icicle-insert-Completions-help-string',
 ;;    `icicle-key-description', `icicle-longest-common-match',
 ;;    `icicle-maybe-sort-and-strip-candidates',
 ;;    `icicle-minibuffer-contents',
 ;;    `icicle-minibuffer-contents-from-minibuffer',
-;;    `icicle-minibuffer-prompt-end',
+;;    `icicle-minibuffer-prompt-end', `icicle-most-recent-first-p',
 ;;    `icicle-msg-maybe-in-minibuffer', `icicle-next-candidate',
 ;;    `icicle-place-cursor', `icicle-place-overlay',
 ;;    `icicle-prefix-candidates', `icicle-read-file-name',
@@ -76,7 +78,9 @@
 ;;    `icicle-unsorted-file-name-apropos-candidates',
 ;;    `icicle-unsorted-file-name-prefix-candidates',
 ;;    `icicle-unsorted-prefix-candidates',
-;;    `icicle-update-completions'.
+;;    `icicle-update-completions', `old-completing-read',
+;;    `old-choose-completion-string', `old-completion-setup-function',
+;;    `old-read-file-name'.
 ;;
 ;;
 ;;  ***** NOTE: These EMACS PRIMITIVES have been REDEFINED HERE:
@@ -100,6 +104,22 @@
 ;;
 ;;; Change log:
 ;;
+;; 2007/01/06 dadams
+;;     Added: icicle-abbreviate-or-expand-file-name.
+;;     icicle-fix-default-directory: Use icicle-abbreviate-or-expand-file-name.
+;;     icicle-save-or-restore-input: expand-file-name -> icicle-abbreviate-or-expand-file-name.
+;;     icicle-completion-setup-function: Don't set default-directory to nil when minibuf is empty.
+;;     icicle-read-file-name: Bug fix: Don't set initial-input to icicle-initial-value if "".
+;; 2007/01/05 dadams
+;;     icicle-completing-read, icicle-read-file-name:
+;;       Use existing string value of icicle-initial-value.  Thx to rubikitch for the suggestion.
+;; 2007/01/01 dadams
+;;     Added assq-delete-all for Emacs 20 (moved here from icicles-mode.el).
+;;     Added: icicle-assoc-delete-all.
+;; 2006/12/25 dadams
+;;     Added: icicle-most-recent-first-p.
+;;     icicle-update-completions: Added optional no-display arg.
+;;     Moved here from icicles-opt.el: icicle-historical-alphabetic-p.
 ;; 2006/11/10 dadams
 ;;     icicle-completing-read, icicle-read-file-name: Prefix prompt by + if a multi-command.
 ;; 2006/10/15 dadams
@@ -438,7 +458,7 @@
                                   ;; plus, for Emacs < 21: dolist, push, pop
                                   ;; plus, for Emacs < 20: when, unless
 
-(eval-when-compile (require 'icicles-opt)) ;; icicle-init-value-flag
+(eval-when-compile (require 'icicles-opt)) ;; icicle-init-value-flag, icicle-use-~-for-home-dir-flag
 
 ;; Byte-compiling this file, you will likely get some error or warning
 ;; messages. All of the following are benign.  They are due to
@@ -611,6 +631,8 @@ so it is called after completion-list buffer text is written."
                 (setq completion-base-size 0))))
         (icicle-insert-Completions-help-string)))))
 
+;; Don't set default-directory to nil when minibuffer is empty.
+;;
 ;;;###autoload
 (when (>= emacs-major-version 22)
   (defun icicle-completion-setup-function ()
@@ -619,10 +641,9 @@ so it is called after completion-list buffer text is written."
     (save-excursion
       (let* ((mainbuf (current-buffer))
              (mbuf-contents (minibuffer-contents)))
-        ;; When reading a file name in the minibuffer,
-        ;; set default-directory in the minibuffer
+        ;; When reading a file name in the minibuffer, set default-directory in the minibuffer
         ;; so it will get copied into the completion list buffer.
-        (if minibuffer-completing-file-name
+        (when (and minibuffer-completing-file-name (not (string= "" mbuf-contents)))
             (with-current-buffer mainbuf
               (setq default-directory (file-name-directory mbuf-contents))))
         ;; If partial-completion-mode is on, point might not be after the
@@ -796,11 +817,12 @@ If INHERIT-INPUT-METHOD is non-nil, the minibuffer inherits the
 current input method and the setting of `enable-multibyte-characters'.
 
 Completion ignores case when`completion-ignore-case' is non-nil."
-  (unless initial-input (setq initial-input ""))
+  (unless (stringp icicle-initial-value) (setq icicle-initial-value ""))
+  (unless initial-input (setq initial-input icicle-initial-value))
   (if (consp initial-input)
       (setq icicle-initial-value (car initial-input))
     (setq initial-input        (format "%s" initial-input) ; Convert symbol to string
-          icicle-initial-value (or initial-input "")))
+          icicle-initial-value initial-input))
   (setq icicle-nb-of-other-cycle-candidates 0)
 
   ;; Maybe use DEF for INITIAL-INPUT also.
@@ -840,7 +862,7 @@ Completion ignores case when`completion-ignore-case' is non-nil."
                                              initial-input hist def inherit-input-method)))
           ((or (null icicle-reminder-prompt-flag)
                (and (wholenump icicle-reminder-prompt-flag) (zerop icicle-reminder-prompt-flag))
-               (> (length icicle-initial-value) ; No room to add suffix.
+               (> (length initial-input) ; No room to add suffix.
                   (- (window-width (minibuffer-window)) (length prompt))))
            (setq icicle-prompt
                  (if (fboundp 'propertize) ; Emacs 21+ only
@@ -928,9 +950,12 @@ Removes *Completions* window when done.
 
 See also `read-file-name-completion-ignore-case'
 and `read-file-name-function'."
-  (setq icicle-initial-value                  (or initial-input "")
-        icicle-nb-of-other-cycle-candidates   0)
+  (setq icicle-initial-value (or initial-input
+                                 (if (stringp icicle-initial-value) icicle-initial-value "")))
+  (setq icicle-nb-of-other-cycle-candidates 0)
   (icicle-fix-default-directory)        ; Make sure there are no backslashes in it.
+
+  (unless (string= "" icicle-initial-value) (setq initial-input icicle-initial-value))
 
   ;; Maybe use DEFAULT-FILENAME for INITIAL-INPUT also, after removing the directory part.
   ;; Note that if DEFAULT-FILENAME is null, then we let INITIAL-INPUT remain null too.
@@ -1015,18 +1040,18 @@ and `read-file-name-function'."
 
 (defun icicle-fix-default-directory ()
   "Convert backslashes in `default-directory' to slashes."
-;; This is a hack.  If you do `C-x 4 f' from a standalone minibuffer
-;; frame, `default-directory' on MS Windows has this form:
-;; `C:\some-dir/'.  There is a backslash character in the string.  This
-;; is not a problem for standard Emacs, but it is a problem for Icicles,
-;; because we interpret backslashes using regexp syntax - they are not
-;; file separators for Icicles.  So, we call `substitute-in-file-name' to
-;; change all backslashes in `default-directory' to slashes.  This
-;; shouldn't hurt, because `default-directory' is an absolute directory
-;; name - it doesn't contain environment variables.  For example, we
-;; convert `C:\some-dir/' to `c:/some-directory/'."
-  (setq default-directory (substitute-in-file-name default-directory)))
-
+  ;; This is a hack.  If you do `C-x 4 f' from a standalone minibuffer
+  ;; frame, `default-directory' on MS Windows has this form:
+  ;; `C:\some-dir/'.  There is a backslash character in the string.  This
+  ;; is not a problem for standard Emacs, but it is a problem for Icicles,
+  ;; because we interpret backslashes using regexp syntax - they are not
+  ;; file separators for Icicles.  So, we call `substitute-in-file-name' to
+  ;; change all backslashes in `default-directory' to slashes.  This
+  ;; shouldn't hurt, because `default-directory' is an absolute directory
+  ;; name - it doesn't contain environment variables.  For example, we
+  ;; convert `C:\some-dir/' to `c:/some-directory/'."
+  (setq default-directory (icicle-abbreviate-or-expand-file-name
+                           (substitute-in-file-name default-directory))))
 
 (defun icicle-remove-property (prop plist)
   "Remove property PROP from property-list PLIST, non-destructively.
@@ -1620,8 +1645,9 @@ the code."
                           (if (string= "" icicle-common-match-string)
                               (file-name-directory icicle-current-input)
                             (directory-file-name
-                             (expand-file-name icicle-common-match-string
-                                               (file-name-directory icicle-current-input))))
+                             (icicle-abbreviate-or-expand-file-name
+                              icicle-common-match-string
+                              (file-name-directory icicle-current-input))))
                         icicle-common-match-string)))
 
           ;; Save current input for `C-l', then save common match as current input.
@@ -1834,8 +1860,9 @@ This filtering is in addition to matching user input."
        (or (not icicle-must-pass-predicate)
            (funcall icicle-must-pass-predicate candidate))))
 
-(defun icicle-update-completions ()
-  "Update completions list.  Update display too, if already shown."
+(defun icicle-update-completions (&optional no-display)
+  "Update completions list.
+Update display too, if already shown and NO-DISPLAY is nil."
   (setq icicle-completion-candidates
         (funcall (case icicle-last-completion-command
                    ((icicle-prefix-complete icicle-prefix-word-complete)
@@ -1847,7 +1874,7 @@ This filtering is in addition to matching user input."
                         #'icicle-file-name-apropos-candidates
                       #'icicle-apropos-candidates)))
                  icicle-current-input))
-  (when (get-buffer-window "*Completions*" 0)
+  (when (and (get-buffer-window "*Completions*" 0) (not no-display))
     (icicle-display-candidates-in-Completions)))
 
 (defun icicle-msg-maybe-in-minibuffer (format-string &rest args)
@@ -2106,6 +2133,126 @@ Similar to `expand-file-name', except:
     (when no-angles              ; Assume space separates angled keys.
       (setq result (replace-regexp-in-string "<\\([^>]+\\)>" "\\1" result 'fixed-case)))
     result))
+
+(defun icicle-historical-alphabetic-p (s1 s2)
+  "S1 < S2 if S1 is a previous input and S2 is not or S1 string-lessp S2.
+Returns non-nil if S1 is a previous input and either S2 is not or
+\(string-lessp S1 S2).  S1 and S2 must be strings.
+
+When used as a comparison function for completion candidates, this
+makes matching previous inputs available first (at the top of buffer
+*Completions*).  Candidates are effectively in two groups, each of
+which is sorted alphabetically separately: matching previous inputs,
+followed by matching candidates that have not yet been used."
+  ;; We could use `icicle-delete-duplicates' to shorten the history, but that takes time too.
+  ;; And, starting in Emacs 22, histories will not contain duplicates anyway.
+  (let ((hist (and (symbolp minibuffer-history-variable)
+                   (symbol-value minibuffer-history-variable)))
+        (dir (and (icicle-file-name-input-p)
+                  (or (file-name-directory (or icicle-last-input icicle-current-input))
+                       default-directory))))
+    (if (not (consp hist))
+        (string-lessp s1 s2)
+      (when dir (setq s1 (expand-file-name s1 dir) s2 (expand-file-name s2 dir)))
+      (let ((s1-previous-p (member s1 hist))
+            (s2-previous-p (member s2 hist)))
+        (or (and (not s1-previous-p) (not s2-previous-p) (string-lessp s1 s2))
+            (and s1-previous-p (not s2-previous-p))
+            (and s1-previous-p s2-previous-p (string-lessp s1 s2)))))))
+
+;; $$ Alternative definition, but it doesn't seem any faster, and is slightly less clear.
+;; (defun icicle-most-recent-first-p (s1 s2)
+;;   "S1 < S2 if S1 was used more recently than S2.
+;; Also, S1 < S2 if S1 was used previously but S2 was not.
+;; Also, S1 < S2 if neither was used previously and S1 string-lessp S2."
+;;   ;; We could use `icicle-delete-duplicates' to shorten the history, but that takes time too.
+;;   ;; And, starting in Emacs 22, histories will not contain duplicates anyway.
+;;   (let ((hist (and (symbolp minibuffer-history-variable)
+;;                    (symbol-value minibuffer-history-variable)))
+;;         (dir (and (icicle-file-name-input-p)
+;;                   (or (file-name-directory (or icicle-last-input icicle-current-input))
+;;                       default-directory)))
+;;         (s1-in-hist nil)
+;;         (s2-in-hist nil))
+;;     (if (not (consp hist))
+;;         (string-lessp s1 s2)
+;;       (when dir (setq s1 (expand-file-name s1 dir) s2 (expand-file-name s2 dir)))
+;;       (while (and hist (not (setq s1-in-hist (equal s1 (car hist)))))
+;;         (when (setq s2-in-hist (equal s2 (car hist))) (setq hist nil))
+;;         (setq hist (cdr hist)))
+;;       (or (and hist s1-in-hist) (and (not s2-in-hist) (string-lessp s1 s2))))))
+
+(defun icicle-most-recent-first-p (s1 s2)
+  "S1 < S2 if S1 was used more recently than S2.
+Also, S1 < S2 if S1 was used previously but S2 was not.
+Also, S1 < S2 if neither was used previously and S1 string-lessp S2."
+  ;; We could use `icicle-delete-duplicates' to shorten the history, but that takes time too.
+  ;; And, starting in Emacs 22, histories will not contain duplicates anyway.
+  (let ((hist (and (symbolp minibuffer-history-variable)
+                   (symbol-value minibuffer-history-variable)))
+        (dir (and (icicle-file-name-input-p)
+                  (or (file-name-directory (or icicle-last-input icicle-current-input))
+                      default-directory)))
+        (s1-tail nil)
+        (s2-tail nil))
+    (if (not (consp hist))
+        (string-lessp s1 s2)      
+      (when dir (setq s1 (expand-file-name s1 dir) s2 (expand-file-name s2 dir)))
+      (setq s1-tail (member s1 hist) s2-tail (member s2 hist))
+      (cond ((and s1-tail s2-tail) (>= (length s1-tail) (length s2-tail)))
+            (s1-tail t)
+            (s2-tail nil)
+            (t (string-lessp s1 s2))))))
+
+;; $$
+;; (defun icicle-alist-delete-all (key alist &optional test)
+;;     "Delete from ALIST all elements whose car is the same as KEY.
+;; Optional arg TEST is the equality test to use.  If nil, `eq' is used.
+;; Return the modified alist.
+;; Elements of ALIST that are not conses are ignored."
+;;     (setq test (or test #'eq))
+;;     (while (and (consp (car alist)) (funcall test (car (car alist)) key))
+;;       (setq alist (cdr alist)))
+;;     (let ((tail alist) tail-cdr)
+;;       (while (setq tail-cdr (cdr tail))
+;;         (if (and (consp (car tail-cdr)) (funcall test (car (car tail-cdr)) key))
+;;             (setcdr tail (cdr tail-cdr))
+;;           (setq tail tail-cdr))))
+;;     alist)
+
+;;; Standard Emacs 21+ function, defined here for Emacs 20.
+(unless (fboundp 'assq-delete-all)
+  (defun assq-delete-all (key alist)
+    "Delete from ALIST all elements whose car is `eq' to KEY.
+Return the modified alist.
+Elements of ALIST that are not conses are ignored."
+    (while (and (consp (car alist)) (eq (car (car alist)) key)) (setq alist (cdr alist)))
+    (let ((tail alist) tail-cdr)
+      (while (setq tail-cdr (cdr tail))
+        (if (and (consp (car tail-cdr)) (eq (car (car tail-cdr)) key))
+            (setcdr tail (cdr tail-cdr))
+          (setq tail tail-cdr))))
+    alist))
+
+(defun icicle-assoc-delete-all (key alist)
+  "Delete from ALIST all elements whose car is `equal' to KEY.
+Return the modified alist.
+Elements of ALIST that are not conses are ignored."
+  (while (and (consp (car alist)) (equal (car (car alist)) key))
+    (setq alist (cdr alist)))
+  (let ((tail alist) tail-cdr)
+    (while (setq tail-cdr (cdr tail))
+      (if (and (consp (car tail-cdr)) (equal (car (car tail-cdr)) key))
+          (setcdr tail (cdr tail-cdr))
+        (setq tail tail-cdr))))
+  alist)
+
+(defun icicle-abbreviate-or-expand-file-name (filename &optional default-dir)
+  "`abbreviate-file-name' if `icicle-use-~-for-home-dir-flag' is non-nil.
+`expand-file-name' if `icicle-use-~-for-home-dir-flag' is nil."
+  (if icicle-use-~-for-home-dir-flag
+      (abbreviate-file-name (expand-file-name filename default-dir))
+    (expand-file-name filename default-dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -4,12 +4,12 @@
 ;; Description: Internal variables for Icicles
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 2005, Drew Adams, all rights reserved.
+;; Copyright (C) 1996-2006, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:23:26 2006
 ;; Version: 22.0
-;; Last-Updated: Thu Nov 09 13:23:09 2006 (-28800 Pacific Standard Time)
+;; Last-Updated: Fri Jan 05 16:31:15 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 225
+;;     Update #: 307
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-var.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -18,8 +18,8 @@
 ;; Features that might be required by this library:
 ;;
 ;;   `apropos', `apropos-fn+var', `cl', `color-theme', `cus-face',
-;;   `easymenu', `hexrgb', `icicles-opt', `thingatpt', `thingatpt+',
-;;   `wid-edit', `widget'.
+;;   `easymenu', `ffap', `ffap-', `hexrgb', `icicles-opt',
+;;   `thingatpt', `thingatpt+', `wid-edit', `widget'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -31,43 +31,72 @@
 ;;
 ;;  Internal variables defined here:
 ;;
-;;    `icicle-pre-minibuffer-buffer', `icicle-candidate-action-fn',
-;;    `icicle-candidate-entry-fn', `icicle-candidate-nb',
-;;    `icicle-candidates-alist', `icicle-cmd-calling-for-completion',
-;;    `icicle-common-match-string', `icicle-complete-input-overlay',
-;;    `icicle-completion-candidates' `icicle-completion-help-string',
+;;    `frame-name-history', `icicle-bookmark-history',
+;;    `icicle-buffer-config-history', `icicle-candidate-action-fn',
+;;    `icicle-candidate-entry-fn', `icicle-candidate-help-fn',
+;;    `icicle-candidate-nb', `icicle-candidates-alist',
+;;    `icicle-cmd-calling-for-completion', `icicle-color-history',
+;;    `icicle-color-theme-history', `icicle-common-match-string',
+;;    `icicle-complete-input-overlay', `icicle-completion-candidates'
+;;    `icicle-completion-help-string',
+;;    `icicle-completion-set-history',
 ;;    `icicle-current-completion-candidate-overlay',
 ;;    `icicle-current-completion-mode', `icicle-current-input',
 ;;    `icicle-current-raw-input', `icicle-default-directory',
 ;;    `icicle-default-thing-insertion-flipped-p',
-;;    `icicle-extra-candidates', `icicle-icompleting-p',
-;;    `icicle-ignored-extensions', `icicle-ignored-extensions-regexp',
+;;    `icicle-dictionary-history', `icicle-extra-candidates',
+;;    `icicle-font-history', `icicle-function-history',
+;;    `icicle-icompleting-p', `icicle-ignored-extensions',
+;;    `icicle-ignored-extensions-regexp',
 ;;    `icicle-incremental-completion-p', `icicle-initial-value',
 ;;    `icicle-insert-string-at-pt-end',
-;;    `icicle-insert-string-at-pt-start',
+;;    `icicle-insert-string-at-pt-start', `icicle-kill-history',
+;;    `icicle-kmacro-alist', `icicle-kmacro-history',
 ;;    `icicle-last-completion-candidate',
 ;;    `icicle-last-completion-command', `icicle-last-input',
 ;;    `icicle-last-sort-function', `icicle-last-transform-function',
 ;;    `icicle-menu-items-alist', `icicle-must-match-regexp',
 ;;    `icicle-must-not-match-regexp', `icicle-must-pass-predicate',
 ;;    `icicle-nb-of-other-cycle-candidates',
-;;    `icicle-post-command-hook', `icicle-pre-command-hook',
-;;    `icicle-prompt', `icicle-prompt-suffix', `icicle-re-no-dot',
+;;    `icicle-pre-minibuffer-buffer', `icicle-post-command-hook',
+;;    `icicle-pre-command-hook', `icicle-prompt',
+;;    `icicle-prompt-suffix', `icicle-re-no-dot',
 ;;    `icicle-saved-candidates-variables-obarray',
+;;    `icicle-saved-completion-candidate',
 ;;    `icicle-saved-completion-candidates',
+;;    `icicle-saved-completion-candidates-internal',
 ;;    `icicle-saved-ignored-extensions',
+;;    `icicle-saved-kmacro-ring-max',
 ;;    `icicle-saved-regexp-search-ring-max',
 ;;    `icicle-saved-region-background',
 ;;    `icicle-saved-search-ring-max', `icicle-search-command',
 ;;    `icicle-search-current-overlay', `icicle-search-final-choice',
-;;    `icicle-search-overlays', `icicle-search-refined-overlays',
+;;    `icicle-search-history', `icicle-search-overlays',
+;;    `icicle-search-refined-overlays',
 ;;    `icicle-successive-grab-count',
-;;    `icicle-thing-at-pt-fns-pointer'.
+;;    `icicle-thing-at-pt-fns-pointer',
+;;    `icicle-universal-argument-map', `icicle-variable-history'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change log:
 ;;
+;; 2007/01/05 dadams
+;;     icicle-initial-value: Updated doc string to mention you can bind it.
+;; 2006/12/25 dadams
+;;     Added: icicle-saved-completion-candidates-internal.
+;; 2006/12/23 dadams
+;;     Added: icicle-candidate-help-fn.
+;; 2006/12/17 dadams
+;;     Added: icicle-saved-completion-candidate.
+;; 2006/11/24 dadams
+;;     Added: icicle-universal-argument-map, icicle-kmacro-alist, icicle-saved-kmacro-ring-max,
+;;            icicle-kmacro-history.
+;; 2006/11/18 dadams
+;;     Added: frame-name-history, icicle-bookmark-history, icicle-buffer-config-history,
+;;            icicle-color-history, icicle-color-theme-history, icicle-completion-set-history,
+;;            icicle-dictionary-history, icicle-font-history, icicle-function-history,
+;;            icicle-kill-history, icicle-search-history, icicle-variable-history,
 ;; 2006/11/09 dadams
 ;;     icicle-search-refined-overlays: Updated doc string: icicle-search-highlight-threshold.
 ;; 2006/10/14 dadams
@@ -167,16 +196,22 @@
 (defvar font-lock-keyword-face 'font-lock-keyword-face ; Defined in `font-lock.el'.
   "Face name to use for keywords.")
 
-(defvar icicle-pre-minibuffer-buffer nil
-  "Buffer that was current before the minibuffer became active.")
+(defvar frame-name-history nil "History for frame names.") ; Defined in Emacs 22 `frame.el'.
+
+(defvar icicle-bookmark-history nil "History for bookmark names.")
+
+(defvar icicle-buffer-config-history nil "History for buffer configuration names.")
 
 (defvar icicle-candidate-action-fn nil
-  "Function to be applied to current completion candidate.
+  "Action function to be applied to current completion candidate.
 For `icicle-all-candidates-action' to be able to report successes,
 this should return non-nil for \"success\" and nil for \"failure\".")
 
 (defvar icicle-candidate-entry-fn nil
   "Function to apply to selected entries in `icicle-candidates-alist'.")
+
+(defvar icicle-candidate-help-fn nil
+  "Help function to be applied to current completion candidate.")
 
 (defvar icicle-candidate-nb nil
   "Current completion candidate number, or nil if not cycling candidates.
@@ -190,6 +225,10 @@ The cdr is some other data to be used when the candidate is chosen.")
 (defvar icicle-cmd-calling-for-completion 'ignore
   "Last command causing display of list of possible completions.")
 
+(defvar icicle-color-history nil "History for color names.")
+
+(defvar icicle-color-theme-history nil "History for color-theme names.")
+
 (defvar icicle-common-match-string nil
   "Longest common match among all completion candidates.
 Nil means no such common match is available.")
@@ -201,6 +240,8 @@ Nil means no such common match is available.")
 
 (defvar icicle-completion-help-string ""
   "Description of minibuffer bindings.")
+
+(defvar icicle-completion-set-history nil "History for completion-set names.")
 
 (defvar icicle-current-completion-candidate-overlay nil
   "Overlay used to highlight current completion candidate.")
@@ -223,8 +264,14 @@ Set whenever minibuffer is entered or input is completed.")
 This means that the meaning of `icicle-default-thing-insertion' has
 been reversed.")
 
+(defvar icicle-dictionary-history nil "History for dictionary entries.")
+
 (defvar icicle-extra-candidates nil
   "A list of extra completion candidates (strings).")
+
+(defvar icicle-font-history nil "History for font names.")
+
+(defvar icicle-function-history nil "History for function names.")
 
 (defvar icicle-icompleting-p nil
   "Internal flag: non-nil when editing text in minibuffer.
@@ -252,13 +299,30 @@ been displayed.")
   "Initial value used in minibuffer completion.
 Any function that reads from the minibuffer and accepts a default
 value or initial value should, before reading, put that value in
-`icicle-initial-value'.  For example, `completing-read' does that.")
+`icicle-initial-value'.  For example, `completing-read' does that.
+
+In addition, `completing-read' and `read-file-name' will respect this
+value, using it as the initial value if none is provided explicitly.
+This means that you can bind `icicle-initial-value' around an
+expression that calls `completing-read' or `read-file-name', and the
+bound value will be used as the initial value.")
 
 (defvar icicle-insert-string-at-pt-end 0
   "Position of end of text `icicle-insert-string-at-point' inserted.")
 
 (defvar icicle-insert-string-at-pt-start 0
   "Position of start of text `icicle-insert-string-at-point' inserted.")
+
+(defvar icicle-kill-history nil "History of kill-ring entries.")
+
+(when (boundp 'kmacro-ring)             ; Emacs 22
+  (defvar icicle-kmacro-alist nil
+    "Alist with elements (CANDIDATE-NAME . RING-ITEM).
+CANDIDATE-NAME is a synthetic macro name: \"macro #\" followed by a
+unique number 1, 2, 3....
+
+RING-ITEM is an item in `kmacro-ring' or `(kmacro-ring-head)'.")
+  (defvar icicle-kmacro-history nil "History for keyboard-macro names."))
 
 (defvar icicle-last-completion-candidate ""
   "Last completion candidate used in minibuffer completion.")
@@ -308,6 +372,9 @@ Use command `icy-mode' (aka `icicle-mode') to set this up properly.")
   "Functions added to `pre-command-hook' when in Icicle mode.
 Use command `icy-mode' (aka `icicle-mode') to set this up properly.")
 
+(defvar icicle-pre-minibuffer-buffer nil
+  "Buffer that was current before the minibuffer became active.")
+
 (defvar icicle-prompt ""
   "Prompt used for completion.  See also `icicle-prompt-suffix'.")
 
@@ -322,11 +389,21 @@ Intended to remind you how to obtain help on input completion.")
   "Obarray of variables you have saved sets of completion candidates in.
 Used for completion in `icicle-candidate-set-retrieve-from-variable'.")
 
+(defvar icicle-saved-completion-candidate nil
+  "Completion candidate to be restored after recursive `completing-read'.")
+
 (defvar icicle-saved-completion-candidates nil
   "Completion candidates user saved using `icicle-candidate-set-save'.")
 
+(defvar icicle-saved-completion-candidates-internal nil
+  "Completion candidates saved temporarily by program.")
+
 (defvar icicle-saved-ignored-extensions nil
   "Local copy of `icicle-ignored-extensions', so we can restore it.")
+
+(when (boundp 'kmacro-ring)             ; Emacs 22
+  (defvar icicle-saved-kmacro-ring-max kmacro-ring-max
+    "Saved value of `kmacro-ring-max', so it can be restored."))
 
 (defvar icicle-saved-regexp-search-ring-max regexp-search-ring-max
   "Saved value of `search-ring-max', so it can be restored.")
@@ -349,6 +426,8 @@ search command in a particular mode.")
   "Final user input from `icicle-search'.
 This might or might not be one of the possible search candidates.")
 
+(defvar icicle-search-history nil "History for `icicle-search' final choices.")
+
 (defvar icicle-search-overlays nil
   "Overlays used to highlight match of `icicle-search' regexp argument.")
 
@@ -364,6 +443,39 @@ a single overlay (or nil).  Otherwise, this is a list of overlays.")
 (defvar icicle-thing-at-pt-fns-pointer 0
   "Current index into the car of `icicle-thing-at-point-functions'.
 This points to the current function in the list.")
+
+(defvar icicle-universal-argument-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [t] 'icicle-universal-argument-other-key)
+    (define-key map (vector meta-prefix-char t) 'icicle-universal-argument-other-key)
+    (define-key map [switch-frame] nil)
+    (define-key map [?\C-u] 'icicle-universal-argument-more)
+    (define-key map [?-] 'icicle-universal-argument-minus)
+    (define-key map [?0] 'icicle-digit-argument)
+    (define-key map [?1] 'icicle-digit-argument)
+    (define-key map [?2] 'icicle-digit-argument)
+    (define-key map [?3] 'icicle-digit-argument)
+    (define-key map [?4] 'icicle-digit-argument)
+    (define-key map [?5] 'icicle-digit-argument)
+    (define-key map [?6] 'icicle-digit-argument)
+    (define-key map [?7] 'icicle-digit-argument)
+    (define-key map [?8] 'icicle-digit-argument)
+    (define-key map [?9] 'icicle-digit-argument)
+    (define-key map [kp-0] 'icicle-digit-argument)
+    (define-key map [kp-1] 'icicle-digit-argument)
+    (define-key map [kp-2] 'icicle-digit-argument)
+    (define-key map [kp-3] 'icicle-digit-argument)
+    (define-key map [kp-4] 'icicle-digit-argument)
+    (define-key map [kp-5] 'icicle-digit-argument)
+    (define-key map [kp-6] 'icicle-digit-argument)
+    (define-key map [kp-7] 'icicle-digit-argument)
+    (define-key map [kp-8] 'icicle-digit-argument)
+    (define-key map [kp-9] 'icicle-digit-argument)
+    (define-key map [kp-subtract] 'icicle-universal-argument-minus)
+    map)
+  "Keymap used while processing `C-u' during Icicles completion.")
+
+(defvar icicle-variable-history nil "History for variable names.")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

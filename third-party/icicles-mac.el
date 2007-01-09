@@ -7,9 +7,9 @@
 ;; Copyright (C) 2005, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:24:28 2006
 ;; Version: 22.0
-;; Last-Updated: Sat Oct 14 15:13:16 2006 (-25200 Pacific Daylight Time)
+;; Last-Updated: Sat Jan 06 15:17:34 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 105
+;;     Update #: 156
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-mac.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -28,7 +28,8 @@
 ;; 
 ;;  Macros defined here:
 ;;
-;;    `icicle-define-command', `icicle-define-file-command'.
+;;    `icicle-define-add-to-alist-command', `icicle-define-command',
+;;    `icicle-define-file-command'.
 ;;
 ;;  Functions defined here:
 ;;
@@ -42,6 +43,13 @@
 ;; 
 ;;; Change log:
 ;;
+;; 2007/01/06 dadams
+;;     font-lock-add-keywords: 2 or 3, not 1 or 2, is the index after adding icicle-define-add-to-*.
+;; 2007/01/01 dadams
+;;     Added: icicle-define-add-to-alist-command.
+;;     Removed compile-time require of icicles-var.el.
+;;     font-lock-add-keywords: "\\>[ \t'\(]*\\(\\sw+\\)?", not "\\s-+\\(\\sw\\(\\sw\\|\\s_\\)+\\)".
+;;                             Added icicle-define-add-to-alist-command.
 ;; 2006/10/14 dadams
 ;;     Require icicles-var.el.
 ;;     Moved conditional eval-when-compile to top level.
@@ -98,14 +106,29 @@
 
 (eval-when-compile (when (< emacs-major-version 20) (require 'cl))) ;; when, unless
 
-(eval-when-compile (require 'icicles-var)) ;; icicle-last-input
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
+ 
 
 
 ;;; Macros  ------------------------------------------------
+
+(defmacro icicle-define-add-to-alist-command (command doc-string construct-item-fn alist-var
+                                              &optional dont-save)
+  "Define COMMAND that adds an item to an alist user option.
+Any items with the same key are first removed from the alist.
+DOC-STRING is the doc string of COMMAND.
+CONSTRUCT-ITEM-FN is a function that constructs the new item.  It reads user input.
+LIST-VAR is the alist user option.
+Optional arg DONT-SAVE non-nil means do not call
+`customize-save-variable' to save the updated variable."
+  `(defun ,command ()
+    ,(concat doc-string "\n\nNote: Any items with the same key are first removed from the alist.")
+    (interactive)
+    (let ((new-item (funcall ,construct-item-fn)))
+      (setq ,alist-var (icicle-assoc-delete-all (car new-item) ,alist-var))
+      (push new-item ,alist-var)
+      ,(unless dont-save `(customize-save-variable ',alist-var ,alist-var))
+      (message "Added to `%s': `%S'" ',alist-var new-item))))
 
 (defmacro icicle-define-command
     (command doc-string function
@@ -333,6 +356,7 @@ This is an Icicles command - see `icicle-mode'.")
         (error (icicle-try-switch-buffer orig-buff) ,undo-sexp
                (error "%s" (error-message-string act-on-choice))))
       ,last-sexp)))
+ 
 
 
 ;;; Functions  ---------------------------------------------
@@ -366,8 +390,11 @@ This is an Icicles command - see `icicle-mode'.")
 ;; Make Emacs-Lisp mode fontify definitions of Icicles commands.
 (font-lock-add-keywords
  'emacs-lisp-mode
- `((,(concat "(" (regexp-opt '("icicle-define-command" "icicle-define-file-command") t)
-             "\\s-+\\(\\sw\\(\\sw\\|\\s_\\)+\\)")
+ `((,(concat "(" (regexp-opt '("icicle-define-add-to-alist-command" "icicle-define-command"
+                               "icicle-define-file-command")
+                             t)
+             ;; $$ "\\s-+\\(\\sw\\(\\sw\\|\\s_\\)+\\)")
+             "\\>[ \t'\(]*\\(\\sw+\\)?")
     (1 font-lock-keyword-face)
     ;; Index (2 or 3) depends on whether or not shy groups are supported.
     ,(list (if (string-match "\\(?:\\)" "") 2 3) font-lock-function-name-face))))
