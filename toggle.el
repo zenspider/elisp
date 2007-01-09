@@ -4,6 +4,8 @@
 ; app/model/blah.rb <-> test/unit/blah_test.rb
 ; lib/blah.rb <-> test/test_blah.rb
 
+(require 'cl)
+
 (defcustom toggle-mappings
   '(
     ; rails (with test rails)

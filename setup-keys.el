@@ -23,8 +23,12 @@
       (occur (if isearch-regexp isearch-string (regexp-quote isearch-string))))))
 
 ; compatibility
-(if running-emacs
-  (progn
-    (global-set-key "\M-g" 'goto-line)
-    (require 'dired)
-    (define-key dired-mode-map "k" 'dired-kill-subdir)))
+;; (if running-emacs
+;;   (progn
+;;     (global-set-key "\M-g" 'goto-line)
+;;     (require 'dired)
+;;     (define-key dired-mode-map "k" 'dired-kill-subdir)))
+
+(if running-emacs (global-set-key "\M-g" 'goto-line))
+; (if running-emacs (require 'dired))
+; (if running-emacs (define-key dired-mode-map "k" 'dired-kill-subdir))

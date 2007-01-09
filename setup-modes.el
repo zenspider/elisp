@@ -4,21 +4,22 @@
 (require 'compile)
 (require 'p4)
 (require 'ecb-autoloads)
-(require 'which-func)
-(require 'expand)
 ; (require 'mmm-mode)
 ; (require 'mmm-auto)
 (require 'autorevert)
 ; (require 'icicles)
-(require 'autotest)
+; (require 'autotest)
 
-(require 'pabbrev)
-(dolist (hook '(text-mode-hook 
-                html-mode-hook 
-                emacs-lisp-mode-hook 
-                latex-mode-hook
-                ruby-mode-hook))
-  (add-hook hook (lambda () (pabbrev-mode))))
+(autoload 'autotest-switch "autotest")
+
+
+;; (require 'pabbrev)
+;; (dolist (hook '(text-mode-hook 
+;;                 html-mode-hook 
+;;                 emacs-lisp-mode-hook 
+;;                 latex-mode-hook
+;;                 ruby-mode-hook))
+;;   (add-hook hook (lambda () (pabbrev-mode))))
 
 ;; ============================================================
 ;; Simple mode toggles:
@@ -63,6 +64,7 @@
     (insert " -*-")
     (insert "\n")))
 
+
 (defconst ruby-expand-list
   (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
           '(
@@ -81,16 +83,17 @@
   "Expansions for Ruby mode")
 
 (setq ruby-mode-abbrev-table '())
-(defun parse-tree ()
-  (interactive)
-  (expand-add-abbrevs ruby-mode-abbrev-table
-                      (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
-                              '(
-                                ("vc" ("[:vcall, " p "], "))
-                                ("dp" ("  def process_" p "(exp)" n
-                                       "  abort exp.inspect" n
-                                       "  end"))
-                                ))))
+
+;; (defun parse-tree ()
+;;   (interactive)
+;;   (expand-add-abbrevs ruby-mode-abbrev-table
+;;                       (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
+;;                               '(
+;;                                 ("vc" ("[:vcall, " p "], "))
+;;                                 ("dp" ("  def process_" p "(exp)" n
+;;                                        "  abort exp.inspect" n
+;;                                        "  end"))
+;;                                 ))))
 
 (setq save-abbrevs nil)
 
@@ -165,10 +168,12 @@
 (add-hook 'ruby-mode-hook
           '(lambda ()
              (inf-ruby-keys)
+             (require 'which-func)
              (which-function)
              (define-key ruby-mode-map "\M-\C-x" 'bury-buffer)
              (define-key ruby-mode-map "\C-c\C-a" 'autotest-switch)
              (define-key ruby-mode-map "\C-c\C-a" 'autotest-switch)
+             (require 'expand)
              (expand-add-abbrevs ruby-mode-abbrev-table ruby-expand-list)
              (abbrev-mode)
              (outline-minor-mode)
