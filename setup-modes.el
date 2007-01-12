@@ -10,8 +10,9 @@
 ; (require 'icicles)
 ; (require 'autotest)
 
-(autoload 'autotest-switch "autotest")
-
+(autoload 'toggle-buffer "toggle" "doco" t)
+(autoload 'autotest-switch "autotest" "doco" t)
+(autoload 'autotest "autotest" "doco" t)
 
 ;; (require 'pabbrev)
 ;; (dolist (hook '(text-mode-hook 

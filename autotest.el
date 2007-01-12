@@ -2,6 +2,7 @@
 ;
 ; sets up an autotest buffer and provides conveniencte methods 
 
+(require 'shell)
 
 (defun autotest ()
   (interactive)

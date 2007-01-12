@@ -85,7 +85,7 @@
 
 ;; (icicle-mode 1)
 
-(autoload 'toggle-buffer "toggle")
+(if (fboundp 'autotest) (message "bad") (message "good"))
 
 (put 'erase-buffer 'disabled nil) ;; nukes stupid warning
 (setq explicit-shell-file-name "/bin/bash")
