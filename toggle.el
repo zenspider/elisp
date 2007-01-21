@@ -12,7 +12,7 @@
     ("app/controllers/\\(.*\\).rb"       . "test/controllers/\\1_test.rb")
     ("app/views/\\(.*\\).rb"             . "test/views/\\1_test.rb")
     ("app/models/\\(.*\\).rb"            . "test/unit/\\1_test.rb")
-    ("test/functional/\\(.*\\)_test.rb" . "app/controllers/\\1.rb")
+    ("test/functional/\\(.*\\)_test.rb"  . "app/controllers/\\1.rb")
     ("test/integration/\\(.*\\)_test.rb" . "app/controllers/\\1.rb")
     ("test/views/\\(.*\\)_test.rb"       . "app/views/\\1.rb")
     ("test/unit/\\(.*\\)_test.rb"        . "app/models/\\1.rb")
@@ -33,9 +33,9 @@ expression RE matches PATH, then replace-match is invoked with
 TRANS. After the first successful match, this returns. If no rule
 matches, it returns nil"
   (cond ((null rules) nil)
-	((string-match (caar rules) path)
-	 (replace-match (cdar rules) nil nil path))
-	(t (toggle-filename path (rest rules)))))
+    ((string-match (caar rules) path)
+     (replace-match (cdar rules) nil nil path))
+    (t (toggle-filename path (rest rules)))))
 
 ; bpalmer suggests:
 ;(loop for (re . trans) in toggle-mappings
@@ -48,7 +48,7 @@ match is found, switches to that buffer."
   (interactive)
   (let ((new-name (toggle-filename (buffer-file-name) toggle-mappings)))
     (if new-name
-	(find-file new-name)
+    (find-file new-name)
       (message (concat "Match not found for " (buffer-file-name))))))
 
 (provide 'toggle)

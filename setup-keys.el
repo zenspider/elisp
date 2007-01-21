@@ -2,33 +2,43 @@
 ;; Keys & Menus:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(global-set-key "\C-\M-n" 'insert-buffer-name)
-(global-set-key "\C-\M-x" 'bury-buffer)
-(global-set-key "\C-c\C-r" 'recompile)
-(global-set-key "\C-x\C-b" 'bs-show)
-(global-set-key "\C-x\C-p" 'find-file-at-point)
-(global-set-key "\C-x\C-t" 'toggle-buffer)
-(global-set-key "\M-s" 'fixup-whitespace)
-(global-set-key (kbd "<f7>")  'swap-buffers) ; located in setup-aliases.el
-(global-set-key (kbd "<f8>")  'toggle-split) ; located in setup-aliases.el
-(global-set-key (kbd "<f12>") 'query-replace-regexp)
+(global-set-key (kbd "<f12>")   'query-replace-regexp)
+(global-set-key (kbd "<f7>")    'swap-buffers)
+(global-set-key (kbd "<f8>")    'toggle-split)
+(global-set-key (kbd "C-M-x")   'bury-buffer)
+(global-set-key (kbd "C-c C-r") 'recompile)
+(global-set-key (kbd "C-c e")   'fc-eval-and-replace)
+(global-set-key (kbd "C-c f")   'my-selective-display)
+(global-set-key (kbd "C-x C-b") 'bs-show)
+(global-set-key (kbd "C-x C-p") 'find-file-at-point)
+(global-set-key (kbd "C-x C-t") 'toggle-buffer)
+(global-set-key (kbd "M-s")     'fixup-whitespace)
 
-(define-key global-map [C-up]           'previous-line-6)
-(define-key global-map [C-down]         'forward-line-6)
-
-(define-key isearch-mode-map (kbd "C-o") ; occur easily inside isearch
+; this is so awesome - occur easily inside isearch
+(define-key isearch-mode-map (kbd "C-o")
   (lambda ()
     (interactive)
     (let ((case-fold-search isearch-case-fold-search))
-      (occur (if isearch-regexp isearch-string (regexp-quote isearch-string))))))
+      (occur (if isearch-regexp isearch-string
+               (regexp-quote isearch-string))))))
 
-; compatibility
-;; (if running-emacs
-;;   (progn
-;;     (global-set-key "\M-g" 'goto-line)
-;;     (require 'dired)
-;;     (define-key dired-mode-map "k" 'dired-kill-subdir)))
+; iconify bugs the crap out of me:
+(global-unset-key (kbd "C-z"))
+(add-hook 'comint-mode-hook
+          (lambda ()
+            (define-key shell-mode-map (kbd "C-z") 'comint-stop-subjob)))
 
-(if running-emacs (global-set-key "\M-g" 'goto-line))
-; (if running-emacs (require 'dired))
-; (if running-emacs (define-key dired-mode-map "k" 'dired-kill-subdir))
+; compatibility:
+(if running-emacs
+    (progn
+      (global-set-key (kbd "M-g")      'goto-line)
+      (global-set-key (kbd "<C-up>")   'previous-line-6)
+      (global-set-key (kbd "<C-down>") 'forward-line-6)
+      (add-hook 'dired-load-hook
+                (lambda ()
+                  (define-key dired-mode-map "k" 'dired-kill-subdir)))))
+
+; This allows me to enforce that bury-buffer is bound to C-M-x
+; regardless of mode (YAY!)
+(require 'override-keymaps)
+(override-keymaps)

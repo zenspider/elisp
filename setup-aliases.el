@@ -15,7 +15,7 @@
 (defun arrange-frame (w h &optional nosplit)
   "Rearrange the current frame to a custom width and height and split unless prefix."
   (let ((frame (current-frame)))
-    (progn
+    (when (equal 'mac (framep frame))
       (delete-other-windows)
       (set-frame-position frame 5 25)
       (set-frame-size frame w h)
@@ -23,73 +23,74 @@
           (split-window-horizontally)))))
 
 (defun small (&optional split)
-  "Create a small window suitable for coding on anything"
+  "Create a small window suitable for coding on anything."
   (interactive "P")
+  (my-set-mac-font "bitstream vera sans mono" 12)
   (arrange-frame 80 45 (not split)))
 
 (defun medium (&optional nosplit)
-  "Create a large window suitable for coding on a macbook"
+  "Create a large window suitable for coding on a macbook."
   (interactive "P")
+  (my-set-mac-font "bitstream vera sans mono" 12)
   (arrange-frame 170 45 nosplit))
 
 (defun huge (&optional nosplit)
-  "Create a really large window suitable for coding on a 20 inch cinema display"
+  "Create a really large window suitable for coding on a 20 inch cinema display."
   (interactive "P")
+  (my-set-mac-font "bitstream vera sans mono" 12)
   (arrange-frame 199 60 nosplit))
+
+(defun presentation ()
+  "Create a giant font window suitable for doing live demos."
+  (interactive)
+  (arrange-frame 85 25 t)
+  (my-set-mac-font "bitstream vera sans mono" 24))
+
+(defun record-current-window ()
+  (delete-other-windows)
+  (insert (pp `(arrange-frame ,(window-width) ,(+ 1 (window-height)) t))))
 
 (defun my-recompile-init ()
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0))
 
-(if (featurep 'xemacs)
-    (defadvice yank (after indent-region activate)
-      (if (member major-mode '(emacs-lisp-mode
-                               c-mode
-                               c++-mode
-                               tcl-mode
-                               sql-mode
-                               perl-mode
-                               cperl-mode
-                               java-mode
-                               jde-mode
-                               ruby-mode
-                               LaTeX-mode
-                               TeX-mode))
-          (indent-region (region-beginning) (region-end) nil))))
+(defun my-generate-new-buffer-name (name)
+  "Find a new buffer name not currently used in the form of <name>-<N> where N starts at 1"
+  (let* ((count 1)
+         (buffer-name (format "%s-%d" name count)))
+    (while (get-buffer buffer-name)
+      (set 'buffer-name (format "%s-%d" name count))
+      (set 'count (+ count 1)))
+    buffer-name))
 
 (defun myshell ()
   "Create a shell buffer that is properly named (shell-<N>)"
   (interactive)
-  (shell)		  ; use these two instead of (shell "shell")
-  (rename-buffer "shell") ; as it plays with multipl windows better
-  (rename-uniquely))
+  (shell (my-generate-new-buffer-name "shell")))
 
-(defun hard-tabs ()
-  "Set tabbing in current buffer so only hard tabs are inserted into file, but 4 col. tabstops are still observed."
-  (interactive)
+(defun modify-tabs (length enabled)
   (progn
-    (setq tab-width 4)
-    (setq indent-tabs-mode t)
+    (setq tab-width length indent-tabs-mode enabled)
     (save-excursion
-      (tabify (mark) (point)))))
+      (mark-whole-buffer)
+      (if enabled
+          (tabify (mark) (point))
+          (untabify (mark) (point))))))
 
 (defun mytabs()
-  "Set tabbing back to the way I like it."
+  "Set tabbing to spaces at 2 col tabstops."
   (interactive)
-  (progn
-    (setq tab-width 4 indent-tabs-mode nil)
-    (save-excursion
-      (mark-whole-buffer)
-      (untabify (mark) (point)))))
+  (modify-tabs 2 nil))
 
-(defun mytabs2()
-  "Set tabbing back to the way I like it."
+(defun mytabs4()
+  "Set tabbing to spaces at 4 col tabstops."
   (interactive)
-  (progn
-    (setq tab-width 2 indent-tabs-mode nil)
-    (save-excursion
-      (mark-whole-buffer)
-      (untabify (mark) (point)))))
+  (modify-tabs 4 nil))
+
+(defun mytabs-hard ()
+  "Set tabbing to real tabs but viewed at 4 col tabstops."
+  (interactive)
+  (modify-tabs 4 t))
 
 (defun toggle-split ()
   "Toggle vertical/horizontal window split."
@@ -172,3 +173,38 @@
   "Stop the server"
   (interactive)
   (server-start t))
+
+(defun fc-eval-and-replace ()
+  "Replace the preceding sexp with its value."
+  (interactive)
+  (backward-kill-sexp)
+  (condition-case nil
+      (prin1 (eval (read (current-kill 0)))
+             (current-buffer))
+    (error (message "Invalid expression")
+           (insert (current-kill 0)))))
+
+(defun my-selective-display (column)
+  "Rotate folding the buffer at no, 2, 4, and 6 columns."
+  (interactive "P")
+  (set-selective-display
+   (if (< (or selective-display 0) 6)
+       (or column (+ (or selective-display 0) 2))
+     nil)))
+
+(defun my-set-mac-font (name  size)
+  (interactive
+   (list (completing-read "font-name: "
+                          (mapcar (lambda (p) (list (car p) (car p)))
+                                  (x-font-family-list)) nil t)
+         (read-number "size: " 12)))
+  (set-face-attribute 'default nil
+                      :family name
+                      :slant  'normal
+                      :weight 'normal
+                      :width  'normal
+                      :height (* 10 size))
+  (frame-parameter nil 'font))
+
+;; to get the current font:
+; (frame-parameter nil 'font)
