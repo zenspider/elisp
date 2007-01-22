@@ -1,6 +1,6 @@
 ;;; icicles-iswitchb.el --- Using iswitchb with Icicles
 ;;
-;; $Id: icicles-iswitchb.el,v 1.4 2006/12/28 04:11:16 rubikitch Exp $
+;; $Id: icicles-iswitchb.el,v 1.7 2007/01/10 14:33:05 rubikitch Exp $
 ;; Author: rubikitch
 ;; Maintainer: rubikitch
 ;; Copyright (C) 2006, rubikitch, all rights reserved.
@@ -32,13 +32,9 @@
 ;; (iswitchb-default-keybindings)
 ;; (icy-mode)
 ;;
-;; Note: If, in Emacs 22 or later, you use `iswitchb-mode' instead of
-;; `iswitchb-default-keybindings', then you must call `iswitchb-mode'
-;; before the first call to `icicle-mode'. Whichever mode is turned on
-;; first will grab the binding of `C-x b'. If, however, you continue
-;; to use `iswitchb-default-keybindings', instead of `iswitchb-mode',
-;; then the order does not matter: re-entering `icicle-mode' will
-;; restore `C-x b' to `iswitchb-buffer'.
+;; In Emacs 22 or later, you can use `iswitchb-mode' instead of
+;; `iswitchb-default-keybindings'.  The order of loading the libraries
+;; is unimportant, as is the order of activating the modes.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -48,9 +44,18 @@
 ;;
 ;;; Change log:
 ;;
+;; 2007/01/10 dadams
+;; Updated commentary. The order of Icicles and Iswitchb no longer matters.
 ;; $Log: icicles-iswitchb.el,v $
+;; Revision 1.7  2007/01/10 14:33:05  rubikitch
+;; small bugfix
+;;
+;; Revision 1.6  2007/01/10 14:17:40  rubikitch
 ;; 2006/12/31 dadams
 ;; Updated commentary about order of Icicles and Iswitchb.
+;;
+;; Revision 1.5  2007/01/10 14:12:03  rubikitch
+;; small refactoring
 ;;
 ;; Revision 1.4  2006/12/28 04:11:16  rubikitch
 ;; Added installation.
@@ -151,8 +156,17 @@ in a separate window.
   (interactive)
   (setq iswitchb-icicles-regexp
         (regexp-quote (buffer-substring (minibuffer-prompt-end) (point-max))))
-  (setq iswitchb-exit 'icicle-buffer)
+  (setq iswitchb-exit 'iswitchb-icicle-buffer)
   (exit-minibuffer))
+
+(defun iswitchb-icicle-buffer ()
+  (let ((icicle-show-Completions-initially-flag t)
+        (icicle-buffer-match-regexp iswitchb-icicles-regexp)
+        (curbuf (current-buffer)))
+    (icicle-buffer)
+    (if (equal curbuf (current-buffer))
+        (keyboard-quit)
+      (current-buffer))))
 
 (defadvice iswitchb-read-buffer (around icicle-iswitchb)
   "Hijack icicle-find-file in iswitchb-read-buffer."
@@ -182,14 +196,8 @@ in a separate window.
   "Handle `find-file' and `icicle-buffer' within iswitchb."
   (cond ((eq iswitchb-exit 'findfile)
          (call-interactively 'find-file))
-        ((eq iswitchb-exit 'icicle-buffer)
-         (let ((icicle-show-Completions-initially-flag t)
-               (icicle-buffer-match-regexp iswitchb-icicles-regexp)
-               (curbuf (current-buffer)))
-           (icicle-buffer)
-           (if (equal curbuf (current-buffer))
-               (keyboard-quit)
-             (current-buffer))))
+        ((and (symbolp iswitchb-exit) (fboundp iswitchb-exit))
+         (funcall iswitchb-exit))
         (t
          nil)))
 
@@ -197,5 +205,7 @@ in a separate window.
 
 (provide 'icicles-iswitchb)
 
+;; How to save (DO NOT REMOVE!!)
+;; (let ((oddmuse-wiki "EmacsWiki")(oddmuse-page-name "icicles-iswitchb.el")) (call-interactively 'oddmuse-post))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; icicles-iswitchb.el ends here

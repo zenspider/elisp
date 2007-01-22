@@ -4,12 +4,12 @@
 ;; Description: Top-level commands for Icicles
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 1996-2006, Drew Adams, all rights reserved.
+;; Copyright (C) 1996-2007, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:25:04 2006
 ;; Version: 22.0
-;; Last-Updated: Mon Jan 01 17:50:05 2007 (-28800 Pacific Standard Time)
+;; Last-Updated: Fri Jan 19 21:09:01 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 6966
+;;     Update #: 7238
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-cmd.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -22,8 +22,7 @@
 ;;   `ediff-help', `ediff-init', `ediff-merg', `ediff-mult',
 ;;   `ediff-util', `ediff-wind', `fit-frame', `frame-cmds',
 ;;   `frame-fns', `info', `info+', `misc-fns', `mkhtml',
-;;   `mkhtml-htmlize', `strings', `thingatpt', `thingatpt+',
-;;   `widget'.
+;;   `mkhtml-htmlize', `strings', `thingatpt', `thingatpt+'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -96,9 +95,10 @@
 ;;    `icicle-delete-file-or-directory', `icicle-edmacro-parse-keys',
 ;;    `icicle-execute-extended-command-1', `icicle-filter-alist',
 ;;    `icicle-find-file-other-window-w-wildcards',
-;;    `icicle-find-file-w-wildcards', `icicle-imenu-in-buffer-p',
-;;    `icicle-Info-goto-node-action', `icicle-Info-index-action',
-;;    `icicle-insert-for-yank',
+;;    `icicle-find-file-w-wildcards',
+;;    `icicle-get-current-region-candidate',
+;;    `icicle-imenu-in-buffer-p', `icicle-Info-goto-node-action',
+;;    `icicle-Info-index-action', `icicle-insert-for-yank',
 ;;    `icicle-insert-thesaurus-entry-cand-fn',
 ;;    `icicle-keys+cmds-w-prefix', `icicle-kill-a-buffer',
 ;;    `icicle-kmacro-action', `icicle-map-action',
@@ -110,6 +110,7 @@
 ;;    `icicle-remove-all-regions-action', `icicle-search-action',
 ;;    `icicle-search-highlight-all-input-matches',
 ;;    `icicle-search-regexp-scan', `icicle-search-region-beg-end',
+;;    `icicle-select-region-action',
 ;;    `icicle-this-command-keys-prefix'.
 ;;
 ;;  Internal variables defined here:
@@ -147,10 +148,32 @@
 ;;
 ;;  Key bindings made by Icicles: See "Key Bindings" in `icicles.el'.
 ;;
+;;(@> "Index")
+;;  (@> "Icicles multi-commands")
+;;  (@> "Other top-level Icicles commands")
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change log:
 ;;
+;; 2007/01/18 dadams
+;;     Added: icicle-get-current-region-candidate.
+;;       Use current cand if cycled or `mouse-2'.  Else if single match, use that.  Else error.
+;;     icicle-remove-region, icicle-search-region, icicle-region-help:
+;;       Use icicle-get-current-region-candidate.
+;;     icicle-add-region: Added optional TAG arg and prefix arg treatment.
+;;     icicle-remove-region: Update completions list.  Bind regions-w-buffers.
+;;     icicle-remove-all-regions-in-buffer: Use current buffer name as default.
+;;     Added: icicle-select-region-action.
+;;     icicle-select-region: Use icicle-select-region-action.
+;;     Renamed: option icicle-regions to icicle-region-alist.
+;;     icicle-regions: Sort entries.
+;; 2007/01/17 dadams
+;;    icicle-filter-alist: Reversed argument order.  Return alist arg if filter-keys arg is empty.
+;; 2007/01/12 dadams
+;;    icicle-delete-window: Do icicle-remove-Completions-window if in minibuffer.
+;;    icicle-yank-insert: Do icicle-yank if in minibuffer.
+;;    icicle-(fundoc|vardoc|doc|plist): Added condition-case to protect symbols that raise errors.
 ;; 2007/01/01 dadams
 ;;    Added: icicle-(add|remove)-candidate-(to|from)-saved-completion-set.
 ;;    icicle-add-buffer-config: Use nil, not "nil" as default, if icicle-buffer-sort is nil.
@@ -759,7 +782,7 @@
   ;; icicle-buffer-no-match-regexp, icicle-buffer-predicate, icicle-buffer-require-match-flag,
   ;; icicle-buffer-sort, icicle-color-themes, icicle-complete-keys-self-insert-flag, 
   ;; icicle-ignore-space-prefix-flag, icicle-incremental-completion-flag, icicle-input-string,
-  ;; icicle-key-descriptions-use-<>-flag, icicle-regions, icicle-regions-name-length-max,
+  ;; icicle-key-descriptions-use-<>-flag, icicle-region-alist, icicle-regions-name-length-max,
   ;; icicle-require-match-flag, icicle-saved-completion-sets, icicle-search-cleanup-flag,
   ;; icicle-search-highlight-all-current-flag, icicle-search-highlight-threshold,
   ;; icicle-search-hook, icicle-show-Completions-initially-flag, icicle-sort-function, 
@@ -1227,10 +1250,8 @@ With a prefix argument, you are prompted for the directory."
           (kill-buffer-and-its-windows existing-dired-buffer) ; Defined in `misc-cmds.el'
         (kill-buffer existing-dired-buffer)))
     (dired-other-window (cons default-directory icicle-saved-completion-candidates))))
-
-
-
  
+;;(@* "Icicles multi-commands")
 ;;; Icicles multi-commands .   .   .   .   .   .   .   .   .
 
 (icicle-define-command icicle-execute-extended-command ; Bound to `M-x' in Icicle mode.
@@ -1420,28 +1441,34 @@ With a zero prefix argument, this is `icicle-select-window', or
 ;;;###autoload
 (defun icicle-delete-window (bufferp)   ; Bound to `C-x 0' in Icicle mode.
   "`delete-window' or prompt for buffer and delete all its windows.
-With no prefix arg, delete the selected window.
-With a prefix arg, prompt for a buffer and delete all windows, on any
-  frame, that show that buffer.
+When called from the minibuffer, remove the *Completions* window.
 
-With a prefix arg, this is an Icicles multi-command - see
-`icicle-mode'.  Input-candidate completion and cycling are available.
-While cycling, these keys act on the current candidate:
+Otherwise:
+ With no prefix arg, delete the selected window.
+ With a prefix arg, prompt for a buffer and delete all windows, on
+   any frame, that show that buffer.
 
-`C-RET'   - Act on current completion candidate only
-`C-down'  - Act, then move to next prefix-completion candidate
-`C-up'    - Act, then move to previous prefix-completion candidate
-`C-next'  - Act, then move to next apropos-completion candidate
-`C-prior' - Act, then move to previous apropos-completion candidate
-`up'      - Move to next prefix-completion candidate
-`down'    - Move to previous prefix-completion candidate
-`next'    - Move to next apropos-completion candidate
-`prior'   - Move to previous apropos-completion candidate
-`C-!'     - Act on *all* candidates, successively (careful!)
+ With a prefix arg, this is an Icicles multi-command - see
+ `icicle-mode'.  Input-candidate completion and cycling are
+ available.  While cycling, these keys act on the current
+ candidate:
 
-Use `RET' or `S-RET' to finally choose a candidate, or `C-g' to quit."
+ `C-RET'   - Act on current completion candidate only
+ `C-down'  - Act, then move to next prefix-completion candidate
+ `C-up'    - Act, then move to previous prefix-completion candidate
+ `C-next'  - Act, then move to next apropos-completion candidate
+ `C-prior' - Act, then move to previous apropos-completion candidate
+ `up'      - Move to next prefix-completion candidate
+ `down'    - Move to previous prefix-completion candidate
+ `next'    - Move to next apropos-completion candidate
+ `prior'   - Move to previous apropos-completion candidate
+ `C-!'     - Act on *all* candidates, successively (careful!)
+
+ Use `RET' or `S-RET' to finally choose a candidate, or `C-g' to quit."
   (interactive "P")
-  (if bufferp (icicle-delete-windows) (delete-window)))
+  (if (window-minibuffer-p (selected-window))
+      (icicle-remove-Completions-window)
+    (if bufferp (icicle-delete-windows) (delete-window))))
 
 (icicle-define-command icicle-kill-buffer ; Bound to `C-x k' in Icicle mode.
   "Kill a buffer."                      ; Doc string
@@ -1660,9 +1687,14 @@ This is like `yank', but it does not rotate the `kill-ring'." ; Doc string
 
 ;;;###autoload
 (defun icicle-yank-insert (&optional arg) ;  Bound to `C-y' (or whatever `yank' was bound to).
-  "`icicle-insert-kill', if prefix arg < 0; otherwise, `yank'."
+  "`icicle-insert-kill', if prefix arg < 0; otherwise, `yank'.
+When called from the minibuffer, however, this calls `icicle-yank':
+The prefix arg is then ignored and *Completions* is updated with
+regexp input matches."
   (interactive "*P")
-  (if (wholenump (prefix-numeric-value arg)) (yank arg) (icicle-insert-kill)))
+  (if (window-minibuffer-p (selected-window))
+      (icicle-yank arg)
+    (if (wholenump (prefix-numeric-value arg)) (yank arg) (icicle-insert-kill))))
 
 (icicle-define-file-command icicle-delete-file ; Command name
   "Delete a file or directory."         ; Doc string
@@ -1939,9 +1971,11 @@ which includes newline. Remember also that you can use `\\<minibuffer-local-comp
   "SYMB `C-q C-g C-q C-j' PLIST (`RET' when done): " ; `completing-read' args
   (let ((result nil))                   ; TABLE arg is an alist with items ((symb plist-string))
     (mapatoms (lambda (symb)            ; Each completion candidate is a list of strings.
-                (let ((plist (symbol-plist symb)))
-                  (when plist
-                    (push (list (list (symbol-name symb) (format "%s" plist))) result)))))
+                (condition-case nil
+                    (let ((plist (symbol-plist symb)))
+                      (when plist
+                        (push (list (list (symbol-name symb) (format "%s" plist))) result)))
+                  (error nil))))        ; Ignore symbols that produce errors.
     result)
   nil nil nil nil nil nil
   nil                                   ; Additional bindings
@@ -1973,10 +2007,12 @@ Remember that you can use `\\<minibuffer-local-completion-map>\
   "VAR `C-q C-g C-q C-j' DOC (`RET' when done): " ; `completing-read' args
   (let ((result nil))                   ; TABLE arg is an alist whose items are ((symb doc)).
     (mapatoms (lambda (symb)            ; Each completion candidate is a list of strings.
-                (when (boundp symb)
-                  (let ((doc (documentation-property symb 'variable-documentation)))
-                    (when (icicle-non-whitespace-string-p doc)
-                      (push (list (list (symbol-name symb) doc)) result))))))
+                (condition-case nil
+                    (when (boundp symb)
+                      (let ((doc (documentation-property symb 'variable-documentation)))
+                        (when (icicle-non-whitespace-string-p doc)
+                          (push (list (list (symbol-name symb) doc)) result))))
+                  (error nil))))        ; Ignore symbols that produce errors.
     result)
   nil nil nil nil nil nil
   nil                                   ; Additional bindings
@@ -2008,9 +2044,11 @@ Remember that you can use `\\<minibuffer-local-completion-map>\
   (let ((result nil))                   ; TABLE arg is an alist whose items are ((symb doc)).
     (mapatoms (lambda (symb)            ; Each completion candidate is a list of strings.
                 (when (fboundp symb)
-                  (let ((doc (documentation symb)))
-                    (when (icicle-non-whitespace-string-p doc)
-                      (push (list (list (symbol-name symb) doc)) result))))))
+                  (condition-case nil
+                      (let ((doc (documentation symb)))
+                        (when (icicle-non-whitespace-string-p doc)
+                          (push (list (list (symbol-name symb) doc)) result)))
+                    (error nil)))))     ; Ignore symbols that produce errors.
     result)
   nil nil nil nil nil nil
   nil                                   ; Additional bindings
@@ -2033,17 +2071,17 @@ Remember that you can use `\\<minibuffer-local-completion-map>\
   "Find doc with regexp: "              ; `completing-read' args
   (let ((result nil)                    ; TABLE arg is an alist whose items are (doc . symb).
         doc)                            ; Each completion candidate is a list of strings.
-    (mapatoms (lambda (symb)                    
-                (when (fboundp symb)
-                  (setq doc (concat (documentation symb) "\n\n"))
-                  (when (icicle-non-whitespace-string-p doc)
-                    (push (cons doc symb) result)))
-                (when (boundp symb)
-                  (setq doc (concat
-                             (documentation-property symb 'variable-documentation)
-                             "\n\n"))
-                  (when (icicle-non-whitespace-string-p doc)
-                    (push (cons doc symb) result)))))
+    (mapatoms (lambda (symb)
+                (condition-case nil
+                    (progn
+                      (when (fboundp symb)
+                        (setq doc (concat (documentation symb) "\n\n"))
+                        (when (icicle-non-whitespace-string-p doc) (push (cons doc symb) result)))
+                      (when (boundp symb)
+                        (setq doc (concat (documentation-property symb 'variable-documentation)
+                                          "\n\n"))
+                        (when (icicle-non-whitespace-string-p doc) (push (cons doc symb) result))))
+                  (error nil))))        ; Ignore symbols that produce errors.
     ;; `icicle-candidate-action-fn' is used in the main body of command
     ;;`icicle-doc' and is also bound to `C-RET'.  We need to refer to the
     ;; TABLE arg to `completing-read' within the body of the function.
@@ -2262,8 +2300,8 @@ to nil so that candidates with initial spaces can be matched."
         (let ((cand-nb 0)
               candidate-entries result)
           (completing-read "Choose an occurrence: " icicle-candidates-alist nil t)
-          (setq candidate-entries (icicle-filter-alist icicle-completion-candidates
-                                                       icicle-candidates-alist))
+          (setq candidate-entries (icicle-filter-alist icicle-candidates-alist
+                                                       icicle-completion-candidates))
           (cond ((not (wholenump icicle-candidate-nb)) ; Didn't cycle to choose the candidate.
                  (when (cdr candidate-entries) ; Multiple entries with the same key
                    (error (substitute-command-keys "Ambiguous choice. Try again.")))
@@ -2395,92 +2433,109 @@ With a plain `C-u' prefix arg: `icicle-select-region'."
   (if arg
       (if (atom current-prefix-arg)
           (call-interactively #'icicle-add-region)
-        (unless (consp icicle-regions)
-          (error "`icicle-regions' is empty; try again, with a numeric prefix arg"))
+        (unless (consp icicle-region-alist)
+          (error "`icicle-region-alist' is empty; try again, with a numeric prefix arg"))
         (call-interactively #'icicle-select-region))
     (call-interactively #'exchange-point-and-mark)))
 
 ;;;###autoload
-(defun icicle-add-region (start end)
-  "Add current region to the list of Icicles regions, `icicle-regions'.
-Updates the persistent value of user option `icicle-regions'.
-To remove a region from `icicle-regions', use command
-`icicle-remove-region' or customize `icicle-regions'."
-  (interactive "r")
+(defun icicle-add-region (start end &optional tag) ; Bound to `C-N C-x C-x', N = whole number.
+  "Add current region to list of regions, `icicle-region-alist'.
+Updates the persistent value of user option `icicle-region-alist'.
+
+With a prefix argument, you are prompted for a tag to name the region.
+Otherwise, the first `icicle-regions-name-length-max' characters of
+the region itself serve as the name.
+
+To remove a region from `icicle-region-alist', use command
+`icicle-remove-region' or customize `icicle-region-alist'."
+  (interactive "r\nP")
   (when (= start end) (error "Cannot add region; it is empty"))
   (when (> start end) (setq end (prog1 start (setq start end))))
-  (add-to-list
-   'icicle-regions
-   (list (buffer-substring-no-properties start (+ start (min icicle-regions-name-length-max
-                                                             (- end start))))
-         (buffer-name)
-         start
-         end))
-  (customize-save-variable 'icicle-regions icicle-regions)
-  (message "Current region was added to `icicle-regions'"))
+  (let ((region-prefix
+         (buffer-substring-no-properties start (+ start (min icicle-regions-name-length-max
+                                                             (- end start))))))
+    (add-to-list 'icicle-region-alist (list (setq tag (if tag
+                                                          (read-string "Region name (tag): "
+                                                                       nil nil region-prefix)
+                                                        region-prefix))
+                                            (buffer-name)
+                                            start
+                                            end))
+    (customize-save-variable 'icicle-region-alist icicle-region-alist)
+    (message "Region added to `icicle-region-alist' with tag `%s'"
+             (if (> (length tag) 20) (concat (substring tag 0 17) "...") tag))))
 
 ;;;###autoload
-(icicle-define-command icicle-select-region ; Command name
+(icicle-define-command icicle-select-region ; Bound to `C-u C-x C-x'
   "Choose a region from the list of Icicles regions, and activate it.
-You can use `icicle-add-region' to define the list of regions,
-`icicle-regions'.
-Regions in `icicles-regions' that are in buffers that do not currently
-exist are ignored.
+Regions in `icicle-region-alist' that are in buffers that do not
+currently exist are ignored.
 
 Note that each region is defined by its limits, so that if the
 region's buffer has changed, then the text used to identify the region
 might no longer correspond to the text at the beginning of the
-region."                                ; Doc string
-  (lambda (reg-name)                    ; Function to perform the action
-    (let* ((reg (assoc reg-name icicle-regions))
-           (buf (cadr reg)))
-      (pop-to-buffer buf)
-      (raise-frame)
-      (goto-char (caddr reg))
-      (push-mark (cadddr reg) 'nomsg 'activate))
-    (setq deactivate-mark nil))
+region.
+
+You can use `icicle-add-region' to define the list of regions,
+`icicle-region-alist'."                                ; Doc string
+  icicle-select-region-action          ; Function to perform the action
   "Select region: " regions-w-buffers   ; `completing-read' args
   nil t nil nil (caar regions-w-buffers) nil
   ((regions-w-buffers (icicle-regions)) ; Additional bindings
    (icicle-candidate-help-fn 'icicle-region-help)))
 
+(defun icicle-select-region-action (reg-name)
+  "Action function for `icicle-select-region'."
+  (let* ((reg (icicle-get-current-region-candidate reg-name))
+         (buf (cadr reg)))
+    (pop-to-buffer buf)
+    (raise-frame)
+    (goto-char (caddr reg))
+    (push-mark (cadddr reg) 'nomsg 'activate))
+  (setq deactivate-mark nil))
+
 ;;;###autoload
 (icicle-define-command icicle-remove-region ; Command name
-  "Remove a region from the list of Icicles regions, `icicle-regions'.
-Updates the persistent value of user option `icicle-regions'.
-To add a region to `icicle-regions', use command `icicle-add-region'
-or customize `icicle-regions'."         ; Doc string
+  "Remove a region from the list of regions, `icicle-region-alist'.
+Updates the persistent value of user option `icicle-region-alist'.
+
+To add a region to `icicle-region-alist', use command
+`icicle-add-region' or customize `icicle-region-alist'." ; Doc string
   (lambda (reg-name)                    ; Function to perform the action
-    (let ((reg (assoc reg-name icicle-regions)))
-      (setq icicle-regions (delete reg icicle-regions))
-      (customize-save-variable 'icicle-regions icicle-regions)))
-  "Remove region: " icicle-regions      ; `completing-read' args
-  nil t nil nil (caar icicle-regions) nil
-  ((icicle-candidate-help-fn 'icicle-region-help))) ; Additional bindings
+    (let ((reg (icicle-get-current-region-candidate reg-name)))
+      (setq icicle-region-alist (delete reg icicle-region-alist))
+      (icicle-update-completions)
+      (customize-save-variable 'icicle-region-alist icicle-region-alist)))
+  "Remove region: " icicle-region-alist ; `completing-read' args
+  nil t nil nil (caar icicle-region-alist) nil
+  ((regions-w-buffers (icicle-regions)) ; Additional bindings
+   (icicle-candidate-help-fn 'icicle-region-help)))
 
 ;;;###autoload
 (icicle-define-command icicle-remove-all-regions-in-buffer ; Command name
-  "Remove all regions in a buffer from `icicle-regions'.
+  "Remove all regions in a buffer from `icicle-region-alist'.
 To remove individual regions, use command `icicle-remove-region'.
-To add a region to `icicle-regions', use command `icicle-add-region'.
-Alternatively, you can customize `icicle-regions'." ; Doc string
-  icicle-remove-all-regions-action      ; Function to perform the action
+To add a region to `icicle-region-alist', use `icicle-add-region'.
+Alternatively, you can customize `icicle-region-alist'." ; Doc string
+  icicle-remove-all-regions-action
+                                        ; Function to perform the action
   "Buffer: "                            ; `completing-read' args
-  (icicle-remove-duplicates (mapcar (lambda (reg) (list (cadr reg))) icicle-regions))
-  nil t)
+  (icicle-remove-duplicates (mapcar (lambda (reg) (list (cadr reg))) icicle-region-alist))
+  nil t nil nil (buffer-name))
 
 (defun icicle-remove-all-regions-action (buffer)
   "Action function for `icicle-remove-all-regions-in-buffer'.
-Remove all regions in BUFFER from `icicle-regions'.
+Remove all regions in BUFFER from `icicle-region-alist'.
 BUFFER is the name of a buffer."
-  (dolist (reg icicle-regions)
-    (when (string= buffer (cadr reg)) (setq icicle-regions (delete reg icicle-regions))))
-  (customize-save-variable 'icicle-regions icicle-regions)
+  (dolist (reg icicle-region-alist)
+    (when (string= buffer (cadr reg)) (setq icicle-region-alist (delete reg icicle-region-alist))))
+  (customize-save-variable 'icicle-region-alist icicle-region-alist)
   (message "Removed all regions in buffer `%s'" buffer))
 
 ;;;###autoload
 (icicle-define-command icicle-search-region ; Command name
-  "Search a region from the list of Icicles regions, `icicle-regions'.
+  "Search a region from the list of regions, `icicle-region-alist'.
 You can use `icicle-add-region' to define the list of regions.
 Regions in `icicles-regions' that are in buffers that do not currently
 exist are ignored.
@@ -2490,7 +2545,7 @@ region's buffer has changed, then the text used to identify the region
 might no longer correspond to the text at the beginning of the
 region."                                ; Doc string
   (lambda (reg-name)                    ; Function to perform the action
-    (let* ((reg (assoc reg-name icicle-regions))
+    (let* ((reg (icicle-get-current-region-candidate reg-name))
            (buf (cadr reg)))
       (cond ((get-buffer buf)
              (pop-to-buffer buf)
@@ -2501,8 +2556,7 @@ region."                                ; Doc string
                (set-buffer (window-buffer (minibuffer-window)))
                (icicle-erase-minibuffer)))
             (t
-             (message "Skipping regions in `%s' - no such buffer" buf)
-             (sit-for 2)))))
+             (message "Skipping regions in `%s' - no such buffer" buf) (sit-for 2)))))
   "Search region: " regions-w-buffers   ; `completing-read' args
   nil t nil nil (caar regions-w-buffers) nil
   ((regions-w-buffers (icicle-regions)) ; Additional bindings
@@ -2512,16 +2566,43 @@ region."                                ; Doc string
    (regexp (read-from-minibuffer "Search for (regexp): " nil nil nil 'regexp-history))))
 
 (defun icicle-region-help (reg-name)
-  "Use for `icicle-candidate-help-fn' in cmds that use `icicle-regions'."
+  "Use as `icicle-candidate-help-fn' for `icicle-region-alist' commands."
   (icicle-msg-maybe-in-minibuffer
-   (let ((reg (assoc reg-name icicle-regions)))
+   (let ((reg (icicle-get-current-region-candidate reg-name)))
      (or (concat "Buffer: `" (cadr reg) (format "', Length: %d" (- (cadddr reg) (caddr reg))))
          "No help"))))
 
 (defun icicle-regions ()
-  "Variable `icicle-regions', with non-existent buffers removed."
-  (icicle-delete-if-not (lambda (reg) (get-buffer (cadr reg))) icicle-regions))
+  "Variable `icicle-region-alist', with non-existent buffers removed."
+  (let ((unsorted-regions (icicle-delete-if-not (lambda (reg) (get-buffer (cadr reg)))
+                                                icicle-region-alist)))
+    (if icicle-sort-function
+        (sort unsorted-regions
+              (lambda (a b) (funcall icicle-sort-function (car a) (car b))))
+      unsorted-regions)))    
 
+(defun icicle-get-current-region-candidate (reg-name)
+  "Return the current-candidate region from in `icicle-region-alist'.
+REG-NAME is the region name of the current candidate.
+
+If user cycled among candidates or used `mouse-2', then use the
+current candidate number, and ignore REG-NAME.
+
+Otherwise:
+  If only one candidate matches REG-NAME, use that.
+  Else raise an error telling user to use cycling or `mouse-2'."
+  ;; `regions-w-buffers' is free here.
+  (let ((candidate-entries (icicle-filter-alist regions-w-buffers icicle-completion-candidates)))
+    (if (wholenump icicle-candidate-nb) ; Cycled or used `mouse-2' to choose the candidate.
+        (elt candidate-entries (mod icicle-candidate-nb (length regions-w-buffers)))
+      ;; If `icicle-completion-candidates' is nil, because user didn't use `TAB' or `S-TAB', then
+      ;; `regions-w-buffers' can contain non-matches.  So, we check for more than one match.
+      (let ((first-match (assoc reg-name regions-w-buffers)))
+        (if (and first-match (not (assoc reg-name (delete first-match candidate-entries))))
+            first-match                 ; Only one match, so use it.
+          (error
+           "Ambiguous choice. Cycle or use `mouse-2' to choose unique matching candidate."))))))
+            
 ;;;###autoload
 (defun icicle-search-generic ()         ; Bound to `C-x `'.
   "Run `icicle-search-command'."
@@ -2546,12 +2627,12 @@ completely.  You are prompted for the buffers to search - all of each
 buffer is searched.
 
 - With a numeric prefix arg, search all of the regions in
-`icicle-regions'.  Those regions can be in any buffers.  If a region
-is in a buffer that does not exist, it is skipped.  You can always
-re-create the buffer (e.g. visit the file), and try again.
+`icicle-region-alist'.  Those regions can be in any buffers.  If a
+region is in a buffer that does not exist, it is skipped.  You can
+always re-create the buffer (e.g. visit the file), and try again.
 
-Note: To individually search selected regions in `icicle-regions', use
-multi-command `icicle-search-region'.
+Note: To individually search selected regions in
+`icicle-region-alist', use multi-command `icicle-search-region'.
 
 The use of completion for this command is a bit special.  It is not
 unusual in this context to have multiple completion candidates that
@@ -2632,13 +2713,13 @@ REGEXP is the regexp that determines the set of initial candidates.
 REQUIRE-MATCH is passed to `completing-read'.
 
 Optional arg WHERE is a list of buffer names or a list of regions of
-the same form as `icicle-regions'."
+the same form as `icicle-region-alist'."
 
   (interactive `(,@(icicle-search-region-beg-end)
                  ,(read-from-minibuffer "Search for (regexp): " nil nil nil 'regexp-history)
                  t
                  ,(cond ((consp current-prefix-arg) (mapcar #'get-buffer (icicle-buffer-list)))
-                        (current-prefix-arg icicle-regions)
+                        (current-prefix-arg icicle-region-alist)
                         (t nil))))
                          
   (setq regexp (or regexp
@@ -2655,7 +2736,7 @@ the same form as `icicle-regions'."
     (message "Finding matches...")
     (cond ((and (consp where) (stringp (car where))) ; List of buffer names - search buffers.
            (dolist (buf where) (icicle-search-regexp-scan buf regexp)))
-          ((consp where)                ; Search all regions in `icicle-regions'.
+          ((consp where)                ; Search all regions in `icicle-region-alist'.
            (dolist (reg where)
              (if (bufferp (get-buffer (cadr reg)))
                  (icicle-search-regexp-scan
@@ -2675,8 +2756,8 @@ the same form as `icicle-regions'."
                                                    "Choose an occurrence: "
                                                    icicle-candidates-alist nil require-match
                                                    nil 'icicle-search-history)
-                       candidate-entries (icicle-filter-alist icicle-completion-candidates
-                                                              icicle-candidates-alist))
+                       candidate-entries (icicle-filter-alist icicle-candidates-alist
+                                                              icicle-completion-candidates))
                  (cond
                    ;; No match required, and not a match - just run the hook.
                    ((and (not require-match) (null icicle-completion-candidates))
@@ -2789,6 +2870,7 @@ If BEG and END are non-nil, scan only between positions BEG and END."
 2. Move to the regexp match in the original buffer and highlight it.
 3. If `icicle-search-highlight-threshold' is zero, highlight what the
    current input matches, inside the match of the initial regexp."
+  ;; Argument STRING is ignored.
   (unwind-protect
        (condition-case icicle-search-action
            (let (curr-cand-string)
@@ -2806,8 +2888,8 @@ If BEG and END are non-nil, scan only between positions BEG and END."
                      (setq curr-cand-string (icicle-current-completion-in-Completions))))
                  (set-window-point compl-win curr-cand-pos)))
              ;; Move cursor to the match in the original buffer and highlight it.
-             (let* ((cand+mrker (elt (icicle-filter-alist icicle-completion-candidates
-                                                          icicle-candidates-alist)
+             (let* ((cand+mrker (elt (icicle-filter-alist icicle-candidates-alist
+                                                          icicle-completion-candidates)
                                      icicle-candidate-nb))
                     (candidate (car-safe cand+mrker))
                     (marker (cdr-safe cand+mrker)))
@@ -2844,10 +2926,13 @@ If BEG and END are non-nil, scan only between positions BEG and END."
          (error nil))                   ; Return nil for failure.
     (select-frame-set-input-focus (window-frame (minibuffer-window)))))
 
-(defun icicle-filter-alist (filter-keys alist)
+(defun icicle-filter-alist (alist filter-keys)
   "Filter ALIST, keeping items whose cars match FILTER-KEYS, in order.
-The original ALIST is not altered; a copy is filtered and returned."
-  (icicle-delete-if-not (lambda (item) (member (car item) filter-keys)) alist))
+The original ALIST is not altered; a copy is filtered and returned.
+If FILTER-KEYS is empty, then ALIST is returned, not a copy."
+  (if filter-keys
+      (icicle-delete-if-not (lambda (item) (member (car item) filter-keys)) alist)
+    alist))
 
 ;;;###autoload
 (defun icicle-search-highlight-cleanup ()
@@ -3079,7 +3164,7 @@ variable."
 You are prompted for the object type, then the object of that type,
 then the function to apply.
 
-There are two sorts of objects that can be chosen:
+There are two kinds of objects that can be chosen:
 
 1. Objects that are easily associated with names.
 2. Objects that are not easily named.
@@ -3183,10 +3268,8 @@ displayed."
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
 Don't forget to mention your Emacs and Icicles library versions.")))
-
-
-
  
+;;(@* "Other top-level Icicles commands")
 ;;; Other top-level Icicles commands   .   .   .   .   .   .
 
 ;;;###autoload

@@ -4,12 +4,12 @@
 ;; Description: User options (variables) for Icicles
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 1996-2006, Drew Adams, all rights reserved.
+;; Copyright (C) 1996-2007, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:22:14 2006
 ;; Version: 22.0
-;; Last-Updated: Sat Jan 06 14:29:19 2007 (-28800 Pacific Standard Time)
+;; Last-Updated: Fri Jan 19 21:11:37 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 680
+;;     Update #: 715
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-opt.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -36,6 +36,7 @@
 ;;    `icicle-buffer-match-regexp', `icicle-buffer-no-match-regexp',
 ;;    `icicle-buffer-predicate', `icicle-buffer-require-match-flag'
 ;;    `icicle-buffer-sort', `icicle-change-region-background-flag',
+;;    `icicle-change-sort-order-completion-flag',
 ;;    `icicle-color-themes', `icicle-complete-keys-self-insert-flag',
 ;;    `icicle-completing-mustmatch-prompt-prefix',
 ;;    `icicle-completing-prompt-prefix',
@@ -54,13 +55,14 @@
 ;;    `icicle-key-descriptions-use-<>-flag',
 ;;    `icicle-key-descriptions-use-angle-brackets-flag',
 ;;    `icicle-kmacro-ring-max', `icicle-list-end-string',
-;;    `icicle-list-join-string', `icicle-mark-position-in-candidate',
+;;    `icicle-list-join-string', `icicle-list-nth-parts-join-string',
+;;    `icicle-mark-position-in-candidate',
 ;;    `icicle-minibuffer-setup-hook', `icicle-modal-cycle-down-key',
 ;;    `icicle-modal-cycle-up-key',
 ;;    `icicle-point-position-in-candidate',
 ;;    `icicle-redefine-standard-commands-flag',
 ;;    `icicle-regexp-quote-flag', `icicle-regexp-search-ring-max',
-;;    `icicle-region-background', `icicle-regions',
+;;    `icicle-region-alist', `icicle-region-background',
 ;;    `icicle-regions-name-length-max', `icicle-reminder-prompt-flag',
 ;;    `icicle-require-match-flag', `icicle-saved-completion-sets',
 ;;    `icicle-search-cleanup-flag',
@@ -68,7 +70,8 @@
 ;;    `icicle-search-highlight-threshold', `icicle-search-hook',
 ;;    `icicle-search-ring-max', `icicle-show-Completions-help-flag',
 ;;    `icicle-show-Completions-initially-flag',
-;;    `icicle-sort-function', `icicle-special-candidate-regexp',
+;;    `icicle-sort-function', `icicle-sort-functions-alist',
+;;    `icicle-special-candidate-regexp',
 ;;    `icicle-TAB-shows-candidates-flag',
 ;;    `icicle-thing-at-point-functions',
 ;;    `icicle-touche-pas-aux-menus-flag', `icicle-transform-function',
@@ -80,10 +83,26 @@
 ;;    `icicle-buffer-sort-*...*-last', `icicle-increment-color-hue',
 ;;    `icicle-increment-color-value'.
 ;;
+;;(@> "Index")
+;;  (@> "Change log")
+;;  (@> "User options, organized alphabetically, except for dependencies")
+
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change log:
 ;;
+;;(@* "Change log")
+;;
+;; 2007/01/18 dadams
+;;     Renamed: icicle-regions to icicle-region-alist.
+;; 2007/01/15 dadams
+;;     Added: icicle-change-sort-order-completion-flag, icicle-sort-functions-alist.
+;;     icicle-cycle-into-subdirs-flag, icicle-sort-function: Updated doc string.
+;; 2007/01/14 dadams
+;;     Added: icicle-list-nth-parts-join-string.
+;; 2007/01/08 dadams
+;;     icicle-reminder-prompt-flag: Reduced default value from 20 to 7 Emacs sessions.
 ;; 2007/01/06 dadams
 ;;     Added: icicle-use-~-for-home-dir-flag.  Thanks to Timothy Stotts for the suggestion.
 ;; 2006/12/29 dadams
@@ -228,8 +247,9 @@
                             ;; word-nearest-point
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- 
 
+ 
+;;(@* "User options, organized alphabetically, except for dependencies")
 
 ;;; User options, organized alphabetically, except for dependencies --
 
@@ -375,8 +395,9 @@ This can be useful to make *Completions* more visible."
 (defcustom icicle-cycle-into-subdirs-flag nil
   "*Non-nil means minibuffer-input cycling explores subdirectories.
 If this is non-nil, then you might want to use a function such as
-`icicle-sort-dirs-last' for option `icicle-sort-function', to prevent
-cycling into subdirectories depth first."
+`icicle-dirs-last-p' for option `icicle-sort-function', to prevent
+cycling into subdirectories depth first.  Command
+`icicle-sort-by-directories-last' does that."
   :type 'boolean :group 'Icicles-Miscellaneous)
 
 ;;;###autoload
@@ -611,6 +632,12 @@ control-j (newline):
   :type 'string :group 'Icicles-Completions-Display)
 
 ;;;###autoload
+(defcustom icicle-list-nth-parts-join-string " "
+  "*String joining candidate parts split by `icicle-list-use-nth-parts'.
+This has an effect on multi-completion candidates only, and only if
+the current command uses `icicle-list-use-nth-parts'.")
+
+;;;###autoload
 (defcustom icicle-mark-position-in-candidate 'input-end
   "*Position of mark when you cycle through completion candidates.
 This is the mark position in the minibuffer.
@@ -643,6 +670,13 @@ The value has the same form as a key-sequence arg to `define-key'.
 This is only used if `icicle-cycling-respects-completion-mode-flag' is
 non-nil."
   :type 'sexp :group 'Icicles-Key-Bindings)
+
+;;;###autoload
+(defcustom icicle-change-sort-order-completion-flag nil
+  "*Non-nil means `icicle-change-sort-order' uses completion, by default.
+Otherwise, it cycles among the possible sort orders.  You can override
+the behavior by using `C-u' with `icicle-change-sort-order'"
+  :type 'boolean :group 'Icicles-Completions-Display :group 'Icicles-Matching)
 
 ;;;###autoload
 (defcustom icicle-point-position-in-candidate 'root-end
@@ -768,8 +802,8 @@ easily read your minibuffer input."
             (face-background 'region)))) ; Use normal region background.
 
 ;;;###autoload
-(defcustom icicle-regions nil
-  "*List of regions (in any buffers).
+(defcustom icicle-region-alist nil
+  "*Alist of regions (in any buffers).
 Use commands `icicle-add-region' and `icicle-remove-region' to define
 this list.
 
@@ -793,7 +827,7 @@ used to name the region."
   :type 'integer :group 'Icicles-Miscellaneous)
 
 ;;;###autoload
-(defcustom icicle-reminder-prompt-flag 20
+(defcustom icicle-reminder-prompt-flag 7
   "*Whether to use `icicle-prompt-suffix' reminder in minibuffer prompt.
 Nil means never use the reminder.
 Non-nil means use the reminder, if space permits:
@@ -895,8 +929,9 @@ order in buffer *Completions*.  If the value is nil, then no sorting
 is done.
 
 When `icicle-cycle-into-subdirs-flag' is non-nil, you might want to
-use a function such as `icicle-sort-dirs-last' for this option, to
-prevent cycling into subdirectories depth first.
+use a function such as `icicle-dirs-last-p' for this option, to
+prevent cycling into subdirectories depth first.  Command
+`icicle-sort-by-directories-last' does that.
 
 You can toggle sorting at any time using command
 `icicle-toggle-sorting', bound to `C-,' in the minibuffer.
@@ -906,6 +941,20 @@ locally, for use in particular contexts.  In particular, you can bind
 this to nil in an Emacs-Lisp function, to inhibit sorting in that
 context."
   :type '(choice (const :tag "None" nil) function) :group 'Icicles-Completions-Display)
+
+(defcustom icicle-sort-functions-alist nil
+  "Alist of sort functions.
+You probably do not want to customize this option.  Instead, use macro
+`icicle-define-sort-command' to define a new sort function and add it
+to this alist.
+Each alist element has the form (SORT-ORDER . COMPARISON-FUNCTION).
+SORT-ORDER is a short string (or symbol) describing the sort order.
+ Examples: \"by date\", \"alphabetically\", \"directories first\".
+COMPARISON-FN is a function that compares two strings, returning
+ non-nil if and only if the first string sorts before the second."
+  ;; We don't use `alist' :type, because we want Emacs-20 compatibility.
+  :type '(repeat (cons (choice string symbol) (choice function nil)))
+  :group 'Icicles-Completions-Display :group 'Icicles-Matching)
 
 ;;;###autoload
 (defcustom icicle-buffer-configs

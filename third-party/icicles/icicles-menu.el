@@ -4,12 +4,12 @@
 ;; Description: Execute menu items as commands, with completion.
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 2005-2006, Drew Adams, all rights reserved.
+;; Copyright (C) 2005-2007, Drew Adams, all rights reserved.
 ;; Created: Fri Aug 12 17:18:02 2005
 ;; Version: 22.0
-;; Last-Updated: Fri Dec 22 14:45:36 2006 (-28800 Pacific Standard Time)
+;; Last-Updated: Fri Jan 19 21:11:03 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 356
+;;     Update #: 358
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-menu.el
 ;; Keywords: menu-bar, menu, command, help, abbrev, minibuffer, keys,
 ;;           completion, matching, local, internal, extensions,
@@ -327,7 +327,7 @@ See `icicle-get-a-menu-item-alist' for the structure."
                 (mapcar (lambda (map) (icicle-get-a-menu-item-alist (assq 'menu-bar map)))
                         (current-minor-mode-maps)))))
     (if nil;; icicle-sort-menu-bar-order-flag ; Not yet implemented.
-        (setq alist (sort alist))
+        (setq alist (sort alist SOME-PREDICATE))
       alist)))
 
 (defun icicle-get-a-menu-item-alist (keymap)

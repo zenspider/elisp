@@ -4,12 +4,12 @@
 ;; Description: Macros for Icicles
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 2005, Drew Adams, all rights reserved.
+;; Copyright (C) 1996-2007, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:24:28 2006
 ;; Version: 22.0
-;; Last-Updated: Sat Jan 06 15:17:34 2007 (-28800 Pacific Standard Time)
+;; Last-Updated: Fri Jan 19 21:13:05 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 156
+;;     Update #: 182
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-mac.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -29,7 +29,7 @@
 ;;  Macros defined here:
 ;;
 ;;    `icicle-define-add-to-alist-command', `icicle-define-command',
-;;    `icicle-define-file-command'.
+;;    `icicle-define-file-command', `icicle-define-sort-command'.
 ;;
 ;;  Functions defined here:
 ;;
@@ -39,12 +39,33 @@
 ;;
 ;;    `select-frame-set-input-focus'.
 ;;
+;;  You might also be interested in my library `imenu+.el', which
+;;  teaches the macros defined here to Imenu, so the functions defined
+;;  with those macros show up in Imenu menus.
+;;
+;;  I'v also included some commented-out code at the end, which you
+;;  might want to use in your init file (~/.emacs).  It provides
+;;  better indentation for the doc string when you use the macros here
+;;  in your code.
+;;
+;;(@> "Index")
+;;  (@> "Change log")
+;;  (@> "Macros")
+;;  (@> "Functions")
+
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change log:
 ;;
+;;(@* "Change log")
+;;
+;; 2007/01/15 dadams
+;;     Added: icicle-define-sort-command.
+;;     Updated font-lock-add-keywords.  Added lisp-indentation-hack (commented out).
 ;; 2007/01/06 dadams
 ;;     font-lock-add-keywords: 2 or 3, not 1 or 2, is the index after adding icicle-define-add-to-*.
+;;                             Use lax matching, so no error if no match.
 ;; 2007/01/01 dadams
 ;;     Added: icicle-define-add-to-alist-command.
 ;;     Removed compile-time require of icicles-var.el.
@@ -105,12 +126,12 @@
 ;; the function x-focus-frame is not known to be defined.
 
 (eval-when-compile (when (< emacs-major-version 20) (require 'cl))) ;; when, unless
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
  
+;;(@* "Macros")
 
-
-;;; Macros  ------------------------------------------------
+;;; Macros -----------------------------------------------------------
 
 (defmacro icicle-define-add-to-alist-command (command doc-string construct-item-fn alist-var
                                               &optional dont-save)
@@ -356,10 +377,38 @@ This is an Icicles command - see `icicle-mode'.")
         (error (icicle-try-switch-buffer orig-buff) ,undo-sexp
                (error "%s" (error-message-string act-on-choice))))
       ,last-sexp)))
+
+(defmacro icicle-define-sort-command (sort-order comparison-fn doc-string)
+  "Define a command to sort completions by SORT-ORDER.
+SORT-ORDER is a short string (or symbol) describing the sort order.
+ It is used after the phrase \"Sorting is now \".  Examples: \"by date\",
+ \"alphabetically\", \"directories first\", and \"previously used first\".
+
+The new command is named by replacing any spaces in SORT-ORDER with
+hyphens (`-') and then adding the prefix `icicle-sort-'.
+
+COMPARISON-FN is a function that compares two strings, returning
+ non-nil if and only if the first string sorts before the second.
+
+DOC-STRING is the doc string of the new command."
+  (unless (stringp sort-order) (setq sort-order (symbol-name sort-order)))         
+  (let ((command (intern (concat "icicle-sort-"
+                                 (replace-regexp-in-string "\\s-+" "-" sort-order)))))
+    `(progn
+      (setq icicle-sort-functions-alist (icicle-assoc-delete-all
+                                         ,sort-order icicle-sort-functions-alist))
+      (push (cons ,sort-order ',comparison-fn) icicle-sort-functions-alist)
+      (defun ,command ()
+        ,doc-string
+        (interactive)
+        (setq icicle-sort-function #',comparison-fn)
+        (message "Sorting is now %s" ,sort-order)
+        (icicle-update-completions)))))
+
  
+;;(@* "Functions")
 
-
-;;; Functions  ---------------------------------------------
+;;; Functions --------------------------------------------------------
 
 (defun icicle-try-switch-buffer (buffer)
   "Try to switch to BUFFER, first in same window, then in other window."
@@ -391,13 +440,34 @@ This is an Icicles command - see `icicle-mode'.")
 (font-lock-add-keywords
  'emacs-lisp-mode
  `((,(concat "(" (regexp-opt '("icicle-define-add-to-alist-command" "icicle-define-command"
-                               "icicle-define-file-command")
+                               "icicle-define-file-command" "icicle-define-sort-command")
                              t)
              ;; $$ "\\s-+\\(\\sw\\(\\sw\\|\\s_\\)+\\)")
              "\\>[ \t'\(]*\\(\\sw+\\)?")
     (1 font-lock-keyword-face)
     ;; Index (2 or 3) depends on whether or not shy groups are supported.
-    ,(list (if (string-match "\\(?:\\)" "") 2 3) font-lock-function-name-face))))
+    ,(list (if (string-match "\\(?:\\)" "") 2 3) font-lock-function-name-face nil t))))
+
+;; This is commented out, but you might also want to use it or something similar.  I use it in
+;; my init file.  The `icicle-define-*' lines cause doc strings to be indented correctly.
+;; (defun lisp-indentation-hack ()
+;;   "Better Lisp indenting.  Use in Lisp mode hooks
+;; such as `lisp-mode-hook', `emacs-lisp-mode-hook', and
+;; `lisp-interaction-mode-hook'."
+;;   (unless (assoc "cl-indent" load-history) (load "cl-indent" nil t))
+;;   (set (make-local-variable 'lisp-indent-function) 'common-lisp-indent-function)
+;;   (setq lisp-indent-maximum-backtracking 10)
+;;   (put 'define-derived-mode 'common-lisp-indent-function '(4 4 4 2 &body))
+;;   (put 'if 'common-lisp-indent-function '(nil nil &body))
+;;   (put 'icicle-define-command 'common-lisp-indent-function '(4 &body))
+;;   (put 'icicle-define-file-command 'common-lisp-indent-function '(4 &body))
+;;   (put 'icicle-define-sort-command 'common-lisp-indent-function '(4 4 &body))
+;;   (put 'icicle-define-add-to-alist-command 'common-lisp-indent-function '(4 &body)))
+
+;; (add-hook 'emacs-lisp-mode-hook 'lisp-indentation-hack)
+;; (add-hook 'lisp-mode-hook             'lisp-indentation-hack)
+;; (add-hook 'lisp-interaction-mode-hook 'lisp-indentation-hack)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

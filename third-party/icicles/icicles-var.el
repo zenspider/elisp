@@ -4,12 +4,12 @@
 ;; Description: Internal variables for Icicles
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 1996-2006, Drew Adams, all rights reserved.
+;; Copyright (C) 1996-2007, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:23:26 2006
 ;; Version: 22.0
-;; Last-Updated: Fri Jan 05 16:31:15 2007 (-28800 Pacific Standard Time)
+;; Last-Updated: Fri Jan 19 21:12:04 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 307
+;;     Update #: 371
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-var.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -34,11 +34,11 @@
 ;;    `frame-name-history', `icicle-bookmark-history',
 ;;    `icicle-buffer-config-history', `icicle-candidate-action-fn',
 ;;    `icicle-candidate-entry-fn', `icicle-candidate-help-fn',
-;;    `icicle-candidate-nb', `icicle-candidates-alist',
-;;    `icicle-cmd-calling-for-completion', `icicle-color-history',
-;;    `icicle-color-theme-history', `icicle-common-match-string',
-;;    `icicle-complete-input-overlay', `icicle-completion-candidates'
-;;    `icicle-completion-help-string',
+;;    `icicle-candidate-nb', `icicle-candidate-properties-alist',
+;;    `icicle-candidates-alist', `icicle-cmd-calling-for-completion',
+;;    `icicle-color-history', `icicle-color-theme-history',
+;;    `icicle-common-match-string', `icicle-complete-input-overlay',
+;;    `icicle-completion-candidates' `icicle-completion-help-string',
 ;;    `icicle-completion-set-history',
 ;;    `icicle-current-completion-candidate-overlay',
 ;;    `icicle-current-completion-mode', `icicle-current-input',
@@ -55,12 +55,15 @@
 ;;    `icicle-last-completion-candidate',
 ;;    `icicle-last-completion-command', `icicle-last-input',
 ;;    `icicle-last-sort-function', `icicle-last-transform-function',
-;;    `icicle-menu-items-alist', `icicle-must-match-regexp',
-;;    `icicle-must-not-match-regexp', `icicle-must-pass-predicate',
+;;    `icicle-list-use-nth-parts', `icicle-menu-items-alist',
+;;    `icicle-menu-map', `icicle-minor-mode-map-entry',
+;;    `icicle-must-match-regexp', `icicle-must-not-match-regexp',
+;;    `icicle-must-pass-predicate',
 ;;    `icicle-nb-of-other-cycle-candidates',
 ;;    `icicle-pre-minibuffer-buffer', `icicle-post-command-hook',
 ;;    `icicle-pre-command-hook', `icicle-prompt',
 ;;    `icicle-prompt-suffix', `icicle-re-no-dot',
+;;    `icicle-reverse-sort-p',
 ;;    `icicle-saved-candidates-variables-obarray',
 ;;    `icicle-saved-completion-candidate',
 ;;    `icicle-saved-completion-candidates',
@@ -77,10 +80,30 @@
 ;;    `icicle-thing-at-pt-fns-pointer',
 ;;    `icicle-universal-argument-map', `icicle-variable-history'.
 ;;
+;;(@> "Index")
+;;  (@> "Change log")
+;;  (@> "Internal variables (alphabetical)")
+
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change log:
 ;;
+;;(@* "Change log")
+;;
+;; 2007/01/19 dadams
+;;     Added: icicle-candidate-properties-alist.
+;; 2007/01/15 dadams
+;;     Added: icicle-reverse-sort-p.
+;; 2007/01/14 dadams
+;;     icicle-list-use-nth-parts: Updated doc string for new icicle-list-nth-parts-join-string.
+;; 2007/01/12 dadams
+;;     Added: icicle-list-use-nth-parts.
+;;     Removed icicle-saved-overriding-local-map.
+;; 2007/01/11 dadams
+;;     Added: icicle-menu-map, icicle-minor-mode-map-entry.
+;; 2007/01/10 dadams
+;;     Added: icicle-saved-overriding-local-map.
 ;; 2007/01/05 dadams
 ;;     icicle-initial-value: Updated doc string to mention you can bind it.
 ;; 2006/12/25 dadams
@@ -185,9 +208,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+ 
+;;(@* "Internal variables (alphabetical)")
 
-
-;;; Internal variables (alphabetical) ----------------------
+;;; Internal variables (alphabetical) --------------------------------
 
 ;; These two are defined here so they won't raise an error in `font-lock-add-keywords'.
 (defvar font-lock-function-name-face 'font-lock-function-name-face ; Defined in `font-lock.el'.
@@ -338,7 +362,53 @@ RING-ITEM is an item in `kmacro-ring' or `(kmacro-ring-head)'.")
 (defvar icicle-last-transform-function (or icicle-transform-function 'icicle-remove-duplicates)
   "Local copy of `icicle-transform-function', so we can restore it.")
 
+(defvar icicle-list-use-nth-parts nil
+  "List of indexes of multi-completion pieces to use.
+This is not an internal variable.  You can bind this in your own Lisp
+code to affect completion behavior.
+
+An empty list means use the entire multi-completion.  Otherwise,
+concatenate, in order, the Nth parts of the multi-completion, where N
+is each of the (one-based) indexes, in turn.  Any index larger than
+the actual number of parts in the multi-completion means use the last
+part.
+
+For example: If the value is (1), then use only the first part of the
+multi-completion as the completion candidate. If the value is (2 1),
+then use as candidate the second part followed by the first part, the
+two parts being joined by option `icicle-list-nth-parts-join-string'.
+If the value is (1 99) and the multi-completion has fewer than 99
+parts, then use the first and last parts, joined by
+`icicle-list-nth-parts-join-string'.  If the value is (2 1 2), then
+use the second part, first part, and second part again - you can use a
+given part any number of times.")
+
 (defvar icicle-menu-items-alist nil)    ; Defined in `icicles-menu.el'.
+
+(defvar icicle-menu-map nil "Icicles menu-bar menu keymap.")
+
+(defvar icicle-minor-mode-map-entry nil "Icicles mode entry in `minor-mode-map-alist'.")
+
+(defvar icicle-candidate-properties-alist nil
+  "Alist of multi-completion indexes and associated text properties.
+The text properties apply to candidates in *Completions*.  Each alist
+entry has the form (NTH PROPERTIES) or (NTH PROPERTIES JOIN-TOO).
+
+NTH is a whole-number index identifying the multi-completion part.
+
+PROPERTIES is a list of text properties to apply to the part.
+
+JOIN-TOO non-nil means to also apply PROPERTIES to the join string
+that follows the part.
+
+Example alist:
+
+ ((3 (face 'underline))
+  (2 (invisible t) t))
+
+The first entry underlines the third multi-completion part.
+The second entry makes both the second part and the join string that
+follows it invisible.")
 
 (defvar icicle-must-match-regexp nil
   "Nil or a regexp that completion candidates must match.
@@ -384,6 +454,9 @@ Intended to remind you how to obtain help on input completion.")
 
 (defvar icicle-re-no-dot "^\\([^.]\\|\\.\\([^.]\\|\\..\\)\\).*"
   "Regexp that matches anything except `.' and `..'.")
+
+(defvar icicle-reverse-sort-p nil
+  "Non-nil means that candidates are being sorted in the reverse order.")
 
 (defvar icicle-saved-candidates-variables-obarray (make-vector 100 0)
   "Obarray of variables you have saved sets of completion candidates in.

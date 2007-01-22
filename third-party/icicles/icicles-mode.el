@@ -4,12 +4,12 @@
 ;; Description: Icicle Mode definition for Icicles
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 1996-2006, Drew Adams, all rights reserved.
+;; Copyright (C) 1996-2007, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 10:21:10 2006
 ;; Version: 22.0
-;; Last-Updated: Sat Jan 06 14:11:46 2007 (-28800 Pacific Standard Time)
+;; Last-Updated: Sat Jan 20 16:19:41 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 1153
+;;     Update #: 1761
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-mode.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -37,8 +37,10 @@
 ;;
 ;;    `icicle-activate-mark', `icicle-bind-completion-keys',
 ;;    `icicle-bind-isearch-keys', `icicle-cancel-Help-redirection',
-;;    `icicle-completing-p', `icicle-define-icicle-mode-map',
+;;    `icicle-completing-p', `icicle-define-icicle-maps',
 ;;    `icicle-minibuffer-setup', `icicle-rebind-completion-maps',
+;;    `icicle-rebind-global', `icicle-rebind-non-completion-keys',
+;;    `icicle-restore-non-completion-keys',
 ;;    `icicle-redefine-standard-commands',
 ;;    `icicle-redefine-standard-options',
 ;;    `icicle-redefine-std-completion-fns', `icicle-remap',
@@ -68,10 +70,54 @@
 ;;     Depending on `icicle-init-value-flag', select minibuffer
 ;;     contents.
 ;;
+;;(@> "Index")
+;;  (@> "Change log")
+;;  (@> "User Options (alphabetical)")
+;;  (@> "Internal variables (alphabetical)")
+;;  (@> "Icicle mode command")
+;;  (@> "Other Icicles functions that define Icicle mode")
+
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change log:
 ;;
+;;(@* "Change log")
+;;
+;; 2007/01/20 dadams
+;;     icicle-(redefine|restore)-std-completion-fns: Added icicle-display-completion-list.
+;; 2007/01/15 dadams
+;;     Moved C-, binding from icicle-toggle-sorting to icicle-change-sort-order.
+;;     Moved icicle-toggle-alternative-sorting from M-, to C-M-,.
+;;     Bound icicle-change-alternative-sort-order to M-,.
+;;     Updated list of options in icicle-completion-help-string.
+;; 2007/01/12 dadams
+;;     Removed: icicle-override-maps-w-minibuffer-map, icicle-restore-overriding-local-map.
+;;              Not used in minibuffer hooks.
+;;     Removed [pause] bindings from minibuffer maps.
+;;     Removed remap of yank in minibuffer maps.
+;;     No longer bind icicle-remove-Completions-window in minibuffer maps.
+;; 2007/01/11 dadams
+;;     Renamed: icicle-define-icicle-mode-map to icicle-define-icicle-maps.
+;;     icicle-define-icicle-maps: Use icicle-menu-map.  Don't recreate it.
+;;     Bound [pause] to icicle-switch-to/from-minibuffer in all minibuffer maps.
+;; 2007/01/10 dadams
+;;     Added: icicle-override-maps-w-minibuffer-map, icicle-restore-overriding-local-map,
+;;            icicle-(rebind|restore)-non-completion-keys. 
+;;     Added: icicle-rebind-global: This used to be called icicle-remap.
+;;     icicle-(remap|unmap): Different purpose and use now.  Redefined to use remapping when
+;;        available (as was done before for self-insert-command).
+;;     icicle-mode:
+;;       Add, remove as minibuffer setup and exit hooks: icicle-override-maps-w-minibuffer-map,
+;;                                                       icicle-restore-overriding-local-map.
+;;       Call icicle-(rebind|restore)-non-completion-keys.
+;;     icicle-define-icicle-mode-map:
+;;       Use icicle-remap where previously used substitute-key-definition for top-level commands.
+;;       Moved to icicle-(rebind|restore)-non-completion-keys:
+;;         binding of Info commands in Info map and S-tab in all keymaps (to *-rebind-* only).
+;;     icicle-(bind|restore)-completion-keys: Use new icicle-(remap|unmap) where possible.
+;;       Use icicle-rebind-global and substitute-key-definition for keys defined in vanilla 
+;;         completion maps.
 ;; 2007/01/06 dadams
 ;;     icicle-mode: Update doc and bind icicle-toggle-~-for-home-dir to M-~.
 ;; 2007/01/01 dadams
@@ -269,8 +315,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+ 
+;;(@* "User Options (alphabetical)")
 
-;;; User Options (alphabetical)
+;;; User Options (alphabetical) --------------------------------------
 
 ;; Emacs 20 only
 (unless (fboundp 'define-minor-mode)
@@ -287,17 +335,19 @@ use either \\[customize] or command `icy-mode' (aka `icicle-mode')."
   "*Functions run after entering and exiting Icicle mode."
   :type 'hook :group 'Icicles-Miscellaneous)
 
+ 
+;;(@* "Internal variables (alphabetical)")
 
-;;; Internal variables (alphabetical) ----------------------
+;;; Internal variables (alphabetical) --------------------------------
 
 (defvar icicle-mode-map nil
   "Keymap for Icicle mode.  These are top-level key bindings.
 See also `icicle-rebind-completion-maps' for minibuffer bindings.")
 
-
-
  
-;;; Icicle mode command ------------------------------------
+;;(@* "Icicle mode command")
+
+;;; Icicle mode command ----------------------------------------------
 
 (defalias 'icy-mode 'icicle-mode)
 
@@ -344,6 +394,8 @@ The following top-level commands are also available in Icicle mode:
 `icicle-frame-bg'                      - Change background of frame
 `icicle-frame-fg'                      - Change foreground of frame
 `icicle-fundoc'                        - Show function description(s)
+`icicle-goto-global-marker'            - Go to a global marker
+`icicle-goto-marker'                   - Go to a marker in this buffer
 `icicle-imenu'                         - Navigate among Imenu entries
 `icicle-Info-goto-mode'                - Multi-cmd `Info-goto-node'
 `icicle-Info-index'                    - Multi-command `Info-index'
@@ -389,7 +441,8 @@ For more information, use `\\<minibuffer-local-completion-map>\\[icicle-completi
 when the minibuffer is active."
             :global t :group 'Icicles-Miscellaneous :lighter " Icy" :init-value nil
             (cond (icicle-mode
-                   (icicle-define-icicle-mode-map)
+                   (icicle-define-icicle-maps)
+                   (icicle-rebind-non-completion-keys)
                    (add-hook 'minibuffer-setup-hook    'icicle-minibuffer-setup)
                    (add-hook 'minibuffer-exit-hook     'icicle-cancel-Help-redirection)
                    (add-hook 'minibuffer-exit-hook     'icicle-restore-region-face)
@@ -408,6 +461,7 @@ when the minibuffer is active."
                      (minibuffer-indicate-depth-mode 99)))
                   (t
                    (makunbound 'icicle-mode-map)
+                   (icicle-restore-non-completion-keys)
                    (remove-hook 'minibuffer-setup-hook    'icicle-minibuffer-setup)
                    (remove-hook 'minibuffer-exit-hook     'icicle-cancel-Help-redirection)
                    (remove-hook 'minibuffer-exit-hook     'icicle-restore-region-face)
@@ -468,6 +522,8 @@ The following top-level commands are also available in Icicle mode:
 `icicle-frame-bg'                      - Change background of frame
 `icicle-frame-fg'                      - Change foreground of frame
 `icicle-fundoc'                        - Show function description(s)
+`icicle-goto-global-marker'            - Go to a global marker
+`icicle-goto-marker'                   - Go to a marker in this buffer
 `icicle-imenu'                         - Navigate among Imenu entries
 `icicle-Info-goto-mode'                - Multi-cmd `Info-goto-node'
 `icicle-Info-index'                    - Multi-command `Info-index'
@@ -515,7 +571,8 @@ when the minibuffer is active."
     (setq icicle-mode (if arg (> (prefix-numeric-value arg) 0) (not icicle-mode)))
     (icicle-rebind-completion-maps icicle-mode)
     (cond (icicle-mode
-           (icicle-define-icicle-mode-map)
+           (icicle-define-icicle-maps)
+           (icicle-rebind-non-completion-keys)
            ;; This is not really necessary after the first time - no great loss.
            (add-hook 'minibuffer-setup-hook    'icicle-minibuffer-setup)
            (add-hook 'minibuffer-exit-hook     'icicle-cancel-Help-redirection)
@@ -534,6 +591,7 @@ when the minibuffer is active."
            (message "Icicle mode is now ON"))
           (t
            (makunbound 'icicle-mode-map)
+           (icicle-restore-non-completion-keys)
            (remove-hook 'minibuffer-setup-hook    'icicle-minibuffer-setup)
            (remove-hook 'minibuffer-exit-hook     'icicle-cancel-Help-redirection)
            (remove-hook 'minibuffer-exit-hook     'icicle-restore-region-face)
@@ -550,21 +608,22 @@ when the minibuffer is active."
            (message "Icicle mode is now OFF"))))
   (add-to-list 'minor-mode-alist '(icicle-mode " Icy")))
 
-(defun icicle-define-icicle-mode-map ()
-  "Define `icicle-mode-map'."
-  (let ((map (make-sparse-keymap "Icicles")))
-    (assq-delete-all 'icicle-mode minor-mode-map-alist) ; Remove it, so we can create it anew.
-    (setq icicle-mode-map (make-sparse-keymap))
-    (define-key icicle-mode-map [menu-bar] (make-sparse-keymap))
-    (define-key icicle-mode-map [menu-bar icicles] (cons "Icicles" map))
-    (define-key map [icicle-mode] '("Turn Off Icicle Mode" . icicle-mode))
-    (define-key map [icicle-abort] '("Cancel Minibuffer" . icicle-abort-minibuffer-input))
+(defun icicle-define-icicle-maps ()
+  "Define `icicle-mode-map' and `icicle-menu-map'."
+  (setq icicle-mode-map (make-sparse-keymap)) ; Recreate it each time, to capture latest bindings.
+
+  ;; Define Icicles menu-bar menu.  Create it only once.  Sacrifice latest bindings for speed.
+  (unless icicle-menu-map
+    (setq icicle-menu-map (make-sparse-keymap "Icicles"))
+    (define-key icicle-menu-map [icicle-mode] '("Turn Off Icicle Mode" . icicle-mode))
+    (define-key icicle-menu-map [icicle-abort]
+      '("Cancel Minibuffer" . icicle-abort-minibuffer-input))
     (put 'icicle-abort 'menu-enable '(and icicle-mode (active-minibuffer-window)))
-    (define-key map [icicle-report-bug] '("Send Bug Report" . icicle-send-bug-report))
-    (define-key map [icicle-customize-icicles-group]
+    (define-key icicle-menu-map [icicle-report-bug] '("Send Bug Report" . icicle-send-bug-report))
+    (define-key icicle-menu-map [icicle-customize-icicles-group]
       '("Customize Icicles" . icicle-customize-icicles-group))
-    (define-key map [icicle-help] '("Help" . icicle-completion-help))
-    (define-key map [icicle-separator-last] '("--"))
+    (define-key icicle-menu-map [icicle-help] '("Help" . icicle-completion-help))
+    (define-key icicle-menu-map [icicle-separator-last] '("--"))
 
     (cond ((and (not icicle-touche-pas-aux-menus-flag)
                 (boundp 'menu-bar-frames-menu)) ; Defined in `menu-bar+.el'.
@@ -575,12 +634,12 @@ when the minibuffer is active."
            (define-key menu-bar-frames-menu [icicle-frame-bg]
              '("[Icy] + Change Background..." . icicle-frame-bg)))
           (t
-           (define-key map [icicle-font] '("+ Change Font of Frame..." . icicle-font))
-           (define-key map [icicle-frame-fg]
+           (define-key icicle-menu-map [icicle-font] '("+ Change Font of Frame..." . icicle-font))
+           (define-key icicle-menu-map [icicle-frame-fg]
              '("+ Change Foreground of Frame..." . icicle-frame-fg))
-           (define-key map [icicle-frame-bg]
+           (define-key icicle-menu-map [icicle-frame-bg]
              '("+ Change Background of Frame..." . icicle-frame-bg))
-           (define-key map [icicle-separator-frame] '("--"))))
+           (define-key icicle-menu-map [icicle-separator-frame] '("--"))))
     (put 'icicle-font 'menu-enable
          '(and icicle-mode
            (not (window-minibuffer-p (frame-selected-window menu-updating-frame)))))
@@ -603,49 +662,54 @@ when the minibuffer is active."
            (define-key menu-bar-describe-menu [icicle-vardoc]
              '("[Icy] + Variable with Name, Doc..." . icicle-vardoc)))
           (t
-           (define-key map [icicle-plist]
+           (define-key icicle-menu-map [icicle-plist]
              '("+ Symbol with Property List..." . icicle-plist))
-           (define-key map [icicle-doc]
+           (define-key icicle-menu-map [icicle-doc]
              '("+ Doc of Fun, Var, or Face..." . icicle-doc))
-           (define-key map [icicle-fundoc]
+           (define-key icicle-menu-map [icicle-fundoc]
              '("+ Describe Function with Name, Doc..." . icicle-fundoc))
-           (define-key map [icicle-vardoc]
+           (define-key icicle-menu-map [icicle-vardoc]
              '("+ Describe Variable with Name, Doc..." . icicle-vardoc))
-           (define-key map [icicle-separator-doc] '("--"))))
+           (define-key icicle-menu-map [icicle-separator-doc] '("--"))))
 
-    (define-key map [icicle-map] '("+ Apply Function to Alist Items..." . icicle-map))
-    (define-key map [icicle-save-string-to-variable]
+    (define-key icicle-menu-map [icicle-map] '("+ Apply Function to Alist Items..." . icicle-map))
+    (define-key icicle-menu-map [icicle-save-string-to-variable]
       '("Save String to Variable..." . icicle-save-string-to-variable))
-    (define-key map [icicle-color-theme] '("+ Choose Color Theme..." . icicle-color-theme))
+    (define-key icicle-menu-map [icicle-color-theme]
+      '("+ Choose Color Theme..." . icicle-color-theme))
     (put 'icicle-color-theme 'menu-enable
-         '(and icicle-mode
-           (not (window-minibuffer-p (frame-selected-window menu-updating-frame)))))
-    (define-key map [icicle-remove-saved-completion-set]
+         '(and icicle-mode (not (window-minibuffer-p (frame-selected-window
+                                                      menu-updating-frame)))))
+    (define-key icicle-menu-map [icicle-remove-saved-completion-set]
       '("+ Remove a Saved Completion Set..." . icicle-remove-saved-completion-set))
     (put 'icicle-remove-saved-completion-set 'menu-enable
          '(and icicle-mode icicle-saved-completion-sets))
-    (define-key map [icicle-add/update-saved-completion-set]
+    (define-key icicle-menu-map [icicle-add/update-saved-completion-set]
       '("Add/Update a Saved Completion Set..." . icicle-add/update-saved-completion-set))
     (when (fboundp 'icicle-kmacro)
-      (define-key map [icicle-kmacro] '("+ Execute Nth Keyboard Macro..." . icicle-kmacro))
+      (define-key icicle-menu-map [icicle-kmacro]
+        '("+ Execute Nth Keyboard Macro..." . icicle-kmacro))
       (put 'icicle-kmacro 'menu-enable'(and icicle-mode (or (kmacro-ring-head) kmacro-ring))))
-    (define-key map [icicle-execute-named-keyboard-macro]
+    (define-key icicle-menu-map [icicle-execute-named-keyboard-macro]
       '("+ Execute Named Keyboard Macro..." . icicle-execute-named-keyboard-macro))
-    (define-key map [icicle-imenu] '("+ Icicle Imenu..." . icicle-imenu))
-    (define-key map [icicle-goto-global-marker]
+    (define-key icicle-menu-map [icicle-imenu] '("+ Imenu..." . icicle-imenu))
+    (define-key icicle-menu-map [icicle-goto-global-marker]
       '("+ Go To Global Mark..." . icicle-goto-global-marker))
-    (define-key map [icicle-goto-marker] '("+ Go To Mark..." . icicle-goto-marker))
+    (define-key icicle-menu-map [icicle-goto-marker] '("+ Go To Mark..." . icicle-goto-marker))
     (put 'icicle-goto-global-marker 'menu-enable
          '(and icicle-mode (consp (icicle-markers global-mark-ring))))
     (put 'icicle-goto-marker 'menu-enable '(and icicle-mode (consp (icicle-markers mark-ring))))
-    (define-key map [icicle-separator-misc] '("--"))
+    (define-key icicle-menu-map [icicle-separator-misc] '("--"))
 
-    (define-key map [icicle-remove-region]
+    (define-key icicle-menu-map [icicle-remove-region]
       '("+ Remove a Region from List..." . icicle-remove-region))
-    (define-key map [icicle-add-region] '("Add Current Region to List" . icicle-add-region))
-    (define-key map [icicle-search-region] '("+ Search a Region..." . icicle-search-region))
-    (define-key map [icicle-select-region] '("+ Choose a Region..." . icicle-select-region))
-    (define-key map [icicle-separator-region] '("--"))
+    (define-key icicle-menu-map [icicle-add-region]
+      '("Add Current Region to List" . icicle-add-region))
+    (define-key icicle-menu-map [icicle-search-region]
+      '("+ Search a Region..." . icicle-search-region))
+    (define-key icicle-menu-map [icicle-select-region]
+      '("+ Choose a Region..." . icicle-select-region))
+    (define-key icicle-menu-map [icicle-separator-region] '("--"))
     (put 'icicle-remove-region 'menu-enable '(and icicle-mode icicle-regions))
     (put 'icicle-add-region 'menu-enable '(and icicle-mode mark-active))
     (put 'icicle-search-region 'menu-enable '(and icicle-mode icicle-regions))
@@ -673,24 +737,25 @@ when the minibuffer is active."
            (define-key menu-bar-apropos-menu [icicle-apropos-command]
              '("[Icy] Commands..." . icicle-apropos-command)))
           (t
-           (define-key map [icicle-apropos-zippy] '("Apropos Zippy..." . icicle-apropos-zippy))
+           (define-key icicle-menu-map [icicle-apropos-zippy]
+             '("Apropos Zippy..." . icicle-apropos-zippy))
            (cond ((fboundp 'apropos-option)
-                  (define-key map [icicle-apropos]
+                  (define-key icicle-menu-map [icicle-apropos]
                     '("Apropos..." . icicle-apropos))
-                  (define-key map [icicle-apropos-function]
+                  (define-key icicle-menu-map [icicle-apropos-function]
                     '("Apropos Functions..." . icicle-apropos-function))
-                  (define-key map [icicle-apropos-variable]
+                  (define-key icicle-menu-map [icicle-apropos-variable]
                     '("Apropos Variables..." . icicle-apropos-variable))
-                  (define-key map [icicle-apropos-option]
+                  (define-key icicle-menu-map [icicle-apropos-option]
                     '("Apropos Options..." . icicle-apropos-option))
-                  (define-key map [icicle-apropos-command]
+                  (define-key icicle-menu-map [icicle-apropos-command]
                     '("Apropos Commands..." . icicle-apropos-command)))
                  (t
-                  (define-key map [icicle-apropos-variable]
+                  (define-key icicle-menu-map [icicle-apropos-variable]
                     '("Apropos Variables..." . icicle-apropos-variable))
-                  (define-key map [icicle-apropos-command]
+                  (define-key icicle-menu-map [icicle-apropos-command]
                     '("Apropos Commands..." . icicle-apropos-command))))
-           (define-key map [icicle-separator-apropos] '("--"))))
+           (define-key icicle-menu-map [icicle-separator-apropos] '("--"))))
 
     (cond ((and (not icicle-touche-pas-aux-menus-flag)
                 (boundp 'menu-bar-options-menu)) ; Use Options menu, if available.
@@ -716,27 +781,27 @@ when the minibuffer is active."
            (define-key menu-bar-options-menu [icicle-toggle-ignore]
              '("[Icy] Toggle Ignored File Extensions" . icicle-toggle-ignored-extensions)))
           (t
-           (define-key map [icicle-set-option-to-t]
+           (define-key icicle-menu-map [icicle-set-option-to-t]
              '("+ Turn On Any Option..." . icicle-set-option-to-t))
-           (define-key map [icicle-reset-option-to-nil]
+           (define-key icicle-menu-map [icicle-reset-option-to-nil]
              '("+ Turn Off Any Option..." . icicle-reset-option-to-nil))
-           (define-key map [icicle-toggle-option]
+           (define-key icicle-menu-map [icicle-toggle-option]
              '("+ Toggle Any Option..." . icicle-toggle-option))
-           (define-key map [icicle-toggle-transforming]
+           (define-key icicle-menu-map [icicle-toggle-transforming]
              '("Toggle Duplicate Removal" . icicle-toggle-transforming))
-           (define-key map [icicle-toggle-sorting]
+           (define-key icicle-menu-map [icicle-toggle-sorting]
              '("Toggle Completion Sorting" . icicle-toggle-sorting))
-           (define-key map [icicle-toggle-search-cleanup]
+           (define-key icicle-menu-map [icicle-toggle-search-cleanup]
              '("Toggle Removal of Search Highlighting" . icicle-toggle-search-cleanup))
-           (define-key map [icicle-toggle-regexp-quote]
+           (define-key icicle-menu-map [icicle-toggle-regexp-quote]
              '("Toggle Escaping Special Chars" . icicle-toggle-regexp-quote))
-           (define-key map [icicle-toggle-incremental-completion]
+           (define-key icicle-menu-map [icicle-toggle-incremental-completion]
              '("Toggle Incremental Completion" . icicle-incremental-completion))
-           (define-key map [icicle-toggle-ignore]
+           (define-key icicle-menu-map [icicle-toggle-ignore]
              '("Toggle Ignoring Space Prefix" . icicle-toggle-ignored-space-prefix))
-           (define-key map [icicle-toggle-ignore]
+           (define-key icicle-menu-map [icicle-toggle-ignore]
              '("Toggle Ignored File Extensions" . icicle-toggle-ignored-extensions))
-           (define-key map [icicle-separator-toggle] '("--"))))
+           (define-key icicle-menu-map [icicle-separator-toggle] '("--"))))
 
     (cond ((and (not icicle-touche-pas-aux-menus-flag)
                 (boundp 'menu-bar-custom-menu)) ; Use Customize menu, if available.
@@ -750,14 +815,14 @@ when the minibuffer is active."
            (define-key menu-bar-custom-menu [icicle-customize-apropos]
              '("[Icy] Settings Matching Regexp..." . icicle-customize-apropos)))
           (t
-           (define-key map [icicle-customize-separator] '("--"))
-           (define-key map [icicle-customize-apropos-groups]
+           (define-key icicle-menu-map [icicle-customize-separator] '("--"))
+           (define-key icicle-menu-map [icicle-customize-apropos-groups]
              '("Groups Matching Regexp..." . icicle-customize-apropos-groups))
-           (define-key map [icicle-customize-apropos-faces]
+           (define-key icicle-menu-map [icicle-customize-apropos-faces]
              '("Faces Matching Regexp..." . icicle-customize-apropos-faces))
-           (define-key map [icicle-customize-apropos-options]
+           (define-key icicle-menu-map [icicle-customize-apropos-options]
              '("Options Matching Regexp..." . icicle-customize-apropos-options))
-           (define-key map [icicle-customize-apropos]
+           (define-key icicle-menu-map [icicle-customize-apropos]
              '("Settings Matching Regexp..." . icicle-customize-apropos))))
 
     (cond ((and (not icicle-touche-pas-aux-menus-flag)
@@ -768,10 +833,10 @@ when the minibuffer is active."
            (define-key Info-mode-menu [icicle-Info-index]
              '("[Icy] + Look Up in Index..." . icicle-Info-index)))
           (t
-           (define-key map [icicle-Info-separator] '("--"))
-           (define-key map [icicle-Info-goto-node]
+           (define-key icicle-menu-map [icicle-Info-separator] '("--"))
+           (define-key icicle-menu-map [icicle-Info-goto-node]
              '("+ Go to Node..." . icicle-Info-goto-node))
-           (define-key map [icicle-Info-index]
+           (define-key icicle-menu-map [icicle-Info-index]
              '("+ Look Up in Index..." . icicle-Info-index))))
 
     (cond ((and (not icicle-touche-pas-aux-menus-flag)
@@ -784,12 +849,13 @@ when the minibuffer is active."
            (define-key menu-bar-edit-menu [icicle-insert-kill]
              '("[Icy] + Paste Copied Text..." . icicle-insert-kill)))
           (t
-           (define-key map [icicle-edit-separator] '("--"))
-           (define-key map [icicle-complete-thesaurus-entry]
+           (define-key icicle-menu-map [icicle-edit-separator] '("--"))
+           (define-key icicle-menu-map [icicle-complete-thesaurus-entry]
              '("Complete with Thesaurus..." . icicle-complete-thesaurus-entry))
-           (define-key map [icicle-insert-thesaurus-entry]
+           (define-key icicle-menu-map [icicle-insert-thesaurus-entry]
              '("+ Insert Thesaurus Entry..." . icicle-insert-thesaurus-entry))
-           (define-key map [icicle-insert-kill]'("+ Paste Copied Text..." . icicle-insert-kill))))
+           (define-key icicle-menu-map [icicle-insert-kill]
+             '("+ Paste Copied Text..." . icicle-insert-kill))))
     (put 'icicle-complete-thesaurus-entry 'menu-enable
          '(and icicle-mode (not buffer-read-only) (boundp 'synonyms-obarray)))
     (put 'icicle-insert-thesaurus-entry 'menu-enable
@@ -824,26 +890,28 @@ when the minibuffer is active."
            (define-key menu-bar-file-menu [icicle-find-file]
              '("[Icy] + Open File or Directory..." . icicle-find-file)))
           (t
-           (define-key map [icicle-kill-buffer] '("+ Kill Buffer..." . icicle-kill-buffer))
-           (define-key map [icicle-delete-file] '("+ Delete File..." . icicle-delete-file))
+           (define-key icicle-menu-map [icicle-kill-buffer]
+             '("+ Kill Buffer..." . icicle-kill-buffer))
+           (define-key icicle-menu-map [icicle-delete-file]
+             '("+ Delete File..." . icicle-delete-file))
            (when (condition-case nil (require 'recentf) (error nil))
-             (define-key map [icicle-recent-file-other-window]
+             (define-key icicle-menu-map [icicle-recent-file-other-window]
                '("+ Open Recent File (Other Window)..." . icicle-recent-file-other-window))
-             (define-key map [icicle-recent-file]
+             (define-key icicle-menu-map [icicle-recent-file]
                '("+ Open Recent File..." . icicle-recent-file)))
-           (define-key map [icicle-dired-saved-file-candidates-other-window]
+           (define-key icicle-menu-map [icicle-dired-saved-file-candidates-other-window]
              '("[Icy] Dired Saved Candidates (Other Window)..." .
                icicle-dired-saved-file-candidates-other-window))
-           (define-key map [icicle-dired-saved-file-candidates]
+           (define-key icicle-menu-map [icicle-dired-saved-file-candidates]
              '("[Icy] Dired Saved Candidates..." .
                icicle-dired-saved-file-candidates))
-           (define-key map [icicle-locate-file-other-window]
+           (define-key icicle-menu-map [icicle-locate-file-other-window]
              '("+ Open File under Directory (Other Window)..." . icicle-locate-file-other-window))
-           (define-key map [icicle-locate-file]
+           (define-key icicle-menu-map [icicle-locate-file]
              '("+ Open File under Directory..." . icicle-locate-file))
-           (define-key map [icicle-find-file-other-window]
+           (define-key icicle-menu-map [icicle-find-file-other-window]
              '("+ Open File or Directory (Other Window)..." . icicle-find-file-other-window))
-           (define-key map [icicle-find-file]
+           (define-key icicle-menu-map [icicle-find-file]
              '("+ Open File or Directory ..." . icicle-find-file))))
     (put 'icicle-delete-file 'menu-enable
          '(and icicle-mode
@@ -867,40 +935,41 @@ when the minibuffer is active."
     (put 'icicle-dired-saved-file-candidates-other-window 'menu-enable
          '(and icicle-mode icicle-saved-completion-candidates
            (not (window-minibuffer-p (frame-selected-window menu-updating-frame)))))
-    (define-key map [icicle-buffer-list] '("+ Buffer List..." . icicle-buffer-list))
-    (define-key map [icicle-remove-buffer-config]
+    (define-key icicle-menu-map [icicle-buffer-list] '("+ Buffer List..." . icicle-buffer-list))
+    (define-key icicle-menu-map [icicle-remove-buffer-config]
       '("+ Remove Buffer Configuration..." . icicle-remove-buffer-config))
     (put 'icicle-remove-buffer-config 'menu-enable '(and icicle-mode icicle-buffer-configs))
-    (define-key map [icicle-add-buffer-config]
+    (define-key icicle-menu-map [icicle-add-buffer-config]
       '("New Buffer Configuration..." . icicle-add-buffer-config))
-    (define-key map [icicle-buffer-config]
+    (define-key icicle-menu-map [icicle-buffer-config]
       '("+ Choose Buffer Configuration..." . icicle-buffer-config))
     (put 'icicle-buffer-config 'menu-enable '(and icicle-mode icicle-buffer-configs))
-    (define-key map [icicle-remove-buffer-candidate]
+    (define-key icicle-menu-map [icicle-remove-buffer-candidate]
       '("+ Don't Always Include Buffer..." . icicle-remove-buffer-candidate))
     (put 'icicle-remove-buffer-candidate 'menu-enable '(and icicle-mode icicle-buffer-extras))
-    (define-key map [icicle-add-buffer-candidate]
+    (define-key icicle-menu-map [icicle-add-buffer-candidate]
       '("+ Always Include Buffer..." . icicle-add-buffer-candidate))
-    (define-key map [icicle-kill-buffer] '("+ Kill Buffer..." . icicle-kill-buffer))
-    (define-key map [icicle-delete-windows]
+    (define-key icicle-menu-map [icicle-kill-buffer] '("+ Kill Buffer..." . icicle-kill-buffer))
+    (define-key icicle-menu-map [icicle-delete-windows]
       '("+ Delete Windows on Buffer..." . icicle-delete-windows))
-    (define-key map [icicle-buffer-other-window]
+    (define-key icicle-menu-map [icicle-buffer-other-window]
       '("+ Switch to Buffer (Other Window)..." . icicle-buffer-other-window))
     (put 'icicle-buffer-other-window 'menu-enable
-         '(and icicle-mode
-           (not (window-minibuffer-p (frame-selected-window menu-updating-frame)))))
-    (define-key map [icicle-buffer] '("+ Switch to Buffer..." . icicle-buffer))
+         '(and icicle-mode (not (window-minibuffer-p (frame-selected-window
+                                                      menu-updating-frame)))))
+    (define-key icicle-menu-map [icicle-buffer] '("+ Switch to Buffer..." . icicle-buffer))
     (put 'icicle-buffer 'menu-enable
          '(and icicle-mode
            (not (window-minibuffer-p (frame-selected-window menu-updating-frame)))))
     (cond ((and (not icicle-touche-pas-aux-menus-flag)
                 (boundp 'menu-bar-bookmark-map)) ; Use Bookmarks menu, if available.
-           (require 'bookmark) ; `bookmark-buffer-name' is not autoloaded.
+           (require 'bookmark)          ; `bookmark-buffer-name' is not autoloaded.
            (define-key menu-bar-bookmark-map [icicle-bookmark]
              '("[Icy] + Jump to Bookmark Using Icicles..." . icicle-bookmark)))
           (t
-           (define-key map [icicle-bookmark] '("+ Jump To Bookmark..." . icicle-bookmark))
-           (define-key map [icicle-separator-bookmark-buffer] '("--"))))
+           (define-key icicle-menu-map [icicle-bookmark]
+             '("+ Jump To Bookmark..." . icicle-bookmark))
+           (define-key icicle-menu-map [icicle-separator-bookmark-buffer] '("--"))))
     (put 'icicle-bookmark 'menu-enable
          '(and icicle-mode
            (not (window-minibuffer-p (frame-selected-window menu-updating-frame)))))
@@ -917,12 +986,12 @@ when the minibuffer is active."
            (define-key menu-bar-search-menu [icicle-occur]
              '("[Icy] + Occur (Regexp)..." . icicle-occur)))
           (t
-           (define-key map [icicle-search-highlight-cleanup]
+           (define-key icicle-menu-map [icicle-search-highlight-cleanup]
              '("Remove Search Highlighting..." . icicle-search-highlight-cleanup))
-           (define-key map [icicle-compilation-search]
+           (define-key icicle-menu-map [icicle-compilation-search]
              '("+ Search Compilation/Grep Hits (Regexp)..." . icicle-compilation-search))
-           (define-key map [icicle-search] '("+ Search (Regexp)..." . icicle-search))
-           (define-key map [icicle-occur] '("+ Occur (Regexp)..." . icicle-occur))))
+           (define-key icicle-menu-map [icicle-search] '("+ Search (Regexp)..." . icicle-search))
+           (define-key icicle-menu-map [icicle-occur] '("+ Occur (Regexp)..." . icicle-occur))))
     (put 'icicle-search-highlight-cleanup 'menu-enable
          '(and icicle-mode (or icicle-search-overlays
                             (overlayp icicle-search-current-overlay)
@@ -936,71 +1005,99 @@ when the minibuffer is active."
          '(and icicle-mode
            (not (window-minibuffer-p (frame-selected-window menu-updating-frame)))))
     (put 'icicle-occur 'menu-enable
-         '(and icicle-mode
-           (not (window-minibuffer-p (frame-selected-window menu-updating-frame)))))
+         '(and icicle-mode (not (window-minibuffer-p (frame-selected-window
+                                                      menu-updating-frame))))))
 
-    ;; Optional bindings - governed by `icicle-bind-top-level-commands-flag'.
-    (when icicle-bind-top-level-commands-flag
-      (define-key icicle-mode-map [pause]    'icicle-switch-to/from-minibuffer)
-      (define-key icicle-mode-map "\C-c`"    'icicle-search-generic)
-      (define-key icicle-mode-map "\C-c'"    'icicle-occur)
-      (define-key icicle-mode-map "\C-c/"    'icicle-complete-thesaurus-entry)
-      (define-key icicle-mode-map "\C-x\M-e" 'icicle-execute-named-keyboard-macro)
-      (when (fboundp 'icicle-kmacro) (define-key icicle-mode-map [f5] 'icicle-kmacro)) ; Emacs 22
+  ;; Install Icicles menu-bar menu.
+  (define-key icicle-mode-map [menu-bar icicles] (cons "Icicles" icicle-menu-map))
+
+  ;; Optional `icicle-mode-map' bindings - governed by `icicle-bind-top-level-commands-flag'.
+  (when icicle-bind-top-level-commands-flag
+    (define-key icicle-mode-map [pause]    'icicle-switch-to/from-minibuffer)
+    (define-key icicle-mode-map "\C-c`"    'icicle-search-generic)
+    (define-key icicle-mode-map "\C-c'"    'icicle-occur)
+    (define-key icicle-mode-map "\C-c/"    'icicle-complete-thesaurus-entry)
+    (define-key icicle-mode-map "\C-x\M-e" 'icicle-execute-named-keyboard-macro)
+    (when (fboundp 'icicle-kmacro) (define-key icicle-mode-map [f5] 'icicle-kmacro)) ; Emacs 22
       
-      ;; Replace some standard bindings.
-      (substitute-key-definition 'abort-recursive-edit 'icicle-abort-minibuffer-input
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'execute-extended-command 'icicle-execute-extended-command
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'switch-to-buffer 'icicle-buffer
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'switch-to-buffer-other-window 'icicle-buffer-other-window
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'find-file 'icicle-find-file
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'find-file-other-window 'icicle-find-file-other-window
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'kill-buffer 'icicle-kill-buffer
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'kill-buffer-and-its-windows 'icicle-kill-buffer
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'delete-window 'icicle-delete-window
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'other-window-or-frame 'icicle-other-window-or-frame
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'other-window 'icicle-other-window-or-frame
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'delete-windows-for 'icicle-delete-window
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'exchange-point-and-mark 'icicle-exchange-point-and-mark
-                                 icicle-mode-map (current-global-map))
-      (substitute-key-definition 'yank 'icicle-yank-insert icicle-mode-map (current-global-map))
+    ;; Remap some top-level commands.
+    (icicle-remap 'abort-recursive-edit                   'icicle-abort-minibuffer-input
+                  icicle-mode-map (current-global-map)) ; `C-g'
+    (icicle-remap 'execute-extended-command               'icicle-execute-extended-command
+                  icicle-mode-map (current-global-map)) ; `M-x'
+    (icicle-remap 'switch-to-buffer                       'icicle-buffer
+                  icicle-mode-map (current-global-map)) ; `C-x b'
+    (icicle-remap 'switch-to-buffer-other-window          'icicle-buffer-other-window
+                  icicle-mode-map (current-global-map)) ; `C-x 4 b'
+    (icicle-remap 'find-file                              'icicle-find-file
+                  icicle-mode-map (current-global-map)) ; `C-x C-f'
+    (icicle-remap 'find-file-other-window                 'icicle-find-file-other-window
+                  icicle-mode-map (current-global-map)) ; `C-x 4 f'
+    (icicle-remap 'kill-buffer                            'icicle-kill-buffer
+                  icicle-mode-map (current-global-map)) ; `C-x k'
+    (icicle-remap 'kill-buffer-and-its-windows            'icicle-kill-buffer
+                  icicle-mode-map (current-global-map)) ; `C-x k'
+    (icicle-remap 'delete-window                          'icicle-delete-window
+                  icicle-mode-map (current-global-map)) ; `C-x 0'
+    (icicle-remap 'delete-windows-for                     'icicle-delete-window
+                  icicle-mode-map (current-global-map)) ; `C-x 0'
+    (icicle-remap 'other-window-or-frame                  'icicle-other-window-or-frame
+                  icicle-mode-map (current-global-map)) ; `C-x o'
+    (icicle-remap 'other-window                           'icicle-other-window-or-frame
+                  icicle-mode-map (current-global-map)) ; `C-x o'
+    (icicle-remap 'exchange-point-and-mark                'icicle-exchange-point-and-mark
+                  icicle-mode-map (current-global-map)) ; `C-x C-x'
+    (icicle-remap 'yank                                   'icicle-yank-insert
+                  icicle-mode-map (current-global-map)) ; `C-y'
+            
+    ;; This is for Icicles Menu, not Icicles, but it's convenient to do this here.
+    (when (fboundp 'icicle-execute-menu-command) ; Defined in `icicles-menu.el'.
+      (define-key icicle-mode-map [?\e ?\M-x] 'icicle-execute-menu-command) ; `ESC M-x'
+      (define-key icicle-mode-map [?\M-`] 'icicle-execute-menu-command) ; `M-`'
+      (define-key icicle-mode-map [f10] 'icicle-execute-menu-command))) ; Replaces `tmm-menu'.
+
+  ;; Bind `S-TAB' in `icicle-mode-map', for generic `S-TAB'.  Emacs 22.
+  (when (fboundp 'map-keymap) (define-key icicle-mode-map [S-tab] 'icicle-generic-S-tab)) ; `S-TAB'
+
+  ;; Install or update `icicle-mode-map'.
+  (if icicle-minor-mode-map-entry
+      (setcdr icicle-minor-mode-map-entry icicle-mode-map)
+    (setq icicle-minor-mode-map-entry (cons 'icicle-mode icicle-mode-map))
+    (add-to-list 'minor-mode-map-alist icicle-minor-mode-map-entry)))
+
+(defun icicle-rebind-non-completion-keys ()
+  "Rebind some keys in maps other than minibuffer maps and `icicle-mode-map'"
+  ;; Replace some standard Info bindings.
+  (if (not (boundp 'Info-mode-map))
       (eval-after-load "info"
         '(progn
-          (substitute-key-definition 'Info-goto-node 'icicle-Info-goto-node-cmd Info-mode-map)
-          (substitute-key-definition 'Info-index 'icicle-Info-index-cmd Info-mode-map)))
-            
-      ;; This is for Icicles Menu, not Icicles, but it's convenient to do this here.
-      (when (fboundp 'icicle-execute-menu-command) ; Defined in `icicles-menu.el'.
-        (define-key icicle-mode-map [?\e ?\M-x] 'icicle-execute-menu-command)
-        (define-key icicle-mode-map [?\M-`] 'icicle-execute-menu-command)
-        (define-key icicle-mode-map [f10] 'icicle-execute-menu-command))) ; Replaces `tmm-menu'.
+          (icicle-remap 'Info-goto-node  'icicle-Info-goto-node-cmd  Info-mode-map) ; `g'
+          (icicle-remap 'Info-index      'icicle-Info-index-cmd      Info-mode-map))) ; `i'
+    (icicle-remap 'Info-goto-node  'icicle-Info-goto-node-cmd  Info-mode-map)
+    (icicle-remap 'Info-index      'icicle-Info-index-cmd      Info-mode-map))
 
-    (push (cons 'icicle-mode icicle-mode-map) minor-mode-map-alist))
-
-  ;; Bind `S-TAB' in all maps, for key completion, and in `icicle-mode-map', for generic S-TAB.
+  ;; Bind `S-TAB' in all maps, for key completion.  This is NOT undone when you leave Icicle mode.
   (when (fboundp 'map-keymap)           ; Emacs 22.
     (dolist (key+map (accessible-keymaps (current-global-map)))
       (when (and (keymapp (cdr key+map))
                  (not (stringp (car-safe (last (cdr key+map)))))) ; Try to exclude menu maps.
-        (define-key (cdr key+map) [S-tab] 'icicle-complete-keys)))
-    (define-key icicle-mode-map [S-tab] 'icicle-generic-S-tab)))
+        (define-key (cdr key+map) [S-tab] 'icicle-complete-keys)))))
 
-
+(defun icicle-restore-non-completion-keys ()
+  "Restore some bindings changed by `icicle-rebind-non-completion-keys'.
+`S-TAB' is still left bound in all maps."
+  (if (not (boundp 'Info-mode-map))
+      (eval-after-load "info"
+        '(progn
+          (icicle-unmap 'Info-goto-node Info-mode-map 'icicle-Info-goto-node-cmd)
+          (icicle-unmap 'Info-index     Info-mode-map 'icicle-Info-index-cmd)))
+    (icicle-unmap 'Info-goto-node Info-mode-map 'icicle-Info-goto-node-cmd)
+    (icicle-unmap 'Info-index     Info-mode-map 'icicle-Info-index-cmd)))
 
  
-;;; Other Icicles functions that define Icicle mode---------
+;;(@* "Other Icicles functions that define Icicle mode")
+
+;;; Other Icicles functions that define Icicle mode ------------------
 
 (defun icicle-rebind-completion-maps (turn-on-p)
   "Rebind minibuffer completion maps to be able to cycle completions.
@@ -1278,8 +1375,7 @@ mentioned here.
 * `completion-ignore-case', `read-file-name-completion-ignore-case'
                                          - Case sensitivity? (`C-A')
 * `completion-ignored-extensions'        - Ignored filenames (`C-.')
-* `icicle-alternative-sort-function'     - `M-,' alternative to
-                                           `icicle-sort-function'
+* `icicle-alternative-sort-function'     - Other sort (`M-,', `C-M-,')
 * `icicle-bind-top-level-commands-flag'  - Bind Icicles commands?
 * `icicle-buffer-*'                      - `icicle-buffer' options
 * `icicle-change-region-background-flag' - Change region color?
@@ -1306,10 +1402,12 @@ mentioned here.
 * `icicle-key-descriptions-use-<>-flag'  - Key shown as \"<>\"? (`C-<')
 * `icicle-kmacro-ring-max'               - Icicles `kmacro-ring-max'
 * `icicle-list-join-string'              - Multi-completion join
+* `icicle-list-nth-parts-join-string'    - Join split-candidate parts
 * `icicle-mark-position-in-candidate'    - Mark position in cycling
 * `icicle-minibuffer-setup-hook'         - Functions run after setup
 * `icicle-modal-cycle-down-key'          - Down key for modal cycling
 * `icicle-modal-cycle-up-key'            - Up key for modal cycling
+* `icicle-change-sort-order-completion-flag' - Control `C-,' behavior
 * `icicle-point-position-in-candidate'   - Cursor position in cycling
 * `icicle-redefine-standard-commands-flag'- Redefine std commands?
 * `icicle-regexp-quote-flag'             - Escape chars? (`C-`')
@@ -1329,12 +1427,14 @@ mentioned here.
 * `icicle-show-Completions-help-flag'    - Show *Completions* help?
 * `icicle-show-Completions-initially-flag'- Show *Completions* first?
 * `icicle-sort-function'                 - Sort candidates (`C-,')
+* `icicle-sort-functions-alist'          - Functions for sorting
 * `icicle-special-candidate-regexp'      - For highlighted candidates
 * `icicle-TAB-shows-candidates-flag'     - 1st `TAB' shows candidates?
 * `icicle-thing-at-point-functions'      - Functions to yank things
 * `icicle-touche-pas-aux-menus-flag'     - Add to standard menus?
 * `icicle-transform-function'            - Remove duplicates (`C-$')
 * `icicle-update-input-hook'             - Fns run when input changes
+* `icicle-use-~-for-home-dir-flag'       - Use `~' for $HOME (`M-~')
 * `icicle-word-completion-key'           - Key for word completion
 
 Faces that highlight input in minibuffer.
@@ -1400,6 +1500,8 @@ input prompt is prefixed by `+'.
 + `icicle-frame-bg'                    - Change background of frame
 + `icicle-frame-fg'                    - Change foreground of frame
 + `icicle-fundoc'                      - Show function description
++ `icicle-goto-global-marker'          - Go to a global marker
++ `icicle-goto-marker'                 - Go to a marker in this buffer
 + `icicle-imenu'                       - Navigate among Imenu entries
 + `icicle-Info-goto-node'              - Multi-cmd `Info-goto-node' 
 + `icicle-Info-index'                  - Multi-command `Info-index'
@@ -1458,13 +1560,26 @@ These are all of the minibuffer bindings during completion:
               "Use `\\<minibuffer-local-completion-map>\
 \\[icicle-completion-help]' in minibuffer for help."))))
 
-(defsubst icicle-remap (from to map)
-  "Bind command TO in MAP to all keys currently bound globally to FROM."
-  (substitute-key-definition from to map (current-global-map)))
+(defun icicle-remap (old new map &optional oldmap)
+  "Bind command NEW in MAP to all keys currently bound to OLD.
+If command remapping is available, use that.  Otherwise, bind NEW to
+whatever OLD is bound to in MAP, or in OLDMAP, if provided."
+  (if (fboundp 'command-remapping)
+      (define-key map (vector 'remap old) new) ; Ignore OLDMAP for Emacs 22.
+    (substitute-key-definition old new map oldmap)))
 
-(defsubst icicle-unmap (from map)
-  "In MAP, unbind any keys that are globally bound to FROM."
-  (substitute-key-definition from nil map (current-global-map)))
+(defun icicle-unmap (command map current)
+  "In MAP, unbind any keys that are bound to COMMAND.
+If command remapping is available, remap COMMAND to nil in MAP,
+unbinding it.
+Otherwise, bind COMMAND to whatever CURRENT is bound to in MAP."
+  (if (fboundp 'command-remapping)
+      (define-key map (vector 'remap command) nil)
+    (substitute-key-definition current command map)))
+
+(defun icicle-rebind-global (old new map)
+  "Bind command NEW in MAP to all keys currently bound globally to OLD."
+  (substitute-key-definition old new map (current-global-map)))
 
 (defun icicle-bind-completion-keys (map)
   "Bind keys for minibuffer completion map MAP.
@@ -1597,104 +1712,127 @@ MAP is `minibuffer-local-completion-map',
     ;; Emacs 20: Cannot use `define-key-after' with multi-event key.
     (define-key map [menu-bar minibuf completion-help] (cons "Help" 'icicle-completion-help)))
 
-  ;; Remap some commands bound globally.
-  (if (fboundp 'command-remapping)
-      (define-key map [remap self-insert-command] 'icicle-self-insert)
-    (substitute-key-definition 'self-insert-command 'icicle-self-insert map (current-global-map)))
-  (icicle-remap 'universal-argument            'icicle-universal-argument map)
-  (icicle-remap 'negative-argument             'icicle-negative-argument map)
-  (icicle-remap 'digit-argument                'icicle-digit-argument map)
-  (icicle-remap 'backward-delete-char-untabify 'icicle-backward-delete-char-untabify map)
-  (icicle-remap 'delete-backward-char          'icicle-delete-backward-char map)
-  (icicle-remap 'delete-char                   'icicle-delete-char map)
-  (icicle-remap 'backward-kill-word            'icicle-backward-kill-word map)
-  (icicle-remap 'kill-word                     'icicle-kill-word map)
-  (icicle-remap 'backward-kill-sexp            'icicle-backward-kill-sexp map)
-  (icicle-remap 'kill-sexp                     'icicle-kill-sexp map)
-  (icicle-remap 'backward-kill-sentence        'icicle-backward-kill-sentence map)
-  (icicle-remap 'backward-kill-paragraph       'icicle-backward-kill-paragraph map)
-  (icicle-remap 'kill-paragraph                'icicle-kill-paragraph map)
-  (icicle-remap 'kill-line                     'icicle-kill-line map)
-  (icicle-remap 'kill-region                   'icicle-kill-region map)
-  (icicle-remap 'kill-region-wimpy             'icicle-kill-region-wimpy map)
-  (icicle-remap 'transpose-chars               'icicle-transpose-chars map)
-  (icicle-remap 'transpose-words               'icicle-transpose-words map)
-  (icicle-remap 'transpose-sexps               'icicle-transpose-sexps map)
-  (icicle-remap 'yank                          'icicle-yank map)
-  (icicle-remap 'yank-pop                      'icicle-yank-pop  map)
+  ;; Remap some commands for completion.
+  (icicle-remap 'self-insert-command           'icicle-self-insert map (current-global-map))
+  (icicle-remap 'universal-argument            'icicle-universal-argument ; `C-u'
+                map (current-global-map))
+  (icicle-remap 'negative-argument             'icicle-negative-argument ; `M--'
+                map (current-global-map))
+  (icicle-remap 'digit-argument                'icicle-digit-argument ; `C-9'
+                map (current-global-map))
+  (icicle-remap 'backward-delete-char-untabify 'icicle-backward-delete-char-untabify ; `DEL'
+                map (current-global-map))
+  (icicle-remap 'delete-backward-char          'icicle-delete-backward-char ; `DEL'
+                map (current-global-map))
+  (icicle-remap 'delete-char                   'icicle-delete-char ; `C-d', `deletechar'
+                map (current-global-map))
+  (icicle-remap 'backward-kill-word            'icicle-backward-kill-word ; `M-DEL'
+                map (current-global-map))
+  (icicle-remap 'kill-word                     'icicle-kill-word ; `M-d'
+                map (current-global-map))
+  (icicle-remap 'backward-kill-sexp            'icicle-backward-kill-sexp ; `C-M-backspace'
+                map (current-global-map))
+  (icicle-remap 'kill-sexp                     'icicle-kill-sexp ; `C-M-k', `C-M-delete'
+                map (current-global-map))
+  (icicle-remap 'backward-kill-sentence        'icicle-backward-kill-sentence ; `C-x DEL'
+                map (current-global-map))
+  (icicle-remap 'backward-kill-paragraph       'icicle-backward-kill-paragraph ; `C-backspace'
+                map (current-global-map))
+  (icicle-remap 'kill-paragraph                'icicle-kill-paragraph ; `C-delete'
+                map (current-global-map))
+  (icicle-remap 'kill-line                     'icicle-kill-line ; `C-k', `delete', `deleteline'
+                map (current-global-map))
+  (icicle-remap 'kill-region                   'icicle-kill-region ; `C-w', `S-delete'
+                map (current-global-map))
+  (icicle-remap 'kill-region-wimpy             'icicle-kill-region-wimpy ; `C-w', `S-delete'
+                map (current-global-map))
+  (icicle-remap 'transpose-chars               'icicle-transpose-chars ; `C-t'
+                map (current-global-map))
+  (icicle-remap 'transpose-words               'icicle-transpose-words ; `M-t'
+                map (current-global-map))
+  (icicle-remap 'transpose-sexps               'icicle-transpose-sexps ; `C-M-t'
+                map (current-global-map))
+  (icicle-remap 'yank-pop                      'icicle-yank-pop ; `M-y', `M-insert'
+                map (current-global-map))
+
+  ;; Rebind some global bindings for the completion maps.
   (unless icicle-cycling-respects-completion-mode-flag
-    (icicle-remap 'previous-line               'icicle-previous-prefix-candidate map)
-    (icicle-remap 'next-line                   'icicle-next-prefix-candidate map))
-  (icicle-remap 'scroll-up                     'icicle-next-apropos-candidate map)
-  (icicle-remap 'scroll-down                   'icicle-previous-apropos-candidate map)
-  (icicle-remap 'backward-paragraph            'icicle-previous-prefix-candidate-action map)
-  (icicle-remap 'forward-paragraph             'icicle-next-prefix-candidate-action map)
-  (icicle-remap 'scroll-right                  'icicle-previous-apropos-candidate-action map)
-  (icicle-remap 'scroll-left                   'icicle-next-apropos-candidate-action map)
+    (icicle-rebind-global 'previous-line  'icicle-previous-prefix-candidate map) ; `down', `C-n'
+    (icicle-rebind-global 'next-line      'icicle-next-prefix-candidate map)) ; `up', `C-p'
+  (icicle-rebind-global 'scroll-down      'icicle-previous-apropos-candidate map) ; `prior', `M-v'
+  (icicle-rebind-global 'scroll-up        'icicle-next-apropos-candidate map) ; `next', `C-v'
+  (icicle-rebind-global 'backward-paragraph
+                        'icicle-previous-prefix-candidate-action map) ; `C-up', `M-{'
+  (icicle-rebind-global 'forward-paragraph
+                        'icicle-next-prefix-candidate-action map) ; `C-down', `M-}'
+  (icicle-rebind-global 'scroll-right
+                        'icicle-previous-apropos-candidate-action map) ; `C-prior', `C-x >'
+  (icicle-rebind-global 'scroll-left
+                        'icicle-next-apropos-candidate-action map) ; `C-next', `C-x <'
 
   ;; Bind some additional keys.
   (define-key map icicle-word-completion-key 'icicle-prefix-word-complete)
-  (define-key map [(control meta up)]        'icicle-help-on-previous-prefix-candidate)
-  (define-key map [(control meta down)]      'icicle-help-on-next-prefix-candidate)
-  (define-key map [(control meta prior)]     'icicle-help-on-previous-apropos-candidate)
-  (define-key map [(control meta next)]      'icicle-help-on-next-apropos-candidate)
-  (define-key map [(control help)]           'icicle-help-on-candidate)
-  (define-key map [(control f1)]             'icicle-help-on-candidate)
-  (define-key map [(control meta return)]    'icicle-help-on-candidate)
-  (define-key map [(meta return)]            'icicle-candidate-read-fn-invoke)
-  (define-key map [(control return)]         'icicle-candidate-action)
-  (define-key map [(control ?o)]             'icicle-candidate-action)
-  (define-key map [(control ?!)]             'icicle-all-candidates-action)
-  (define-key map [S-iso-lefttab]            'icicle-apropos-complete)
-  (define-key map [S-tab]                    'icicle-apropos-complete)
-  (define-key map [S-M-C-iso-lefttab]        'icicle-apropos-complete-no-display)
-  (define-key map [S-M-C-tab]                'icicle-apropos-complete-no-display)
-  (define-key map [(control ?i)]             'icicle-prefix-complete)
-  (define-key map [tab]                      'icicle-prefix-complete)
-  (define-key map [(control meta ?/)]        'icicle-prefix-complete) ; For `dabbrev.el'.
-  (define-key map [(control meta tab)]       'icicle-prefix-complete-no-display)
-  (define-key map [(meta ?h)]                'icicle-history)
-  (define-key map [(meta pause)]             'icicle-keep-only-past-inputs)
-  (define-key map [insert]                   'icicle-switch-to-Completions-buf)
+  (define-key map [(control meta up)]        'icicle-help-on-previous-prefix-candidate) ; `C-M-up'
+  (define-key map [(control meta down)]      'icicle-help-on-next-prefix-candidate) ; `C-M-down'
+  (define-key map [(control meta prior)]  'icicle-help-on-previous-apropos-candidate) ; `C-M-prior'
+  (define-key map [(control meta next)]      'icicle-help-on-next-apropos-candidate) ; `C-M-next'
+  (define-key map [(control help)]           'icicle-help-on-candidate) ; `C-help'
+  (define-key map [(control f1)]             'icicle-help-on-candidate) ; `C-f1'
+  (define-key map [(control meta return)]    'icicle-help-on-candidate) ; `C-M-RET'
+  (define-key map [(meta return)]            'icicle-candidate-read-fn-invoke) ; `M-RET'
+  (define-key map [(control return)]         'icicle-candidate-action) ; `C-RET'
+  (define-key map [(control ?o)]             'icicle-candidate-action) ; `C-o'
+  (define-key map [(control ?!)]             'icicle-all-candidates-action) ; `C-!'
+  (define-key map [S-iso-lefttab]            'icicle-apropos-complete) ; `S-TAB'
+  (define-key map [S-tab]                    'icicle-apropos-complete) ; `S-TAB'
+  (define-key map [S-M-C-iso-lefttab]        'icicle-apropos-complete-no-display) ; `S-M-C-TAB'
+  (define-key map [S-M-C-tab]                'icicle-apropos-complete-no-display) ; `S-M-C-TAB'
+  (define-key map [(control ?i)]             'icicle-prefix-complete) ; `TAB'
+  (define-key map [tab]                      'icicle-prefix-complete) ; `TAB'
+  (define-key map [(control meta ?/)]        'icicle-prefix-complete) ; `C-M-/', for `dabbrev.el'.
+  (define-key map [(control meta tab)]       'icicle-prefix-complete-no-display) ; `C-M-TAB'
+  (define-key map [(meta ?h)]                'icicle-history) ; `M-h'
+  (define-key map [(meta pause)]             'icicle-keep-only-past-inputs) ; `M-pause'
+  (define-key map [insert]                   'icicle-switch-to-Completions-buf) ; `insert'
   ;; `minibuffer-completion-help' got wiped out by remap for self-insert.
-  (define-key map "?"                        'icicle-self-insert)
-  (define-key map " "                        'icicle-self-insert)
-  (define-key map [M-S-backspace]            'icicle-erase-minibuffer)
-  (define-key map [M-S-delete]               'icicle-erase-minibuffer)
+  (define-key map "?"                        'icicle-self-insert) ; `?'
+  (define-key map " "                        'icicle-self-insert) ; " "
+  (define-key map [M-S-backspace]            'icicle-erase-minibuffer) ; `M-S-backspace'
+  (define-key map [M-S-delete]               'icicle-erase-minibuffer) ; `M-S-delete'
   ;; Replaces `kill-sentence':
-  (define-key map [(meta ?k)]                'icicle-erase-minibuffer-or-history-element)
-  (define-key map [(meta ?q)]                'icicle-insert-key-description)
-  (define-key map [(control ?g)]             'icicle-abort-minibuffer-input)
-  (define-key map [(control ?l)]             'icicle-retrieve-last-input)
-  (define-key map [(control ?x) ?0]          'icicle-remove-Completions-window)
-  (define-key map [(meta ?$)]                'icicle-candidate-set-truncate)
-  (define-key map [(control ?~)]             'icicle-candidate-set-complement)
-  (define-key map [(control ?-)]             'icicle-candidate-set-difference)
-  (define-key map [(control ?+)]             'icicle-candidate-set-union)
-  (define-key map [(control ?*)]             'icicle-candidate-set-intersection)
-  (define-key map [(control meta ?>)]        'icicle-candidate-set-save)
-  (define-key map [(control meta ?<)]        'icicle-candidate-set-retrieve)
-  (define-key map [(control meta ?})]        'icicle-candidate-set-save-to-variable)
-  (define-key map [(control meta ?{)]        'icicle-candidate-set-retrieve-from-variable)
-  (define-key map [(control ?})]             'icicle-candidate-set-save-to-cache-file)
-  (define-key map [(control ?{)]             'icicle-candidate-set-retrieve-from-cache-file)
-  (define-key map [(control ?%)]             'icicle-candidate-set-swap)
-  (define-key map [(control ?:)]             'icicle-candidate-set-define)
-  (define-key map [(control ?=)]             'icicle-insert-string-from-variable)
-  (define-key map [(control ?,)]             'icicle-toggle-sorting)
-  (define-key map [(control ?<)]             'icicle-toggle-angle-brackets)
-  (define-key map [(control ?$)]             'icicle-toggle-transforming)
-  (define-key map [(control ??)]             'icicle-completion-help)
-  (define-key map [(control ?.)]             'icicle-dispatch-C-.)
-  (define-key map [(control ?#)]             'icicle-toggle-incremental-completion)
-  (define-key map [(control ?^)]             'icicle-dispatch-C-^)
-  (define-key map [(control ?`)]             'icicle-toggle-regexp-quote)
-  (define-key map [(shift control ?a)]       'icicle-toggle-case-sensitivity)
-  (define-key map [(meta ?~)]                'icicle-toggle-~-for-home-dir)
-  (define-key map [(meta ?,)]                'icicle-toggle-alternative-sorting)
-  (define-key map [(meta ?.)]                'icicle-insert-string-at-point)
-  (define-key map [(meta ?*)]                'icicle-narrow-candidates)
-  (define-key map [(meta ?:)]                'icicle-pp-eval-expression))
+  (define-key map [(meta ?k)]                'icicle-erase-minibuffer-or-history-element) ; `M-k'
+  (define-key map [(meta ?q)]                'icicle-insert-key-description) ; `M-q'
+  (define-key map [(control ?g)]             'icicle-abort-minibuffer-input) ; `C-g'
+  (define-key map [(control ?l)]             'icicle-retrieve-last-input) ; `C-l'
+  (define-key map [(meta ?$)]                'icicle-candidate-set-truncate) ; `M-$'
+  (define-key map [(control ?~)]             'icicle-candidate-set-complement) ; `C-~'
+  (define-key map [(control ?-)]             'icicle-candidate-set-difference) ; `C--'
+  (define-key map [(control ?+)]             'icicle-candidate-set-union) ; `C-+'
+  (define-key map [(control ?*)]             'icicle-candidate-set-intersection) ; `C-*'
+  (define-key map [(control meta ?>)]        'icicle-candidate-set-save) ; `C-M->'
+  (define-key map [(control meta ?<)]        'icicle-candidate-set-retrieve) ; `C-M-<'
+  (define-key map [(control meta ?})]        'icicle-candidate-set-save-to-variable) ; `C-M-}'
+  (define-key map [(control meta ?{)]       'icicle-candidate-set-retrieve-from-variable) ; `C-M-{'
+  (define-key map [(control ?})]             'icicle-candidate-set-save-to-cache-file) ; `C-}'
+  (define-key map [(control ?{)]            'icicle-candidate-set-retrieve-from-cache-file) ; `C-{'
+  (define-key map [(control ?%)]             'icicle-candidate-set-swap) ; `C-%'
+  (define-key map [(control ?:)]             'icicle-candidate-set-define) ; `C-:'
+  (define-key map [(control ?=)]             'icicle-insert-string-from-variable) ; `C-='
+  (define-key map [(control ?,)]             'icicle-change-sort-order) ; `C-,'
+  (define-key map [(control ?<)]             'icicle-toggle-angle-brackets) ; `C-<'
+  (define-key map [(control ?$)]             'icicle-toggle-transforming) ; `C-$'
+  (define-key map [(control ??)]             'icicle-completion-help) ; `C-?'
+  (define-key map [(control ?.)]             'icicle-dispatch-C-.) ; `C-.'
+  (define-key map [(control ?#)]             'icicle-toggle-incremental-completion) ; `C-#'
+  (define-key map [(control ?^)]             'icicle-dispatch-C-^) ; `C-^'
+  (define-key map [(control ?`)]             'icicle-toggle-regexp-quote) ; `C-`'
+  (define-key map [(shift control ?a)]       'icicle-toggle-case-sensitivity) ; `S-C-a' (`C-A')
+  (define-key map [(meta ?~)]                'icicle-toggle-~-for-home-dir) ; `M-~'
+  (define-key map [(meta ?,)]                'icicle-change-alternative-sort-order) ; `M-,'
+  (define-key map [(control meta ?,)]        'icicle-toggle-alternative-sorting) ; `C-M-,'
+  (define-key map [(meta ?.)]                'icicle-insert-string-at-point) ; `M-.'
+  (define-key map [(meta ?*)]                'icicle-narrow-candidates) ; `M-*'
+  (define-key map [(meta ?:)]                'icicle-pp-eval-expression)) ; `M-:'
 
 (defun icicle-restore-completion-keys (map)
   "Restore standard keys for minibuffer completion map MAP.
@@ -1738,39 +1876,38 @@ MAP is `minibuffer-local-completion-map',
         (list 'menu-item "Complete" 'minibuffer-complete :help "Complete as far as possible"))
     (define-key map [menu-bar minibuf tab] (cons "Complete" 'minibuffer-complete)))
 
-  ;; Restore remapped commands.
-  (if (fboundp 'command-remapping)
-      (define-key map [remap self-insert-command] nil)
-    (substitute-key-definition 'self-insert-command nil map (current-global-map)))
-  (icicle-unmap 'universal-argument            map)
-  (icicle-unmap 'negative-argument             map)
-  (icicle-unmap 'digit-argument                map)
-  (icicle-unmap 'backward-delete-char-untabify map)
-  (icicle-unmap 'delete-backward-char          map)
-  (icicle-unmap 'delete-char                   map)
-  (icicle-unmap 'backward-kill-word            map)
-  (icicle-unmap 'kill-word                     map)
-  (icicle-unmap 'backward-kill-sexp            map)
-  (icicle-unmap 'kill-sexp                     map)
-  (icicle-unmap 'backward-kill-sentence        map)
-  (icicle-unmap 'backward-kill-paragraph       map)
-  (icicle-unmap 'kill-paragraph                map)
-  (icicle-unmap 'kill-line                     map)
-  (icicle-unmap 'kill-region                   map)
-  (icicle-unmap 'kill-region-wimpy             map)
-  (icicle-unmap 'transpose-chars               map)
-  (icicle-unmap 'transpose-words               map)
-  (icicle-unmap 'transpose-sexps               map)
-  (icicle-unmap 'yank                          map)
-  (icicle-unmap 'yank-pop                      map)
-  (icicle-unmap 'previous-line                 map)
-  (icicle-unmap 'next-line                     map)
-  (icicle-unmap 'scroll-up                     map)
-  (icicle-unmap 'scroll-down                   map)
-  (icicle-unmap 'backward-paragraph            map)
-  (icicle-unmap 'forward-paragraph             map)
-  (icicle-unmap 'scroll-right                  map)
-  (icicle-unmap 'scroll-left                   map)
+  ;; Unmap commands that were bound for completion.
+  (icicle-unmap 'self-insert-command           map 'icicle-self-insert)
+  (icicle-unmap 'universal-argument            map 'icicle-universal-argument)
+  (icicle-unmap 'negative-argument             map 'icicle-negative-argument)
+  (icicle-unmap 'digit-argument                map 'icicle-digit-argument)
+  (icicle-unmap 'backward-delete-char-untabify map 'icicle-backward-delete-char-untabify)
+  (icicle-unmap 'delete-backward-char          map 'icicle-delete-backward-char)
+  (icicle-unmap 'delete-char                   map 'icicle-delete-char)
+  (icicle-unmap 'backward-kill-word            map 'icicle-backward-kill-word)
+  (icicle-unmap 'kill-word                     map 'icicle-kill-word)
+  (icicle-unmap 'backward-kill-sexp            map 'icicle-backward-kill-sexp)
+  (icicle-unmap 'kill-sexp                     map 'icicle-kill-sexp)
+  (icicle-unmap 'backward-kill-sentence        map 'icicle-backward-kill-sentence)
+  (icicle-unmap 'backward-kill-paragraph       map 'icicle-backward-kill-paragraph)
+  (icicle-unmap 'kill-paragraph                map 'icicle-kill-paragraph)
+  (icicle-unmap 'kill-line                     map 'icicle-kill-line)
+  (icicle-unmap 'kill-region                   map 'icicle-kill-region)
+  (icicle-unmap 'kill-region-wimpy             map 'icicle-kill-region-wimpy)
+  (icicle-unmap 'transpose-chars               map 'icicle-transpose-chars)
+  (icicle-unmap 'transpose-words               map 'icicle-transpose-words)
+  (icicle-unmap 'transpose-sexps               map 'icicle-transpose-sexps)
+  (icicle-unmap 'yank-pop                      map 'icicle-yank-pop)
+
+  ;; Restore commands that were bound for completion.
+  (substitute-key-definition 'icicle-previous-prefix-candidate         'previous-line      map)
+  (substitute-key-definition 'icicle-next-prefix-candidate             'next-line          map)
+  (substitute-key-definition 'icicle-previous-apropos-candidate        'scroll-down        map)
+  (substitute-key-definition 'icicle-next-apropos-candidate            'scroll-up          map)
+  (substitute-key-definition 'icicle-previous-prefix-candidate-action  'backward-paragraph map)
+  (substitute-key-definition 'icicle-next-prefix-candidate-action      'forward-paragraph  map)
+  (substitute-key-definition 'icicle-previous-apropos-candidate-action 'scroll-right       map)
+  (substitute-key-definition 'icicle-next-apropos-candidate-action     'scroll-left        map)
 
   ;; Restore additional bindings.
   (define-key map icicle-word-completion-key nil) ; Do first, so can be rebound, as needed.
@@ -1804,7 +1941,6 @@ MAP is `minibuffer-local-completion-map',
   (define-key map [(meta ?q)]                nil)
   (define-key map [(control ?g)]             'abort-recursive-edit)
   (define-key map [(control ?l)]             nil)
-  (define-key map [(control ?x) ?0]          nil)
   (define-key map [(meta ?$)]                nil)
   (define-key map [(control ?~)]             nil)
   (define-key map [(control ?-)]             nil)
@@ -1830,6 +1966,7 @@ MAP is `minibuffer-local-completion-map',
   (define-key map [(shift control ?a)]       nil)
   (define-key map [(meta ?~)]                nil)
   (define-key map [(meta ?,)]                nil)
+  (define-key map [(control meta ?,)]        nil)
   (define-key map [(meta ?.)]                nil)
   (define-key map [(meta ?*)]                nil)
   (define-key map [(meta ?:)]                nil)
@@ -1990,7 +2127,8 @@ if `icicle-change-region-background-flag' is non-nil."
     (defalias 'mouse-choose-completion      (symbol-function 'icicle-mouse-choose-completion))
     (defalias 'completion-setup-function    (symbol-function 'icicle-completion-setup-function))
     (defalias 'completing-read              (symbol-function 'icicle-completing-read))
-    (defalias 'read-file-name               (symbol-function 'icicle-read-file-name))))
+    (defalias 'read-file-name               (symbol-function 'icicle-read-file-name))
+    (defalias 'display-completion-list      (symbol-function 'icicle-display-completion-list))))
 
 (defun icicle-restore-std-completion-fns ()
   "Restore standard completion functions replaced in Icicle mode."
@@ -2002,7 +2140,8 @@ if `icicle-change-region-background-flag' is non-nil."
     (defalias 'mouse-choose-completion      (symbol-function 'old-mouse-choose-completion))
     (defalias 'completion-setup-function    (symbol-function 'old-completion-setup-function))
     (defalias 'completing-read              (symbol-function 'old-completing-read))
-    (defalias 'read-file-name               (symbol-function 'old-read-file-name))))
+    (defalias 'read-file-name               (symbol-function 'old-read-file-name))
+    (defalias 'display-completion-list      (symbol-function 'old-display-completion-list))))
 
 (defun icicle-redefine-standard-options ()
   "Replace certain standard Emacs options with Icicles versions."

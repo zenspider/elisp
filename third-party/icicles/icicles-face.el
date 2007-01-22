@@ -4,12 +4,12 @@
 ;; Description: Faces for Icicles
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 2005, Drew Adams, all rights reserved.
+;; Copyright (C) 1996-2007, Drew Adams, all rights reserved.
 ;; Created: Mon Feb 27 09:19:43 2006
 ;; Version: 22.0
-;; Last-Updated: Fri Dec 22 13:49:49 2006 (-28800 Pacific Standard Time)
+;; Last-Updated: Fri Jan 19 21:12:31 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 226
+;;     Update #: 243
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/icicles-face.el
 ;; Keywords: internal, extensions, help, abbrev, local, minibuffer,
 ;;           keys, apropos, completion, matching, regexp, command
@@ -51,9 +51,17 @@
 ;;    `icicle-search-main-regexp-others', `icicle-special-candidate',
 ;;    `icicle-whitespace-highlight', `minibuffer-prompt'.
 ;;
+;;(@> "Index")
+;;  (@> "Change log")
+;;  (@> "Groups, organized alphabetically")
+;;  (@> "Faces, organized alphabetically")
+
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change log:
+;;
+;;(@* "Change log")
 ;;
 ;; 2006/12/22 dadams
 ;;    Renamed group icicles to Icicles.
@@ -111,8 +119,9 @@
 ;;; Code:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- 
 
+ 
+;;(@* "Groups, organized alphabetically")
 
 ;;; Groups, organized alphabetically ---------------------------------
 
@@ -125,7 +134,7 @@
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions."))
+Don't forget to mention your Emacs and Icicles library versions."))
   :link '(url-link :tag "Other Libraries by Drew"
           "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
   :link '(url-link :tag "Download"
@@ -142,7 +151,7 @@ Don't forget to mention your Emacs and library versions."))
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions."))
+Don't forget to mention your Emacs and Icicles library versions."))
   :link '(url-link :tag "Other Libraries by Drew"
           "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
   :link '(url-link :tag "Download"
@@ -159,7 +168,7 @@ Don't forget to mention your Emacs and library versions."))
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions."))
+Don't forget to mention your Emacs and lIcicles ibrary versions."))
   :link '(url-link :tag "Other Libraries by Drew"
           "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
   :link '(url-link :tag "Download"
@@ -176,7 +185,7 @@ Don't forget to mention your Emacs and library versions."))
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions."))
+Don't forget to mention your Emacs and Icicles library versions."))
   :link '(url-link :tag "Other Libraries by Drew"
           "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
   :link '(url-link :tag "Download"
@@ -193,7 +202,7 @@ Don't forget to mention your Emacs and library versions."))
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions."))
+Don't forget to mention your Emacs and Icicles library versions."))
   :link '(url-link :tag "Other Libraries by Drew"
           "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
   :link '(url-link :tag "Download"
@@ -210,7 +219,7 @@ Don't forget to mention your Emacs and library versions."))
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions."))
+Don't forget to mention your Emacs and Icicles library versions."))
   :link '(url-link :tag "Other Libraries by Drew"
           "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
   :link '(url-link :tag "Download"
@@ -227,7 +236,7 @@ Don't forget to mention your Emacs and library versions."))
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions."))
+Don't forget to mention your Emacs and Icicles library versions."))
   :link '(url-link :tag "Other Libraries by Drew"
           "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
   :link '(url-link :tag "Download"
@@ -244,7 +253,7 @@ Don't forget to mention your Emacs and library versions."))
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions."))
+Don't forget to mention your Emacs and Icicles library versions."))
   :link '(url-link :tag "Other Libraries by Drew"
           "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
   :link '(url-link :tag "Download"
@@ -261,7 +270,7 @@ Don't forget to mention your Emacs and library versions."))
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
 icicles.el bug: \
 &body=Describe bug here, starting with `emacs -q'.  \
-Don't forget to mention your Emacs and library versions."))
+Don't forget to mention your Emacs and Icicles library versions."))
   :link '(url-link :tag "Other Libraries by Drew"
           "http://www.emacswiki.org/cgi-bin/wiki/DrewsElispLibraries")
   :link '(url-link :tag "Download"
@@ -270,8 +279,9 @@ Don't forget to mention your Emacs and library versions."))
           "http://www.emacswiki.org/cgi-bin/wiki/Icicles")
   :link '(emacs-commentary-link :tag "Commentary" "icicles")
   )
- 
 
+ 
+;;(@* "Faces, organized alphabetically")
 
 ;;; Faces, organized alphabetically ----------------------------------
 
