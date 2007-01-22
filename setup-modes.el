@@ -194,11 +194,11 @@ ruby on the file I'm visiting."
 (add-hook 'text-mode-hook
           '(lambda ()
              (turn-on-auto-fill)
-             (define-key text-mode-map "\M-s" 'fixup-whitespace)))
+             (define-key text-mode-map (kbd "M-s") 'fixup-whitespace)))
 
 (add-hook 'c-mode-hook
           '(lambda ()
-             (local-set-key "\C-\c\C-r" 'recompile)))
+             (local-set-key (kbd "C-c C-r") 'recompile)))
 
 (turn-on-auto-revert-mode)
 (global-auto-revert-mode)

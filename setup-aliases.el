@@ -46,6 +46,12 @@
   (arrange-frame 85 25 t)
   (my-set-mac-font "bitstream vera sans mono" 24))
 
+(defun peepcode ()
+  "Create a small font window suitable for doing live demos in 800x600."
+  (interactive)
+  (arrange-frame 85 34 t)
+  (my-set-mac-font "bitstream vera sans mono" 14))
+
 (defun record-current-window ()
   (delete-other-windows)
   (insert (pp `(arrange-frame ,(window-width) ,(+ 1 (window-height)) t))))

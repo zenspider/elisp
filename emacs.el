@@ -32,8 +32,6 @@
 (load "setup-misc")
 (load "setup-modes")
 
-(add-hook 'after-init-hook (lambda () (small)) t)
-
 ;; (require 'icicles)
 ;; (icicle-mode 1)))
 
@@ -57,7 +55,6 @@
  '(inhibit-splash-screen t)
  '(locate-command "mdfind")
  '(mouse-wheel-mode t nil (mwheel))
- '(pop-up-windows nil)
  '(save-place t nil (saveplace))
  '(search-highlight t)
  '(show-paren-mode t)

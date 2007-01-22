@@ -35,8 +35,8 @@
       (global-set-key (kbd "<C-up>")   'previous-line-6)
       (global-set-key (kbd "<C-down>") 'forward-line-6)
       (add-hook 'dired-load-hook
-                (lambda ()
-                  (define-key dired-mode-map "k" 'dired-kill-subdir)))))
+                '(lambda ()
+                   (define-key dired-mode-map "k" 'dired-kill-subdir)))))
 
 ; This allows me to enforce that bury-buffer is bound to C-M-x
 ; regardless of mode (YAY!)
