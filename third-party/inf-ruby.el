@@ -2,7 +2,7 @@
 ;;;
 ;;;  $Id: inf-ruby.el 11454 2007-01-03 03:14:57Z matz $
 ;;;  $Author: matz $
-;;;  $Date: 2007-01-02 22:14:57 -0500 (Tue, 02 Jan 2007) $
+;;;  $Date: 2007-01-02 19:14:57 -0800 (Tue, 02 Jan 2007) $
 ;;;
 ;;; Inferior Ruby Mode - ruby process in a buffer.
 ;;;                      adapted from cmuscheme.el

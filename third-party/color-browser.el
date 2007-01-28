@@ -1982,8 +1982,6 @@ value."
     (force-mode-line-update)
     ))
 
-;........................................................
-
 ;;;_  + Color Browser.........................................
 
 ;; Now we define the Color Browser which is made up of the buffers

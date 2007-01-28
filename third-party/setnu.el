@@ -103,6 +103,12 @@ to automatically turn on line numbering when enterting text-mode."
   (or (string-match "XEmacs" emacs-version)
       (string-match "Lucid" emacs-version)))
 
+(unless setnu-running-under-xemacs
+  (defface setnu-line-number-face
+      '((t (:inherit default) (:weight bold)))
+    "Face used to display the line numbers.")
+  (setq setnu-line-number-face 'setnu-line-number-face))
+
 (if setnu-running-under-xemacs
     (fset 'setnu-make-extent 'make-extent)
   (fset 'setnu-make-extent 'make-overlay))

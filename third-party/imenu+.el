@@ -4,12 +4,12 @@
 ;; Description: Extensions to `imenu.el'.
 ;; Author: Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 1999-2006, Drew Adams, all rights reserved.
+;; Copyright (C) 1999-2007, Drew Adams, all rights reserved.
 ;; Created: Thu Aug 26 16:05:01 1999
 ;; Version: 21.0
-;; Last-Updated: Fri Jan 13 15:02:09 2006 (-28800 Pacific Standard Time)
+;; Last-Updated: Fri Jan 19 21:14:24 2007 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 542
+;;     Update #: 548
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/imenu+.el
 ;; Keywords: tools, menus
 ;; Compatibility: GNU Emacs 20.x, GNU Emacs 21.x, GNU Emacs 22.x
@@ -63,6 +63,8 @@
 ;;
 ;;; Change log:
 ;;
+;; 2007/01/16 dadams
+;;     imenu-lisp-fn-defn-regexp: Updated for icicle-define-add-to-alist-command.
 ;; 2005/12/09 dadams
 ;;     imenu-lisp-fn-defn-regexp: Updated to include icicle-define*.
 ;;       Use regexp-opt for Emacs 20 version too.
@@ -162,7 +164,7 @@ See also `imenu-emacs-key-defn-regexp-1'.")
     (concat "^\\s-*("
             (regexp-opt
              '("defun" "defun*" "defsubst" "defadvice" "define-skeleton"
-               "define-derived-mode" "defsetf"
+               "define-derived-mode" "defsetf" "icicle-define-add-to-alist-command"
                "icicle-define-command" "icicle-define-file-command") t)
             "\\s-+\\(\\sw\\(\\sw\\|\\s_\\)+\\)"))
   "*Regexp that recognizes Lisp function definitions.")
@@ -273,6 +275,7 @@ See `imenu' for more information."
                       menu-items))))
 
 
+
 ;;; REPLACES ORIGINAL in `imenu.el'.
 ;;; Sorts each submenu before splitting submenus, instead of sorting among submenus after.
 ;;;###autoload
@@ -297,9 +300,7 @@ See `imenu' for more information."
                      (mapcar (lambda (sm) (imenu--sort-submenu sm imenu-sort-function))
                              index-alist)
                    index-alist)))
-          (setq menu (imenu--split-menu
-                      index-alist
-                      (buffer-name)))
+          (setq menu (imenu--split-menu index-alist (buffer-name)))
           (if (>= emacs-major-version 22)
               (setq menu1 (imenu--create-keymap (car menu)
                                                 (cdr (if (< 1 (length (cdr menu)))
