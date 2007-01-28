@@ -99,6 +99,7 @@
              (define-key ruby-mode-map (kbd "C-c C-r") 'ri-show-term-at-point)
              (define-key ruby-mode-map (kbd "C-c C-t") 'ri-show-term-composite-at-point)
              (imenu-add-menubar-index)
+             (local-set-key [mouse-3] 'imenu)
              (require 'expand)
              (expand-add-abbrevs ruby-mode-abbrev-table ruby-expand-list)
              (abbrev-mode)))

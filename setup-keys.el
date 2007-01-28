@@ -7,7 +7,7 @@
 (global-set-key (kbd "<f8>")    'toggle-split)
 (global-set-key (kbd "C-M-x")   'bury-buffer)
 (global-set-key (kbd "C-c C-r") 'recompile)
-(global-set-key (kbd "C-c e")   'fc-eval-and-replace)
+(global-set-key (kbd "C-c e")   'my-eval-and-replace)
 (global-set-key (kbd "C-c f")   'my-selective-display)
 (global-set-key (kbd "C-x C-b") 'bs-show)
 (global-set-key (kbd "C-x C-p") 'find-file-at-point)

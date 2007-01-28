@@ -53,6 +53,7 @@
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(inhibit-splash-screen t)
+ '(locate-make-command-line 'locate-make-mdfind-command-line)
  '(locate-command "mdfind")
  '(mouse-wheel-mode t nil (mwheel))
  '(save-place t nil (saveplace))
