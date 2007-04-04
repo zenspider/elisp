@@ -1,30 +1,89 @@
-;; toggle.el
-;
-; blah.rb <-> test_blah.rb
-; app/model/blah.rb <-> test/unit/blah_test.rb
-; lib/blah.rb <-> test/test_blah.rb
+;;; toggle.el --- quickly open corresponding file (eg test vs impl).
 
-(require 'cl)
+;; Copyright (C) 2006-2007 by Ryan Davis
 
-(defcustom toggle-mappings
-  '(
-    ; rails (with test rails)
-    ("app/controllers/\\(.*\\).rb"       . "test/controllers/\\1_test.rb")
-    ("app/views/\\(.*\\).rb"             . "test/views/\\1_test.rb")
-    ("app/models/\\(.*\\).rb"            . "test/unit/\\1_test.rb")
-    ("test/functional/\\(.*\\)_test.rb"  . "app/controllers/\\1.rb")
-    ("test/integration/\\(.*\\)_test.rb" . "app/controllers/\\1.rb")
-    ("test/views/\\(.*\\)_test.rb"       . "app/views/\\1.rb")
-    ("test/unit/\\(.*\\)_test.rb"        . "app/models/\\1.rb")
-    ; ("app/controllers/\\(.*\\).rb" . "test/functional/\\1_test.rb")
-    ; plain ruby
-    ("lib/\\(.*\\).rb" . "test/test_\\1.rb")
-    ("test/test_\\(.*\\).rb" . "lib/\\1.rb")
-    ("test_\\(.*\\).rb" . "\\1.rb")
-    ("\\([^/]+\\).rb" . "test_\\1.rb"))
-  "A list of (RE . TRANS) rules used by toggle-filename."
+;; Author: Ryan Davis <ryand-ruby@zenspider.com>
+;; Version 1.1
+;; Keywords: files, extensions, convenience
+;; Created: 2006-03-22
+;; Compatibility: Emacs 22, 21?
+;; URL(en): http://seattlerb.rubyforge.org/
+
+;; The MIT License: http://en.wikipedia.org/wiki/MIT_License
+
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+;; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+;; MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+;; IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+;; CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+;; TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+;; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+;;; Commentary:
+
+;; This package provides the ability to quickly open a corresponding
+;; file for the current buffer by using a bi-directional mapping of
+;; regular expression pairs. You can select a mapping style from
+;; `toggle-mapping-styles' using the `toggle-style' function or set
+;; your default style via the `toggle-mapping-style' variable.
+
+;; There are 3 different mapping styles in this version: zentest,
+;; rails, and ruby. Feel free to submit more and I'll incorporate
+;; them.
+
+;;; Example Mapping (ruby style):
+;;
+;; blah.rb <-> test_blah.rb
+;; lib/blah.rb <-> test/test_blah.rb
+
+(defcustom toggle-mapping-styles
+  '((zentest . (("app/controllers/\\1.rb" . "test/controllers/\\1_test.rb")
+                ("app/views/\\1.rb"       . "test/views/\\1_test.rb")
+                ("app/models/\\1.rb"      . "test/unit/\\1_test.rb")
+                ("lib/\\1.rb"             . "test/unit/test_\\1.rb")))
+    (rails   . (("app/controllers/\\1.rb" . "test/functional/\\1_test.rb")
+                ("app/models/\\1.rb"      . "test/unit/\\1_test.rb")
+                ("lib/\\1.rb"             . "test/unit/test_\\1.rb")))
+    (ruby    . (("lib/\\1.rb"             . "test/test_\\1.rb")
+                ("\\1.rb"                 . "test_\\1.rb"))))
+  "A list of (name . toggle-mapping) rules used by toggle-filename."
   :group 'toggle
   :type '(repeat (cons string string)))
+
+(defvar toggle-mappings '()
+  "*The current file mappings for `toggle-filename' to use.")
+
+(defun toggle-style (name)
+  (interactive "sStyle: ")
+  (let ((pairs (cdr (assoc name toggle-mapping-styles))))
+    (if pairs
+        (setq toggle-mappings
+              (mapcar (lambda (pair)
+                        (cons (replace-regexp-in-string "\\\\1" "\\\\(.*\\\\)"
+                                                        (car pair))
+                              (cdr pair)))
+                      (append pairs
+                              (mapcar (lambda (pair)
+                                        (cons (cdr pair) (car pair))) pairs)))))))
+
+(defcustom toggle-mapping-style
+  'rails
+  "The defaulte toggle mapping style to load when initialized."
+  :group 'toggle
+  :type '(symbol))
+
+(setq toggle-mappings (toggle-style toggle-mapping-style))
 
 (defun toggle-filename (path rules)
   "Transform a matching subpath in PATH as given by RULES.
@@ -36,10 +95,6 @@ matches, it returns nil"
     ((string-match (caar rules) path)
      (replace-match (cdar rules) nil nil path))
     (t (toggle-filename path (rest rules)))))
-
-; bpalmer suggests:
-;(loop for (re . trans) in toggle-mappings
-;      if (string-match re path) do (return (replace-match trans nil nil path)))
 
 (defun toggle-buffer ()
   "Opens a related file to the current buffer using matching rules.
