@@ -229,7 +229,7 @@
 
 ;; Booleans
 (defvar ri-use-one-buffer t)
-(defvar ri-overwrite-buffer nil)
+(defvar ri-overwrite-buffer t)
 (defvar ri-switch-to-ri-buffer t)
 (defvar ri-read-only t)
 
