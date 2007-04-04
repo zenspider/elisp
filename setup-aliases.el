@@ -35,6 +35,16 @@
       (while (looking-at "\n")
         (delete-char 1)))))))
 
+(defun expand-parse (name l &optional str pos)
+  (cond ((null l)
+         (list name str (reverse pos)))
+        ((equal 'n (car l))
+         (expand-parse name (cdr l) (concat str "\n")
+                       (cons (1+ (length str)) pos)))
+        ((equal 'p (car l))
+         (expand-parse name (cdr l) str (cons (1+ (length str)) pos)))
+        (t (expand-parse name (cdr l) (concat str (car l)) pos))))
+
 (defun forward-line-6 ()
   (interactive)
   (forward-line 6))
@@ -49,13 +59,48 @@
   "Create a really large window suitable for coding on a 20 inch cinema display."
   (interactive "P")
   (my-set-mac-font "bitstream vera sans mono" 12)
-  (arrange-frame 199 60 nosplit))
+  (arrange-frame 200 60 nosplit))
+
+(defun hugeish (&optional nosplit)
+  "Yet another screen layout. Suitable for 13in but denser than medium."
+  (interactive "P")
+  (my-set-mac-font "bitstream vera sans mono" 10)
+  (arrange-frame 200 62 nosplit))
 
 (defun insert-buffer-name()
-  "Insert the value of buffer-name"
+  "Insert the value of buffer-name."
   (interactive)
   (progn
     (insert (buffer-name))))
+
+(defun insert-modeline ()
+  "Insert the current modeline into the file."
+  (interactive)
+  (let ((mode (symbol-name major-mode)))
+    (insert "-*- ")
+    (comment-region (line-beginning-position) (line-end-position))
+    (insert (substring mode 0 (- (length mode) 5)))
+    (insert " -*-")
+    (insert "\n")))
+
+(defun insert-path (path)
+  (interactive "G")
+  (insert (expand-file-name path)))
+
+(defun insert-shebang ()
+  "Insert a shebang line based on mode into the file."
+  (interactive)
+  (let* ((mode (symbol-name major-mode))
+         (prg  (substring mode 0 (- (length mode) 5)))
+         (path (shell-command-to-string (concat "which " prg))))
+    (save-excursion
+      (goto-char (point-min))
+      (insert "#!")
+      (insert path)
+      (insert "\n"))))
+
+(defun list-join (sep lst)
+  (mapconcat (lambda (x) x) lst sep))
 
 (defun locate-make-mdfind-command-line (search-string)
   (list "mdfind" (concat "kMDItemDisplayName=*" search-string "*")))
@@ -75,6 +120,10 @@
           (tabify (mark) (point))
           (untabify (mark) (point))))))
 
+(defun my-emacs-wiki ()
+  (interactive)
+  (shell-command (concat "open http://localhost/~ryan/emacs/static/" (buffer-name))))
+
 (defun my-eval-and-replace ()
   "Replace the preceding sexp with its value."
   (interactive)
@@ -85,6 +134,13 @@
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
+(defun my-indent-whole-buffer ()
+  "indent whole buffer"
+  (interactive)
+  (delete-trailing-whitespace)
+  (indent-region (point-min) (point-max) nil)
+  (untabify (point-min) (point-max)))
+
 (defun my-generate-new-buffer-name (name)
   "Find a new buffer name not currently used in the form of <name>-<N> where N starts at 1"
   (let* ((count 1)
@@ -94,6 +150,12 @@
       (set 'count (+ count 1)))
     buffer-name))
 
+(defun my-read-this ()
+  (interactive)
+  (delete-other-windows)
+  (split-window-horizontally)
+  (follow-mode))
+
 (defun my-recompile-init ()
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0))
@@ -101,6 +163,11 @@
 (defun my-record-current-window ()
   (delete-other-windows)
   (insert (pp `(arrange-frame ,(window-width) ,(+ 1 (window-height)) t))))
+
+(defun my-reset-macro-counter (n)
+  "Set kmacro-counter to \\[universal-argument] prefix's value or 1 by default"
+  (interactive "p")
+  (setq kmacro-counter (or n 1)))
 
 (defun my-selective-display (column)
   "Rotate folding the buffer at no, 2, 4, and 6 columns."
@@ -165,7 +232,9 @@
 
 (defun reload-safari ()
   (interactive)
-  (shell-command "printf 'tell application \"System Events\"\nclick button \"Stop\" of first window of process \"Safari\"\nend tell' | osascript" nil nil))
+  (shell-command "printf 'tell application \"System Events\"
+click button \"Stop\" of first window of process \"Safari\"
+end tell' | osascript" nil nil))
 
 (defun server-stop ()
   "Stop the server"
@@ -177,6 +246,17 @@
   (interactive "P")
   (my-set-mac-font "bitstream vera sans mono" 12)
   (arrange-frame 80 45 (not split)))
+
+(defun spotlight ()
+  (interactive)
+  (let ((locate-command "mdfind")
+        (locate-make-command-line 'locate-make-mdfind-command-line))
+    (call-interactively 'locate nil)))
+
+(defun spotlight-full ()
+  (interactive)
+  (let ((locate-command "mdfind"))
+    (call-interactively 'locate nil)))
 
 (defun swap-buffers ()
   "Swap the current 2 buffers in their windows"
@@ -212,3 +292,9 @@
   (interactive)
   (let ((fill-column (point-max)))
     (fill-paragraph nil)))
+
+
+(defun occur-buffer ()
+  (interactive)
+  (save-excursion
+    (shell-command-on-region (point-min) (point-max) "occur -n -p")))

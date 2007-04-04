@@ -4,6 +4,9 @@
 (require 'compile)
 (require 'p4)
 (require 'autorevert)
+; (require 'quack)
+; (require 'w3m-load)
+
 ;; (require 'ecb-autoloads)
 ;; (require 'mmm-mode)
 ;; (require 'mmm-auto)
@@ -11,14 +14,58 @@
 (autoload 'toggle-buffer "toggle" "doco" t)
 (autoload 'autotest-switch "autotest" "doco" t)
 (autoload 'autotest "autotest" "doco" t)
+(autoload 'which-function "which-func" "doco" t)
+(autoload 'slime-setup "slime.el" "slime" t)
+(autoload 'slime "slime.el" "slime" t)
+(autoload 'semantic-load-enable-code-helpers "semantic" "semantic lib" t)
+
+;; (require 'generic-x)
+
+;; (defmacro with-library (symbol &rest body)
+;;   `(condition-case nil
+;;        (progn
+;;          (require ',symbol)
+;;          ,@body)
+
+;;      (error (message "I guess we don't have %s available." ',symbol)
+;;             nil)))
+
+;; (defmacro with-library (symbol &rest body)
+;;   `(if (require ',symbol nil t)
+;;        (progn
+;;          ,@body)))
+
+(require 'javascript-mode)
+(require 'ecmascript-mode)
+
+;; (with-library javascript-mode
+;;               (add-to-list 'auto-mode-alist '("\\.js$" . javascript-mode)))
+
+;; (when (locate-library "javascript")
+;;   (autoload 'javascript-mode "javascript" nil t)
+;;   (add-to-list 'auto-mode-alist '("\\.js$" . javascript-mode)))
+
+(dolist (spec '(("\\.rb$"     . ruby-mode)
+                ("\\.rhtml$"  . html-mode)
+                ("\\.bash.*$" . ksh-mode)
+                ("\\.org$"    . org-mode)
+                ("\\.js$"     . ecmascript-mode)
+                ("^\\(GNUm\\|M\\)akefile.*$" . makefile-mode)))
+  (add-to-list 'auto-mode-alist spec))
+
+; (require 'rinari)
 
 ;; ============================================================
-;; Simple mode toggles:
+;; Org Mode:
 
-(setq
- tramp-default-method "ssh"
-;;  ecb-toggle-layout-sequence '("left10" "left9" "left6")
- compilation-error-regexp-alist '(bash java gcc-include gnu))
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+(setq org-tag-alist '(("brainstorm" . ?b) ("code" . ?c) ("email" . ?e) ("logistics" . ?l) ("online" . ?o) ("research" . ?r) ("write" . ?w)))
+(setq org-agenda-directory "~/Documents/org/")
+(setq org-agenda-files
+      (directory-files (expand-file-name org-agenda-directory) t "^.*\\.org$"))
 
 ;; ============================================================
 ;; Ruby:
@@ -30,31 +77,8 @@
 (autoload 'ri "ri.el" "ri utility" t)
 (autoload 'ri-show-term-at-point "ri.el" "ri utility" t)
 (autoload 'ri-show-term-composite-at-point "ri.el" "ri utility" t)
-(autoload 'slime-setup "slime.el" "slime" t)
-(autoload 'slime "slime.el" "slime" t)
-(autoload 'semantic-load-enable-code-helpers "semantic" "semantic lib" t)
-
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
-
-(defun expand-parse (name l &optional str pos)
-  (cond ((null l)
-         (list name str (reverse pos)))
-        ((equal 'n (car l))
-         (expand-parse name (cdr l) (concat str "\n")
-                       (cons (1+ (length str)) pos)))
-        ((equal 'p (car l))
-         (expand-parse name (cdr l) str (cons (1+ (length str)) pos)))
-        (t (expand-parse name (cdr l) (concat str (car l)) pos))))
-
-(defun insert-modeline ()
-  (interactive)
-  (let ((mode (symbol-name major-mode)))
-    (insert "-*- ")
-    (comment-region (line-beginning-position) (line-end-position))
-    (insert (substring mode 0 (- (length mode) 5)))
-    (insert " -*-")
-    (insert "\n")))
 
 (defconst ruby-expand-list
   (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
@@ -73,8 +97,71 @@
                     "  end\nend"))))
   "Expansions for Ruby mode")
 
+(defface my-red-face
+  '((t (:foreground "white" :background "red")))
+  "A red face for warnings that are not quite that bad."
+ :group 'my-faces)
+
+(defface my-yellow-face
+  '((t (:background "yellow")))
+  "A yellow face for warnings that are not quite that bad."
+ :group 'my-faces)
+
+(setq yellow-tokens (delete ?\s "\\<\\(F IX\\|D OC\\|R ETIRE\\|T ODO\\|W ARN\\).*\\>"))
+(setq red-tokens (delete ?\s "\\<\\(H ACK\\|R EFACTOR\\).*\\>"))
+
+(mapcar (lambda (mode)
+          (font-lock-add-keywords
+           mode
+           (list (list yellow-tokens 0 ''my-yellow-face 'prepend)
+                 (list red-tokens    0 ''my-red-face    'prepend))))
+        '(ruby-mode lisp-mode scheme-mode emacs-lisp-mode))
+
+;; (defun setup-abbrevs-for-modes (modes)
+;;   (dolist (mode modes)
+;;     (setq ,(concat-symbols mode '-mode-abbrev-table) '())))
+;; ;;     (add-hook `(concat-symbols ',mode '-mode-hook)
+;; ;;               (lambda ()
+;; ;;                  (require 'expand)
+;; ;;                  (expand-add-abbrevs
+;; ;;                   `(concat-symbols ',mode '-mode-abbrev-table)
+;; ;;                   `(concat-symbols ',mode '-expand-list))
+;; ;;                  (abbrev-mode)))))
+
+;; (setup-abbrevs-for-modes '(ruby scheme))
+
+;; (mapcar
+;;  (lambda (mode) (setq (concat-symbols mode '-mode-abbrev-table) '()))
+;;  '(ruby scheme))
+
 (setq ruby-mode-abbrev-table '())
 (setq save-abbrevs nil)
+
+;; (defun rails-file-cache (dir)
+;;   "Adds all the ruby and rhtml files recursively in the current directory to the file-cache"
+;;   (interactive "DAdd directory: ")
+;;   (require 'filecache)
+;;   (define-key minibuffer-local-completion-map [S-tab] 'file-cache-minibuffer-complete)
+;;   (define-key minibuffer-local-map [S-tab] 'file-cache-minibuffer-complete)
+;;   (define-key minibuffer-local-must-match-map [S-tab] 'file-cache-minibuffer-complete)
+;;   (file-cache-clear-cache)
+;;   (dolist (subdir '("app" "test" "lib" "db" "config"))
+;;     (file-cache-add-directory-recursively (concat dir subdir) "\\.r\\(b\\|html\\|xml\\|js\\)"))
+;;   (file-cache-delete-file-regexp "\\.svn"))
+
+(defun ruby-completion-buffer ()
+  (interactive)
+  (switch-to-buffer "*ruby-completion*")
+  (erase-buffer)
+  (insert (shell-command-to-string "ri -l")))
+
+;; (defun split-horizontally-not-vertically ()
+;;   "If there's only one window (excluding any possibly active minibuffer), then
+;;      split the current window horizontally."
+;;   (interactive)
+;;   (if (= (length (window-list nil 'dont-include-minibuffer-even-if-active)) 1)
+;;       (split-window-horizontally)))
+;; (add-hook 'temp-buffer-setup-hook 'split-horizontally-not-vertically)
 
 ;(add-to-list 'compilation-error-regexp-alist
 ;     '("test[a-zA-Z0-9_]*([A-Z][a-zA-Z0-9_]*) \\[\\(.*\\):\\([0-9]+\\)\\]:"
@@ -83,14 +170,20 @@
 ;            '("^ *\\[?\\([^:\\n\\r]+\\):\\([0-9]+\\):in"
 ;              1 2))
 
-;; (defun ruby-test-function ()
-;;   "Test the current ruby function (must be runable via ruby <buffer> --name <test>)."
-;;   (interactive)
-;;   (let* ((funname (which-function))
-;;          (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname))))
-;;     (compile (concat "ruby " (file-name-nondirectory (buffer-file-name)) " --name " fn))))
+(defun ruby-test-function ()
+  "Test the current ruby function."
+  (interactive)
+  (let* ((funname (which-function))
+         (fn (and (string-match "#\\(.*\\)" funname) (match-string 1 funname))))
+    (compile
+     (concat "ruby " (file-name-nondirectory (buffer-file-name)) " -n " fn))))
 
+;; TODO: grab more from http://www.rubygarden.org/ruby?EmacsExtensions
+
+;; FIX!
 (setq ruby-program-name "/usr/local/bin/irb")
+(setq ri-ri-command "/usr/local/bin/ri")
+(setq ri-emacsrb "plain")
 
 (add-hook 'ruby-mode-hook
           '(lambda ()
@@ -98,40 +191,31 @@
              (define-key ruby-mode-map (kbd "C-c C-a") 'autotest-switch)
              (define-key ruby-mode-map (kbd "C-c C-r") 'ri-show-term-at-point)
              (define-key ruby-mode-map (kbd "C-c C-t") 'ri-show-term-composite-at-point)
+             (require 'which-func)
+             (add-to-list 'which-func-modes 'ruby-mode)
+             (which-func-mode)
              (imenu-add-menubar-index)
              (local-set-key [mouse-3] 'imenu)
              (require 'expand)
              (expand-add-abbrevs ruby-mode-abbrev-table ruby-expand-list)
              (abbrev-mode)))
 
-;; FIX!
-(setq ri-ri-command "/usr/local/bin/ri")
-(setq ri-emacsrb "plain")
+;;  (add-hook 'foo-mode-hook
+;;            (lambda ()
+;;               (set (make-local-variable imenu-generic-expression)
+;;                    '(("Comments" "^\\s-*#" 1)
+;;                      ...))))
 
-(setq scheme-program-name "/usr/local/bin/mzscheme")
-(setq inferior-lisp-program "/opt/local/bin/sbcl")
+;; TODO:
+;; (setq ruby-imenu-generic-expression
+;;       '(("Comments" "^-- \\(.+\\)" 1)
+;;         ("Function Definitions" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
+;;  [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]+\\)?[ai]s\\b" 2)
+;;         ("Function Prototypes" "^\\s-*\\(function\\|procedure\\)[ \n\t]+\\([a-z0-9_]+\\)\
+;;  [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]*\\)?;" 2)
+;;         ("Indexes" "^\\s-*create\\s-+index\\s-+\\(\\w+\\)" 1)
+;;         ("Tables" "^\\s-*create\\s-+table\\s-+\\(\\w+\\)" 1)))
 
-(defun rb-compile-command (filename)
-    "Find the unit test script for testing FILENAME.  I always organize my
-packages in the same way.  The unit_test.rb script is in the package root.  The
-individual unit tests go under root/test and the source goes under
-root/lib/whatever.  This function figures out what the root should be, and then
-sees if there's a unit_test.rb there.  If it can't find it at all, it just runs
-ruby on the file I'm visiting."
-
-    (let* ((pkg-root (cond
-                      ((string-match "^\\(.*\\)/lib/.*$" filename)
-                       (match-string 1 filename))
-                      ((string-match "^\\(.*\\)/test/.*$" filename)
-                       (match-string 1 filename))
-                      ((string-match "^\\(.*\\)/.*$" filename)
-                       (match-string 1 filename))))
-           (unit-test (concat pkg-root "/unit_test.rb")))
-      (if (file-readable-p unit-test)
-          (concat "ruby " unit-test)
-        (concat "ruby " filename))))
-
-;; TODO: grab more from http://www.rubygarden.org/ruby?EmacsExtensions
 
 ;; ============================================================
 ;; XML:
@@ -175,16 +259,35 @@ ruby on the file I'm visiting."
 ;; (add-hook 'html-mode-hook
 ;;           (lambda ()
 ;;             (setq mmm-classes '(erb-code))
-;;             (mmm-mode-on)))
-(add-to-list 'auto-mode-alist '("\\.rhtml$" . html-mode))
-;; (global-set-key [f8] 'mmm-parse-buffer)
+;;             (mmm-mode-on)
+;;             (local-set-key [f8] 'mmm-parse-buffer)))
+
+;; ============================================================
+;; Scheme / Lisp:
+
+(setq scheme-program-name "mzscheme")
+(setq inferior-lisp-program "/opt/local/bin/sbcl")
+
+(defconst scheme-expand-list
+  (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
+          '(
+            ("def" ("(define " n
+                    "  (lambda (a)\n"
+                    "    (cond\n"
+                    "     ((null? a) 'fix)\n"
+                    "\n"
+                    "     (else 'fix))))\n")))))
+
+(setq scheme-mode-abbrev-table '())
+
+(add-hook 'scheme-mode-hook
+          '(lambda ()
+             (require 'expand)
+             (expand-add-abbrevs scheme-mode-abbrev-table scheme-expand-list)
+             (abbrev-mode)))
 
 ;; ============================================================
 ;; Misc Modes/Stuff:
-
-(add-to-list 'auto-mode-alist '("\\.bash.*$" . ksh-mode))
-(add-to-list 'auto-mode-alist
-             '("^I?\\(M\\|m\\|GNUm\\)akefile.*$" . makefile-mode))
 
 (if running-emacs
     (add-hook 'shell-mode-hook
@@ -200,6 +303,7 @@ ruby on the file I'm visiting."
 (add-hook 'c-mode-hook
           '(lambda ()
              (local-set-key (kbd "C-c C-r") 'recompile)))
+
 
 (turn-on-auto-revert-mode)
 (global-auto-revert-mode)
@@ -229,15 +333,3 @@ ruby on the file I'm visiting."
             (lambda ()
               (highlight-tabs)
               (highlight-trailing-whitespace))))
-
-;; ============================================================
-;; PAbbrev:
-
-;; (require 'pabbrev)
-;; (dolist (hook '(text-mode-hook
-;;                 html-mode-hook
-;;                 emacs-lisp-mode-hook
-;;                 latex-mode-hook
-;;                 ruby-mode-hook))
-;;   (add-hook hook (lambda () (pabbrev-mode))))
-
