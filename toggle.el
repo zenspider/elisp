@@ -3,7 +3,7 @@
 ;; Copyright (C) 2006-2007 by Ryan Davis
 
 ;; Author: Ryan Davis <ryand-ruby@zenspider.com>
-;; Version 1.1
+;; Version 1.2
 ;; Keywords: files, extensions, convenience
 ;; Created: 2006-03-22
 ;; Compatibility: Emacs 22, 21?
@@ -47,6 +47,12 @@
 ;; blah.rb <-> test_blah.rb
 ;; lib/blah.rb <-> test/test_blah.rb
 
+;;; History:
+
+;; 1.2 2007-04-04 Interleave bidirectional mappings. Fixed interactive setter.
+;; 1.1 2007-03-30 Initial release to emacswiki.org. Added named styles and bidi.
+;; 1.0 2006-03-22 Birfday.
+
 (defcustom toggle-mapping-styles
   '((zentest . (("app/controllers/\\1.rb" . "test/controllers/\\1_test.rb")
                 ("app/views/\\1.rb"       . "test/views/\\1_test.rb")
@@ -66,16 +72,21 @@
 
 (defun toggle-style (name)
   (interactive "sStyle: ")
-  (let ((pairs (cdr (assoc name toggle-mapping-styles))))
+  (let* ((style (if (stringp name) (intern name) name))
+         (pairs (cdr (assoc style toggle-mapping-styles))))
     (if pairs
-        (setq toggle-mappings
-              (mapcar (lambda (pair)
-                        (cons (replace-regexp-in-string "\\\\1" "\\\\(.*\\\\)"
-                                                        (car pair))
-                              (cdr pair)))
-                      (append pairs
-                              (mapcar (lambda (pair)
-                                        (cons (cdr pair) (car pair))) pairs)))))))
+        (progn
+          (setq toggle-mappings
+                (mapcar (lambda (pair)
+                          (cons (replace-regexp-in-string "\\\\1" "\\\\(.*\\\\)"
+                                                          (car pair))
+                                (cdr pair)))
+                        (mapcan 'list
+                                pairs
+                                (mapcar (lambda (pair)
+                                          (cons (cdr pair) (car pair))) pairs))))
+          (message (concat "Set to " name)))
+      (message (concat "Couldn't find style" name)))))
 
 (defcustom toggle-mapping-style
   'rails
