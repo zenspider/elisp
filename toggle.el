@@ -49,15 +49,21 @@
 
 ;;; History:
 
-;; 1.2 2007-04-04 Interleave bidirectional mappings. Fixed interactive setter.
+;; 1.2 2007-04-06 Interleave bidirectional mappings. Fixed interactive setter. Added rspec mappings.
 ;; 1.1 2007-03-30 Initial release to emacswiki.org. Added named styles and bidi.
 ;; 1.0 2006-03-22 Birfday.
+
+(require 'cl)
 
 (defcustom toggle-mapping-styles
   '((zentest . (("app/controllers/\\1.rb" . "test/controllers/\\1_test.rb")
                 ("app/views/\\1.rb"       . "test/views/\\1_test.rb")
                 ("app/models/\\1.rb"      . "test/unit/\\1_test.rb")
                 ("lib/\\1.rb"             . "test/unit/test_\\1.rb")))
+    (rspec   . (("app/models/\\1.rb"      . "spec/models.\\1_spec.rb")
+                ("app/controllers/\\1.rb" . "spec/controllers/\\1_spec.rb")
+                ("app/views/\\1.rb"       . "spec/views/\\1_spec.rb")
+                ("app/helpers/\\1.rb"     . "spec/helpers/\\1_spec.rb")))
     (rails   . (("app/controllers/\\1.rb" . "test/functional/\\1_test.rb")
                 ("app/models/\\1.rb"      . "test/unit/\\1_test.rb")
                 ("lib/\\1.rb"             . "test/unit/test_\\1.rb")))
@@ -67,34 +73,37 @@
   :group 'toggle
   :type '(repeat (cons string string)))
 
-(defvar toggle-mappings '()
-  "*The current file mappings for `toggle-filename' to use.")
-
-(defun toggle-style (name)
-  (interactive "sStyle: ")
-  (let* ((style (if (stringp name) (intern name) name))
-         (pairs (cdr (assoc style toggle-mapping-styles))))
-    (if pairs
-        (progn
-          (setq toggle-mappings
-                (mapcar (lambda (pair)
-                          (cons (replace-regexp-in-string "\\\\1" "\\\\(.*\\\\)"
-                                                          (car pair))
-                                (cdr pair)))
-                        (mapcan 'list
-                                pairs
-                                (mapcar (lambda (pair)
-                                          (cons (cdr pair) (car pair))) pairs))))
-          (message (concat "Set to " name)))
-      (message (concat "Couldn't find style" name)))))
-
 (defcustom toggle-mapping-style
   'rails
-  "The defaulte toggle mapping style to load when initialized."
+  "The default toggle mapping style to load when initialized."
   :group 'toggle
   :type '(symbol))
 
-(setq toggle-mappings (toggle-style toggle-mapping-style))
+(defun toggle-style (name)
+  (interactive "MStyle: ")
+  (let* ((style (if (stringp name) (intern name) name))
+         (pairs (cdr (assoc style toggle-mapping-styles))))
+    (if pairs
+        (let ((mappings
+               (mapcar (lambda (pair)
+                         (cons
+                          (replace-regexp-in-string
+                           "\\\\1" "\\\\(.*\\\\)"
+                           (replace-regexp-in-string ; special case for "\\1.ext"
+                            "^\\\\1" "\\\\([^/]*\\\\)" (car pair)))
+                          (cdr pair)))
+                       (mapcan 'list
+                               pairs
+                               (mapcar (lambda (pair)
+                                         (cons (cdr pair) (car pair)))
+                                       pairs)))))
+          (if (interactive-p)
+              (setq toggle-mappings mappings)
+            mappings))
+      '())))
+
+(defvar toggle-mappings (toggle-style toggle-mapping-style)
+  "*The current file mappings for `toggle-filename' to use.")
 
 (defun toggle-filename (path rules)
   "Transform a matching subpath in PATH as given by RULES.
@@ -114,7 +123,7 @@ match is found, switches to that buffer."
   (interactive)
   (let ((new-name (toggle-filename (buffer-file-name) toggle-mappings)))
     (if new-name
-    (find-file new-name)
+        (find-file new-name)
       (message (concat "Match not found for " (buffer-file-name))))))
 
 (provide 'toggle)
