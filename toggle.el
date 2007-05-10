@@ -9,8 +9,14 @@
 ;; Compatibility: Emacs 22, 21?
 ;; URL(en): http://seattlerb.rubyforge.org/
 
-;; The MIT License: http://en.wikipedia.org/wiki/MIT_License
+;;; Posted using:
+;; (setq emacs-wiki-name "RyanDavis")
+;; (wikiput-buffer "update")
 
+;;; The MIT License:
+
+;; http://en.wikipedia.org/wiki/MIT_License
+;;
 ;; Permission is hereby granted, free of charge, to any person obtaining
 ;; a copy of this software and associated documentation files (the
 ;; "Software"), to deal in the Software without restriction, including
@@ -80,7 +86,11 @@
   :type '(symbol))
 
 (defun toggle-style (name)
-  (interactive "MStyle: ")
+  (interactive (list (completing-read "Style: "
+                                      (mapcar
+                                       #'symbol-name
+                                       (mapcar #'car toggle-mapping-styles))
+                                      nil t "")))
   (let* ((style (if (stringp name) (intern name) name))
          (pairs (cdr (assoc style toggle-mapping-styles))))
     (if pairs
@@ -100,7 +110,7 @@
           (if (interactive-p)
               (setq toggle-mappings mappings)
             mappings))
-      '())))
+      nil)))
 
 (defvar toggle-mappings (toggle-style toggle-mapping-style)
   "*The current file mappings for `toggle-filename' to use.")

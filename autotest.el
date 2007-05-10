@@ -1,8 +1,49 @@
-;; autotest.el - by Ryan Davis - ryan-ruby@zenspider.com
+;;; autotest.el - ZenTest's autotest integration with emacs.
+
+;; Copyright (C) 2006-2007 by Ryan Davis
+
+;; Author: Ryan Davis <ryand-ruby@zenspider.com>
+;; Version 1.0 beta 3
+;; Keywords: testing, ruby, convenience
+;; Created: 2006-11-17
+;; Compatibility: Emacs 22, 21?
+;; URL(en): http://seattlerb.rubyforge.org/
+;; by Ryan Davis - ryan-ruby@zenspider.com
+
+;;; Posted using:
+;; (setq emacs-wiki-name "RyanDavis")
+;; (wikiput-buffer "update")
+
+;;; The MIT License:
+
+;; http://en.wikipedia.org/wiki/MIT_License
 ;;
-;; Sets up an autotest buffer and provides conveniencte methods.
-;;
-;; History:
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+;; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+;; MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+;; IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+;; CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+;; TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+;; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+;;; Commentary:
+
+;; Sets up an autotest buffer and provides convenience methods.
+
+;;; History:
+
+;; 1.0 beta 3 - 2007-05-10 - emacs compatibility fixes and improved regexps.
 ;; 1.0 beta 2 - 2007-04-03 - added autotest plugin / communication support
 ;; 1.0 beta 1 - 2007-03-06 - initial release
 
@@ -23,9 +64,9 @@
 
     (set (make-local-variable 'compilation-error-regexp-alist)
          '(
-           ("^ +\\([^:]+\\):\\([0-9]+\\)" 1 2)
+           ("^ +\\(#{RAILS_ROOT}/\\)?\\([^(:]+\\):\\([0-9]+\\)" 2 3)
            ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
-           ("^ *\\(#{RAILS_ROOT}\\|[[+]\\)?\\([^:
+           ("^ *\\([[+]\\)?\\([^:
 ]+\\):\\([0-9]+\\):in" 2 3)
            ))
     (compilation-shell-minor-mode)
@@ -35,7 +76,7 @@
   "Switch back and forth between autotest and the previous buffer"
   (interactive)
   (if (equal "*autotest*" (buffer-name))
-      (switch-to-buffer nil)
+      (switch-to-buffer (other-buffer))
     (switch-to-buffer "*autotest*")))
 
 (if (require 'unit-test nil t)
@@ -60,7 +101,7 @@
                            0 3
                            'keymap autotest-map
                            (car mode-line-buffer-identification))))))
-                  (buffer-list)))
+                  (remove-if 'minibufferp (buffer-list))))
         status))
   (message "unit-test not found, not starting autotest/emacs integration"))
 
