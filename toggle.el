@@ -3,7 +3,7 @@
 ;; Copyright (C) 2006-2007 by Ryan Davis
 
 ;; Author: Ryan Davis <ryand-ruby@zenspider.com>
-;; Version 1.2
+;; Version 1.3
 ;; Keywords: files, extensions, convenience
 ;; Created: 2006-03-22
 ;; Compatibility: Emacs 22, 21?
@@ -55,6 +55,7 @@
 
 ;;; History:
 
+;; 1.3 2007-05-10 Added tab completion to toggle-style. Suggested by TingWang.
 ;; 1.2 2007-04-06 Interleave bidirectional mappings. Fixed interactive setter. Added rspec mappings.
 ;; 1.1 2007-03-30 Initial release to emacswiki.org. Added named styles and bidi.
 ;; 1.0 2006-03-22 Birfday.
