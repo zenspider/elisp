@@ -1,8 +1,8 @@
 ;;; -*-Emacs-Lisp-*-
 ;;;
-;;;  $Id: inf-ruby.el 11454 2007-01-03 03:14:57Z matz $
-;;;  $Author: matz $
-;;;  $Date: 2007-01-02 19:14:57 -0800 (Tue, 02 Jan 2007) $
+;;;  $Id: inf-ruby.el 12031 2007-03-11 10:01:15Z knu $
+;;;  $Author: knu $
+;;;  $Date: 2007-03-11 03:01:15 -0700 (Sun, 11 Mar 2007) $
 ;;;
 ;;; Inferior Ruby Mode - ruby process in a buffer.
 ;;;                      adapted from cmuscheme.el
@@ -35,7 +35,15 @@
 ;;; HISTORY
 ;;; senda -  8 Apr 1998: Created.
 ;;;	 $Log$
-;;;	 Revision 1.6.2.1  2004/07/27 07:51:28  matz
+;;;	 Revision 1.7  2004/07/27 08:11:36  matz
+;;;	 * eval.c (rb_eval): copy on write for argument local variable
+;;;	   assignment.
+;;;
+;;;	 * eval.c (assign): ditto.
+;;;
+;;;	 * eval.c (rb_call0): update ruby_frame->argv with the default
+;;;	   value used for the optional arguments.
+;;;
 ;;;	 * object.c (Init_Object): "===" calls rb_obj_equal() directly.
 ;;;	   [ruby-list:39937]
 ;;;
