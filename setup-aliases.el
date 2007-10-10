@@ -343,8 +343,6 @@ end tell' | osascript" nil nil))
     ad-do-it
     (and line (goto-line line))))
 
-(command-frequency)
-
 (defmacro def-hook (mode &rest body)
   `(add-hook
     ',(intern (concat (symbol-name mode) "-hook"))
