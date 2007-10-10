@@ -42,12 +42,22 @@
 ;; Sets up an autotest buffer and provides convenience methods.
 
 ;;; History:
-
+;; 1.0 beta 4 - 2007-09-25 - Added autotest-use-ui and autotest-command vars.
 ;; 1.0 beta 3 - 2007-05-10 - emacs compatibility fixes and improved regexps.
 ;; 1.0 beta 2 - 2007-04-03 - added autotest plugin / communication support
 ;; 1.0 beta 1 - 2007-03-06 - initial release
 
 (require 'shell)
+
+(defcustom autotest-use-ui nil
+  "Should we use test-unit's UI?"
+  :group 'autotest
+  :type '(boolean))
+
+(defcustom autotest-command "autotest"
+  "Command name to use to execute autotest."
+  :group 'autotest
+  :type '(string))
 
 (defun autotest ()
   "Fire up an instance of autotest in its own buffer with shell bindings and compile-mode highlighting and linking."
@@ -70,7 +80,7 @@
 ]+\\):\\([0-9]+\\):in" 2 3)
            ))
     (compilation-shell-minor-mode)
-    (comint-send-string buffer "autotest\n")))
+    (comint-send-string buffer (concat autotest-command "\n"))))
 
 (defun autotest-switch ()
   "Switch back and forth between autotest and the previous buffer"
@@ -79,7 +89,10 @@
       (switch-to-buffer (other-buffer))
     (switch-to-buffer "*autotest*")))
 
-(if (require 'unit-test nil t)
+(eval-when-compile
+  (require 'unit-test nil t))
+
+(if (and autotest-use-ui (require 'unit-test nil t))
     (progn
       (message "starting emacs server for autotest")
       (setq unit-test-colours (acons "gray" "#999999" unit-test-colours))

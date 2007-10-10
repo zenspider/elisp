@@ -17,6 +17,7 @@
 (global-set-key (kbd "C-x C-t") 'toggle-buffer)
 (global-set-key (kbd "M-C-y")   'kill-ring-search)
 (global-set-key (kbd "M-s")     'fixup-whitespace)
+(global-set-key (kbd "M-?")     'etags-select-find-tag-at-point)
 
 ;; FIX: blech!
 ;; (mapcar (lambda (mode)
@@ -39,9 +40,11 @@
 
 ;; iconify bugs the crap out of me:
 (when window-system (global-unset-key "\C-z"))
-(add-hook 'comint-mode-hook
-          (lambda ()
-            (define-key shell-mode-map (kbd "C-z") 'comint-stop-subjob)))
+(def-hook comint-mode
+  (define-key shell-mode-map (kbd "C-z") 'comint-stop-subjob))
+
+(def-hook dired-mode
+  (define-key dired-mode-map "e" 'wdired-change-to-wdired-mode))
 
 ; compatibility:
 (if running-emacs
@@ -49,9 +52,8 @@
       (global-set-key (kbd "M-g")      'goto-line)
       (global-set-key (kbd "<C-up>")   'previous-line-6)
       (global-set-key (kbd "<C-down>") 'forward-line-6)
-      (add-hook 'dired-load-hook
-                '(lambda ()
-                   (define-key dired-mode-map "k" 'dired-kill-subdir)))))
+      (def-hook dired-load
+        (define-key dired-mode-map "k" 'dired-kill-subdir))))
 
 ; This allows me to enforce that bury-buffer is bound to C-M-x
 ; regardless of mode (YAY!)

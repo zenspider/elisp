@@ -12,6 +12,12 @@
       (if (not nosplit)
           (split-window-horizontally)))))
 
+(defun chmod ()
+  (interactive)
+  (shell-command (format "chmod %s %s"
+                         (read-from-minibuffer "Mode string?: " "u+x")
+                         (buffer-file-name))))
+
 (defun clean-whitespace ()
   (interactive)
   (save-excursion
@@ -34,16 +40,6 @@
       (goto-char (- (point-max) 1))
       (while (looking-at "\n")
         (delete-char 1)))))))
-
-(defun expand-parse (name l &optional str pos)
-  (cond ((null l)
-         (list name str (reverse pos)))
-        ((equal 'n (car l))
-         (expand-parse name (cdr l) (concat str "\n")
-                       (cons (1+ (length str)) pos)))
-        ((equal 'p (car l))
-         (expand-parse name (cdr l) str (cons (1+ (length str)) pos)))
-        (t (expand-parse name (cdr l) (concat str (car l)) pos))))
 
 (defun forward-line-6 ()
   (interactive)
@@ -83,6 +79,20 @@
     (insert " -*-")
     (insert "\n")))
 
+(defun my-ruby-sexp (start end)
+  (interactive "r")
+  (save-excursion
+    (save-match-data
+      (replace-regexp "]" ")" nil start end)
+      (replace-regexp "\\[" "s(" nil start end))))
+
+(defun my-ruby-massage ()
+  (interactive)
+  (save-excursion
+    (replace-string "#<" "["  nil (point-min) (point-max))
+    (replace-string ">"  "]"  nil (point-min) (point-max))
+    (replace-string "=]" "=>" nil (point-min) (point-max))))
+
 (defun insert-path (path)
   (interactive "G")
   (insert (expand-file-name path)))
@@ -98,6 +108,12 @@
       (insert "#!")
       (insert path)
       (insert "\n"))))
+
+(defun lappy ()
+  (interactive)
+  (medium)
+  (myshell)
+  (swap-buffers))
 
 (defun list-join (sep lst)
   (mapconcat (lambda (x) x) lst sep))
@@ -214,17 +230,22 @@
   (interactive)
   (modify-tabs 4 nil))
 
+(defun mytabs8()
+  "Set tabbing to spaces at 8 col tabstops."
+  (interactive)
+  (modify-tabs 8 nil))
+
 (defun peepcode ()
   "Create a small font window suitable for doing live demos in 800x600."
   (interactive)
-  (arrange-frame 85 34 t)
-  (my-set-mac-font "bitstream vera sans mono" 14))
+  (arrange-frame 80 30 t)
+  (my-set-mac-font "bitstream vera sans mono" 15))
 
 (defun presentation ()
   "Create a giant font window suitable for doing live demos."
   (interactive)
-  (arrange-frame 85 25 t)
-  (my-set-mac-font "bitstream vera sans mono" 24))
+  (arrange-frame 80 25 t)
+  (my-set-mac-font "bitstream vera sans mono" 20))
 
 (defun previous-line-6 ()
   (interactive)
@@ -293,8 +314,41 @@ end tell' | osascript" nil nil))
   (let ((fill-column (point-max)))
     (fill-paragraph nil)))
 
+(setq emacs-wiki-name "RyanDavis")
+(defun wikiput-buffer (msg)
+  (interactive "MUpdate message: ")
+  (shell-command-on-region (point-min) (point-max)
+                           (concat "wikiput -u "
+                                   emacs-wiki-name
+                                   " -s \"" msg "\""
+                                   " http://www.emacswiki.org/cgi-bin/wiki/"
+                                   (buffer-name))))
+
+(defun wikiget (page-name)
+  (interactive "MPage name: ")
+  (shell-command (concat "curl -s \"http://www.emacswiki.org/cgi-bin/wiki/"
+                         "?action=browse;id="
+                         page-name
+                         ";raw=1\"")
+                 page-name))
 
 (defun occur-buffer ()
   (interactive)
   (save-excursion
     (shell-command-on-region (point-min) (point-max) "occur -n -p")))
+
+(defadvice find-file-at-point (around goto-line compile activate)
+  (let ((line (and (looking-at ".*:\\([0-9]+\\)")
+                   (string-to-number (match-string 1)))))
+    ad-do-it
+    (and line (goto-line line))))
+
+(command-frequency)
+
+(defmacro def-hook (mode &rest body)
+  `(add-hook
+    ',(intern (concat (symbol-name mode) "-hook"))
+    (defun ,(intern (concat "my-" (symbol-name mode) "-hook")) ()
+      ,@body)))
+(put 'def-hook 'lisp-indent-function 1)
+
