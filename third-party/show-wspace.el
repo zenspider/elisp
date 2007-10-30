@@ -7,9 +7,9 @@
 ;; Copyright (C) 2000-2007, Drew Adams, all rights reserved.
 ;; Created: Wed Jun 21 08:54:53 2000
 ;; Version: 21.0
-;; Last-Updated: Fri Jan 19 21:25:32 2007 (-28800 Pacific Standard Time)
+;; Last-Updated: Tue Sep 25 09:22:37 2007 (-25200 Pacific Daylight Time)
 ;;           By: dradams
-;;     Update #: 233
+;;     Update #: 262
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/show-wspace.el
 ;; Keywords: highlight, whitespace
 ;; Compatibility: GNU Emacs 20.x, GNU Emacs 21.x, GNU Emacs 22.x
@@ -35,47 +35,51 @@
 ;; mode.
 ;;
 ;; If you want to always use a particular kind of whitespace
-;; highlighting, by default, then add the corresponding `highlight-*'
-;; command (see below) to the hook `font-lock-mode-hook'.  Then,
-;; whenever Font-Lock mode is turned on, so will the whitespace
-;; highlighting.
+;; highlighting, by default, then add the corresponding
+;; `show-ws-highlight-*' function (see below) to the hook
+;; `font-lock-mode-hook'.  Then, whenever Font-Lock mode is turned on,
+;; whitespace highlighting will also be turned on.
 ;;
 ;; For example, you can turn on tab highlighting by default by adding
-;; command `highlight-tabs' to `font-lock-mode-hook' in your .emacs
-;; file, as follows:
+;; command `show-ws-highlight-tabs' to `font-lock-mode-hook' in your
+;; .emacs file, as follows:
 ;;
-;;     (add-hook 'font-lock-mode-hook 'highlight-tabs)
+;;     (add-hook 'font-lock-mode-hook 'show-ws-highlight-tabs)
 ;;
 ;;
 ;; Faces defined here:
 ;;
-;;    `pesche-hardspace', `pesche-space', `pesche-tab'.
+;;    `show-ws-hard-space', `show-ws-tab', `show-ws-trailing-whitespace'.
 ;;
 ;; Commands defined here:
 ;;
-;;    `toggle-hardspace-font-lock', `toggle-tabs-font-lock',
-;;    `toggle-trailing-whitespace-font-lock'.
+;;    `show-ws-toggle-show-hard-spaces', `show-ws-toggle-show-tabs',
+;;    `show-ws-toggle-show-trailing-whitespace',
+;;    `toggle-show-hard-spaces-show-ws' (alias),
+;;    `toggle-show-tabs-show-ws' (alias),
+;;    `toggle-show-trailing-whitespace-show-ws' (alias).
 ;;
 ;; Non-interactive functions defined here:
 ;;
-;;    `highlight-hard-spaces', `highlight-tabs',
-;;    `highlight-trailing-whitespace'.
+;;    `show-ws-highlight-hard-spaces', `show-ws-highlight-tabs',
+;;    `show-ws-highlight-trailing-whitespace'.
 ;;
 ;; Internal variables defined here:
 ;;
-;;    `highlight-hard-spaces-p', `highlight-tabs-p',
-;;    `highlight-trailing-whitespace-p'.
+;;    `show-ws-highlight-hard-spaces-p', `show-ws-highlight-tabs-p',
+;;    `show-ws-highlight-trailing-whitespace-p'.
 ;;
 ;; Drew Adams wrote the `toggle-*' commands and `*-p' variables.
 ;;
 ;; Peter Steiner wrote the original code that did the equivalent of
-;; the `highlight-*' commands here in his `hilite-trail.el'.  The
-;; names "pesche" are his.
+;; the `show-ws-highlight-*' commands here in his `hilite-trail.el'.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;;; Change log:
 ;;
+;; 2007/09/25 dadams
+;;     Renamed to use prefix show-ws-.  Thx to Cyril Brulebois.
 ;; 2006/11/11 dadams
 ;;     Corrected doc strings.  Clarified: hard space is non-breaking space, \240.
 ;;     Included hard space in highlight-trailing-whitespace.
@@ -122,6 +126,7 @@
 
 (defgroup Show-Whitespace nil
   "Highlight whitespace of various kinds."
+  :prefix "show-ws-"
   :group 'convenience :group 'matching
   :link `(url-link :tag "Send Bug Report"
           ,(concat "mailto:" "drew.adams" "@" "oracle" ".com?subject=\
@@ -137,74 +142,83 @@ Don't forget to mention your Emacs and library versions."))
   :link '(emacs-commentary-link :tag "Commentary" "show-wspace")
   )
 
-(defface pesche-tab '((t (:background "LemonChiffon")))
+(defface show-ws-tab '((t (:background "LemonChiffon")))
   "*Face for highlighting tab characters (`C-i') in Font-Lock mode."
   :group 'Show-Whitespace :group 'font-lock :group 'faces)
 
-(defface pesche-space '((t (:background "Gold")))
+(defface show-ws-trailing-whitespace '((t (:background "Gold")))
   "*Face for highlighting whitespace at line ends in Font-Lock mode."
   :group 'Show-Whitespace :group 'font-lock :group 'faces)
 
-(defface pesche-hardspace '((t (:background "PaleGreen")))
+(defface show-ws-hard-space '((t (:background "PaleGreen")))
   "*Face for highlighting non-breaking spaces (`\240')in Font-Lock mode."
   :group 'Show-Whitespace :group 'font-lock :group 'faces)
 
 
-(defvar highlight-tabs-p nil
+(defvar show-ws-highlight-tabs-p nil
   "Non-nil means font-lock mode highlights TAB characters (`C-i').")
 
-(defvar highlight-trailing-whitespace-p nil
+(defvar show-ws-highlight-trailing-whitespace-p nil
   "Non-nil means font-lock mode highlights whitespace at line ends.")
 
-(defvar highlight-hard-spaces-p nil
+(defvar show-ws-highlight-hard-spaces-p nil
   "Non-nil means font-lock mode highlights non-breaking spaces (`\240').")
 
 ;;;###autoload
-(defun toggle-tabs-font-lock ()
-  "Toggle highlighting of TABs, using face `pesche-tab'."
+(defalias 'toggle-show-tabs-show-ws 'show-ws-toggle-show-tabs)
+;;;###autoload
+(defun show-ws-toggle-show-tabs ()
+  "Toggle highlighting of TABs, using face `show-ws-tab'."
   (interactive)
-  (if highlight-tabs-p
-      (remove-hook 'font-lock-mode-hook 'highlight-tabs)
-    (add-hook 'font-lock-mode-hook 'highlight-tabs))
-  (setq highlight-tabs-p (not highlight-tabs-p))
-  (font-lock-mode)(font-lock-mode)
-  (message "TAB highlighting is now %s." (if highlight-tabs-p "ON" "OFF")))
+  (if show-ws-highlight-tabs-p
+      (remove-hook 'font-lock-mode-hook 'show-ws-highlight-tabs)
+    (add-hook 'font-lock-mode-hook 'show-ws-highlight-tabs))
+  (setq show-ws-highlight-tabs-p (not show-ws-highlight-tabs-p))
+  (font-lock-mode) (font-lock-mode)
+  (message "TAB highlighting is now %s." (if show-ws-highlight-tabs-p "ON" "OFF")))
 
 ;;;###autoload
-(defun toggle-hardspace-font-lock ()
+(defalias 'toggle-show-hard-spaces-show-ws 'show-ws-toggle-show-hard-spaces)
+;;;###autoload
+(defun show-ws-toggle-show-hard-spaces ()
   "Toggle highlighting of non-breaking space characters (`\240').
-Uses face `pesche-hardspace'."
+Uses face `show-ws-hard-space'."
   (interactive)
-  (if highlight-hard-spaces-p
-      (remove-hook 'font-lock-mode-hook 'highlight-hard-spaces)
-    (add-hook 'font-lock-mode-hook 'highlight-hard-spaces))
-  (setq highlight-hard-spaces-p (not highlight-hard-spaces-p))
-  (font-lock-mode)(font-lock-mode)
+  (if show-ws-highlight-hard-spaces-p
+      (remove-hook 'font-lock-mode-hook 'show-ws-highlight-hard-spaces)
+    (add-hook 'font-lock-mode-hook 'show-ws-highlight-hard-spaces))
+  (setq show-ws-highlight-hard-spaces-p (not show-ws-highlight-hard-spaces-p))
+  (font-lock-mode) (font-lock-mode)
   (message "Hard (non-breaking) space highlighting is now %s."
-           (if highlight-hard-spaces-p "ON" "OFF")))
+           (if show-ws-highlight-hard-spaces-p "ON" "OFF")))
 
 ;;;###autoload
-(defun toggle-trailing-whitespace-font-lock ()
+(defalias 'toggle-show-trailing-whitespace-show-ws
+    'show-ws-toggle-show-trailing-whitespace)
+;;;###autoload
+(defun show-ws-toggle-show-trailing-whitespace ()
   "Toggle highlighting of trailing whitespace.
-Uses face `pesche-space'."
+Uses face `show-ws-trailing-whitespace'."
   (interactive)
-  (if highlight-trailing-whitespace-p
-      (remove-hook 'font-lock-mode-hook 'highlight-trailing-whitespace)
-    (add-hook 'font-lock-mode-hook 'highlight-trailing-whitespace))
-  (setq highlight-trailing-whitespace-p (not highlight-trailing-whitespace-p))
-  (font-lock-mode)(font-lock-mode)
+  (if show-ws-highlight-trailing-whitespace-p
+      (remove-hook 'font-lock-mode-hook 'show-ws-highlight-trailing-whitespace)
+    (add-hook 'font-lock-mode-hook 'show-ws-highlight-trailing-whitespace))
+  (setq show-ws-highlight-trailing-whitespace-p
+        (not show-ws-highlight-trailing-whitespace-p))
+  (font-lock-mode) (font-lock-mode)
   (message "Trailing whitespace highlighting is now %s."
-           (if highlight-trailing-whitespace-p "ON" "OFF")))
+           (if show-ws-highlight-trailing-whitespace-p "ON" "OFF")))
 
-(defun highlight-tabs ()
+(defun show-ws-highlight-tabs ()
   "Highlight tab characters (`C-i')."
-  (font-lock-add-keywords nil '(("[\t]+" (0 'pesche-tab t)))))
-(defun highlight-hard-spaces ()
+  (font-lock-add-keywords nil '(("[\t]+" (0 'show-ws-tab t)))))
+(defun show-ws-highlight-hard-spaces ()
   "Highlight hard (non-breaking) space characters (`\240')."
-  (font-lock-add-keywords nil '(("[\240]+" (0 'pesche-hardspace t)))))
-(defun highlight-trailing-whitespace ()
+  (font-lock-add-keywords nil '(("[\240]+" (0 'show-ws-hard-space t)))))
+(defun show-ws-highlight-trailing-whitespace ()
   "Highlight whitespace characters at line ends."
-  (font-lock-add-keywords nil '(("[\240\040\t]+$" (0 'pesche-space t)))))
+  (font-lock-add-keywords
+   nil '(("[\240\040\t]+$" (0 'show-ws-trailing-whitespace t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 
