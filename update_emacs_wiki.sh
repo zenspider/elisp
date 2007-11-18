@@ -1,30 +1,29 @@
 #!/bin/bash
 
-EMACSWIKI_BACKUP_DIR="/Users/ryan/Sites/emacs/"
+set -xv
 
-cd $EMACSWIKI_BACKUP_DIR
+cd "/Users/ryan/Sites/emacs/"
 
-EMACSWIKI_URL="http://www.emacswiki.org/"
-BACKUP_EXT=".tar.gz"
-DEFAULT_DOWNLOAD="emacs/static emacs/elisp"
-DOWNLOADS=${@:-$DEFAULT_DOWNLOAD}
+STATIC="http://www.emacswiki.org/emacs/static.tar.gz"
+STATIC_F="static-$(date +%Y%m%d).tar.gz"
+ELISP="http://www.emacswiki.org/emacs/elisp.tar.gz"
+ELISP_F="elisp-$(date +%Y%m%d).tar.gz"
 
-for DOWNLOAD in $DOWNLOADS; do
-    DIR=$(basename $DOWNLOAD)
-    URL=$EMACSWIKI_URL$DOWNLOAD$BACKUP_EXT
-    FILE=$DIR-$(date +%Y%m%d)$BACKUP_EXT
+wget -cnv $STATIC -O $STATIC_F &
+wget -cnv $ELISP  -O $ELISP_F  &
 
-    if [ ! -f "$FILE" ]; then
-	    ${WGET:-wget} ${WGET_OPTS:-"-nv"} "${URL}" -O  "${FILE}"
-	    rm -rf $DIR
-        ls -t $DIR-*$BACKUP_EXT | tail +4 | xargs rm -v
-    fi
-    if [ ! -d $DIR ]; then
-	    tar zxf $FILE
-        chmod -R a+rX $DIR
-        if [ $DIR = "static" ]; then
-            find static -name \*.html -print0 | xargs -0 perl -pi -e 's%(=")/cgi-bin/emacs/(?:download/)?%$1../elisp/%g;'
-        fi
-    fi
-done
+wait
 
+rm -rf static elisp
+
+tar zxf $STATIC_F &
+tar zxf $ELISP_F  &
+
+wait
+
+chmod -R a+rX static elisp
+
+find static -name \*.html -print0 | xargs -0 perl -pi -e 's%(=")/cgi-bin/emacs/(?:download/)?%$1../elisp/%g;'
+    
+ls -t static-* | tail +4 | xargs rm -v
+ls -t elisp-*  | tail +4 | xargs rm -v
