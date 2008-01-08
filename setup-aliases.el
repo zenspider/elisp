@@ -343,6 +343,33 @@ end tell' | osascript" nil nil))
     ad-do-it
     (and line (goto-line line))))
 
+(defun munge-newlines (start end from to)
+  (save-excursion
+    (save-match-data
+      (goto-char start)
+      (let ((case-fold-search nil))
+        (while (re-search-forward from end t)
+          (replace-match to t t))))))
+
+(defun escape-newlines (start end)
+  (interactive "r")
+  (munge-newlines start end "\n" "\\n"))
+
+(defun unescape-newlines (start end)
+  (interactive "r")
+  (munge-newlines start end "\\\\n" "\n"))
+
+(defun un-camelcase-region (start end)
+  (interactive "r")
+  (save-excursion
+    (save-match-data
+      (goto-char start)
+      (let ((case-fold-search nil))
+        (while (re-search-forward "\\([a-z]\\)\\([A-Z]\\)" end t)
+          (replace-match (concat (match-string 1)
+                                 "_"
+                                 (downcase (match-string 2))) t))))))
+
 (defmacro def-hook (mode &rest body)
   `(add-hook
     ',(intern (concat (symbol-name mode) "-hook"))
@@ -350,3 +377,21 @@ end tell' | osascript" nil nil))
       ,@body)))
 (put 'def-hook 'lisp-indent-function 1)
 
+(defun sacha/increase-font-size ()
+  (interactive)
+  (set-face-attribute 'default
+                      nil
+                      :height
+                      (ceiling (* 1.10
+                                  (face-attribute 'default :height)))))
+(defun sacha/decrease-font-size ()
+  (interactive)
+  (set-face-attribute 'default
+                      nil
+                      :height
+                      (floor (* 0.9
+                                  (face-attribute 'default :height)))))
+(global-set-key (kbd "C-+") 'sacha/increase-font-size)
+(global-set-key (kbd "C--") 'sacha/decrease-font-size)
+
+(face-attribute 'default :height)

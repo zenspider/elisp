@@ -176,8 +176,25 @@
 
 (require 'show-wspace)
 
-(dolist (hook '(ruby-mode-hook emacs-lisp-mode-hook))
+(dolist (hook my-usual-programming-modes)
   (add-hook hook
             (lambda ()
-              (highlight-tabs)
-              (highlight-trailing-whitespace))))
+              (show-ws-highlight-tabs)
+              (show-ws-highlight-trailing-whitespace))))
+
+(require 'filecache)
+
+(defun my-file-cache ()
+  (interactive)
+  (file-cache-clear-cache)
+  (file-cache-add-directory-list load-path)
+  (file-cache-add-directory-using-find "~/Work/p4/zss/src/ParseTree/dev")
+  (file-cache-add-directory-using-find "~/Work/p4/zss/src/ruby_parser/dev")
+  (file-cache-add-directory-using-find "~/Work/p4/zss/src/ruby2ruby/dev"))
+
+(my-file-cache)
+
+(mapcar (lambda (map) (define-key map [S-tab] 'file-cache-minibuffer-complete))
+        (list minibuffer-local-completion-map
+              minibuffer-local-map
+              minibuffer-local-must-match-map))

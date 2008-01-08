@@ -53,7 +53,8 @@
 ;;
 ;; Commands defined here:
 ;;
-;;    `show-ws-toggle-show-hard-spaces', `show-ws-toggle-show-tabs',
+;;    `show-ws-toggle-show-hard-spaces',
+;;    `show-ws-toggle-show-tabs',
 ;;    `show-ws-toggle-show-trailing-whitespace',
 ;;    `toggle-show-hard-spaces-show-ws' (alias),
 ;;    `toggle-show-tabs-show-ws' (alias),
@@ -61,12 +62,14 @@
 ;;
 ;; Non-interactive functions defined here:
 ;;
-;;    `show-ws-highlight-hard-spaces', `show-ws-highlight-tabs',
+;;    `show-ws-highlight-hard-spaces',
+;;    `show-ws-highlight-tabs',
 ;;    `show-ws-highlight-trailing-whitespace'.
 ;;
 ;; Internal variables defined here:
 ;;
-;;    `show-ws-highlight-hard-spaces-p', `show-ws-highlight-tabs-p',
+;;    `show-ws-highlight-hard-spaces-p',
+;;    `show-ws-highlight-tabs-p',
 ;;    `show-ws-highlight-trailing-whitespace-p'.
 ;;
 ;; Drew Adams wrote the `toggle-*' commands and `*-p' variables.

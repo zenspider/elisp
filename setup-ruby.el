@@ -2,6 +2,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.mab$"   . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rb$"    . ruby-mode))
+(add-to-list 'auto-mode-alist '("Rakefile"  . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rhtml$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
@@ -99,3 +100,10 @@
   (dolist (subdir '("app" "test" "lib" "db" "config"))
     (file-cache-add-directory-recursively (concat dir subdir) "\\.r\\(b\\|html\\|xml\\|js\\)"))
   (file-cache-delete-file-regexp "\\.svn"))
+
+(require 'show-wspace)
+;; (dolist (hook '(ruby-mode-hook))
+;;   (add-hook hook
+;;             (lambda ()
+;;               (show-ws-highilight-tabs)
+;;               (show-ws-highlight-trailing-whitespace))))

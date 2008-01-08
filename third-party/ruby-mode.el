@@ -1,12 +1,12 @@
 ;;;
 ;;;  ruby-mode.el -
 ;;;
-;;;  $Author: knu $
-;;;  $Date: 2007-03-11 03:01:15 -0700 (Sun, 11 Mar 2007) $
+;;;  $Author: matz $
+;;;  $Date: 2007-11-11 20:55:19 -0800 (Sun, 11 Nov 2007) $
 ;;;  created at: Fri Feb  4 14:49:13 JST 1994
 ;;;
 
-(defconst ruby-mode-revision "$Revision: 12031 $")
+(defconst ruby-mode-revision "$Revision: 13893 $")
 
 (defconst ruby-mode-version
   (progn
@@ -506,8 +506,9 @@ The variable ruby-indent-level controls the amount of indentation.
 	 (setq nest (cons (cons nil pnt) nest))
 	 (setq depth (1+ depth)))
 	(goto-char pnt))
-       ((looking-at ":\\(['\"]\\)\\(\\\\.\\|[^\\\\]\\)*\\1")
-	(goto-char (match-end 0)))
+       ((looking-at ":\\(['\"]\\)")
+	(goto-char (match-beginning 1))
+	(ruby-forward-string (buffer-substring (match-beginning 1) (match-end 1)) end))
        ((looking-at ":\\([-,.+*/%&|^~<>]=?\\|===?\\|<=>\\)")
 	(goto-char (match-end 0)))
        ((looking-at ":\\([a-zA-Z_][a-zA-Z_0-9]*[!?=]?\\)?")

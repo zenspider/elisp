@@ -65,6 +65,11 @@
 (dolist (path (split-string (getenv "PATH") ":" t)) ; argh this is stupid
   (add-to-list 'exec-path path t))
 
+(load "/usr/local/share/emacs/23.0.50/lisp/vc")
+(load "/usr/local/share/emacs/23.0.50/lisp/vc-hooks")
+(load "/usr/local/share/emacs/23.0.50/lisp/vc-git")
+(load "/usr/local/share/emacs/23.0.50/lisp/vc-svn")
+
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -76,11 +81,22 @@
  '(dired-recursive-deletes (quote top))
  '(ecb-layout-window-sizes (quote (("left9" (0.325 . 0.975)))))
  '(ecb-options-version "2.32")
+ '(erc-keywords (quote ("autotest\\|zentest\\|inline\\|parse_?tree")))
+ '(erc-kill-buffer-on-part t)
+ '(erc-kill-queries-on-quit t)
+ '(erc-kill-server-buffer-on-quit t)
+ '(erc-mode-line-format "%t %a")
+ '(erc-pals (quote ("drbrain" "evan")))
+ '(erc-track-exclude-types (quote ("JOIN" "NICK" "PART" "QUIT")))
+ '(erc-track-minor-mode t)
+ '(erc-track-mode t)
+ '(erc-track-position-in-mode-line (quote after-modes))
  '(eval-expression-print-length nil)
  '(eval-expression-print-level nil)
  '(explicit-shell-file-name "/bin/bash")
  '(find-file-visit-truename t)
  '(global-font-lock-mode t nil (font-core))
+ '(hippie-expand-try-functions-list (quote (try-complete-file-name-partially try-complete-file-name try-expand-all-abbrevs try-expand-list try-expand-dabbrev-visible try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill try-complete-lisp-symbol-partially try-complete-lisp-symbol try-expand-tag)))
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(inhibit-splash-screen t)
@@ -98,7 +114,7 @@
  '(transient-mark-mode t)
  '(truncate-partial-width-windows nil)
  '(use-dialog-box nil)
- '(vc-handled-backends (quote (CVS SVN)))
+ '(vc-handled-backends (quote (CVS SVN GIT)))
  '(vc-path (quote ("/opt/local/bin" "/usr/local/bin")))
  '(vc-svn-program-name "/opt/local/bin/svn")
  '(visible-bell t))

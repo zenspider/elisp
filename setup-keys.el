@@ -15,6 +15,7 @@
 (global-set-key (kbd "C-x C-b") 'bs-show)
 (global-set-key (kbd "C-x C-p") 'find-file-at-point)
 (global-set-key (kbd "C-x C-t") 'toggle-buffer)
+(global-set-key (kbd "C-x /")   'align-regexp)
 (global-set-key (kbd "M-C-y")   'kill-ring-search)
 (global-set-key (kbd "M-s")     'fixup-whitespace)
 (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point)

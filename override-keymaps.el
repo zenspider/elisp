@@ -1,4 +1,4 @@
-;; override-keymaps.el
+;;; override-keymaps.el
 ;
 ; Provides a means of overriding major-modes' keymaps when you want a
 ; global key binding to really be global.
