@@ -98,4 +98,4 @@
   (interactive)
   (remove-overlays))
 
-(provide 'rcov)
+(provide 'rcov-overlay)
