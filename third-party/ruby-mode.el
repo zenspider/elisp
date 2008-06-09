@@ -2,11 +2,11 @@
 ;;;  ruby-mode.el -
 ;;;
 ;;;  $Author: matz $
-;;;  $Date: 2007-11-11 20:55:19 -0800 (Sun, 11 Nov 2007) $
+;;;  $Date: 2008-05-01 23:17:56 -0700 (Thu, 01 May 2008) $
 ;;;  created at: Fri Feb  4 14:49:13 JST 1994
 ;;;
 
-(defconst ruby-mode-revision "$Revision: 13893 $")
+(defconst ruby-mode-revision "$Revision: 16267 $")
 
 (defconst ruby-mode-version
   (progn
@@ -255,7 +255,12 @@ The variable ruby-indent-level controls the amount of indentation.
   (make-local-variable 'add-log-current-defun-function)
   (setq add-log-current-defun-function 'ruby-add-log-current-method)
 
-  (run-hooks 'ruby-mode-hook))
+  (set (make-local-variable 'font-lock-defaults) '((ruby-font-lock-keywords) nil nil))
+  (set (make-local-variable 'font-lock-keywords) ruby-font-lock-keywords)
+  (set (make-local-variable 'font-lock-syntax-table) ruby-font-lock-syntax-table)
+  (set (make-local-variable 'font-lock-syntactic-keywords) ruby-font-lock-syntactic-keywords)
+
+  (run-mode-hooks 'ruby-mode-hook))
 
 (defun ruby-current-indentation ()
   (save-excursion
@@ -1020,24 +1025,13 @@ balanced expression is found."
 	  ("^\\(=\\)begin\\(\\s \\|$\\)" 1 (7 . nil))
 	  ("^\\(=\\)end\\(\\s \\|$\\)" 1 (7 . nil))))
 
-  (cond ((featurep 'xemacs)
-	 (put 'ruby-mode 'font-lock-defaults
-	      '((ruby-font-lock-keywords)
-		nil nil nil
-		beginning-of-line
-		(font-lock-syntactic-keywords
-		 . ruby-font-lock-syntactic-keywords))))
-	(t
-	 (add-hook 'ruby-mode-hook
-	    '(lambda ()
-	       (make-local-variable 'font-lock-defaults)
-	       (make-local-variable 'font-lock-keywords)
-	       (make-local-variable 'font-lock-syntax-table)
-	       (make-local-variable 'font-lock-syntactic-keywords)
-	       (setq font-lock-defaults '((ruby-font-lock-keywords) nil nil))
-	       (setq font-lock-keywords ruby-font-lock-keywords)
-	       (setq font-lock-syntax-table ruby-font-lock-syntax-table)
-	       (setq font-lock-syntactic-keywords ruby-font-lock-syntactic-keywords)))))
+  (if (featurep 'xemacs)
+      (put 'ruby-mode 'font-lock-defaults
+	   '((ruby-font-lock-keywords)
+	     nil nil nil
+	     beginning-of-line
+	     (font-lock-syntactic-keywords
+	      . ruby-font-lock-syntactic-keywords))))
 
   (defun ruby-font-lock-docs (limit)
     (if (re-search-forward "^=begin\\(\\s \\|$\\)" limit t)

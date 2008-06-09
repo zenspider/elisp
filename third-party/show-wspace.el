@@ -4,12 +4,12 @@
 ;; Description: Highlight whitespace of various kinds.
 ;; Author: Peter Steiner <unistein@isbe.ch>, Drew Adams
 ;; Maintainer: Drew Adams
-;; Copyright (C) 2000-2007, Drew Adams, all rights reserved.
+;; Copyright (C) 2000-2008, Drew Adams, all rights reserved.
 ;; Created: Wed Jun 21 08:54:53 2000
 ;; Version: 21.0
-;; Last-Updated: Tue Sep 25 09:22:37 2007 (-25200 Pacific Daylight Time)
+;; Last-Updated: Tue Jan 01 13:59:36 2008 (-28800 Pacific Standard Time)
 ;;           By: dradams
-;;     Update #: 262
+;;     Update #: 264
 ;; URL: http://www.emacswiki.org/cgi-bin/wiki/show-wspace.el
 ;; Keywords: highlight, whitespace
 ;; Compatibility: GNU Emacs 20.x, GNU Emacs 21.x, GNU Emacs 22.x
@@ -41,7 +41,7 @@
 ;; whitespace highlighting will also be turned on.
 ;;
 ;; For example, you can turn on tab highlighting by default by adding
-;; command `show-ws-highlight-tabs' to `font-lock-mode-hook' in your
+;; function `show-ws-highlight-tabs' to `font-lock-mode-hook' in your
 ;; .emacs file, as follows:
 ;;
 ;;     (add-hook 'font-lock-mode-hook 'show-ws-highlight-tabs)
@@ -53,8 +53,7 @@
 ;;
 ;; Commands defined here:
 ;;
-;;    `show-ws-toggle-show-hard-spaces',
-;;    `show-ws-toggle-show-tabs',
+;;    `show-ws-toggle-show-hard-spaces', `show-ws-toggle-show-tabs',
 ;;    `show-ws-toggle-show-trailing-whitespace',
 ;;    `toggle-show-hard-spaces-show-ws' (alias),
 ;;    `toggle-show-tabs-show-ws' (alias),
@@ -62,14 +61,12 @@
 ;;
 ;; Non-interactive functions defined here:
 ;;
-;;    `show-ws-highlight-hard-spaces',
-;;    `show-ws-highlight-tabs',
+;;    `show-ws-highlight-hard-spaces', `show-ws-highlight-tabs',
 ;;    `show-ws-highlight-trailing-whitespace'.
 ;;
 ;; Internal variables defined here:
 ;;
-;;    `show-ws-highlight-hard-spaces-p',
-;;    `show-ws-highlight-tabs-p',
+;;    `show-ws-highlight-hard-spaces-p', `show-ws-highlight-tabs-p',
 ;;    `show-ws-highlight-trailing-whitespace-p'.
 ;;
 ;; Drew Adams wrote the `toggle-*' commands and `*-p' variables.
