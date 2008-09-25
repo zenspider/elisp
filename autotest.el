@@ -3,16 +3,12 @@
 ;; Copyright (C) 2006-2007 by Ryan Davis
 
 ;; Author: Ryan Davis <ryand-ruby@zenspider.com>
-;; Version 1.0 beta 3
+;; Version 1.0
 ;; Keywords: testing, ruby, convenience
 ;; Created: 2006-11-17
 ;; Compatibility: Emacs 22, 21?
 ;; URL(en): http://seattlerb.rubyforge.org/
 ;; by Ryan Davis - ryan-ruby@zenspider.com
-
-;;; Posted using:
-;; (setq emacs-wiki-name "RyanDavis")
-;; (wikiput-buffer "update")
 
 ;;; The MIT License:
 
@@ -42,10 +38,11 @@
 ;; Sets up an autotest buffer and provides convenience methods.
 
 ;;; History:
-;; 1.0 beta 4 - 2007-09-25 - Added autotest-use-ui and autotest-command vars.
-;; 1.0 beta 3 - 2007-05-10 - emacs compatibility fixes and improved regexps.
-;; 1.0 beta 2 - 2007-04-03 - added autotest plugin / communication support
-;; 1.0 beta 1 - 2007-03-06 - initial release
+;; 1.0.0 - 2008-09-25 - Added an extra regexp for rspec/mspec. 1.0.0 release.
+;; 1.0b4 - 2007-09-25 - Added autotest-use-ui and autotest-command vars.
+;; 1.0b3 - 2007-05-10 - emacs compatibility fixes and improved regexps.
+;; 1.0b2 - 2007-04-03 - added autotest plugin / communication support
+;; 1.0b1 - 2007-03-06 - initial release
 
 (require 'shell)
 
@@ -78,6 +75,7 @@
            ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
            ("^ *\\([[+]\\)?\\([^:
 ]+\\):\\([0-9]+\\):in" 2 3)
+           ("^.* at \\([^:]*\\):\\([0-9]+\\)$" 1 2)
            ))
     (compilation-shell-minor-mode)
     (comint-send-string buffer (concat autotest-command "\n"))))
