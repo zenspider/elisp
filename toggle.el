@@ -44,7 +44,7 @@
 ;; `toggle-mapping-styles' using the `toggle-style' function or set
 ;; your default style via the `toggle-mapping-style' variable.
 
-;; There are 3 different mapping styles in this version: zentest,
+;; There are 4 different mapping styles in this version: zentest,
 ;; rails, and ruby. Feel free to submit more and I'll incorporate
 ;; them.
 
@@ -62,12 +62,23 @@
 
 (require 'cl)
 
+;; TODO:
+;; It would also be great to be able to toggle between a model and
+;; the equivalent controller:
+;;   app/models/\\1.rb     => app/controllers/\\1.rb
+;; and from the controller to views:
+;;   app/controller/\\1.rb => app/views/\\1.rb/
+;;
+;; I can't do that yet... but we should be able to make the mapping
+;; styles list any number of patterns to rotate through. I'll talk to
+;; PhilHagelberg about it and try it.
+
 (defcustom toggle-mapping-styles
   '((zentest . (("app/controllers/\\1.rb" . "test/controllers/\\1_test.rb")
                 ("app/views/\\1.rb"       . "test/views/\\1_test.rb")
                 ("app/models/\\1.rb"      . "test/unit/\\1_test.rb")
                 ("lib/\\1.rb"             . "test/unit/test_\\1.rb")))
-    (rspec   . (("app/models/\\1.rb"      . "spec/models.\\1_spec.rb")
+    (rspec   . (("app/models/\\1.rb"      . "spec/models/\\1_spec.rb")
                 ("app/controllers/\\1.rb" . "spec/controllers/\\1_spec.rb")
                 ("app/views/\\1.rb"       . "spec/views/\\1_spec.rb")
                 ("app/helpers/\\1.rb"     . "spec/helpers/\\1_spec.rb")))
