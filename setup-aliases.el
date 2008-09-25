@@ -1,11 +1,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Aliases:
+;; Aliases: (use sort-paragraphs on this section)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defadvice find-file-at-point (around goto-line compile activate)
+  (let ((line (and (looking-at ".*:\\([0-9]+\\)")
+                   (string-to-number (match-string 1)))))
+    ad-do-it
+    (and line (goto-line line))))
+
+(defmacro def-hook (mode &rest body)
+  `(add-hook
+    ',(intern (concat (symbol-name mode) "-hook"))
+    (defun ,(intern (concat "my-" (symbol-name mode) "-hook")) ()
+      ,@body)))
+(put 'def-hook 'lisp-indent-function 1)
+
+(defmacro hook-after-load (mode &rest body)
+  `(eval-after-load ,(symbol-name mode)
+     '(def-hook ,(intern (concat (symbol-name mode) "-mode"))
+              ,@body)))
+(put 'hook-after-load 'lisp-indent-function 1)
 
 (defun arrange-frame (w h &optional nosplit)
   "Rearrange the current frame to a custom width and height and split unless prefix."
   (let ((frame (selected-frame)))
-    (when (equal 'mac (framep frame))
+    ;; (when (or (equal 'mac (framep frame)) (equal 'ns (framep frame)))
+    (when (memq (framep frame) '(mac ns))
       (delete-other-windows)
       (set-frame-position frame 5 25)
       (set-frame-size frame w h)
@@ -41,6 +61,10 @@
       (while (looking-at "\n")
         (delete-char 1)))))))
 
+(defun escape-newlines (start end)
+  (interactive "r")
+  (munge-newlines start end "\n" "\\n"))
+
 (defun forward-line-6 ()
   (interactive)
   (forward-line 6))
@@ -50,18 +74,6 @@
   (interactive)
   (let ((current-prefix-arg t))
     (call-interactively 'grep)))
-
-(defun huge (&optional nosplit)
-  "Create a really large window suitable for coding on a 20 inch cinema display."
-  (interactive "P")
-  (my-set-mac-font "bitstream vera sans mono" 12)
-  (arrange-frame 200 60 nosplit))
-
-(defun hugeish (&optional nosplit)
-  "Yet another screen layout. Suitable for 13in but denser than medium."
-  (interactive "P")
-  (my-set-mac-font "bitstream vera sans mono" 10)
-  (arrange-frame 200 62 nosplit))
 
 (defun insert-buffer-name()
   "Insert the value of buffer-name."
@@ -78,20 +90,6 @@
     (insert (substring mode 0 (- (length mode) 5)))
     (insert " -*-")
     (insert "\n")))
-
-(defun my-ruby-sexp (start end)
-  (interactive "r")
-  (save-excursion
-    (save-match-data
-      (replace-regexp "]" ")" nil start end)
-      (replace-regexp "\\[" "s(" nil start end))))
-
-(defun my-ruby-massage ()
-  (interactive)
-  (save-excursion
-    (replace-string "#<" "["  nil (point-min) (point-max))
-    (replace-string ">"  "]"  nil (point-min) (point-max))
-    (replace-string "=]" "=>" nil (point-min) (point-max))))
 
 (defun insert-path (path)
   (interactive "G")
@@ -111,7 +109,7 @@
 
 (defun lappy ()
   (interactive)
-  (medium)
+  (resize-13)
   (myshell)
   (swap-buffers))
 
@@ -121,12 +119,6 @@
 (defun locate-make-mdfind-command-line (search-string)
   (list "mdfind" (concat "kMDItemDisplayName=*" search-string "*")))
 
-(defun medium (&optional nosplit)
-  "Create a large window suitable for coding on a macbook."
-  (interactive "P")
-  (my-set-mac-font "bitstream vera sans mono" 12)
-  (arrange-frame 170 45 nosplit))
-
 (defun modify-tabs (length enabled)
   (progn
     (setq tab-width length indent-tabs-mode enabled)
@@ -135,6 +127,14 @@
       (if enabled
           (tabify (mark) (point))
           (untabify (mark) (point))))))
+
+(defun munge-newlines (start end from to)
+  (save-excursion
+    (save-match-data
+      (goto-char start)
+      (let ((case-fold-search nil))
+        (while (re-search-forward from end t)
+          (replace-match to t t))))))
 
 (defun my-emacs-wiki ()
   (interactive)
@@ -150,13 +150,6 @@
     (error (message "Invalid expression")
            (insert (current-kill 0)))))
 
-(defun my-indent-whole-buffer ()
-  "indent whole buffer"
-  (interactive)
-  (delete-trailing-whitespace)
-  (indent-region (point-min) (point-max) nil)
-  (untabify (point-min) (point-max)))
-
 (defun my-generate-new-buffer-name (name)
   "Find a new buffer name not currently used in the form of <name>-<N> where N starts at 1"
   (let* ((count 1)
@@ -165,6 +158,30 @@
       (set 'buffer-name (format "%s-%d" name count))
       (set 'count (+ count 1)))
     buffer-name))
+
+(defun my-get-mac-font ()
+  (list (face-attribute 'default :family)
+        (/ (face-attribute 'default :height) 10)))
+
+(defun my-indent-whole-buffer ()
+  "indent whole buffer"
+  (interactive)
+  (delete-trailing-whitespace)
+  (indent-region (point-min) (point-max) nil)
+  (untabify (point-min) (point-max)))
+
+(defun my-insert-line-count ()
+  (interactive)
+  (let ((msg (count-lines-region (mark) (point))))
+    (move-end-of-line '())
+    (insert " ")
+    (set-mark (point))
+    (insert msg)
+    (comment-region (mark) (point))))
+
+(defun my-quickref ()
+  (interactive)
+  (find-file-other-window (expand-file-name "~/Work/p4/zss/www/zenspider.com/data/Languages/Ruby/QuickRef")))
 
 (defun my-read-this ()
   (interactive)
@@ -177,13 +194,32 @@
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0))
 
 (defun my-record-current-window ()
+  (interactive)
   (delete-other-windows)
-  (insert (pp `(arrange-frame ,(window-width) ,(+ 1 (window-height)) t))))
+  (let ((font (my-get-mac-font)))
+    (insert (pp `(defun xxx (&optional nosplit)
+                   (interactive "P")
+                   (my-set-mac-font ,(car font) ,(cadr font))
+                   (arrange-frame ,(window-width) ,(+ 1 (window-height)) nosplit))))))
 
 (defun my-reset-macro-counter (n)
   "Set kmacro-counter to \\[universal-argument] prefix's value or 1 by default"
   (interactive "p")
   (setq kmacro-counter (or n 1)))
+
+(defun my-ruby-massage ()
+  (interactive)
+  (save-excursion
+    (replace-string "#<" "["  nil (point-min) (point-max))
+    (replace-string ">"  "]"  nil (point-min) (point-max))
+    (replace-string "=]" "=>" nil (point-min) (point-max))))
+
+(defun my-ruby-sexp (start end)
+  (interactive "r")
+  (save-excursion
+    (save-match-data
+      (replace-regexp "]" ")" nil start end)
+      (replace-regexp "\\[" "s(" nil start end))))
 
 (defun my-selective-display (column)
   "Rotate folding the buffer at no, 2, 4, and 6 columns."
@@ -193,7 +229,7 @@
        (or column (+ (or selective-display 0) 2))
      nil)))
 
-(defun my-set-mac-font (name  size)
+(defun my-set-mac-font (name size)
   (interactive
    (list (completing-read "font-name: "
                           (mapcar (lambda (p) (list (car p) (car p)))
@@ -206,9 +242,6 @@
                       :width  'normal
                       :height (* 10 size))
   (frame-parameter nil 'font))
-
-;; to get the current font:
-; (frame-parameter nil 'font)
 
 (defun myshell ()
   "Create a shell buffer that is properly named (shell-<N>)"
@@ -235,17 +268,10 @@
   (interactive)
   (modify-tabs 8 nil))
 
-(defun peepcode ()
-  "Create a small font window suitable for doing live demos in 800x600."
+(defun occur-buffer ()
   (interactive)
-  (arrange-frame 80 30 t)
-  (my-set-mac-font "bitstream vera sans mono" 15))
-
-(defun presentation ()
-  "Create a giant font window suitable for doing live demos."
-  (interactive)
-  (arrange-frame 80 25 t)
-  (my-set-mac-font "bitstream vera sans mono" 20))
+  (save-excursion
+    (shell-command-on-region (point-min) (point-max) "occur -n -p")))
 
 (defun previous-line-6 ()
   (interactive)
@@ -257,16 +283,45 @@
 click button \"Stop\" of first window of process \"Safari\"
 end tell' | osascript" nil nil))
 
-(defun server-stop ()
-  "Stop the server"
-  (interactive)
-  (server-start t))
+(defun resize-13 (&optional nosplit)
+  (interactive "P")
+  (my-set-mac-font "apple-bitstream vera sans mono" 12)
+  (arrange-frame 170 50 nosplit))
 
-(defun small (&optional split)
+(defun resize-13-dense (&optional nosplit)
+  "Yet another screen layout. Suitable for 13in but denser than medium."
+  (interactive "P")
+  (my-set-mac-font "bitstream vera sans mono" 10)
+  (arrange-frame 200 62 nosplit))
+
+(defun resize-20 (&optional nosplit)
+  "Create a really large window suitable for coding on a 20 inch cinema display."
+  (interactive "P")
+  (my-set-mac-font "bitstream vera sans mono" 12)
+  (arrange-frame 200 60 nosplit))
+
+(defun resize-peepcode ()
+  "Create a small font window suitable for doing live demos in 800x600."
+  (interactive)
+  (arrange-frame 80 30 t)
+  (my-set-mac-font "bitstream vera sans mono" 15))
+
+(defun resize-presentation ()
+  "Create a giant font window suitable for doing live demos."
+  (interactive)
+  (arrange-frame 80 25 t)
+  (my-set-mac-font "bitstream vera sans mono" 20))
+
+(defun resize-small (&optional split)
   "Create a small window suitable for coding on anything."
   (interactive "P")
   (my-set-mac-font "bitstream vera sans mono" 12)
   (arrange-frame 80 45 (not split)))
+
+(defun server-stop ()
+  "Stop the server"
+  (interactive)
+  (server-start t))
 
 (defun spotlight ()
   (interactive)
@@ -306,59 +361,9 @@ end tell' | osascript" nil nil))
                    t nil)))
       (delete-window nw)
       (split-window cw nil sv)
-      (switch-to-buffer-other-window nb)
-      )))
+      (switch-to-buffer-other-window nb))))
 
-(defun unfill-paragraph ()
-  (interactive)
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil)))
-
-(setq emacs-wiki-name "RyanDavis")
-(defun wikiput-buffer (msg)
-  (interactive "MUpdate message: ")
-  (shell-command-on-region (point-min) (point-max)
-                           (concat "wikiput -u "
-                                   emacs-wiki-name
-                                   " -s \"" msg "\""
-                                   " http://www.emacswiki.org/cgi-bin/wiki/"
-                                   (buffer-name))))
-
-(defun wikiget (page-name)
-  (interactive "MPage name: ")
-  (shell-command (concat "curl -s \"http://www.emacswiki.org/cgi-bin/wiki/"
-                         "?action=browse;id="
-                         page-name
-                         ";raw=1\"")
-                 page-name))
-
-(defun occur-buffer ()
-  (interactive)
-  (save-excursion
-    (shell-command-on-region (point-min) (point-max) "occur -n -p")))
-
-(defadvice find-file-at-point (around goto-line compile activate)
-  (let ((line (and (looking-at ".*:\\([0-9]+\\)")
-                   (string-to-number (match-string 1)))))
-    ad-do-it
-    (and line (goto-line line))))
-
-(defun munge-newlines (start end from to)
-  (save-excursion
-    (save-match-data
-      (goto-char start)
-      (let ((case-fold-search nil))
-        (while (re-search-forward from end t)
-          (replace-match to t t))))))
-
-(defun escape-newlines (start end)
-  (interactive "r")
-  (munge-newlines start end "\n" "\\n"))
-
-(defun unescape-newlines (start end)
-  (interactive "r")
-  (munge-newlines start end "\\\\n" "\n"))
-
+;; TODO: prefix with my- or something so I use this
 (defun un-camelcase-region (start end)
   (interactive "r")
   (save-excursion
@@ -370,12 +375,25 @@ end tell' | osascript" nil nil))
                                  "_"
                                  (downcase (match-string 2))) t))))))
 
-(defmacro def-hook (mode &rest body)
-  `(add-hook
-    ',(intern (concat (symbol-name mode) "-hook"))
-    (defun ,(intern (concat "my-" (symbol-name mode) "-hook")) ()
-      ,@body)))
-(put 'def-hook 'lisp-indent-function 1)
+(defun unescape-newlines (start end)
+  (interactive "r")
+  (munge-newlines start end "\\\\n" "\n"))
+
+(defun unfill-paragraph ()
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "Borrowed" defuns:
+
+(defun sacha/decrease-font-size ()
+  (interactive)
+  (set-face-attribute 'default
+                      nil
+                      :height
+                      (floor (* 0.9
+                                  (face-attribute 'default :height)))))
 
 (defun sacha/increase-font-size ()
   (interactive)
@@ -384,14 +402,42 @@ end tell' | osascript" nil nil))
                       :height
                       (ceiling (* 1.10
                                   (face-attribute 'default :height)))))
-(defun sacha/decrease-font-size ()
+
+(defun sudo-buffer ()
+  "Revert buffer using tramp sudo.
+    This will also reserve changes already made by a non-root user."
   (interactive)
-  (set-face-attribute 'default
-                      nil
-                      :height
-                      (floor (* 0.9
-                                  (face-attribute 'default :height)))))
-(global-set-key (kbd "C-+") 'sacha/increase-font-size)
-(global-set-key (kbd "C--") 'sacha/decrease-font-size)
+  (let ((f (buffer-file-name)))
+    (when f
+      (let ((content (when (buffer-modified-p)
+                       (widen)
+                       (buffer-string))))
+        (if (file-writable-p f)
+            (revert-buffer)
+          (kill-buffer (current-buffer))
+          (find-file (concat "/sudo::" f))
+          (when content
+            (let ((buffer-read-only nil))
+              (erase-buffer)
+              (insert content))))))))
 
 (face-attribute 'default :height)
+
+;;; stolen from: http://www.emacswiki.org/cgi-bin/wiki/IndentRigidlyN
+(defun indent-rigidly-n (n)
+  "Indent the region, or otherwise the current line, by N spaces."
+  (let* ((use-region (and transient-mark-mode mark-active))
+         (rstart (if use-region (region-beginning) (point-at-bol)))
+         (rend   (if use-region (region-end)       (point-at-eol)))
+         (deactivate-mark "irrelevant")) ; avoid deactivating mark
+    (indent-rigidly rstart rend n)))
+
+(defun indent-rigidly-4 ()
+  "Indent the region, or otherwise the current line, by 4 spaces."
+  (interactive)
+  (indent-rigidly-n 4))
+
+(defun outdent-rigidly-4 ()
+  "Indent the region, or otherwise the current line, by -4 spaces."
+  (interactive)
+  (indent-rigidly-n -4))
