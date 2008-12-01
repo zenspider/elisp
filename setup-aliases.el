@@ -1,6 +1,6 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Aliases: (use sort-paragraphs on this section)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; Aliases: (use sort-paragraphs on this section)
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defadvice find-file-at-point (around goto-line compile activate)
   (let ((line (and (looking-at ".*:\\([0-9]+\\)")
@@ -32,80 +32,81 @@
       (if (not nosplit)
           (split-window-horizontally)))))
 
-(defun chmod ()
-  (interactive)
-  (shell-command (format "chmod %s %s"
-                         (read-from-minibuffer "Mode string?: " "u+x")
-                         (buffer-file-name))))
+;; (defun chmod ()
+;;   (interactive)
+;;   (shell-command (format "chmod %s %s"
+;;                          (read-from-minibuffer "Mode string?: " "u+x")
+;;                          (buffer-file-name))))
 
-(defun clean-whitespace ()
-  (interactive)
-  (save-excursion
-    (save-restriction
-      (save-match-data
-    (progn
-      (delete-trailing-whitespace)
-      (goto-char (point-min))
-      (while (re-search-forward "^[ \t]+" nil t)
-        (delete-region (match-beginning 0) (match-end 0)))
-      (goto-char (point-min))
-      (while (re-search-forward " +" nil t)
-        (delete-region (+ 1 (match-beginning 0)) (match-end 0)))
-      (goto-char (point-min))
-      (while (re-search-forward "\n\n+" nil t)
-        (delete-region (+ 2 (match-beginning 0)) (match-end 0)))
-      (goto-char (point-min))
-      (while (looking-at "\n")
-        (delete-char 1))
-      (goto-char (- (point-max) 1))
-      (while (looking-at "\n")
-        (delete-char 1)))))))
+;; (defun clean-whitespace ()
+;;   (interactive)
+;;   (save-excursion
+;;     (save-restriction
+;;       (save-match-data
+;;     (progn
+;;       (delete-trailing-whitespace)
+;;       (goto-char (point-min))
+;;       (while (re-search-forward "^[ \t]+" nil t)
+;;         (delete-region (match-beginning 0) (match-end 0)))
+;;       (goto-char (point-min))
+;;       (while (re-search-forward " +" nil t)
+;;         (delete-region (+ 1 (match-beginning 0)) (match-end 0)))
+;;       (goto-char (point-min))
+;;       (while (re-search-forward "\n\n+" nil t)
+;;         (delete-region (+ 2 (match-beginning 0)) (match-end 0)))
+;;       (goto-char (point-min))
+;;       (while (looking-at "\n")
+;;         (delete-char 1))
+;;       (goto-char (- (point-max) 1))
+;;       (while (looking-at "\n")
+;;         (delete-char 1)))))))
 
-(defun escape-newlines (start end)
-  (interactive "r")
-  (munge-newlines start end "\n" "\\n"))
+;; (defun escape-newlines (start end)
+;;   (interactive "r")
+;;   (munge-newlines start end "\n" "\\n"))
 
-(defun forward-line-6 ()
-  (interactive)
-  (forward-line 6))
+;; (defun grep-current-word ()
+;;   "Grep for the current word"
+;;   (interactive)
+;;   (let ((current-prefix-arg t))
+;;     (call-interactively 'grep)))
 
-(defun grep-current-word ()
-  "Grep for the current word"
-  (interactive)
-  (let ((current-prefix-arg t))
-    (call-interactively 'grep)))
+;; (defun insert-buffer-name()
+;;   "Insert the value of buffer-name."
+;;   (interactive)
+;;   (progn
+;;     (insert (buffer-name))))
 
-(defun insert-buffer-name()
-  "Insert the value of buffer-name."
-  (interactive)
-  (progn
-    (insert (buffer-name))))
+;; (defun insert-date ()
+;;   "Insert today's date."
+;;   (interactive)
+;;   (insert (shell-command-to-string "today")))
 
-(defun insert-modeline ()
-  "Insert the current modeline into the file."
-  (interactive)
-  (let ((mode (symbol-name major-mode)))
-    (insert "-*- ")
-    (comment-region (line-beginning-position) (line-end-position))
-    (insert (substring mode 0 (- (length mode) 5)))
-    (insert " -*-")
-    (insert "\n")))
+;; (defun insert-modeline ()
+;;   "Insert the current modeline into the file."
+;;   (interactive)
+;;   (let ((mode (symbol-name major-mode)))
+;;     (insert "-*- ")
+;;     (comment-region (line-beginning-position) (line-end-position))
+;;     (insert (substring mode 0 (- (length mode) 5)))
+;;     (insert " -*-")
+;;     (insert "\n")))
 
-(defun insert-path (path)
-  (interactive "G")
-  (insert (expand-file-name path)))
+;; (defun insert-path (path)
+;;   (interactive "G")
+;;   (insert (expand-file-name path)))
 
-(defun insert-shebang ()
-  "Insert a shebang line based on mode into the file."
-  (interactive)
-  (let* ((mode (symbol-name major-mode))
-         (prg  (substring mode 0 (- (length mode) 5)))
-         (path (shell-command-to-string (concat "which " prg))))
-    (save-excursion
-      (goto-char (point-min))
-      (insert "#!")
-      (insert path)
-      (insert "\n"))))
+;; (defun insert-shebang ()
+;;   "Insert a shebang line based on mode into the file."
+;;   (interactive)
+;;   (let* ((mode (symbol-name major-mode))
+;;          (prg  (substring mode 0 (- (length mode) 5)))
+;;          (path (shell-command-to-string (concat "which " prg))))
+;;     (save-excursion
+;;       (goto-char (point-min))
+;;       (insert "#!")
+;;       (insert path)
+;;       (insert "\n"))))
 
 (defun lappy ()
   (interactive)
@@ -113,43 +114,44 @@
   (myshell)
   (swap-buffers))
 
-(defun list-join (sep lst)
-  (mapconcat (lambda (x) x) lst sep))
+;; (defun list-join (sep lst)
+;;   (mapconcat (lambda (x) x) lst sep))
 
-(defun locate-make-mdfind-command-line (search-string)
-  (list "mdfind" (concat "kMDItemDisplayName=*" search-string "*")))
+;; (defun locate-make-mdfind-command-line (search-string)
+;;   (list "mdfind" (concat "kMDItemDisplayName=*" search-string "*")))
 
-(defun modify-tabs (length enabled)
-  (progn
-    (setq tab-width length indent-tabs-mode enabled)
-    (save-excursion
-      (mark-whole-buffer)
-      (if enabled
-          (tabify (mark) (point))
-          (untabify (mark) (point))))))
+;; (defun modify-tabs (length enabled)
+;;   (progn
+;;     (setq tab-width length indent-tabs-mode enabled)
+;;     (save-excursion
+;;       (mark-whole-buffer)
+;;       (if enabled
+;;           (tabify (mark) (point))
+;;           (untabify (mark) (point))))))
 
-(defun munge-newlines (start end from to)
-  (save-excursion
-    (save-match-data
-      (goto-char start)
-      (let ((case-fold-search nil))
-        (while (re-search-forward from end t)
-          (replace-match to t t))))))
+;; (defun munge-newlines (start end from to)
+;;   (save-excursion
+;;     (save-match-data
+;;       (goto-char start)
+;;       (let ((case-fold-search nil))
+;;         (while (re-search-forward from end t)
+;;           (replace-match to t t))))))
 
-(defun my-emacs-wiki ()
+(defun rwd-emacs-wiki ()
   (interactive)
-  (shell-command (concat "open http://localhost/~ryan/emacs/static/" (buffer-name))))
+  (dired (concat "~/Sites/emacs/static/")))
 
-(defun my-eval-and-replace ()
-  "Replace the preceding sexp with its value."
-  (interactive)
-  (backward-kill-sexp)
-  (condition-case nil
-      (prin1 (eval (read (current-kill 0)))
-             (current-buffer))
-    (error (message "Invalid expression")
-           (insert (current-kill 0)))))
+;; (defun my-eval-and-replace ()
+;;   "Replace the preceding sexp with its value."
+;;   (interactive)
+;;   (backward-kill-sexp)
+;;   (condition-case nil
+;;       (prin1 (eval (read (current-kill 0)))
+;;              (current-buffer))
+;;     (error (message "Invalid expression")
+;;            (insert (current-kill 0)))))
 
+;; TODO: fold this into myshell
 (defun my-generate-new-buffer-name (name)
   "Find a new buffer name not currently used in the form of <name>-<N> where N starts at 1"
   (let* ((count 1)
@@ -159,75 +161,75 @@
       (set 'count (+ count 1)))
     buffer-name))
 
-(defun my-get-mac-font ()
-  (list (face-attribute 'default :family)
-        (/ (face-attribute 'default :height) 10)))
+;; (defun my-get-mac-font ()
+;;   (list (face-attribute 'default :family)
+;;         (/ (face-attribute 'default :height) 10)))
 
-(defun my-indent-whole-buffer ()
-  "indent whole buffer"
-  (interactive)
-  (delete-trailing-whitespace)
-  (indent-region (point-min) (point-max) nil)
-  (untabify (point-min) (point-max)))
+;; (defun my-indent-whole-buffer ()
+;;   "indent whole buffer"
+;;   (interactive)
+;;   (delete-trailing-whitespace)
+;;   (indent-region (point-min) (point-max) nil)
+;;   (untabify (point-min) (point-max)))
 
-(defun my-insert-line-count ()
-  (interactive)
-  (let ((msg (count-lines-region (mark) (point))))
-    (move-end-of-line '())
-    (insert " ")
-    (set-mark (point))
-    (insert msg)
-    (comment-region (mark) (point))))
+;; (defun my-insert-line-count ()
+;;   (interactive)
+;;   (let ((msg (count-lines-region (mark) (point))))
+;;     (move-end-of-line '())
+;;     (insert " ")
+;;     (set-mark (point))
+;;     (insert msg)
+;;     (comment-region (mark) (point))))
 
-(defun my-quickref ()
-  (interactive)
-  (find-file-other-window (expand-file-name "~/Work/p4/zss/www/zenspider.com/data/Languages/Ruby/QuickRef")))
+;; (defun my-quickref ()
+;;   (interactive)
+;;   (find-file-other-window (expand-file-name "~/Work/p4/zss/www/zenspider.com/data/Languages/Ruby/QuickRef")))
 
-(defun my-read-this ()
-  (interactive)
-  (delete-other-windows)
-  (split-window-horizontally)
-  (follow-mode))
+;; (defun my-read-this ()
+;;   (interactive)
+;;   (delete-other-windows)
+;;   (split-window-horizontally)
+;;   (follow-mode))
 
 (defun my-recompile-init ()
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0))
 
-(defun my-record-current-window ()
-  (interactive)
-  (delete-other-windows)
-  (let ((font (my-get-mac-font)))
-    (insert (pp `(defun xxx (&optional nosplit)
-                   (interactive "P")
-                   (my-set-mac-font ,(car font) ,(cadr font))
-                   (arrange-frame ,(window-width) ,(+ 1 (window-height)) nosplit))))))
+;; (defun my-record-current-window ()
+;;   (interactive)
+;;   (delete-other-windows)
+;;   (let ((font (my-get-mac-font)))
+;;     (insert (pp `(defun xxx (&optional nosplit)
+;;                    (interactive "P")
+;;                    (my-set-mac-font ,(car font) ,(cadr font))
+;;                    (arrange-frame ,(window-width) ,(+ 1 (window-height)) nosplit))))))
 
-(defun my-reset-macro-counter (n)
-  "Set kmacro-counter to \\[universal-argument] prefix's value or 1 by default"
-  (interactive "p")
-  (setq kmacro-counter (or n 1)))
+;; (defun my-reset-macro-counter (n)
+;;   "Set kmacro-counter to \\[universal-argument] prefix's value or 1 by default"
+;;   (interactive "p")
+;;   (setq kmacro-counter (or n 1)))
 
-(defun my-ruby-massage ()
-  (interactive)
-  (save-excursion
-    (replace-string "#<" "["  nil (point-min) (point-max))
-    (replace-string ">"  "]"  nil (point-min) (point-max))
-    (replace-string "=]" "=>" nil (point-min) (point-max))))
+;; (defun my-ruby-massage ()
+;;   (interactive)
+;;   (save-excursion
+;;     (replace-string "#<" "["  nil (point-min) (point-max))
+;;     (replace-string ">"  "]"  nil (point-min) (point-max))
+;;     (replace-string "=]" "=>" nil (point-min) (point-max))))
 
-(defun my-ruby-sexp (start end)
-  (interactive "r")
-  (save-excursion
-    (save-match-data
-      (replace-regexp "]" ")" nil start end)
-      (replace-regexp "\\[" "s(" nil start end))))
+;; (defun my-ruby-sexp (start end)
+;;   (interactive "r")
+;;   (save-excursion
+;;     (save-match-data
+;;       (replace-regexp "]" ")" nil start end)
+;;       (replace-regexp "\\[" "s(" nil start end))))
 
-(defun my-selective-display (column)
-  "Rotate folding the buffer at no, 2, 4, and 6 columns."
-  (interactive "P")
-  (set-selective-display
-   (if (< (or selective-display 0) 6)
-       (or column (+ (or selective-display 0) 2))
-     nil)))
+;; (defun my-selective-display (column)
+;;   "Rotate folding the buffer at no, 2, 4, and 6 columns."
+;;   (interactive "P")
+;;   (set-selective-display
+;;    (if (< (or selective-display 0) 6)
+;;        (or column (+ (or selective-display 0) 2))
+;;      nil)))
 
 (defun my-set-mac-font (name size)
   (interactive
@@ -248,40 +250,36 @@
   (interactive)
   (shell (my-generate-new-buffer-name "shell")))
 
-(defun mytabs()
-  "Set tabbing to spaces at 2 col tabstops."
-  (interactive)
-  (modify-tabs 2 nil))
+;; (defun mytabs()
+;;   "Set tabbing to spaces at 2 col tabstops."
+;;   (interactive)
+;;   (modify-tabs 2 nil))
 
-(defun mytabs-hard ()
-  "Set tabbing to real tabs but viewed at 4 col tabstops."
-  (interactive)
-  (modify-tabs 4 t))
+;; (defun mytabs-hard ()
+;;   "Set tabbing to real tabs but viewed at 4 col tabstops."
+;;   (interactive)
+;;   (modify-tabs 4 t))
 
-(defun mytabs4()
-  "Set tabbing to spaces at 4 col tabstops."
-  (interactive)
-  (modify-tabs 4 nil))
+;; (defun mytabs4()
+;;   "Set tabbing to spaces at 4 col tabstops."
+;;   (interactive)
+;;   (modify-tabs 4 nil))
 
-(defun mytabs8()
-  "Set tabbing to spaces at 8 col tabstops."
-  (interactive)
-  (modify-tabs 8 nil))
+;; (defun mytabs8()
+;;   "Set tabbing to spaces at 8 col tabstops."
+;;   (interactive)
+;;   (modify-tabs 8 nil))
 
-(defun occur-buffer ()
-  (interactive)
-  (save-excursion
-    (shell-command-on-region (point-min) (point-max) "occur -n -p")))
+;; (defun occur-buffer ()
+;;   (interactive)
+;;   (save-excursion
+;;     (shell-command-on-region (point-min) (point-max) "occur -n -p")))
 
-(defun previous-line-6 ()
-  (interactive)
-  (previous-line 6))
-
-(defun reload-safari ()
-  (interactive)
-  (shell-command "printf 'tell application \"System Events\"
-click button \"Stop\" of first window of process \"Safari\"
-end tell' | osascript" nil nil))
+;; (defun reload-safari ()
+;;   (interactive)
+;;   (shell-command "printf 'tell application \"System Events\"
+;; click button \"Stop\" of first window of process \"Safari\"
+;; end tell' | osascript" nil nil))
 
 (defun resize-13 (&optional nosplit)
   (interactive "P")
@@ -318,21 +316,41 @@ end tell' | osascript" nil nil))
   (my-set-mac-font "bitstream vera sans mono" 12)
   (arrange-frame 80 45 (not split)))
 
-(defun server-stop ()
-  "Stop the server"
+(defun rwd-forward-line-6 ()
   (interactive)
-  (server-start t))
+  (forward-line 6))
 
-(defun spotlight ()
+(defun rwd-previous-line-6 ()
   (interactive)
-  (let ((locate-command "mdfind")
-        (locate-make-command-line 'locate-make-mdfind-command-line))
-    (call-interactively 'locate nil)))
+  (previous-line 6))
 
-(defun spotlight-full ()
+(defun rwd-scroll-down ()
   (interactive)
-  (let ((locate-command "mdfind"))
-    (call-interactively 'locate nil)))
+  (scroll-up 1))
+
+(defun rwd-scroll-up ()
+  (interactive)
+  (scroll-down 1))
+
+(defun rwd-scroll-top ()
+  (interactive)
+  (recenter 0))
+
+;; (defun server-stop ()
+;;   "Stop the server"
+;;   (interactive)
+;;   (server-start t))
+
+;; (defun spotlight ()
+;;   (interactive)
+;;   (let ((locate-command "mdfind")
+;;         (locate-make-command-line 'locate-make-mdfind-command-line))
+;;     (call-interactively 'locate nil)))
+
+;; (defun spotlight-full ()
+;;   (interactive)
+;;   (let ((locate-command "mdfind"))
+;;     (call-interactively 'locate nil)))
 
 (defun swap-buffers ()
   "Swap the current 2 buffers in their windows"
@@ -363,81 +381,81 @@ end tell' | osascript" nil nil))
       (split-window cw nil sv)
       (switch-to-buffer-other-window nb))))
 
-;; TODO: prefix with my- or something so I use this
-(defun un-camelcase-region (start end)
-  (interactive "r")
-  (save-excursion
-    (save-match-data
-      (goto-char start)
-      (let ((case-fold-search nil))
-        (while (re-search-forward "\\([a-z]\\)\\([A-Z]\\)" end t)
-          (replace-match (concat (match-string 1)
-                                 "_"
-                                 (downcase (match-string 2))) t))))))
+;; ;; TODO: prefix with my- or something so I use this
+;; (defun un-camelcase-region (start end)
+;;   (interactive "r")
+;;   (save-excursion
+;;     (save-match-data
+;;       (goto-char start)
+;;       (let ((case-fold-search nil))
+;;         (while (re-search-forward "\\([a-z]\\)\\([A-Z]\\)" end t)
+;;           (replace-match (concat (match-string 1)
+;;                                  "_"
+;;                                  (downcase (match-string 2))) t))))))
 
-(defun unescape-newlines (start end)
-  (interactive "r")
-  (munge-newlines start end "\\\\n" "\n"))
+;; (defun unescape-newlines (start end)
+;;   (interactive "r")
+;;   (munge-newlines start end "\\\\n" "\n"))
 
-(defun unfill-paragraph ()
-  (interactive)
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil)))
+;; (defun unfill-paragraph ()
+;;   (interactive)
+;;   (let ((fill-column (point-max)))
+;;     (fill-paragraph nil)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; "Borrowed" defuns:
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; "Borrowed" defuns:
 
-(defun sacha/decrease-font-size ()
-  (interactive)
-  (set-face-attribute 'default
-                      nil
-                      :height
-                      (floor (* 0.9
-                                  (face-attribute 'default :height)))))
+;; (defun sacha/decrease-font-size ()
+;;   (interactive)
+;;   (set-face-attribute 'default
+;;                       nil
+;;                       :height
+;;                       (floor (* 0.9
+;;                                   (face-attribute 'default :height)))))
 
-(defun sacha/increase-font-size ()
-  (interactive)
-  (set-face-attribute 'default
-                      nil
-                      :height
-                      (ceiling (* 1.10
-                                  (face-attribute 'default :height)))))
+;; (defun sacha/increase-font-size ()
+;;   (interactive)
+;;   (set-face-attribute 'default
+;;                       nil
+;;                       :height
+;;                       (ceiling (* 1.10
+;;                                   (face-attribute 'default :height)))))
 
-(defun sudo-buffer ()
-  "Revert buffer using tramp sudo.
-    This will also reserve changes already made by a non-root user."
-  (interactive)
-  (let ((f (buffer-file-name)))
-    (when f
-      (let ((content (when (buffer-modified-p)
-                       (widen)
-                       (buffer-string))))
-        (if (file-writable-p f)
-            (revert-buffer)
-          (kill-buffer (current-buffer))
-          (find-file (concat "/sudo::" f))
-          (when content
-            (let ((buffer-read-only nil))
-              (erase-buffer)
-              (insert content))))))))
+;; (defun sudo-buffer ()
+;;   "Revert buffer using tramp sudo.
+;;     This will also reserve changes already made by a non-root user."
+;;   (interactive)
+;;   (let ((f (buffer-file-name)))
+;;     (when f
+;;       (let ((content (when (buffer-modified-p)
+;;                        (widen)
+;;                        (buffer-string))))
+;;         (if (file-writable-p f)
+;;             (revert-buffer)
+;;           (kill-buffer (current-buffer))
+;;           (find-file (concat "/sudo::" f))
+;;           (when content
+;;             (let ((buffer-read-only nil))
+;;               (erase-buffer)
+;;               (insert content))))))))
 
-(face-attribute 'default :height)
+;; (face-attribute 'default :height)
 
-;;; stolen from: http://www.emacswiki.org/cgi-bin/wiki/IndentRigidlyN
-(defun indent-rigidly-n (n)
-  "Indent the region, or otherwise the current line, by N spaces."
-  (let* ((use-region (and transient-mark-mode mark-active))
-         (rstart (if use-region (region-beginning) (point-at-bol)))
-         (rend   (if use-region (region-end)       (point-at-eol)))
-         (deactivate-mark "irrelevant")) ; avoid deactivating mark
-    (indent-rigidly rstart rend n)))
+;; ;;; stolen from: http://www.emacswiki.org/cgi-bin/wiki/IndentRigidlyN
+;; (defun indent-rigidly-n (n)
+;;   "Indent the region, or otherwise the current line, by N spaces."
+;;   (let* ((use-region (and transient-mark-mode mark-active))
+;;          (rstart (if use-region (region-beginning) (point-at-bol)))
+;;          (rend   (if use-region (region-end)       (point-at-eol)))
+;;          (deactivate-mark "irrelevant")) ; avoid deactivating mark
+;;     (indent-rigidly rstart rend n)))
 
-(defun indent-rigidly-4 ()
-  "Indent the region, or otherwise the current line, by 4 spaces."
-  (interactive)
-  (indent-rigidly-n 4))
+;; (defun indent-rigidly-4 ()
+;;   "Indent the region, or otherwise the current line, by 4 spaces."
+;;   (interactive)
+;;   (indent-rigidly-n 4))
 
-(defun outdent-rigidly-4 ()
-  "Indent the region, or otherwise the current line, by -4 spaces."
-  (interactive)
-  (indent-rigidly-n -4))
+;; (defun outdent-rigidly-4 ()
+;;   "Indent the region, or otherwise the current line, by -4 spaces."
+;;   (interactive)
+;;   (indent-rigidly-n -4))

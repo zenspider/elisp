@@ -10,8 +10,7 @@
 ;; URL(en): http://seattlerb.rubyforge.org/
 
 ;;; Posted using:
-;; (setq emacs-wiki-name "RyanDavis")
-;; (wikiput-buffer "update")
+;; (emacswiki-post "rcov-overlay.el")
 
 ;;; The MIT License:
 
@@ -75,6 +74,28 @@
 ;;   }.compact.inspect
 ;; end
 
+;; (defun all-parent-dirs (&optional dir)
+;;   (or dir (setq dir default-directory))
+;;   (if (equal dir "/")
+;;       '()
+;;     (cons dir (all-parent-dirs (expand-file-name (concat dir "../"))))))
+
+;; (all-parent-dirs)
+
+;;   `(add-hook
+;;     ',(intern (concat (symbol-name mode) "-hook"))
+;;     (defun ,(intern (concat "my-" (symbol-name mode) "-hook")) ()
+;;       ,@body)))
+;; (put 'reverse-traverse-dirs 'lisp-indent-function 1)
+
+(defun find-project-dir (file &optional dir)
+  (or dir (setq dir default-directory))
+  (if (file-exists-p (concat dir file))
+      dir
+    (if (equal dir "/")
+        nil
+      (find-project-dir file (expand-file-name (concat dir "../"))))))
+
 (defun overlay-current-buffer-with-command (cmd)
   "cmd must output serialized json of the form [[start stop color] ...]"
   (let* ((json-object-type 'plist)
@@ -92,7 +113,9 @@
   (with-current-buffer buffer
     (overlay-current-buffer-with-command
      (concat "rake -s rcov_overlay FILE=\""
-             (file-relative-name (buffer-file-name)) "\""))))
+             (file-relative-name
+              (buffer-file-name)
+              (find-project-dir "coverage.info")) "\" 2>/dev/null"))))
 
 (defun rcov-clear ()
   (interactive)
