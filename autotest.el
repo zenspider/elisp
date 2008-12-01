@@ -10,6 +10,9 @@
 ;; URL(en): http://seattlerb.rubyforge.org/
 ;; by Ryan Davis - ryan-ruby@zenspider.com
 
+;;; Posted using:
+;; (emacswiki-post "autotest.el")
+
 ;;; The MIT License:
 
 ;; http://en.wikipedia.org/wiki/MIT_License
