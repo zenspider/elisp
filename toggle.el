@@ -10,8 +10,7 @@
 ;; URL(en): http://seattlerb.rubyforge.org/
 
 ;;; Posted using:
-;; (setq emacs-wiki-name "RyanDavis")
-;; (wikiput-buffer "update")
+;; (emacswiki-post "toggle.el")
 
 ;;; The MIT License:
 
