@@ -47,16 +47,12 @@
 
 (regen-autoloads)
 
-;; My libs:
+;; My libs: TODO: remove these in favor of autoloading
 
-; (load "setup-aliases")
-(load "setup-keys")
-(load "setup-misc")
-(load "setup-modes")
-(load "setup-ruby")
-; (load "rwd-oddmuse")
-
-(autoload 'my-irc "setup-irc" "doco" t)
+(load "rwd-keys")
+(load "rwd-misc")
+(load "rwd-modes")
+(load "rwd-ruby")
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
