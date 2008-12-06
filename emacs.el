@@ -15,7 +15,6 @@
 ;;                 "find ~/Bin/elisp -maxdepth 2 -type d | sort -u") nil))
 ;;   (add-to-list 'load-path path))
 
-
 (if running-osx
     ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
     ;; argh this is stupid
@@ -26,14 +25,38 @@
       (setenv "CDPATH" cdpath)
       (dolist (p path-list) (add-to-list 'exec-path p t))))
 
+;; --- ;;;###autoload
+
+(require 'autoload)
+(require 'cl)
+
+(defun regen-autoloads ()
+  "Regenerate the autoload definitions file if necessary and load it."
+  (interactive)
+  (let* ((el-file (or (buffer-file-name) load-file-name))
+         (el-root-dir (file-name-directory
+                       (or (file-symlink-p el-file) el-file)))
+         (autoload-file (concat el-root-dir generated-autoload-file)))
+    (if (or (not (file-exists-p autoload-file))
+            (some (lambda (f) (file-newer-than-file-p f autoload-file))
+                  (directory-files el-root-dir t "\\.el$")))
+        (let ((generated-autoload-file autoload-file))
+          (message "Updating autoloads...")
+          (update-directory-autoloads el-root-dir)))
+    (load autoload-file)))
+
+(regen-autoloads)
+
 ;; My libs:
 
-(load "setup-aliases")
+; (load "setup-aliases")
 (load "setup-keys")
 (load "setup-misc")
 (load "setup-modes")
 (load "setup-ruby")
-(load "setup-irc")
+; (load "rwd-oddmuse")
+
+(autoload 'my-irc "setup-irc" "doco" t)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -67,7 +90,7 @@
  '(scroll-bar-mode nil)
  '(search-whitespace-regexp nil)
  '(show-paren-mode t)
- '(tab-width 4)
+ '(tab-width 2)
  '(tool-bar-mode nil nil (tool-bar))
  '(tooltip-mode nil)
  '(tramp-default-method "ssh")

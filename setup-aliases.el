@@ -2,12 +2,14 @@
 ;; ;; Aliases: (use sort-paragraphs on this section)
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;###autoload
 (defadvice find-file-at-point (around goto-line compile activate)
   (let ((line (and (looking-at ".*:\\([0-9]+\\)")
                    (string-to-number (match-string 1)))))
     ad-do-it
     (and line (goto-line line))))
 
+;;;###autoload
 (defmacro def-hook (mode &rest body)
   `(add-hook
     ',(intern (concat (symbol-name mode) "-hook"))
@@ -15,12 +17,14 @@
       ,@body)))
 (put 'def-hook 'lisp-indent-function 1)
 
+;;;###autoload
 (defmacro hook-after-load (mode &rest body)
   `(eval-after-load ,(symbol-name mode)
      '(def-hook ,(intern (concat (symbol-name mode) "-mode"))
               ,@body)))
 (put 'hook-after-load 'lisp-indent-function 1)
 
+;;;###autoload
 (defun arrange-frame (w h &optional nosplit)
   "Rearrange the current frame to a custom width and height and split unless prefix."
   (let ((frame (selected-frame)))
@@ -108,6 +112,7 @@
 ;;       (insert path)
 ;;       (insert "\n"))))
 
+;;;###autoload
 (defun lappy ()
   (interactive)
   (resize-13)
@@ -137,6 +142,7 @@
 ;;         (while (re-search-forward from end t)
 ;;           (replace-match to t t))))))
 
+;;;###autoload
 (defun rwd-emacs-wiki ()
   (interactive)
   (dired (concat "~/Sites/emacs/static/")))
@@ -152,6 +158,7 @@
 ;;            (insert (current-kill 0)))))
 
 ;; TODO: fold this into myshell
+;;;###autoload
 (defun my-generate-new-buffer-name (name)
   "Find a new buffer name not currently used in the form of <name>-<N> where N starts at 1"
   (let* ((count 1)
@@ -181,9 +188,10 @@
 ;;     (insert msg)
 ;;     (comment-region (mark) (point))))
 
-;; (defun my-quickref ()
-;;   (interactive)
-;;   (find-file-other-window (expand-file-name "~/Work/p4/zss/www/zenspider.com/data/Languages/Ruby/QuickRef")))
+;;;###autoload
+(defun rwd-quickref ()
+  (interactive)
+  (find-file-other-window (expand-file-name "~/Work/p4/zss/www/zenspider.com/data/Languages/Ruby/QuickRef")))
 
 ;; (defun my-read-this ()
 ;;   (interactive)
@@ -191,6 +199,7 @@
 ;;   (split-window-horizontally)
 ;;   (follow-mode))
 
+;;;###autoload
 (defun my-recompile-init ()
   (interactive)
   (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0))
@@ -231,6 +240,7 @@
 ;;        (or column (+ (or selective-display 0) 2))
 ;;      nil)))
 
+;;;###autoload
 (defun my-set-mac-font (name size)
   (interactive
    (list (completing-read "font-name: "
@@ -245,6 +255,7 @@
                       :height (* 10 size))
   (frame-parameter nil 'font))
 
+;;;###autoload
 (defun myshell ()
   "Create a shell buffer that is properly named (shell-<N>)"
   (interactive)
@@ -281,57 +292,68 @@
 ;; click button \"Stop\" of first window of process \"Safari\"
 ;; end tell' | osascript" nil nil))
 
+;;;###autoload
 (defun resize-13 (&optional nosplit)
   (interactive "P")
   (my-set-mac-font "apple-bitstream vera sans mono" 12)
   (arrange-frame 170 50 nosplit))
 
+;;;###autoload
 (defun resize-13-dense (&optional nosplit)
   "Yet another screen layout. Suitable for 13in but denser than medium."
   (interactive "P")
   (my-set-mac-font "bitstream vera sans mono" 10)
   (arrange-frame 200 62 nosplit))
 
+;;;###autoload
 (defun resize-20 (&optional nosplit)
   "Create a really large window suitable for coding on a 20 inch cinema display."
   (interactive "P")
   (my-set-mac-font "bitstream vera sans mono" 12)
   (arrange-frame 200 60 nosplit))
 
+;;;###autoload
 (defun resize-peepcode ()
   "Create a small font window suitable for doing live demos in 800x600."
   (interactive)
   (arrange-frame 80 30 t)
   (my-set-mac-font "bitstream vera sans mono" 15))
 
+;;;###autoload
 (defun resize-presentation ()
   "Create a giant font window suitable for doing live demos."
   (interactive)
   (arrange-frame 80 25 t)
   (my-set-mac-font "bitstream vera sans mono" 20))
 
+;;;###autoload
 (defun resize-small (&optional split)
   "Create a small window suitable for coding on anything."
   (interactive "P")
   (my-set-mac-font "bitstream vera sans mono" 12)
   (arrange-frame 80 45 (not split)))
 
+;;;###autoload
 (defun rwd-forward-line-6 ()
   (interactive)
   (forward-line 6))
 
+;;;###autoload
 (defun rwd-previous-line-6 ()
   (interactive)
   (previous-line 6))
 
+;;;###autoload
 (defun rwd-scroll-down ()
   (interactive)
   (scroll-up 1))
 
+;;;###autoload
 (defun rwd-scroll-up ()
   (interactive)
   (scroll-down 1))
 
+;;;###autoload
 (defun rwd-scroll-top ()
   (interactive)
   (recenter 0))
@@ -352,6 +374,7 @@
 ;;   (let ((locate-command "mdfind"))
 ;;     (call-interactively 'locate nil)))
 
+;;;###autoload
 (defun swap-buffers ()
   "Swap the current 2 buffers in their windows"
   (interactive)
@@ -365,6 +388,7 @@
       (select-window nw)
       (switch-to-buffer cb))))
 
+;;;###autoload
 (defun toggle-split ()
   "Toggle vertical/horizontal window split."
   (interactive)

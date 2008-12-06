@@ -98,6 +98,7 @@
   :group 'toggle
   :type '(symbol))
 
+;;;###autoload
 (defun toggle-style (name)
   (interactive (list (completing-read "Style: "
                                       (mapcar
@@ -139,6 +140,7 @@ matches, it returns nil"
      (replace-match (cdar rules) nil nil path))
     (t (toggle-filename path (rest rules)))))
 
+;;;###autoload
 (defun toggle-buffer ()
   "Opens a related file to the current buffer using matching rules.
 Matches the current buffer against rules in toggle-mappings. If a

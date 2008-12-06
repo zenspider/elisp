@@ -1,17 +1,14 @@
 ;; ;; ============================================================
 ;; ;; Requires:
 
-;; (require 'p4)
+(require 'p4)
 ;; (require 'project-local-variables)
 
-;; (autoload 'toggle-buffer "toggle" "doco" t)
-;; (autoload 'toggle-style "toggle" "doco" t)
 ;; (autoload 'which-function "which-func" "doco" t)
 ;; (autoload 'slime-setup "slime.el" "slime" t)
 ;; (autoload 'slime "slime.el" "slime" t)
 ;; (autoload 'etags-select-find-tag "etags-select" "doco" t)
 ;; (autoload 'etags-select-find-tag-at-point "etags-select" "doco" t)
-
 
 ;; (if running-xemacs
 ;;     (add-to-list 'Info-directory-list "/usr/share/info"))
@@ -30,8 +27,8 @@
 ;; (require 'p4-lowlevel)
 ;; (require 'vc-p4)
 
-;; ;; (require 'info)
-;; ;; (add-to-list 'Info-directory-list "~/Sites/emacs/elisp/info")
+(hook-after-load info
+  (add-to-list 'Info-directory-list "~/Sites/emacs/elisp/info"))
 
 (setq my-usual-programming-modes
       '(ruby-mode lisp-mode scheme-mode emacs-lisp-mode))
@@ -207,14 +204,6 @@
 
 ;; (add-hook 'find-file-hooks  'my-add-file-hook)
 ;; (add-hook 'write-file-hooks 'my-add-file-hook)
-
-;; ;;; oddmuse
-
-;; (autoload 'oddmuse-edit "oddmuse" "doco" t)
-;; (autoload 'emacswiki-post "oddmuse" "doco" t)
-;; (defadvice oddmuse-post (before define-question compile activate)
-;;     (unless (string-match "question" oddmuse-post)
-;;       (setq oddmuse-post (concat "uihnscuskc=1;" oddmuse-post))))
 
 ;; ;;; pastebin
 

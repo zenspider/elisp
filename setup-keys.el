@@ -14,7 +14,7 @@
 (global-set-key (kbd "C-x /")   'align-regexp)
 (global-set-key (kbd "C-x C-b") 'bs-show)
 (global-set-key (kbd "C-x C-p") 'find-file-at-point)
-;; (global-set-key (kbd "C-x C-t") 'toggle-buffer)
+(global-set-key (kbd "C-x C-t") 'toggle-buffer)
 ;; (global-set-key (kbd "C-M-.")     'etags-select-find-tag)
 ;; (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point)
 ;; (global-set-key (kbd "M-C-+")   'sacha/increase-font-size)

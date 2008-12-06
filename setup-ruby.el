@@ -1,28 +1,32 @@
 
 ;; autoloads
 
-(autoload 'autotest                        "autotest"        "doco" t)
-(autoload 'autotest-switch                 "autotest"        "doco" t)
-(autoload 'inf-ruby-keys                   "inf-ruby"        "doco"  )
-(autoload 'racc-mode                       "racc-mode"       "doco"  )
-(autoload 'rcov-buffer                     "rcov-overlay.el" "doco" t)
-(autoload 'ri                              "ri.el"           "doco" t)
-(autoload 'ri-show-term-at-point           "ri.el"           "doco" t)
-(autoload 'ri-show-term-composite-at-point "ri.el"           "doco" t)
-(autoload 'ruby-index                      "ri.el"           "doco" t)
-(autoload 'ruby-mode                       "ruby-mode"       "doco"  )
-(autoload 'run-ruby                        "inf-ruby"        "doco"  )
-(autoload 'yaml-mode                       "yaml-mode"       "doco"  )
+;;;###autoload
+(progn
+  (autoload 'autotest                        "autotest"        "doco" t)
+  (autoload 'autotest-switch                 "autotest"        "doco" t)
+  (autoload 'inf-ruby-keys                   "inf-ruby"        "doco"  )
+  (autoload 'racc-mode                       "racc-mode"       "doco"  )
+  (autoload 'rcov-buffer                     "rcov-overlay.el" "doco" t)
+  (autoload 'ri                              "ri.el"           "doco" t)
+  (autoload 'ri-show-term-at-point           "ri.el"           "doco" t)
+  (autoload 'ri-show-term-composite-at-point "ri.el"           "doco" t)
+  (autoload 'ruby-index                      "ri.el"           "doco" t)
+  (autoload 'ruby-mode                       "ruby-mode"       "doco"  )
+  (autoload 'run-ruby                        "inf-ruby"        "doco"  )
+  (autoload 'yaml-mode                       "yaml-mode"       "doco"  ))
 
 ;; auto-modes
 
-(add-to-list 'auto-mode-alist        '("\\.mab$"   . ruby-mode))
-(add-to-list 'auto-mode-alist        '("\\.rb$"    . ruby-mode))
-(add-to-list 'auto-mode-alist        '("Rakefile"  . ruby-mode))
-(add-to-list 'auto-mode-alist        '("\\.rake$"  . ruby-mode))
-(add-to-list 'auto-mode-alist        '("\\.rhtml$" . html-mode))
-(add-to-list 'auto-mode-alist        '("\\.yml$"   . yaml-mode))
-(add-to-list 'interpreter-mode-alist '("ruby"      . ruby-mode))
+;;;###autoload
+(progn
+  (add-to-list 'auto-mode-alist        '("\\.mab$"   . ruby-mode))
+  (add-to-list 'auto-mode-alist        '("\\.rb$"    . ruby-mode))
+  (add-to-list 'auto-mode-alist        '("Rakefile"  . ruby-mode))
+  (add-to-list 'auto-mode-alist        '("\\.rake$"  . ruby-mode))
+  (add-to-list 'auto-mode-alist        '("\\.rhtml$" . html-mode))
+  (add-to-list 'auto-mode-alist        '("\\.yml$"   . yaml-mode))
+  (add-to-list 'interpreter-mode-alist '("ruby"      . ruby-mode)))
 
 ;; (setq ruby-mode-abbrev-table '())
 ;; (setq ruby-program-name "/usr/bin/irb")
