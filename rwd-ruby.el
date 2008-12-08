@@ -19,14 +19,15 @@
 ;; auto-modes
 
 ;;;###autoload
-(progn
-  (add-to-list 'auto-mode-alist        '("\\.mab$"   . ruby-mode))
-  (add-to-list 'auto-mode-alist        '("\\.rb$"    . ruby-mode))
-  (add-to-list 'auto-mode-alist        '("Rakefile"  . ruby-mode))
-  (add-to-list 'auto-mode-alist        '("\\.rake$"  . ruby-mode))
-  (add-to-list 'auto-mode-alist        '("\\.rhtml$" . html-mode))
-  (add-to-list 'auto-mode-alist        '("\\.yml$"   . yaml-mode))
-  (add-to-list 'interpreter-mode-alist '("ruby"      . ruby-mode)))
+(dolist (spec '(("\\.mab$"   . ruby-mode)
+                ("\\.rb$"    . ruby-mode)
+                ("Rakefile"  . ruby-mode)
+                ("\\.rake$"  . ruby-mode)
+                ("\\.rhtml$" . html-mode)
+                ("\\.yml$"   . yaml-mode)
+                ("ruby"      . ruby-mode)
+                ("\\.gem$"   . tar-mode)))
+  (add-to-list 'auto-mode-alist spec))
 
 ;; (setq ruby-mode-abbrev-table '())
 ;; (setq ruby-program-name "/usr/bin/irb")

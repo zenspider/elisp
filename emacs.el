@@ -15,7 +15,7 @@
 ;;                 "find ~/Bin/elisp -maxdepth 2 -type d | sort -u") nil))
 ;;   (add-to-list 'load-path path))
 
-(if running-osx
+(if (and running-osx (not (member "/Users/ryan/Bin" exec-path)))
     ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
     ;; argh this is stupid
     (let* ((path   (shell-command-to-string "/bin/bash -lc 'echo -n $PATH'"))
@@ -30,7 +30,8 @@
 (require 'autoload)
 (require 'cl)
 
-(defun regen-autoloads ()
+;; from technomancy with some tweaks
+(defun rwd-regen-autoloads ()
   "Regenerate the autoload definitions file if necessary and load it."
   (interactive)
   (let* ((el-file (or (buffer-file-name) load-file-name))
@@ -45,7 +46,7 @@
           (update-directory-autoloads el-root-dir)))
     (load autoload-file)))
 
-(regen-autoloads)
+(rwd-regen-autoloads)
 
 ;; My libs: TODO: remove these in favor of autoloading
 
@@ -53,13 +54,15 @@
 (load "rwd-misc")
 (load "rwd-modes")
 (load "rwd-ruby")
+(load "rwd-keywords")                   ; depends on modes, for now
+(load "rwd-history")
+(load "rwd-filecache")
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(global-auto-revert-mode t)
  '(backup-by-copying-when-linked t)
  '(blank-chars (quote (tabs trailing lines space-before-tab)))
  '(blank-line-length 82)
@@ -73,6 +76,8 @@
  '(eval-expression-print-level nil)
  '(ffap-file-finder (quote find-file-other-window))
  '(find-file-visit-truename t)
+ '(global-auto-revert-mode t)
+ '(history-length 1000)
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)

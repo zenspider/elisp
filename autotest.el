@@ -59,6 +59,7 @@
   :group 'autotest
   :type '(string))
 
+;;;###autoload
 (defun autotest ()
   "Fire up an instance of autotest in its own buffer with shell bindings and compile-mode highlighting and linking."
   (interactive)
