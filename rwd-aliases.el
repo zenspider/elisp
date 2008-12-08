@@ -25,7 +25,7 @@
 (put 'hook-after-load 'lisp-indent-function 1)
 
 ;;;###autoload
-(defun arrange-frame (w h &optional nosplit)
+(defun rwd-arrange-frame (w h &optional nosplit)
   "Rearrange the current frame to a custom width and height and split unless prefix."
   (let ((frame (selected-frame)))
     ;; (when (or (equal 'mac (framep frame)) (equal 'ns (framep frame)))
@@ -113,11 +113,13 @@
 ;;       (insert "\n"))))
 
 ;;;###autoload
-(defun lappy ()
+(defun rwd-lappy ()
   (interactive)
-  (resize-13)
-  (myshell)
-  (swap-buffers))
+  (rwd-resize-13)
+  (rwd-shell)
+  (rwd-swap-buffers))
+
+(defalias 'lappy 'rwd-lappy)
 
 ;; (defun list-join (sep lst)
 ;;   (mapconcat (lambda (x) x) lst sep))
@@ -156,17 +158,6 @@
 ;;              (current-buffer))
 ;;     (error (message "Invalid expression")
 ;;            (insert (current-kill 0)))))
-
-;; TODO: fold this into myshell
-;;;###autoload
-(defun my-generate-new-buffer-name (name)
-  "Find a new buffer name not currently used in the form of <name>-<N> where N starts at 1"
-  (let* ((count 1)
-         (buffer-name (format "%s-%d" name count)))
-    (while (get-buffer buffer-name)
-      (set 'buffer-name (format "%s-%d" name count))
-      (set 'count (+ count 1)))
-    buffer-name))
 
 ;; (defun my-get-mac-font ()
 ;;   (list (face-attribute 'default :family)
@@ -211,7 +202,7 @@
 ;;     (insert (pp `(defun xxx (&optional nosplit)
 ;;                    (interactive "P")
 ;;                    (my-set-mac-font ,(car font) ,(cadr font))
-;;                    (arrange-frame ,(window-width) ,(+ 1 (window-height)) nosplit))))))
+;;                    (rwd-arrange-frame ,(window-width) ,(+ 1 (window-height)) nosplit))))))
 
 ;; (defun my-reset-macro-counter (n)
 ;;   "Set kmacro-counter to \\[universal-argument] prefix's value or 1 by default"
@@ -241,7 +232,7 @@
 ;;      nil)))
 
 ;;;###autoload
-(defun my-set-mac-font (name size)
+(defun rwd-set-mac-font (name size)
   (interactive
    (list (completing-read "font-name: "
                           (mapcar (lambda (p) (list (car p) (car p)))
@@ -256,82 +247,75 @@
   (frame-parameter nil 'font))
 
 ;;;###autoload
-(defun myshell ()
+(defun rwd-shell ()
   "Create a shell buffer that is properly named (shell-<N>)"
   (interactive)
-  (shell (my-generate-new-buffer-name "shell")))
-
-;; (defun mytabs()
-;;   "Set tabbing to spaces at 2 col tabstops."
-;;   (interactive)
-;;   (modify-tabs 2 nil))
-
-;; (defun mytabs-hard ()
-;;   "Set tabbing to real tabs but viewed at 4 col tabstops."
-;;   (interactive)
-;;   (modify-tabs 4 t))
-
-;; (defun mytabs4()
-;;   "Set tabbing to spaces at 4 col tabstops."
-;;   (interactive)
-;;   (modify-tabs 4 nil))
-
-;; (defun mytabs8()
-;;   "Set tabbing to spaces at 8 col tabstops."
-;;   (interactive)
-;;   (modify-tabs 8 nil))
-
-;; (defun occur-buffer ()
-;;   (interactive)
-;;   (save-excursion
-;;     (shell-command-on-region (point-min) (point-max) "occur -n -p")))
-
-;; (defun reload-safari ()
-;;   (interactive)
-;;   (shell-command "printf 'tell application \"System Events\"
-;; click button \"Stop\" of first window of process \"Safari\"
-;; end tell' | osascript" nil nil))
+  (let* ((name "shell")
+         (count 1)
+         (buffer-name (format "%s-%d" name count)))
+    (while (get-buffer buffer-name)
+      (set 'buffer-name (format "%s-%d" name count))
+      (set 'count (+ count 1)))
+    (shell buffer-name)))
 
 ;;;###autoload
-(defun resize-13 (&optional nosplit)
+(defalias 'myshell 'rwd-shell)
+
+;;;###autoload
+(defun rwd-tabs (&optional width)
+  "Set tabbing to spaces at 2 col tabstops."
+  (interactive "p")
+  (setq tab-width (or width 2) indent-tabs-mode nil)
+  (save-excursion
+    (mark-whole-buffer)
+    (untabify (point-min) (point-max))))
+
+;;;###autoload
+(defun rwd-occur-buffer ()
+  (interactive)
+  (save-excursion
+    (shell-command-on-region (point-min) (point-max) "occur -n -p")))
+
+;;;###autoload
+(defun rwd-resize-13 (&optional nosplit)
   (interactive "P")
-  (my-set-mac-font "apple-bitstream vera sans mono" 12)
-  (arrange-frame 170 50 nosplit))
+  (rwd-set-mac-font "apple-bitstream vera sans mono" 12)
+  (rwd-arrange-frame 170 50 nosplit))
 
 ;;;###autoload
-(defun resize-13-dense (&optional nosplit)
+(defun rwd-resize-13-dense (&optional nosplit)
   "Yet another screen layout. Suitable for 13in but denser than medium."
   (interactive "P")
-  (my-set-mac-font "bitstream vera sans mono" 10)
-  (arrange-frame 200 62 nosplit))
+  (rwd-set-mac-font "bitstream vera sans mono" 10)
+  (rwd-arrange-frame 200 62 nosplit))
 
 ;;;###autoload
-(defun resize-20 (&optional nosplit)
+(defun rwd-resize-20 (&optional nosplit)
   "Create a really large window suitable for coding on a 20 inch cinema display."
   (interactive "P")
-  (my-set-mac-font "bitstream vera sans mono" 12)
-  (arrange-frame 200 60 nosplit))
+  (rwd-set-mac-font "bitstream vera sans mono" 12)
+  (rwd-arrange-frame 200 60 nosplit))
 
 ;;;###autoload
-(defun resize-peepcode ()
+(defun rwd-resize-peepcode ()
   "Create a small font window suitable for doing live demos in 800x600."
   (interactive)
-  (arrange-frame 80 30 t)
-  (my-set-mac-font "bitstream vera sans mono" 15))
+  (rwd-arrange-frame 80 30 t)
+  (rwd-set-mac-font "bitstream vera sans mono" 15))
 
 ;;;###autoload
-(defun resize-presentation ()
+(defun rwd-resize-presentation ()
   "Create a giant font window suitable for doing live demos."
   (interactive)
-  (arrange-frame 80 25 t)
-  (my-set-mac-font "bitstream vera sans mono" 20))
+  (rwd-arrange-frame 80 25 t)
+  (rwd-set-mac-font "bitstream vera sans mono" 20))
 
 ;;;###autoload
-(defun resize-small (&optional split)
+(defun rwd-resize-small (&optional split)
   "Create a small window suitable for coding on anything."
   (interactive "P")
-  (my-set-mac-font "bitstream vera sans mono" 12)
-  (arrange-frame 80 45 (not split)))
+  (rwd-set-mac-font "bitstream vera sans mono" 12)
+  (rwd-arrange-frame 80 45 (not split)))
 
 ;;;###autoload
 (defun rwd-forward-line-6 ()
@@ -358,24 +342,14 @@
   (interactive)
   (recenter 0))
 
-;; (defun server-stop ()
-;;   "Stop the server"
-;;   (interactive)
-;;   (server-start t))
-
-;; (defun spotlight ()
-;;   (interactive)
-;;   (let ((locate-command "mdfind")
-;;         (locate-make-command-line 'locate-make-mdfind-command-line))
-;;     (call-interactively 'locate nil)))
-
-;; (defun spotlight-full ()
-;;   (interactive)
-;;   (let ((locate-command "mdfind"))
-;;     (call-interactively 'locate nil)))
+;;;###autoload
+(defun server-stop ()
+  "Stop the server"
+  (interactive)
+  (server-start t))
 
 ;;;###autoload
-(defun swap-buffers ()
+(defun rwd-swap-buffers ()
   "Swap the current 2 buffers in their windows"
   (interactive)
   (if (one-window-p)
@@ -389,7 +363,7 @@
       (switch-to-buffer cb))))
 
 ;;;###autoload
-(defun toggle-split ()
+(defun rwd-toggle-split ()
   "Toggle vertical/horizontal window split."
   (interactive)
   (if (one-window-p)
@@ -465,21 +439,24 @@
 
 ;; (face-attribute 'default :height)
 
-;; ;;; stolen from: http://www.emacswiki.org/cgi-bin/wiki/IndentRigidlyN
-;; (defun indent-rigidly-n (n)
-;;   "Indent the region, or otherwise the current line, by N spaces."
-;;   (let* ((use-region (and transient-mark-mode mark-active))
-;;          (rstart (if use-region (region-beginning) (point-at-bol)))
-;;          (rend   (if use-region (region-end)       (point-at-eol)))
-;;          (deactivate-mark "irrelevant")) ; avoid deactivating mark
-;;     (indent-rigidly rstart rend n)))
+;;; stolen from: http://www.emacswiki.org/cgi-bin/wiki/IndentRigidlyN
+;;;###autoload
+(defun indent-rigidly-n (n)
+  "Indent the region, or otherwise the current line, by N spaces."
+  (let* ((use-region (and transient-mark-mode mark-active))
+         (rstart (if use-region (region-beginning) (point-at-bol)))
+         (rend   (if use-region (region-end)       (point-at-eol)))
+         (deactivate-mark "irrelevant")) ; avoid deactivating mark
+    (indent-rigidly rstart rend n)))
 
-;; (defun indent-rigidly-4 ()
-;;   "Indent the region, or otherwise the current line, by 4 spaces."
-;;   (interactive)
-;;   (indent-rigidly-n 4))
+;;;###autoload
+(defun indent-rigidly-4 ()
+  "Indent the region, or otherwise the current line, by 4 spaces."
+  (interactive)
+  (indent-rigidly-n 4))
 
-;; (defun outdent-rigidly-4 ()
-;;   "Indent the region, or otherwise the current line, by -4 spaces."
-;;   (interactive)
-;;   (indent-rigidly-n -4))
+;;;###autoload
+(defun outdent-rigidly-4 ()
+  "Indent the region, or otherwise the current line, by -4 spaces."
+  (interactive)
+  (indent-rigidly-n -4))

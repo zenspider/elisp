@@ -7,7 +7,7 @@
 (put 'overwrite-mode 'disabled t) ; annoying
 
 (if window-system
-    (add-hook 'after-init-hook 'resize-small t))
+    (add-hook 'after-init-hook 'rwd-resize-small t))
 
 ;; (setq ispell-program-name "aspell")
 ;; (setq ispell-dictionary-alist

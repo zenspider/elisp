@@ -2,15 +2,15 @@
 ;; ;; Keys & Menus:
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(global-set-key (kbd "<f7>")    'toggle-split)
-(global-set-key (kbd "<f8>")    'swap-buffers)
+(global-set-key (kbd "<f7>")    'rwd-toggle-split)
+(global-set-key (kbd "<f8>")    'rwd-swap-buffers)
 (global-set-key (kbd "C-M-x")   'bury-buffer)
 ;; (global-set-key (kbd "C-c #")   'kmacro-insert-counter)
 ;; (global-set-key (kbd "C-c 1")   'my-reset-macro-counter)
 ;; (global-set-key (kbd "C-c C-r") 'recompile)
 (global-set-key (kbd "C-c e")   'erase-buffer)
 ;; (global-set-key (kbd "C-c f")   'my-selective-display)
-(global-set-key (kbd "C-c o")   'occur-buffer)
+(global-set-key (kbd "C-c o")   'rwd-occur-buffer)
 (global-set-key (kbd "C-x /")   'align-regexp)
 (global-set-key (kbd "C-x C-b") 'bs-show)
 (global-set-key (kbd "C-x C-p") 'find-file-at-point)
@@ -20,10 +20,9 @@
 ;; (global-set-key (kbd "M-C-+")   'sacha/increase-font-size)
 ;; (global-set-key (kbd "M-C--")   'sacha/decrease-font-size)
 (global-set-key (kbd "M-C-y")   'kill-ring-search)
-;; (global-set-key (kbd "M-[")     'outdent-rigidly-4)
-;; (global-set-key (kbd "M-]")     'indent-rigidly-4)
+(global-set-key (kbd "M-[")     'outdent-rigidly-4)
+(global-set-key (kbd "M-]")     'indent-rigidly-4)
 (global-set-key (kbd "M-s")     'fixup-whitespace)
-
 
 ;; ;; FIX: blech!
 ;; ;; (mapcar (lambda (mode)
