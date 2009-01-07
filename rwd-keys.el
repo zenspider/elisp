@@ -32,16 +32,29 @@
 ;; ;; 	  grep-mode-map
 ;; ;; 	  help-mode-map))
 
+(if running-osx
+    (define-key global-map [ns-drag-file] 'ns-find-file))
+
 (define-key emacs-lisp-mode-map       (kbd "C-c e") 'my-eval-and-replace)
 (define-key lisp-interaction-mode-map (kbd "C-c e") 'my-eval-and-replace)
 
-; this is so awesome - occur easily inside isearch
+;; this is so awesome - occur easily inside isearch
 (define-key isearch-mode-map (kbd "C-o")
   (lambda ()
     (interactive)
     (let ((case-fold-search isearch-case-fold-search))
       (occur (if isearch-regexp isearch-string
                (regexp-quote isearch-string))))))
+
+;; grep all same extension files from inside isearch
+(define-key isearch-mode-map (kbd "C-S-o")
+  (lambda ()
+    (interactive)
+    (grep-compute-defaults)
+    (lgrep (if isearch-regexp isearch-string (regexp-quote isearch-string))
+           (format "*.%s" (file-name-extension (buffer-file-name)))
+           default-directory)
+    (isearch-abort)))
 
 ;; iconify bugs the crap out of me:
 (when window-system (global-unset-key "\C-z"))

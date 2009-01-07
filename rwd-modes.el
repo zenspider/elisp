@@ -12,58 +12,18 @@
 ;; (if running-xemacs
 ;;     (add-to-list 'Info-directory-list "/usr/share/info"))
 
-;; (if running-emacs
-;;     (progn
-;;       (eval-when-compile
-;;         (when (< emacs-major-version 20) (require 'cl)))
-;;       (require 'vc-hooks)
-;;       (setq apropos-do-all t)
-;;       (eval-after-load 'comint
-;;         '(add-hook 'comint-output-filter-functions
-;;                    'comint-watch-for-password-prompt))))
-;; (add-hook 'comint-mode-hook 'comint-add-scroll-to-bottom)
+;; HACK: fix! used to work
 
-(hook-after-load info
-  (add-to-list 'Info-directory-list "~/Sites/emacs/elisp/info"))
+(eval-after-load 'info
+  '(add-to-list 'Info-directory-list "~/Sites/emacs/elisp/info"))
 
 (setq my-usual-programming-modes
       '(ruby-mode lisp-mode scheme-mode emacs-lisp-mode))
-;; (setq my-usual-programming-mode-hooks
-;;       (mapcar (lambda (h) (intern (concat (symbol-name h) "-hook")))
-;;               my-usual-programming-modes))
 
 (dolist (spec '(("\\.bash.*$"                . ksh-mode)
                 ("\\.js$"                    . ecmascript-mode)
                 ("^\\(GNUm\\|M\\)akefile.*$" . makefile-mode)))
   (add-to-list 'auto-mode-alist spec))
-
-;; ;; TODO:
-;; ;; (defun setup-abbrevs-for-modes (modes)
-;; ;;   (dolist (mode modes)
-;; ;;     (setq ,(concat-symbols mode '-mode-abbrev-table) '())))
-
-;; ;; (add-hook `(concat-symbols ',mode '-mode-hook)
-;; ;;           (lambda ()
-;; ;;             (require 'expand)
-;; ;;             (expand-add-abbrevs
-;; ;;              `(concat-symbols ',mode '-mode-abbrev-table)
-;; ;;              `(concat-symbols ',mode '-expand-list))
-;; ;;             (abbrev-mode)))))
-
-;; ;; (setup-abbrevs-for-modes '(ruby scheme))
-
-;; ;; (mapcar
-;; ;;  (lambda (mode) (setq (concat-symbols mode '-mode-abbrev-table) '()))
-;; ;;  '(ruby scheme))
-
-;; (setq save-abbrevs nil)
-
-;; ;; TODO:
-;; ;;  (add-hook 'foo-mode-hook
-;; ;;            (lambda ()
-;; ;;               (set (make-local-variable imenu-generic-expression)
-;; ;;                    '(("Comments" "^\\s-*#" 1)
-;; ;;                      ...))))
 
 ;; ;; ============================================================
 ;; ;; Scheme / Lisp:
@@ -91,10 +51,6 @@
 
 ;; ;; ============================================================
 ;; ;; Misc Modes/Stuff:
-
-;; (def-hook text-mode
-;;   (turn-on-auto-fill)
-;;   (define-key text-mode-map (kbd "M-s") 'fixup-whitespace))
 
 ;; (eval-after-load 'compile
 ;;   '(def-hook c-mode
