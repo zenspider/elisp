@@ -52,37 +52,18 @@
 (rwd-autoloads)
 
 ;; My libs: TODO: remove these in favor of autoloading
-
-(load "rwd-keys")
 (load "rwd-modes")
 (load "rwd-keywords")                   ; depends on modes, for now
-(load "rwd-history")
 
 ;; enable/disable commands:
 (put 'erase-buffer 'disabled nil) ; nukes stupid warning
 
 (if window-system
-    (add-hook 'after-init-hook 'rwd-resize-small t))
-
-;;  '(erc-keywords (quote ("autotest\\|zentest\\|inline\\|parse_?tree")))
-;;  '(erc-kill-buffer-on-part t)
-;;  '(erc-kill-queries-on-quit t)
-;;  '(erc-kill-server-buffer-on-quit t)
-;;  '(erc-mode-line-format "%t %a")
-;;  '(erc-pals (quote ("^drbrain$" "^evan$")))
-;;  '(erc-track-exclude-types (quote ("JOIN" "NICK" "PART" "QUIT")))
-;;  '(erc-track-minor-mode t)
-;;  '(erc-track-mode t)
-;;  '(erc-track-position-in-mode-line (quote after-modes))
-;;  '(explicit-shell-file-name "/bin/bash")
-;;  '(global-font-lock-mode t nil (font-core))
-;;  '(hippie-expand-try-functions-list (quote (try-expand-all-abbrevs try-expand-list try-expand-dabbrev-visible try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill try-complete-lisp-symbol-partially try-complete-lisp-symbol try-expand-tag try-complete-file-name-partially try-complete-file-name)))
-;;  '(locate-make-command-line (quote locate-make-mdfind-command-line))
-;;  '(mouse-wheel-mode t nil (mwheel))
-;;  '(override-keymap-rules (quote (("\230" bury-buffer (ruby python emacs-lisp)) ("\214" rwd-scroll-top (shell comint)))))
-;;  '(perl-indent-level 2)
-;;  '(safe-local-variable-values (quote ((add-log-time-format lambda nil (let* ((time (current-time)) (system-time-locale "C") (diff (+ (cadr time) 32400)) (lo (% diff 65536)) (hi (+ (car time) (/ diff 65536)))) (format-time-string "%a %b %e %H:%M:%S %Y" (list hi lo) t))) (racc-token-length-max . 14))))
-;;  '(winner-mode t nil (winner))
+    (add-hook 'after-init-hook
+              (lambda ()
+                (rwd-resize-small)
+                (run-with-idle-timer 0.25 nil #'rwd-resize-small))
+              t))
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -96,6 +77,7 @@
  '(blank-style (quote (color)))
  '(column-number-mode t)
  '(comint-input-ignoredups t)
+ '(comment-empty-lines (quote (quote eol)))
  '(compilation-error-regexp-alist (quote (bash java gnu gcc-include)))
  '(dired-recursive-deletes (quote top))
  '(ediff-split-window-function (quote split-window-horizontally))
@@ -104,12 +86,15 @@
  '(ffap-file-finder (quote find-file-other-window))
  '(find-file-visit-truename t)
  '(global-auto-revert-mode t)
+ '(hippie-expand-try-functions-list (quote (try-expand-all-abbrevs try-expand-list try-expand-dabbrev-visible try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill try-complete-lisp-symbol-partially try-complete-lisp-symbol try-expand-tag try-complete-file-name-partially try-complete-file-name)))
  '(history-length 1000)
+ '(imenu-max-items 50)
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
  '(oddmuse-directory "~/Library/Caches/oddmuse")
  '(oddmuse-username "RyanDavis")
+ '(override-keymap-rules (quote (("\230" bury-buffer (ruby python emacs-lisp)) ("\214" rwd-scroll-top (shell comint)))))
  '(safe-local-variable-values (quote ((racc-token-length-max . 14))))
  '(save-place t nil (saveplace))
  '(save-place-limit 250)
@@ -132,6 +117,7 @@
  '(vc-path (quote ("/opt/local/bin" "/usr/local/bin")))
  '(vc-svn-program-name "/opt/local/bin/svn")
  '(visible-bell t)
+ '(warning-suppress-types (quote ((undo discard-info))))
  '(wdired-allow-to-change-permissions (quote advanced)))
 
 (custom-set-faces

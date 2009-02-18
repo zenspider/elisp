@@ -5,6 +5,7 @@
     "~/Work/p4/zss/src/ZenTest/dev"
     "~/Work/p4/zss/src/hoe/dev"
     "~/Work/p4/zss/src/minitest/dev"
+    "~/Work/p4/zss/src/metal/dev"
     "~/Work/p4/zss/src/flog/dev/lib"
     "~/Work/p4/zss/src/flay/dev/lib"
     "~/Work/p4/zss/src/ParseTree/dev"

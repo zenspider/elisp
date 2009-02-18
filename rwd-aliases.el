@@ -4,7 +4,7 @@
 
 ;;;###autoload
 (defadvice find-file-at-point (around goto-line compile activate)
-  (let ((line (and (looking-at ".*:\\([0-9]+\\)")
+  (let ((line (and (looking-at ".*?:\\([0-9]+\\)")
                    (string-to-number (match-string 1)))))
     ad-do-it
     (and line (goto-line line))))
@@ -17,18 +17,38 @@
 
 ;;;###autoload
 (defmacro def-hook (mode &rest body)
-  `(add-hook
-    ',(intern (concat (symbol-name mode) "-hook"))
+  (message "** def-hook %s" mode)
+  `(add-to-list ',(intern (concat (symbol-name mode) "-hook"))
     (defun ,(intern (concat "rwd-" (symbol-name mode) "-hook")) ()
+      (message "**** running %s hook" ',mode)
       ,@body)))
 (put 'def-hook 'lisp-indent-function 1)
 
+;; ;;;###autoload
+;; (defmacro hook-after-load (mode &rest body)
+;;   (message "** hook-after-load %s" mode)
+;;   ;; (if (fboundp mode) (error "mode already loaded: %s" mode))
+;;   `(eval-after-load ',mode
+;;      '(def-hook ,mode ,@body)))
+;; (put 'hook-after-load 'lisp-indent-function 1)
+
 ;;;###autoload
-(defmacro hook-after-load (mode &rest body)
-  `(eval-after-load ',(intern (concat (symbol-name mode) "-mode"))
-     '(def-hook ,(intern (concat (symbol-name mode) "-mode"))
-              ,@body)))
-(put 'hook-after-load 'lisp-indent-function 1)
+(defmacro hook-after-load-new (mode hookname &rest body)
+  (message "** hook-after-load %s" mode)
+  ;; (if (fboundp mode) (error "mode already loaded: %s" mode))
+  `(eval-after-load ',mode
+     '(def-hook ,(or hookname mode) ,@body)))
+(put 'hook-after-load-new 'lisp-indent-function 1)
+
+;; ;;;###autoload
+;; (defmacro hook-mode-after-load (mode &rest body)
+;;   (let ((modename (intern (concat (symbol-name mode) "-mode"))))
+;;     (message "** hook-mode-after-load %s" modename)
+;;     `(eval-after-load ',modename
+;;        '(progn
+;;           (message "**** adding %s hook" ',modename)
+;;           (def-hook ,modename ,@body)))))
+;; (put 'hook-mode-after-load 'lisp-indent-function 1)
 
 ;;;###autoload
 (defun list-join (sep lst)
@@ -62,7 +82,7 @@
 
 ;;;###autoload
 (defun rwd-find-project-files ()
-  (split-string (shell-command-to-string (concat "find " (list-join " " rwd-project-dirs) " -name \\*.rb -o -name \\*.el"))))
+  (split-string (shell-command-to-string (concat "find " (list-join " " rwd-project-dirs) " -name \\*.rb -o -name \\*.el -o -name \\*.y"))))
 
 ;;;###autoload
 (defun rwd-forward-line-6 ()
@@ -125,21 +145,21 @@
 ;;;###autoload
 (defun rwd-resize-13 (&optional nosplit)
   (interactive "P")
-  (rwd-set-mac-font "Bitstream Vera Sans Mono" 12)
-  (rwd-arrange-frame 170 50 nosplit))
+  (rwd-set-mac-font "DejaVu Sans Mono" 12)
+  (rwd-arrange-frame 170 48 nosplit))
 
 ;;;###autoload
 (defun rwd-resize-13-dense (&optional nosplit)
   "Yet another screen layout. Suitable for 13in but denser than medium."
   (interactive "P")
-  (rwd-set-mac-font "Bitstream Vera Sans Mono" 10)
-  (rwd-arrange-frame 200 62 nosplit))
+  (rwd-set-mac-font "DejaVu Sans Mono" 10)
+  (rwd-arrange-frame 200 52 nosplit))
 
 ;;;###autoload
 (defun rwd-resize-20 (&optional nosplit)
   "Create a really large window suitable for coding on a 20 inch cinema display."
   (interactive "P")
-  (rwd-set-mac-font "Bitstream Vera Sans Mono" 12)
+  (rwd-set-mac-font "DejaVu Sans Mono" 12)
   (rwd-arrange-frame 200 60 nosplit))
 
 ;;;###autoload
@@ -147,21 +167,26 @@
   "Create a small font window suitable for doing live demos in 800x600."
   (interactive)
   (rwd-arrange-frame 80 30 t)
-  (rwd-set-mac-font "Bitstream Vera Sans Mono" 15))
+  (rwd-set-mac-font "DejaVu Sans Mono" 15))
 
 ;;;###autoload
 (defun rwd-resize-presentation ()
   "Create a giant font window suitable for doing live demos."
   (interactive)
   (rwd-arrange-frame 80 25 t)
-  (rwd-set-mac-font "Bitstream Vera Sans Mono" 20))
+  (rwd-set-mac-font "DejaVu Sans Mono" 20))
 
 ;;;###autoload
 (defun rwd-resize-small (&optional split)
   "Create a small window suitable for coding on anything."
   (interactive "P")
-  (rwd-set-mac-font "Bitstream Vera Sans Mono" 12)
-  (rwd-arrange-frame 80 45 (not split)))
+  (rwd-set-mac-font "DejaVu Sans Mono" 12)
+  (rwd-arrange-frame 80 48 (not split)))
+
+;;;###autoload
+(defun rwd-insert-arrange-frame ()
+  (interactive)
+  (insert (format "%s" (list 'rwd-arrange-frame (frame-width) (frame-height)))))
 
 ;;;###autoload
 (defun rwd-scroll-down ()
@@ -279,6 +304,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; "Borrowed" defuns:
+
+(defun split-horizontally-not-vertically ()
+  "If there's only one window (excluding any possibly active
+     minibuffer), then split the current window horizontally."
+  (interactive)
+  (if (and
+       (>= (frame-width) (* 2 (frame-height)))
+       (= (length (window-list nil 'dont-include-minibuffer-even-if-active)) 1))
+      (split-window-horizontally)))
+(add-hook 'temp-buffer-setup-hook 'split-horizontally-not-vertically)
 
 (defun rwd-sudo-buffer ()
   "Revert buffer using tramp sudo.

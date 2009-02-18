@@ -14,9 +14,10 @@
 
 ;; HACK: fix! used to work
 
-(eval-after-load 'info
-  '(add-to-list 'Info-directory-list "~/Sites/emacs/elisp/info"))
+;; (eval-after-load 'info
+;;   '(add-to-list 'Info-directory-list "~/Sites/emacs/elisp/info"))
 
+;;;###autoload
 (setq my-usual-programming-modes
       '(ruby-mode lisp-mode scheme-mode emacs-lisp-mode))
 
@@ -63,9 +64,6 @@
 
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
-
-(require 'window-number)
-(window-number-meta-mode 1)
 
 ;; ;;; pastebin
 

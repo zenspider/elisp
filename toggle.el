@@ -87,7 +87,10 @@
                 ("app/models/\\1.rb"      . "test/unit/\\1_test.rb")
                 ("lib/\\1.rb"             . "test/unit/test_\\1.rb")))
     (ruby    . (("lib/\\1.rb"             . "test/test_\\1.rb")
-                ("\\1.rb"                 . "test_\\1.rb"))))
+                ("\\1.rb"                 . "test_\\1.rb")))
+    (objc    . (("\\1.m"                  . "\\1.h")))
+    (c       . (("\\1.c"                  . "\\1.h")))
+    (cpp     . (("\\1.cpp"                . "\\1.hpp"))))
   "A list of (name . toggle-mapping) rules used by toggle-filename."
   :group 'toggle
   :type '(repeat (cons string string)))
@@ -111,10 +114,11 @@
         (let ((mappings
                (mapcar (lambda (pair)
                          (cons
-                          (replace-regexp-in-string
-                           "\\\\1" "\\\\(.*\\\\)"
-                           (replace-regexp-in-string ; special case for "\\1.ext"
-                            "^\\\\1" "\\\\([^/]*\\\\)" (car pair)))
+                          (concat
+                           (replace-regexp-in-string
+                            "\\\\1" "\\\\(.*\\\\)"
+                            (replace-regexp-in-string ; special case for "\\1.ext"
+                             "^\\\\1" "\\\\([^/]*\\\\)" (car pair))) "$")
                           (cdr pair)))
                        (mapcan 'list
                                pairs

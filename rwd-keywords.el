@@ -11,15 +11,15 @@
   "A yellow face for warnings that are not quite that bad."
  :group 'my-faces)
 
-(setq yellow-tokens
-      (delete ?\s "\\<\\(F IX\\|D OC\\|R ETIRE\\|T ODO\\|W ARN\\).*\\>"))
-(setq red-tokens
-      (delete ?\s "\\<\\(H ACK\\|R EFACTOR\\).*\\>"))
+(progn
+  (setq yellow-tokens
+        (delete ?\s "\\<\\(F IX\\|D OC\\|R ETIRE\\|T ODO\\|W ARN\\).*\\>"))
+  (setq red-tokens
+        (delete ?\s "\\<\\(H ACK\\|R EFACTOR\\).*\\>"))
 
-(mapcar (lambda (mode)
-          (font-lock-add-keywords
-           mode
-           (list (list yellow-tokens 0 ''my-yellow-face 'prepend)
-                 (list red-tokens    0 ''my-red-face    'prepend))))
-        my-usual-programming-modes)
-
+  (mapcar (lambda (mode)
+            (font-lock-add-keywords
+             mode
+             (list (list yellow-tokens 0 ''my-yellow-face 'prepend)
+                   (list red-tokens    0 ''my-red-face    'prepend))))
+          my-usual-programming-modes))
