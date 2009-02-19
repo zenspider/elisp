@@ -5,10 +5,9 @@
 (setq running-osx    (or (featurep 'mac-carbon) (eq 'ns window-system)))
 
 ;; Pathing:
-;; leaving in the ~ryan part, makes it easier to test from guest acct
-(add-to-list 'load-path (expand-file-name "~ryan/Bin/elisp") t)
-(add-to-list 'load-path (expand-file-name "~ryan/Bin/elisp/third-party") t)
-(add-to-list 'load-path (expand-file-name "~ryan/Sites/emacs/elisp") t)
+(add-to-list 'load-path (expand-file-name "~/Bin/elisp") t)
+(add-to-list 'load-path (expand-file-name "~/Bin/elisp/third-party") t)
+(add-to-list 'load-path (expand-file-name "~/Sites/emacs/elisp") t)
 
 (if (and running-osx (not (member "/Users/ryan/Bin" exec-path)))
     ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
