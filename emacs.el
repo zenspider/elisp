@@ -59,10 +59,7 @@
 
 (if window-system
     (add-hook 'after-init-hook
-              (lambda ()
-                (rwd-resize-small)
-                (run-with-idle-timer 0.25 nil #'rwd-resize-small))
-              t))
+              (lambda () (run-with-idle-timer 0.25 nil #'rwd-resize-small)) t))
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
