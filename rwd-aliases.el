@@ -90,6 +90,12 @@
   (forward-line 6))
 
 ;;;###autoload
+(defun rwd-htmlize-buffer-as-string ()
+  (interactive)
+  (require 'htmlize)
+  (kill-new (htmlize-region-for-paste (point-min) (point-max))))
+
+;;;###autoload
 (defun rwd-insert-shebang ()
   "Insert a shebang line based on mode into the file."
   (interactive)
@@ -141,6 +147,12 @@
   (delete-other-windows)
   (split-window-horizontally)
   (follow-mode))
+
+;;;###autoload
+(defun rwd-renumber-list ()
+  (interactive)
+  (letf ((query-replace-defaults '("\\(.+:\\)" . "\\,(1+ \\#):")))
+    (call-interactively 'replace-regexp)))
 
 ;;;###autoload
 (defun rwd-resize-13 (&optional nosplit)
