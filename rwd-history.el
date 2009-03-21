@@ -32,7 +32,10 @@
   (let ((newlist '())
         (old-size (length file-name-history)))
     (dolist (path (canonical-file-paths file-name-history))
-      (and (file-exists-p path) (add-to-list 'newlist path)))
+      (and
+       (not (string-match "^/\(sudo\|ssh\):" path))
+       (file-exists-p path)
+       (add-to-list 'newlist path)))
     (setq file-name-history newlist)
     (message "file-name-history went from %d to %d"
              old-size (length file-name-history))))
