@@ -86,7 +86,6 @@
 
 ;;;###autoload
 (hook-after-load-new shell shell-mode
-  (message "wtf -- shell mode hook running")
   (define-key shell-mode-map (kbd "C-z") 'comint-stop-subjob)
   (define-key shell-mode-map (kbd "M-<return>") 'shell-resync-dirs))
 
