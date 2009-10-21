@@ -3,10 +3,10 @@
 ;; Copyright (C) 2008 by Ryan Davis
 
 ;; Author: Ryan Davis <ryand-ruby@zenspider.com>
-;; Version 1.0
+;; Version 1.2
 ;; Keywords: no-freakin-clue
 ;; Created: 2008-01-14
-;; Compatibility: Emacs 22, 21?
+;; Compatibility: Emacs 23, 22, 21?
 ;; URL(en): http://seattlerb.rubyforge.org/
 
 ;;; Posted using:
@@ -42,7 +42,7 @@
 ;; data. Also provided are two rake tasks to help generate the needed
 ;; data.
 
-;; The function `overlay-current-buffer-with-command` is acutally
+;; The function `overlay-current-buffer-with-command` is actually
 ;; quite flexible as it will execute an external command that returns
 ;; json data specifying regions and colors. It could be used for all
 ;; sorts of mischief.
@@ -53,13 +53,22 @@
 
 ;;; History:
 
+;; 1.2 2009-10-21 Added customizable overlay background color.
+;; 1.1 2008-12-01 Added find-project-dir to fix path generation issues.
 ;; 1.0 2008-01-14 Birfday.
 
 (require 'cl)
 (require 'json) ;; From: http://edward.oconnor.cx/2006/03/json.el
 
-;; (global-set-key (kbd "C-c r")   'rcov-buffer)
+;; (global-set-key (kbd "C-c C-r")   'rcov-buffer)
 
+;; 
+;; If you use hoe and autotest with the autotest/rcov plugin, all of
+;; this works straight up. Just fire up autotest, let it do its thing,
+;; and you can trigger rcov-buffer to see the coverage on the file.
+
+;;
+;; If you do NOT use hoe, then you should add the following to your rake tasks:
 ;; Add this to your Rakefile:
 ;;
 ;; task :rcov_info do
@@ -74,19 +83,11 @@
 ;;   }.compact.inspect
 ;; end
 
-;; (defun all-parent-dirs (&optional dir)
-;;   (or dir (setq dir default-directory))
-;;   (if (equal dir "/")
-;;       '()
-;;     (cons dir (all-parent-dirs (expand-file-name (concat dir "../"))))))
-
-;; (all-parent-dirs)
-
-;;   `(add-hook
-;;     ',(intern (concat (symbol-name mode) "-hook"))
-;;     (defun ,(intern (concat "my-" (symbol-name mode) "-hook")) ()
-;;       ,@body)))
-;; (put 'reverse-traverse-dirs 'lisp-indent-function 1)
+(defcustom rcov-overlay-fg-color
+  "#ffcccc"
+  "The default background color."
+  :group 'rcov-overlay
+  :type 'color)
 
 (defun find-project-dir (file &optional dir)
   (or dir (setq dir default-directory))
@@ -106,7 +107,7 @@
     (dolist (range ranges)
     (overlay-put
      (make-overlay (car range) (cadr range))
-     'face (cons 'background-color (caddr range))))))
+     'face (cons 'background-color rcov-overlay-fg-color)))))
 
 (defun rcov-buffer (buffer)
   (interactive (list (current-buffer)))
