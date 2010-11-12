@@ -51,6 +51,11 @@
 ;; (put 'hook-mode-after-load 'lisp-indent-function 1)
 
 ;;;###autoload
+(defun head (list n)
+  "Return a copy of list with the first n elements"
+  (butlast list (- (length list) n)))
+
+;;;###autoload
 (defun list-join (sep lst)
   (mapconcat (lambda (x) x) lst sep))
 
@@ -62,6 +67,11 @@
       (let ((case-fold-search nil))
         (while (re-search-forward from end t)
           (replace-match to t t))))))
+
+(defun rwd-add-to-load-path (dir)
+  "Adds a path to the load-path"
+  (interactive "DDirectory: ")
+  (add-to-list 'load-path (expand-file-name dir) t))
 
 ;;;###autoload
 (defun rwd-arrange-frame (w h &optional nosplit)
@@ -81,13 +91,12 @@
   (dired (concat "~/Sites/emacs/static/")))
 
 ;;;###autoload
-(defun rwd-find-project-files ()
-  (split-string (shell-command-to-string (concat "find " (list-join " " rwd-project-dirs) " -name \\*.rb -o -name \\*.el -o -name \\*.y"))))
-
-;;;###autoload
 (defun rwd-forward-line-6 ()
   (interactive)
   (forward-line 6))
+
+(eval-when-compile
+  (require 'htmlize))
 
 ;;;###autoload
 (defun rwd-htmlize-buffer-as-string ()
@@ -134,7 +143,11 @@
 ;;;###autoload
 (defun rwd-previous-line-6 ()
   (interactive)
-  (previous-line 6))
+  (forward-line -6))
+
+;; (set-frame-parameter nil 'fullscreen (if (frame-parameter nil 'fullscreen)
+;;                                          nil
+;;                                        'fullboth))
 
 ;;;###autoload
 (defun rwd-quickref ()
@@ -158,7 +171,7 @@
 (defun rwd-resize-13 (&optional nosplit)
   (interactive "P")
   (rwd-set-mac-font "DejaVu Sans Mono" 12)
-  (rwd-arrange-frame 170 48 nosplit))
+  (rwd-arrange-frame 163 48 nosplit))
 
 ;;;###autoload
 (defun rwd-resize-13-dense (&optional nosplit)
@@ -185,7 +198,8 @@
 (defun rwd-resize-presentation ()
   "Create a giant font window suitable for doing live demos."
   (interactive)
-  (rwd-arrange-frame 80 25 t)
+  (rwd-arrange-frame 92 34 t)
+  ;; TODO: (set-frame-position frame 5 25)
   (rwd-set-mac-font "DejaVu Sans Mono" 20))
 
 ;;;###autoload
@@ -219,8 +233,8 @@
 (defun rwd-set-mac-font (name size)
   (interactive
    (list (completing-read "font-name: "
-                          (mapcar (lambda (p) (list (car p) (car p)))
-                                  (x-font-family-list)) nil t)
+                          (mapcar (lambda (p) (list p p))
+                                  (font-family-list)) nil t)
          (read-number "size: " 12)))
   (set-face-attribute 'default nil
                       :family name
@@ -241,6 +255,14 @@
       (set 'buffer-name (format "%s-%d" name count))
       (set 'count (+ count 1)))
     (shell buffer-name)))
+
+;;;###autoload
+(defun sort-files-by-date (a b)
+  (let ((ta (nth 5 (file-attributes a)))
+        (tb (nth 5 (file-attributes b))))
+    (if (= (nth 0 ta) (nth 0 tb))
+        (> (nth 1 ta) (nth 1 tb))
+      (> (nth 0 ta) (nth 0 tb)))))
 
 ;;;###autoload
 (defun rwd-swap-buffers ()
@@ -306,13 +328,13 @@
 ;;       (replace-regexp "]" ")" nil start end)
 ;;       (replace-regexp "\\[" "s(" nil start end))))
 
-;; (defun my-selective-display (column)
-;;   "Rotate folding the buffer at no, 2, 4, 6, and 8 columns."
-;;   (interactive "P")
-;;   (set-selective-display
-;;    (if (< (or selective-display 0) 8)
-;;        (or column (+ (or selective-display 0) 2))
-;;      nil)))
+(defun rwd-selective-display (column)
+  "Rotate folding the buffer at no, 2, 4, 6, and 8 columns."
+  (interactive "P")
+  (set-selective-display
+   (if (< (or selective-display 0) 8)
+       (or column (+ (or selective-display 0) 2))
+     nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; "Borrowed" defuns:
@@ -322,6 +344,7 @@
      minibuffer), then split the current window horizontally."
   (interactive)
   (if (and
+       (> (frame-width) 80)
        (>= (frame-width) (* 2 (frame-height)))
        (= (length (window-list nil 'dont-include-minibuffer-even-if-active)) 1))
       (split-window-horizontally)))
@@ -345,6 +368,18 @@
               (erase-buffer)
               (insert content))))))))
 
+(defun rwd-clean ()
+  "Untabifies, indents and deletes trailing whitespace from buffer or region."
+  (interactive)
+  (save-excursion
+    (unless (region-active-p)
+      (mark-whole-buffer))
+    (untabify (region-beginning) (region-end))
+    (indent-region (region-beginning) (region-end))
+    (save-restriction
+      (narrow-to-region (region-beginning) (region-end))
+      (delete-trailing-whitespace))))
+
 ;;; stolen from: http://www.emacswiki.org/cgi-bin/wiki/IndentRigidlyN
 ;;;###autoload
 (defun indent-rigidly-n (n)
@@ -356,13 +391,89 @@
     (indent-rigidly rstart rend n)))
 
 ;;;###autoload
-(defun indent-rigidly-4 ()
-  "Indent the region, or otherwise the current line, by 4 spaces."
+(defun indent-rigidly-2 ()
+  "Indent the region, or otherwise the current line, by 2 spaces."
   (interactive)
-  (indent-rigidly-n 4))
+  (indent-rigidly-n 2))
 
 ;;;###autoload
-(defun outdent-rigidly-4 ()
-  "Indent the region, or otherwise the current line, by -4 spaces."
+(defun outdent-rigidly-2 ()
+  "Indent the region, or otherwise the current line, by -2 spaces."
   (interactive)
-  (indent-rigidly-n -4))
+  (indent-rigidly-n -2))
+
+
+;; frame- or window-resizing function
+;; from http://dse.livejournal.com/67732.html. Resizes either frame or window
+;; to 80 columns. If the window can be sized to 80 columns wide, without 
+;; resizing the frame itself, it will resize the window. Otherwise, it will 
+;; resize the frame. You can use a prefix argument to specify a 
+;; different column width
+(defun fix-frame-horizontal-size (width)
+  "Set the frame's size to 80 (or prefix arg WIDTH) columns wide."
+  (interactive "P")
+  (if window-system
+      (set-frame-width (selected-frame) (or width 80))
+    (error "Cannot resize frame horizontally: is a text terminal")))
+
+(defun fix-window-horizontal-size (width)
+  "Set the window's size to 80 (or prefix arg WIDTH) columns wide."
+  (interactive "P")
+  (enlarge-window (- (or width 80) (window-width)) 'horizontal))
+
+(defun fix-horizontal-size (width)
+  "Set the window's or frame's width to 80 (or prefix arg WIDTH)."
+  (interactive "P")
+  (condition-case nil
+      (fix-window-horizontal-size width)
+    (error 
+     (condition-case nil
+     (fix-frame-horizontal-size width)
+       (error
+    (error "Cannot resize window or frame horizontally"))))))
+
+(global-set-key (kbd "C-x W") 'fix-horizontal-size) ;; FIX move
+
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph    
+;;;###autoload
+(defun unfill-paragraph ()
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
+;;;###autoload
+(defun rwd-geera ()
+  (interactive)
+  (let ((where (substring-no-properties (car (which-function)))))
+    (shell-command (format "geera quicky %s %s %s %s" 
+                           "AS" "rServices" "aavilla"
+                           (format "Write functional tests for %s" where)))))
+
+;;;###autoload
+(defun rwd-weighin ()
+  (interactive)
+  (let ((weight  (read-number "Weight (lbs): "))
+        (bodyfat (read-number "Bodyfat (%): ")))
+    (find-file "~/Work/p4/zss/usr/ryand/weight.txt")
+    (goto-char (point-max))
+    (insert (format"%s %.1f %.1f\n" (shell-command-to-string "today") weight bodyfat))))
+
+;;;###autoload
+(defun github-open-url ()
+  (interactive)
+  (unless (vc-git-registered (buffer-file-name))
+    (error "This is not a git file!"))
+  (save-excursion
+    (let* ((git-url    (shell-command-to-string "git config remote.origin.url"))
+           (git-dir    (vc-git-root (buffer-file-name)))
+           (rel-dir    (file-relative-name (buffer-file-name) git-dir))
+           (branch     (remove-in-string
+                         (shell-command-to-string "git symbolic-ref HEAD")
+                        "refs/heads/\\|\n"))
+           (url-base   (remove-in-string git-url "\\.git\n*\\|git:"))
+           (start-line (line-number-at-pos (region-beginning)))
+           (end-line   (line-number-at-pos (region-end)))
+           (url        (format "http:%s/blob/%s/%s#L%d-%d"
+                               url-base branch rel-dir start-line end-line)))
+      (browse-url url))))

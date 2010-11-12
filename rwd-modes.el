@@ -3,11 +3,27 @@
 
 ;; (require 'project-local-variables)
 
-;; (autoload 'which-function "which-func" "doco" t)
-;; (autoload 'slime-setup "slime.el" "slime" t)
-;; (autoload 'slime "slime.el" "slime" t)
-;; (autoload 'etags-select-find-tag "etags-select" "doco" t)
-;; (autoload 'etags-select-find-tag-at-point "etags-select" "doco" t)
+;; (when (require 'diminish nil 'noerror)
+;;   (eval-after-load "company"
+;;       '(diminish 'company-mode "Cmp"))
+;;   (eval-after-load "abbrev"
+;;     '(diminish 'abbrev-mode "Ab"))
+;;   (eval-after-load "yasnippet"
+;;     '(diminish 'yas/minor-mode "Y")))
+;; 
+;; (add-hook 'emacs-lisp-mode-hook 
+;;   (lambda()
+;;     (setq mode-name "el"))) 
+
+
+;;;###autoload
+(progn
+  (autoload 'etags-select-find-tag "etags-select")
+  (autoload 'etags-select-find-tag-at-point "etags-select")
+  (autoload 'magit-status "magit" nil t)
+  (autoload 'ssh "ssh" nil t))
+
+(add-hook 'ssh-mode-hook 'ssh-directory-tracking-mode)
 
 ;; (if running-xemacs
 ;;     (add-to-list 'Info-directory-list "/usr/share/info"))
@@ -23,6 +39,7 @@
 
 (dolist (spec '(("\\.bash.*$"                . ksh-mode)
                 ("\\.js$"                    . ecmascript-mode)
+                ("\\.haml$"                  . haml-mode)
                 ("^\\(GNUm\\|M\\)akefile.*$" . makefile-mode)))
   (add-to-list 'auto-mode-alist spec))
 
@@ -65,9 +82,12 @@
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-;; ;;; pastebin
+;;;###autoload
+(defun sm-try-smerge ()
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "^<<<<<<< " 20480 t)
+      (smerge-mode 1))))
 
-;; (autoload 'pastebin-buffer "pastebin" "doco" t)
-;; (autoload 'pastebin        "pastebin" "doco" t)
-;; (hook-after-load ruby
-;;   (add-to-list 'pastebin-type-assoc '(ruby-mode . "ruby")))
+;;;###autoload
+(add-hook 'find-file-hook 'sm-try-smerge t)

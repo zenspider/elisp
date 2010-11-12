@@ -2,9 +2,19 @@
 
 ;;;###autoload
 (progn
+  (require 'tramp)
   (require 'timid)
   (timid-mode t)
-  (setq timid-enable-globally t))
+  (setq timid-enable-globally t)
+  (dolist (cmd '(goto-line
+                 isearch-forward
+                 isearch-forward-regexp
+                 isearch-query-replace
+                 isearch-query-replace-regexp
+                 query-replace
+                 query-replace-regexp
+                 replace-regexp))
+    (put cmd 'timid-completion 'disabled)))
 
 ;;;###autoload
 (defun canonical-file-path (path)
@@ -16,7 +26,7 @@
 
 ;; removes duplicates - from http://www.emacswiki.org/emacs/timid.el - modified
 ;;;###autoload
-(defun my-add-file-hook ()
+(defun rwd-add-file-hook ()
   "Add the name of the file just opened or written to
      `file-name-history'"
   (and buffer-file-name
@@ -26,38 +36,39 @@
   nil)
 
 ;;;###autoload
+(defconst rwd-tramp-method-regexp
+  (concat "^/" (regexp-opt (mapcar 'car tramp-methods) t) ":"))
+
+;;;###autoload
 (defun canonicalize-file-name-history ()
+  "Set `file-name-history' to the first `history-length' - 100
+elements of `file-name-history' after sorting by mtime,
+canonicalizing, removing duplicates and filtering out all TRAMP
+paths, directories, backups, and non-existent files."
   (interactive)
-  (message "canonicalizing file-name-history")
-  (let ((newlist '())
-        (old-size (length file-name-history)))
-    (dolist (path (canonical-file-paths file-name-history))
-      (and
-       (not (string-match "^/\(sudo\|ssh\):" path))
-       (file-exists-p path)
-       (add-to-list 'newlist path)))
-    (setq file-name-history newlist)
-    (message "file-name-history went from %d to %d"
-             old-size (length file-name-history))))
+  (setq file-name-history
+        (head (sort (remove-duplicates
+                     (mapcar 'canonical-file-path
+                             (remove-if
+                              (lambda (path) 
+                                (or
+                                 (string-match "^/.+::" path)
+                                 (string-match rwd-tramp-method-regexp path)
+                                 (file-directory-p path)
+                                 (string-match "~$" path)
+                                 (not (file-exists-p path))))
+                              file-name-history)) :test #'equal)
+                    'sort-files-by-date)
+         (- history-length 100))))
 
 ;;;###autoload
 (progn 
-  (add-hook 'find-file-hooks  'my-add-file-hook)
-  (add-hook 'write-file-hooks 'my-add-file-hook)
+  (add-hook 'find-file-hooks     'rwd-add-file-hook)
+  (add-hook 'write-file-hooks    'rwd-add-file-hook)
   (add-hook 'savehist-save-hook  'canonicalize-file-name-history))
-
-;;;###autoload
-(dolist (cmd '(isearch-forward
-               isearch-forward-regexp
-               query-replace
-               replace-regexp))
-  (put cmd 'timid-completion 'disabled))
 
 ;;;###autoload
 (defun repopulate-file-name-history ()
   (interactive)
-  (setq newlist '())
-  (dolist (path (canonical-file-paths
-                 (remove-duplicates (sort (rwd-find-project-files) 'string<))))
-    (add-to-list 'file-name-history path))
+  (setq file-name-history (rwd-find-project-files))
   (canonicalize-file-name-history))

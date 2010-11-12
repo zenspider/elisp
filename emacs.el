@@ -1,4 +1,13 @@
-;; ; Compatibility Layer:
+;; Startup optimizations
+;; http://www.elliotglaysher.org/emacs/
+(setq gc-cons-threshold (max 3000000 gc-cons-threshold))
+(setq default-frame-alist
+      '((wait-for-wm . nil)
+        (top         . 0)
+        (width       . 80)
+        (font        . "Bitstream Vera Sans Mono-12")))
+
+;; Compatibility Layer:
 
 (setq running-xemacs (featurep 'xemacs))
 (setq running-emacs  (not running-xemacs))
@@ -9,7 +18,10 @@
 (add-to-list 'load-path (expand-file-name "~/Bin/elisp/third-party") t)
 (add-to-list 'load-path (expand-file-name "~/Sites/emacs/elisp") t)
 
-(if (and running-osx (not (member "/Users/ryan/Bin" exec-path)))
+;; (getenv "PATH")
+;; (getenv "CDPATH")
+
+(if (and running-osx (not (getenv "CDPATH")))
     ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
     ;; argh this is stupid
     (let* ((path   (shell-command-to-string "/bin/bash -lc 'echo -n $PATH'"))
@@ -22,8 +34,12 @@
 ;; --- ;;;###autoload
 (require 'autoload)
 
-(eval-when-compile (require 'cl))
-;; (require 'cl)
+(setq read-buffer-completion-ignore-case t)
+(setq read-file-name-completion-ignore-case t)
+
+;; (eval-when-compile (require 'cl))
+
+(require 'cl)
 
 (defun rwd-recompile-init ()
   (interactive)
@@ -46,13 +62,16 @@
           (load autoload-file) ; helps rwd-recompile-init dependencies
           (rwd-recompile-init)
           ))
-    (load autoload-file)))
+    (message "loading autoloads")
+    (load autoload-file)
+    (message "done loading autoloads")))
 
 (rwd-autoloads)
 
 ;; My libs: TODO: remove these in favor of autoloading
 (load "rwd-modes")
 (load "rwd-keywords")                   ; depends on modes, for now
+(load "rwd-bell")
 
 ;; enable/disable commands:
 (put 'erase-buffer 'disabled nil) ; nukes stupid warning
@@ -61,22 +80,31 @@
     (add-hook 'after-init-hook
               (lambda () (run-with-idle-timer 0.25 nil #'rwd-resize-small)) t))
 
+(require 'uniquify)
+(setq
+ uniquify-strip-common-suffix t
+ uniquify-buffer-name-style 'post-forward
+ uniquify-separator ":")
+
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(Info-additional-directory-list (quote ("/usr/share/info" "~/Bin/elisp/info" "/opt/local/share/info/")))
  '(apropos-do-all t)
  '(backup-by-copying-when-linked t)
  '(blank-chars (quote (tabs trailing lines space-before-tab)))
  '(blank-line-length 82)
  '(blank-style (quote (color)))
+ '(blink-cursor-mode t)
  '(column-number-mode t)
  '(comint-input-ignoredups t)
  '(comment-empty-lines (quote (quote eol)))
  '(compilation-error-regexp-alist (quote (bash java gnu gcc-include)))
  '(dired-recursive-deletes (quote top))
  '(ediff-split-window-function (quote split-window-horizontally))
+ '(erc-modules (quote (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring scrolltobottom stamp track)))
  '(eval-expression-print-length nil)
  '(eval-expression-print-level nil)
  '(ffap-file-finder (quote find-file-other-window))
@@ -85,17 +113,25 @@
  '(hippie-expand-try-functions-list (quote (try-expand-all-abbrevs try-expand-list try-expand-dabbrev-visible try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill try-complete-lisp-symbol-partially try-complete-lisp-symbol try-expand-tag try-complete-file-name-partially try-complete-file-name)))
  '(history-length 1000)
  '(imenu-max-items 50)
+ '(imenu-sort-function (quote imenu--sort-by-name))
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
+ '(line-move-visual nil)
+ '(ns-alternate-modifier (quote none))
+ '(ns-command-modifier (quote meta))
+ '(ns-pop-up-frames nil)
  '(oddmuse-directory "~/Library/Caches/oddmuse")
  '(oddmuse-username "RyanDavis")
  '(override-keymap-rules (quote (("\230" bury-buffer (ruby python emacs-lisp)) ("\214" rwd-scroll-top (shell comint)))))
- '(safe-local-variable-values (quote ((racc-token-length-max . 14))))
+ '(pastebin-default-subdomain "zenspider")
+ '(read-buffer-completion-ignore-case t)
+ '(safe-local-variable-values (quote ((backup-inhibited . t) (racc-token-length-max . 14))))
  '(save-place t nil (saveplace))
  '(save-place-limit 250)
  '(save-place-save-skipped nil)
  '(save-place-skip-check-regexp "\\`/\\(cdrom\\|floppy\\|mnt\\|\\([^@/:]*@\\)?[^@/:]*[^@/:.]:\\)")
+ '(savehist-ignored-variables (quote (yes-or-no-p-history)))
  '(savehist-mode t nil (savehist))
  '(scroll-bar-mode nil)
  '(search-whitespace-regexp nil)
@@ -104,7 +140,8 @@
  '(tab-width 2)
  '(tool-bar-mode nil nil (tool-bar))
  '(tooltip-mode nil)
- '(tramp-default-method "ssh")
+ '(tramp-copy-size-limit 1024)
+ '(tramp-default-method "rsyncc")
  '(transient-mark-mode t)
  '(truncate-partial-width-windows nil)
  '(use-dialog-box nil)
@@ -116,15 +153,21 @@
  '(warning-suppress-types (quote ((undo discard-info))))
  '(wdired-allow-to-change-permissions (quote advanced)))
 
+;; (set-default 'frame-background-mode (if window-system 'light 'dark))
+
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(blank-line ((t (:background "gray80"))))
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(blank-line ((((background light)) (:background "gray80")) (((type tty)) (:background "gray20")) (t (:background "red"))))
  '(blank-line-face ((t (:background "gray90"))))
+ '(cursor ((t (:background "black"))))
  '(diff-added ((t (:inherit diff-changed :foreground "green4"))))
  '(diff-removed ((t (:inherit diff-changed :foreground "red4"))))
+ '(erc-input-face ((t (:foreground "dark green"))))
+ '(erc-my-nick-face ((t (:foreground "dark green" :weight bold))))
+ '(flyspell-incorrect ((t (:underline "red"))))
  '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Dark Blue"))))
  '(font-lock-constant-face ((((class color) (min-colors 88) (background light)) (:foreground "SlateBlue4"))))
  '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "Forest Green")))))
@@ -153,5 +196,9 @@
                          base64 format mule env custom widget
                          backquote make-network-process mac-carbon
                          emacs)))) 'string-lessp)))
+
+ ;; '(blank-line ((((background light)) (:background "gray80"))
+ ;;               (((background dark))  (:background "gray20"))
+ ;;               (t (:background "red"))))
 
 ; (whatsnew)
