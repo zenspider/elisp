@@ -8,7 +8,7 @@
 ;; Created: 2006-11-17
 ;; Compatibility: Emacs 22, 21?
 ;; URL(en): http://seattlerb.rubyforge.org/
-;; by Ryan Davis - ryan-ruby@zenspider.com
+;; by Ryan Davis - ryand-ruby@zenspider.com
 
 ;;; Posted using:
 ;; (emacswiki-post "autotest.el")
