@@ -21,6 +21,9 @@
   (autoload 'etags-select-find-tag "etags-select")
   (autoload 'etags-select-find-tag-at-point "etags-select")
   (autoload 'magit-status "magit" nil t)
+  (autoload 'scheme-smart-complete "scheme-complete" nil t)
+  (autoload 'scheme-complete-or-indent "scheme-complete" nil t)
+  (autoload 'scheme-get-current-symbol-info "scheme-complete" nil t)
   (autoload 'ssh "ssh" nil t))
 
 (add-hook 'ssh-mode-hook 'ssh-directory-tracking-mode)
@@ -43,29 +46,18 @@
                 ("^\\(GNUm\\|M\\)akefile.*$" . makefile-mode)))
   (add-to-list 'auto-mode-alist spec))
 
-;; ;; ============================================================
-;; ;; Scheme / Lisp:
+;;;###autoload
+(add-hook 'scheme-mode-hook
+          (lambda ()
+            (make-local-variable 'eldoc-documentation-function)
+            (setq eldoc-documentation-function 'scheme-get-current-symbol-info)
+            (eldoc-mode)))
 
-;; (setq scheme-program-name "mzscheme")
-;; (setq inferior-lisp-program "/opt/local/bin/sbcl")
-
-;; ;; (defconst scheme-expand-list
-;; ;;   (mapcar (lambda (l) (expand-parse (car l) (car (cdr l))))
-;; ;;           '(
-;; ;;             ("def" ("(define " n
-;; ;;                     "  (lambda (a)\n"
-;; ;;                     "    (cond\n"
-;; ;;                     "     ((null? a) 'fix)\n"
-;; ;;                     "\n"
-;; ;;                     "     (else 'fix))))\n")))))
-
-;; ;; (setq scheme-mode-abbrev-table '())
-
-;; ;; (add-hook 'scheme-mode-hook
-;; ;;           '(lambda ()
-;; ;;              (require 'expand)
-;; ;;              (expand-add-abbrevs scheme-mode-abbrev-table scheme-expand-list)
-;; ;;              (abbrev-mode)))
+;;;###autoload
+(eval-after-load 'scheme
+  '(progn
+     (define-key scheme-mode-map (kbd "\C-c TAB") 'comment-indent)
+     (define-key scheme-mode-map "\t" 'scheme-complete-or-indent)))
 
 ;; ;; ============================================================
 ;; ;; Misc Modes/Stuff:
