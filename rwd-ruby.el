@@ -95,6 +95,7 @@ Then switch to the process buffer."
   (which-func-mode 1)
   
   (imenu-add-menubar-index)
+  (flyspell-prog-mode)
   (blank-mode))
 
 ;;;###autoload

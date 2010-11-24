@@ -1,45 +1,21 @@
-;; ;; ============================================================
-;; ;; Requires:
-
-;; (require 'project-local-variables)
-
-;; (when (require 'diminish nil 'noerror)
-;;   (eval-after-load "company"
-;;       '(diminish 'company-mode "Cmp"))
-;;   (eval-after-load "abbrev"
-;;     '(diminish 'abbrev-mode "Ab"))
-;;   (eval-after-load "yasnippet"
-;;     '(diminish 'yas/minor-mode "Y")))
-;; 
-;; (add-hook 'emacs-lisp-mode-hook 
-;;   (lambda()
-;;     (setq mode-name "el"))) 
-
+;; ============================================================
+;; Requiresx:
 
 ;;;###autoload
 (progn
-  (autoload 'etags-select-find-tag "etags-select")
+  (autoload 'etags-select-find-tag          "etags-select")
   (autoload 'etags-select-find-tag-at-point "etags-select")
-  (autoload 'magit-status "magit" nil t)
-  (autoload 'scheme-smart-complete "scheme-complete" nil t)
-  (autoload 'scheme-complete-or-indent "scheme-complete" nil t)
+  (autoload 'magit-status                   "magit" nil t)
+  (autoload 'scheme-smart-complete          "scheme-complete" nil t)
+  (autoload 'scheme-complete-or-indent      "scheme-complete" nil t)
   (autoload 'scheme-get-current-symbol-info "scheme-complete" nil t)
-  (autoload 'ssh "ssh" nil t))
-
-(add-hook 'ssh-mode-hook 'ssh-directory-tracking-mode)
-
-;; (if running-xemacs
-;;     (add-to-list 'Info-directory-list "/usr/share/info"))
-
-;; HACK: fix! used to work
-
-;; (eval-after-load 'info
-;;   '(add-to-list 'Info-directory-list "~/Sites/emacs/elisp/info"))
+  (autoload 'ssh                            "ssh" nil t))
 
 ;;;###autoload
 (setq my-usual-programming-modes
       '(ruby-mode lisp-mode scheme-mode emacs-lisp-mode))
 
+;;;###autoload
 (dolist (spec '(("\\.bash.*$"                . ksh-mode)
                 ("\\.js$"                    . ecmascript-mode)
                 ("\\.haml$"                  . haml-mode)
@@ -59,27 +35,26 @@
      (define-key scheme-mode-map (kbd "\C-c TAB") 'comment-indent)
      (define-key scheme-mode-map "\t" 'scheme-complete-or-indent)))
 
-;; ;; ============================================================
-;; ;; Misc Modes/Stuff:
+;;;###autoload
+(add-hook 'ssh-mode-hook 'ssh-directory-tracking-mode)
 
-;; (eval-after-load 'compile
-;;   '(def-hook c-mode
-;;      (local-set-key (kbd "C-c C-r") 'recompile)))
+;; ============================================================
+;; Misc Modes/Stuff:
 
-;; (setq ansi-color-for-comint-mode 'filter)
-
+;;;###autoload
 (autoload 'kill-ring-search "kill-ring-search"
-  "Search the kill ring in the minibuffer." t)
+  "Search borkkk the kill ring in the minibuffer." t)
 
+;;;###autoload
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
 ;;;###autoload
-(defun sm-try-smerge ()
-  (save-excursion
-    (goto-char (point-min))
-    (when (re-search-forward "^<<<<<<< " 20480 t)
-      (smerge-mode 1))))
+(progn
+  (defun sm-try-smerge ()
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "^<<<<<<< " 20480 t)
+        (smerge-mode 1))))
 
-;;;###autoload
-(add-hook 'find-file-hook 'sm-try-smerge t)
+  (add-hook 'find-file-hook 'sm-try-smerge t))
