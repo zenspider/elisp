@@ -1,90 +1,50 @@
-;; Startup optimizations
-;; http://www.elliotglaysher.org/emacs/
-(setq gc-cons-threshold (max 3000000 gc-cons-threshold))
-(setq default-frame-alist
-      '((wait-for-wm . nil)
-        (top         . 0)
-        (width       . 80)
-        (font        . "Bitstream Vera Sans Mono-12")))
+(require 'autoload)                     ; = ;;;###autoload
 
-;; Compatibility Layer:
+(autoload 'find-lisp-find-files "find-lisp" nil t)
+(autoload 'find-lisp-find-files-internal "find-lisp" nil t)
+
+(defvar el-root-dir                     ; TODO: there has to be a better way
+  (let* ((el-file (or (buffer-file-name) load-file-name)))
+    (file-name-directory
+     (or (file-symlink-p el-file) el-file)))
+  "Root directory of emacs.el, after following symlinks, etc.")
+
+(add-to-list 'load-path el-root-dir t)
+(add-to-list 'load-path (concat el-root-dir "third-party") t) ; TODO: remove
+(add-to-list 'load-path (expand-file-name "~/Sites/emacs/elisp") t)
+
+;; Compatibility Layer (TODO: remove):
 
 (setq running-xemacs (featurep 'xemacs))
 (setq running-emacs  (not running-xemacs))
-(setq running-osx    (or (featurep 'mac-carbon) (eq 'ns window-system)))
-
-;; Pathing:
-(add-to-list 'load-path (expand-file-name "~/Bin/elisp") t)
-(add-to-list 'load-path (expand-file-name "~/Bin/elisp/third-party") t)
-(add-to-list 'load-path (expand-file-name "~/Sites/emacs/elisp") t)
-
-;; (getenv "PATH")
-;; (getenv "CDPATH")
-
-(if (and running-osx (not (getenv "CDPATH")))
-    ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
-    ;; argh this is stupid
-    (let* ((path   (shell-command-to-string "/bin/bash -lc 'echo -n $PATH'"))
-           (cdpath (shell-command-to-string "/bin/bash -lc 'echo -n $CDPATH'"))
-           (path-list (split-string path ":" t)))
-      (setenv "PATH" path)
-      (setenv "CDPATH" cdpath)
-      (dolist (p path-list) (add-to-list 'exec-path p t))))
-
-;; --- ;;;###autoload
-(require 'autoload)
-
-(setq read-buffer-completion-ignore-case t)
-(setq read-file-name-completion-ignore-case t)
-
-;; (eval-when-compile (require 'cl))
-
-(require 'cl)
 
 (defun rwd-recompile-init ()
   (interactive)
-  (byte-recompile-directory (expand-file-name "~/Bin/elisp") 0))
+  (byte-recompile-directory (expand-file-name el-root-dir) 0))
 
 ;; from technomancy with some tweaks
 (defun rwd-autoloads ()
   "Regenerate the autoload definitions file if necessary and load it."
   (interactive)
-  (let* ((el-file (or (buffer-file-name) load-file-name))
-         (el-root-dir (file-name-directory
-                       (or (file-symlink-p el-file) el-file)))
-         (autoload-file (concat el-root-dir generated-autoload-file)))
+  (let* ((autoload-file (concat el-root-dir generated-autoload-file)))
     (if (or (not (file-exists-p autoload-file))
-            (some (lambda (f) (file-newer-than-file-p f autoload-file))
-                  (directory-files el-root-dir t "\\.el$")))
-        (let ((generated-autoload-file autoload-file))
-          (message "Updating autoloads...")
-          (update-directory-autoloads el-root-dir)
+            (catch 'newer
+              (dolist (file (find-lisp-find-files el-root-dir "\\.el$"))
+                (if (file-newer-than-file-p file autoload-file)
+                    (throw 'newer file)))))
+        (let ((generated-autoload-file autoload-file)
+              (el-root-subdirs (find-lisp-find-files-internal
+                                el-root-dir
+                                'find-lisp-file-predicate-is-directory
+                                'find-lisp-default-directory-predicate)))
+          (apply 'update-directory-autoloads (cons el-root-dir el-root-subdirs))
           (load autoload-file) ; helps rwd-recompile-init dependencies
-          (rwd-recompile-init)
-          ))
+          (rwd-recompile-init)))
     (message "loading autoloads")
     (load autoload-file)
     (message "done loading autoloads")))
 
 (rwd-autoloads)
-
-;; My libs: TODO: remove these in favor of autoloading
-(load "rwd-modes")
-(load "rwd-keywords")                   ; depends on modes, for now
-(load "rwd-bell")
-
-;; enable/disable commands:
-(put 'erase-buffer 'disabled nil) ; nukes stupid warning
-
-(if window-system
-    (add-hook 'after-init-hook
-              (lambda () (run-with-idle-timer 0.25 nil #'rwd-resize-small)) t))
-
-(require 'uniquify)
-(setq
- uniquify-strip-common-suffix t
- uniquify-buffer-name-style 'post-forward
- uniquify-separator ":")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -117,6 +77,7 @@
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
+ '(initial-scratch-message nil)
  '(line-move-visual nil)
  '(ns-alternate-modifier (quote none))
  '(ns-command-modifier (quote meta))
@@ -125,19 +86,15 @@
  '(oddmuse-username "RyanDavis")
  '(override-keymap-rules (quote (("\230" bury-buffer (ruby python emacs-lisp)) ("\214" rwd-scroll-top (shell comint)))))
  '(pastebin-default-subdomain "zenspider")
- '(quack-global-menu-p nil)
- '(quack-pltcollect-dirs (quote ("/MyApplications/dev/lisp/Racket/collects")))
- '(quack-programs (quote ("mzscheme" "bigloo" "csi" "csi -hygienic" "gosh" "gracket" "gsi" "gsi ~~/syntax-case.scm -" "guile" "kawa" "mit-scheme" "racket" "racket -il typed/racket" "rs" "scheme" "scheme48" "scsh" "sisc" "stklos" "sxi")))
- '(quack-remap-find-file-bindings-p nil)
- '(quack-smart-open-paren-p t)
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values (quote ((backup-inhibited . t) (racc-token-length-max . 14))))
  '(save-place t nil (saveplace))
- '(save-place-limit 250)
+ '(save-place-limit 100)
  '(save-place-save-skipped nil)
  '(save-place-skip-check-regexp "\\`/\\(cdrom\\|floppy\\|mnt\\|\\([^@/:]*@\\)?[^@/:]*[^@/:.]:\\)")
  '(savehist-ignored-variables (quote (yes-or-no-p-history)))
  '(savehist-mode t nil (savehist))
+ '(scheme-program-name "mzscheme")
  '(scroll-bar-mode nil)
  '(search-whitespace-regexp nil)
  '(sentence-end-double-space nil)
@@ -158,8 +115,6 @@
  '(warning-suppress-types (quote ((undo discard-info))))
  '(wdired-allow-to-change-permissions (quote advanced)))
 
-;; (set-default 'frame-background-mode (if window-system 'light 'dark))
-
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -176,34 +131,3 @@
  '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Dark Blue"))))
  '(font-lock-constant-face ((((class color) (min-colors 88) (background light)) (:foreground "SlateBlue4"))))
  '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "Forest Green")))))
-
-(require 'loadhist)
-(load "cl-extra")
-(defun whatsnew ()
-  (cl-prettyprint
-   (sort
-    (remove-duplicates
-     (mapcar (lambda (n) (feature-file n))
-             (set-difference 
-              features
-              '(help-fns help-mode view tooltip ediff-hook vc-hooks
-                         lisp-float-type tool-bar mwheel dnd fontset
-                         image fringe abbrev lisp-mode register page
-                         menu-bar rfn-eshadow timer select scroll-bar
-                         mldrag mouse jit-lock font-lock syntax
-                         facemenu font-core frame ucs-tables georgian
-                         utf-8-lang misc-lang vietnamese tibetan thai
-                         lao korean japanese hebrew greek romanian
-                         slovak czech european ethiopic kannada tamil
-                         malayalam devanagari indian cyrillic chinese
-                         case-table jka-cmpr-hook help simple button
-                         faces cus-face text-properties overlay md5
-                         base64 format mule env custom widget
-                         backquote make-network-process mac-carbon
-                         emacs)))) 'string-lessp)))
-
- ;; '(blank-line ((((background light)) (:background "gray80"))
- ;;               (((background dark))  (:background "gray20"))
- ;;               (t (:background "red"))))
-
-; (whatsnew)
