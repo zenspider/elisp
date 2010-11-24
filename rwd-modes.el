@@ -6,6 +6,7 @@
   (autoload 'etags-select-find-tag          "etags-select")
   (autoload 'etags-select-find-tag-at-point "etags-select")
   (autoload 'magit-status                   "magit" nil t)
+  (autoload 'run-scheme                     "cmuscheme" nil t)
   (autoload 'scheme-smart-complete          "scheme-complete" nil t)
   (autoload 'scheme-complete-or-indent      "scheme-complete" nil t)
   (autoload 'scheme-get-current-symbol-info "scheme-complete" nil t)
@@ -32,7 +33,7 @@
 ;;;###autoload
 (eval-after-load 'scheme
   '(progn
-     (define-key scheme-mode-map (kbd "\C-c TAB") 'comment-indent)
+     (require 'scheme-complete)
      (define-key scheme-mode-map "\t" 'scheme-complete-or-indent)))
 
 ;;;###autoload
