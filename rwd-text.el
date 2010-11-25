@@ -1,9 +1,3 @@
-;;;###autoload
-(def-hook text-mode ; can't use hook-after-load because it never "loads"
-  (turn-on-auto-fill)
-  (define-key text-mode-map (kbd "M-s") 'fixup-whitespace)
-  (flyspell-mode))
-
 ;; from http://www.emacswiki.org/emacs/CocoAspell
 ;;;###autoload
 (setq ispell-program-name "aspell"

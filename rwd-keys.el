@@ -101,19 +101,5 @@
     (isearch-abort)))
 
 ;;;###autoload
-(hook-after-load-new shell shell-mode
-  (setq shell-dirstack-query "dirs -l")
-  (define-key shell-mode-map (kbd "C-z") 'comint-stop-subjob)
-  (define-key shell-mode-map (kbd "M-<return>") 'shell-resync-dirs)
-  (define-key comint-mode-map [C-up]   'rwd-previous-line-6)
-  (define-key comint-mode-map [C-down] 'rwd-forward-line-6))
-
-;;;###autoload
-(hook-after-load-new dired dired-mode
-  (define-key dired-mode-map "e" 'wdired-change-to-wdired-mode)
-  (if running-emacs
-      (define-key dired-mode-map "k" 'dired-kill-subdir)))
-
-;;;###autoload
 (eval-after-load 'p4
   '(define-key p4-prefix-map (kbd "A") 'p4-diff-all-opened))

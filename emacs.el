@@ -3,14 +3,15 @@
 (autoload 'find-lisp-find-files "find-lisp" nil t)
 (autoload 'find-lisp-find-files-internal "find-lisp" nil t)
 
-(defvar el-root-dir                     ; TODO: there has to be a better way
-  (let* ((el-file (or (buffer-file-name) load-file-name)))
-    (file-name-directory
-     (or (file-symlink-p el-file) el-file)))
+(defvar user-init-dir (file-name-directory
+                       (or (file-symlink-p user-init-file) user-init-file))
   "Root directory of emacs.el, after following symlinks, etc.")
 
-(add-to-list 'load-path el-root-dir t)
-(add-to-list 'load-path (concat el-root-dir "third-party") t) ; TODO: remove
+(defvar user-hooks-dir (concat user-init-dir "hooks")
+  "Hooks directory inside of user-init-dir")
+
+(add-to-list 'load-path user-init-dir t)
+(add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
 (add-to-list 'load-path (expand-file-name "~/Sites/emacs/elisp") t)
 
 ;; Compatibility Layer (TODO: remove):
@@ -20,24 +21,23 @@
 
 (defun rwd-recompile-init ()
   (interactive)
-  (byte-recompile-directory (expand-file-name el-root-dir) 0))
+  (byte-recompile-directory (expand-file-name user-init-dir) 0))
 
-;; from technomancy with some tweaks
 (defun rwd-autoloads ()
   "Regenerate the autoload definitions file if necessary and load it."
   (interactive)
-  (let* ((autoload-file (concat el-root-dir generated-autoload-file)))
+  (let* ((autoload-file (concat user-init-dir generated-autoload-file)))
     (if (or (not (file-exists-p autoload-file))
             (catch 'newer
-              (dolist (file (find-lisp-find-files el-root-dir "\\.el$"))
+              (dolist (file (find-lisp-find-files user-init-dir "\\.el$"))
                 (if (file-newer-than-file-p file autoload-file)
                     (throw 'newer file)))))
         (let ((generated-autoload-file autoload-file)
               (el-root-subdirs (find-lisp-find-files-internal
-                                el-root-dir
+                                user-init-dir
                                 'find-lisp-file-predicate-is-directory
                                 'find-lisp-default-directory-predicate)))
-          (apply 'update-directory-autoloads (cons el-root-dir el-root-subdirs))
+          (apply 'update-directory-autoloads (cons user-init-dir el-root-subdirs))
           (load autoload-file) ; helps rwd-recompile-init dependencies
           (rwd-recompile-init)))
     (message "loading autoloads")
@@ -45,6 +45,9 @@
     (message "done loading autoloads")))
 
 (rwd-autoloads)
+(rwd-autohooks)
+
+(find-file (or (file-symlink-p user-init-file) user-init-file))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

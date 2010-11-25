@@ -5,7 +5,7 @@
 (progn
   (autoload 'autotest                        "autotest"        "doco" t)
   (autoload 'autotest-switch                 "autotest"        "doco" t)
-  (autoload 'blank-mode                      "blank-mode"      "doco" t) ; TODO move
+  (autoload 'haml-mode                       "haml-mode"       "doco" t)
   (autoload 'inf-ruby-keys                   "inf-ruby"        "doco"  )
   (autoload 'racc-mode                       "racc-mode"       "doco" t)
   (autoload 'rcov-buffer                     "rcov-overlay.el" "doco" t)
@@ -14,8 +14,6 @@
   (autoload 'ri-show-term-composite-at-point "ri.el"           "doco" t)
   (autoload 'ruby-index                      "ri.el"           "doco" t)
   (autoload 'ruby-mode                       "ruby-mode"       "doco" t)
-  (autoload 'pastebin-buffer                 "pastebin"        "doco" t)
-  (autoload 'pastebin                        "pastebin"        "doco" t)
   (autoload 'run-ruby                        "inf-ruby"        "doco" t)
   (autoload 'yaml-mode                       "yaml-mode"       "doco" t))
 
@@ -66,37 +64,7 @@ Then switch to the process buffer."
     (set (make-local-variable 'comint-scroll-show-maximum-output) t)
     (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
 
-;;     (set (make-local-variable 'compilation-error-regexp-alist)
-;;          '(
-;;            ("^ +\\(#{RAILS_ROOT}/\\)?\\([^(:]+\\):\\([0-9]+\\)" 2 3)
-;;            ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
-;;            ("^ *\\([[+]\\)?\\([^:
-;; ]+\\):\\([0-9]+\\):in" 2 3)
-;;            ("^.* at \\([^:]*\\):\\([0-9]+\\)$" 1 2)
-;;            ))
-;;     (compilation-shell-minor-mode)
     (comint-send-string buffer (concat "script/server" "\n"))))
-
-;;;###autoload
-(autoload 'haml-mode "haml-mode" "" t)
-
-;;;###autoload
-(hook-after-load-new ruby-mode nil
-  (inf-ruby-keys)
-  (define-key ruby-mode-map (kbd "C-c C-a") 'autotest-switch)
-  (define-key ruby-mode-map (kbd "C-c C-p") 'pastebin)
-  (define-key ruby-mode-map (kbd "C-c C-r") 'rcov-buffer)
-  (define-key ruby-mode-map (kbd "C-c C-b") 'ruby-run-buffer-clean)
-  (define-key ruby-mode-map (kbd "C-c C-t") 'ri-show-term-composite-at-point)
-
-  ;; TODO: fix this to only be the which-func-modes stuff. preferably elsewhere
-  (require 'which-func)
-  (add-to-list 'which-func-modes 'ruby-mode)
-  (which-func-mode 1)
-  
-  (imenu-add-menubar-index)
-  (flyspell-prog-mode)
-  (blank-mode))
 
 ;;;###autoload
 (defun ruby-pp-region (p m)
@@ -104,27 +72,6 @@ Then switch to the process buffer."
   (shell-command-on-region p m 
                            "ruby -rpp -e 'pp eval($stdin.read)'" 
                            (current-buffer) t))
-
-;;;###autoload
-(hook-after-load-new haml-mode nil
-  (modify-syntax-entry ?_ "_" haml-mode-syntax-table))
-
-;;;###autoload
-(set-register ?c "=== x.y.z / yyyy-mm-dd
-
-* N major enhancements:
-
-  * item
-
-* N minor enhancements:
-
-  * item
-
-* N bug fixes:
-
-  * item
-
-")
 
 ;;;###autoload
 (set-register ?t "require 'minitest/autorun'
@@ -135,7 +82,6 @@ class TestXXX < MiniTest::Unit::TestCase
   end
 end")
 
-;;;###autoload
 (defun rwd-ws (s)
   (concat "\\( *\\)" (replace-regexp-in-string "[LR]HS" "\\\\(.+\\\\)" s)))
 
@@ -172,6 +118,7 @@ end")
              (replace-regexp-in-string " " "_" (match-string 1))))
   ))
 
+;;;###autoload
 (defun rwd-ruby-rspec-to-minitest-spec ()
   (interactive)
   (multi-replace-regexp

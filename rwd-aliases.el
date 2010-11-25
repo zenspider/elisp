@@ -16,41 +16,6 @@
 (defalias 'myshell 'rwd-shell)
 
 ;;;###autoload
-(defmacro def-hook (mode &rest body)
-  (message "** def-hook %s" mode)
-  `(add-to-list ',(intern (concat (symbol-name mode) "-hook"))
-    (defun ,(intern (concat "rwd-" (symbol-name mode) "-hook")) ()
-      (message "**** running %s hook" ',mode)
-      ,@body)))
-(put 'def-hook 'lisp-indent-function 1)
-
-;; ;;;###autoload
-;; (defmacro hook-after-load (mode &rest body)
-;;   (message "** hook-after-load %s" mode)
-;;   ;; (if (fboundp mode) (error "mode already loaded: %s" mode))
-;;   `(eval-after-load ',mode
-;;      '(def-hook ,mode ,@body)))
-;; (put 'hook-after-load 'lisp-indent-function 1)
-
-;;;###autoload
-(defmacro hook-after-load-new (mode hookname &rest body)
-  (message "** hook-after-load %s" mode)
-  ;; (if (fboundp mode) (error "mode already loaded: %s" mode))
-  `(eval-after-load ',mode
-     '(def-hook ,(or hookname mode) ,@body)))
-(put 'hook-after-load-new 'lisp-indent-function 1)
-
-;; ;;;###autoload
-;; (defmacro hook-mode-after-load (mode &rest body)
-;;   (let ((modename (intern (concat (symbol-name mode) "-mode"))))
-;;     (message "** hook-mode-after-load %s" modename)
-;;     `(eval-after-load ',modename
-;;        '(progn
-;;           (message "**** adding %s hook" ',modename)
-;;           (def-hook ,modename ,@body)))))
-;; (put 'hook-mode-after-load 'lisp-indent-function 1)
-
-;;;###autoload
 (defun head (list n)
   "Return a copy of list with the first n elements"
   (butlast list (- (length list) n)))
@@ -67,6 +32,12 @@
       (let ((case-fold-search nil))
         (while (re-search-forward from end t)
           (replace-match to t t))))))
+
+;;;###autoload
+(defun read-file-to-string (path)
+  (with-temp-buffer 
+    (insert-file-contents-literally path)
+    (buffer-string)))
 
 (defun rwd-add-to-load-path (dir)
   "Adds a path to the load-path"
@@ -339,6 +310,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; "Borrowed" defuns:
 
+;;;###autoload
 (defun split-horizontally-not-vertically ()
   "If there's only one window (excluding any possibly active
      minibuffer), then split the current window horizontally."
@@ -348,8 +320,11 @@
        (>= (frame-width) (* 2 (frame-height)))
        (= (length (window-list nil 'dont-include-minibuffer-even-if-active)) 1))
       (split-window-horizontally)))
+
+;;;###autoload
 (add-hook 'temp-buffer-setup-hook 'split-horizontally-not-vertically)
 
+;;;###autoload
 (defun rwd-sudo-buffer ()
   "Revert buffer using tramp sudo.
     This will also reserve changes already made by a non-root user."
@@ -368,6 +343,7 @@
               (erase-buffer)
               (insert content))))))))
 
+;;;###autoload
 (defun rwd-clean ()
   "Untabifies, indents and deletes trailing whitespace from buffer or region."
   (interactive)
