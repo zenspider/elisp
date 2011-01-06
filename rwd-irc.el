@@ -61,4 +61,9 @@
                            (or reason
                                "Kicked (kickban)"))))
 
+(defun erc-cmd-LAST (len)
+  "Recall the last LEN lines from dIRCproxy for the current channel"
+  (let* ((chan (erc-default-target)))
+    (erc-server-send (format "dircproxy recall %s %s" chan len))))
+
 (provide 'rwd-irc)
