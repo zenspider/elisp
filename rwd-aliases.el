@@ -10,6 +10,9 @@
     (and line (goto-line line))))
 
 ;;;###autoload
+(defalias 'big 'rwd-resize-13)
+
+;;;###autoload
 (defalias 'lappy 'rwd-lappy)
 
 ;;;###autoload
@@ -179,6 +182,14 @@
   (interactive "P")
   (rwd-set-mac-font "DejaVu Sans Mono" 12)
   (rwd-arrange-frame 80 48 (not split)))
+
+;;;###autoload
+(defun rwd-rotate-windows ()
+  "When a process or command brings up their buffer on top of the buffer you were working on and you want to move it into the next window so they're both side by side"
+  (interactive)
+  (switch-to-buffer (other-buffer))
+  (other-window 1)
+  (switch-to-buffer (other-buffer)))
 
 ;;;###autoload
 (defun rwd-insert-arrange-frame ()
