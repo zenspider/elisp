@@ -20,6 +20,7 @@
 (dolist (spec '(("\\.bash.*$"                . ksh-mode)
                 ("\\.js$"                    . ecmascript-mode)
                 ("\\.haml$"                  . haml-mode)
+                ("\\.rkt$"                   . scheme-mode)
                 ("^\\(GNUm\\|M\\)akefile.*$" . makefile-mode)))
   (add-to-list 'auto-mode-alist spec))
 
@@ -50,12 +51,13 @@
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
 
-;;;###autoload
-(progn
-  (defun sm-try-smerge ()
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward "^<<<<<<< " 20480 t)
-        (smerge-mode 1))))
+;; ;;;###autoload
+;; (progn
+;;   (defun sm-try-smerge ()
+;;     (save-excursion
+;;       (goto-char (point-min))
+;;       (when (re-search-forward "^<<<<<<< " 20480 t)
+;;         (smerge-mode 1))))
+;; 
+;;   (add-hook 'find-file-hook 'sm-try-smerge t))
 
-  (add-hook 'find-file-hook 'sm-try-smerge t))
