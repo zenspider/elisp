@@ -7,17 +7,9 @@
                        (or (file-symlink-p user-init-file) user-init-file))
   "Root directory of emacs.el, after following symlinks, etc.")
 
-(defvar user-hooks-dir (concat user-init-dir "hooks")
-  "Hooks directory inside of user-init-dir")
-
 (add-to-list 'load-path user-init-dir t)
 (add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
 (add-to-list 'load-path (expand-file-name "~/Sites/emacs/elisp") t)
-
-;; Compatibility Layer (TODO: remove):
-
-(setq running-xemacs (featurep 'xemacs))
-(setq running-emacs  (not running-xemacs))
 
 (defun rwd-recompile-init ()
   (interactive)
@@ -46,8 +38,6 @@
 
 (rwd-autoloads)
 (rwd-autohooks)
-
-(find-file (or (file-symlink-p user-init-file) user-init-file))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -88,7 +78,9 @@
  '(oddmuse-directory "~/Library/Caches/oddmuse")
  '(oddmuse-username "RyanDavis")
  '(override-keymap-rules (quote (("\230" bury-buffer (ruby python emacs-lisp)) ("\214" rwd-scroll-top (shell comint)))))
+ '(pastebin-default-domain "zenspider.pastebin.com")
  '(pastebin-default-subdomain "zenspider")
+ '(pastebin-domain-versions (quote (("pastebin.com" "/api_public.php") ("zenspider.pastebin.com" "/api_public.php") ("pastebin.example.com" "/pastebin.php"))))
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values (quote ((backup-inhibited . t) (racc-token-length-max . 14))))
  '(save-place t nil (saveplace))

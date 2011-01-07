@@ -1,6 +1,6 @@
 ;;;###autoload
 (defun rwd-autohooks ()
-  (dolist (path (directory-files user-hooks-dir t ".*el$"))
+  (dolist (path (directory-files (concat user-init-dir "hooks") t ".*el$"))
     (let* ((mode          (file-name-nondirectory (file-name-sans-extension path)))
            (hook-name     (intern (concat mode "-hook")))
            (hook-path     (concat "hooks/" mode ".el"))
