@@ -17,6 +17,7 @@
   (global-set-key (kbd "C-c d f") 'ediff-files)
   (global-set-key (kbd "C-c d q") 'ediff-quit)
   (global-set-key (kbd "C-c e")   'erase-buffer)
+  (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
   (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
   (global-set-key (kbd "C-x /")   'align-regexp)
   (global-set-key (kbd "C-x C-b") 'bs-show)
@@ -47,21 +48,18 @@
   (when window-system (global-unset-key "\C-z"))
 
   ;; compatibility:
-  (if running-emacs
-      (progn
-        (global-set-key (kbd "M-g")      'goto-line)
-        (global-set-key (kbd "<C-up>")   'rwd-previous-line-6)
-        (global-set-key (kbd "<C-down>") 'rwd-forward-line-6)
-        (global-set-key (kbd "<M-up>")   'rwd-scroll-up)
-        (global-set-key (kbd "<M-down>") 'rwd-scroll-down)
-        (global-set-key (kbd "C-M-l")    'rwd-scroll-top)
+  (global-set-key (kbd "M-g")      'goto-line)
+  (global-set-key (kbd "<C-up>")   'rwd-previous-line-6)
+  (global-set-key (kbd "<C-down>") 'rwd-forward-line-6)
+  (global-set-key (kbd "<M-up>")   'rwd-scroll-up)
+  (global-set-key (kbd "<M-down>") 'rwd-scroll-down)
+  (global-set-key (kbd "C-M-l")    'rwd-scroll-top)
 
-        (if (not (version< emacs-version "23"))
-            (progn
-              (global-set-key (kbd "M-`") 'other-frame)))))
+  (when running-osx
+    (if (not (version< emacs-version "23"))
+        (global-set-key (kbd "M-`") 'other-frame))
 
-  (if running-osx
-      (define-key global-map [ns-drag-file] 'ns-find-file))
+    (define-key global-map [ns-drag-file] 'ns-find-file))
 
   ;; This allows me to enforce that bury-buffer is bound to C-M-x
   ;; regardless of mode (YAY!)
