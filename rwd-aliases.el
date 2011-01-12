@@ -13,6 +13,9 @@
 (defalias 'big 'rwd-resize-13)
 
 ;;;###autoload
+(defalias 'repl 'ielm)
+
+;;;###autoload
 (defalias 'lappy 'rwd-lappy)
 
 ;;;###autoload

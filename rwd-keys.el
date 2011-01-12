@@ -17,6 +17,7 @@
   (global-set-key (kbd "C-c d f") 'ediff-files)
   (global-set-key (kbd "C-c d q") 'ediff-quit)
   (global-set-key (kbd "C-c e")   'erase-buffer)
+  (global-set-key (kbd "C-c i")   'imenu)
   (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
   (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
   (global-set-key (kbd "C-x /")   'align-regexp)
