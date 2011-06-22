@@ -10,11 +10,14 @@
     p))
 
 ;;;###autoload
-(defun try-expand-tag (old)
-  (unless  old
+(defun rwd-try-expand-tag (old)
+  (require 'cc-mode)
+  (require 'etags)
+
+  (unless old
     (he-init-string (he-tag-beg) (point))
     (setq he-expand-list (sort
-                          (all-completions he-search-string 'tags-complete-tag) 'string-lessp)))
+                          (all-completions he-search-string 'rwd-tags-complete-tag) 'string-lessp)))
   (while (and he-expand-list
               (he-string-member (car he-expand-list) he-tried-table))
     (setq he-expand-list (cdr he-expand-list)))
@@ -26,35 +29,20 @@
     (setq he-expand-list (cdr he-expand-list))
     t))
 
-;; stolen from HippieExpand on emacswiki
 ;;;###autoload
-(defun try-rwd-dabbrev-substring (old)
-  (let ((old-fun (symbol-function 'he-dabbrev-search)))
-    (fset 'he-dabbrev-search (symbol-function 'my-dabbrev-substring-search))
-    (unwind-protect
-        (try-expand-dabbrev old)
-      (fset 'he-dabbrev-search old-fun))))
+(defun rwd-tags-complete-tag (string predicate what)
+  (save-excursion
+    (if tags-completion-table
+        ;; If we need to ask for the tag table, allow that.
+        (if (eq what t)
+            (all-completions string (tags-completion-table) predicate)
+          (try-completion string (tags-completion-table) predicate)))))
 
-;; stolen from HippieExpand on emacswiki
+;; stolen from HippieExpand on emacswiki:
+;; Don't add extra paren when expanding line with paredit
 ;;;###autoload
-(defun rwd-dabbrev-substring-search (pattern &optional reverse limit)
-  (let ((result ())
-	(regpat (cond ((not hippie-expand-dabbrev-as-symbol)
-		       (concat (regexp-quote pattern) "\\sw+"))
-		      ((eq (char-syntax (aref pattern 0)) ?_)
-		       (concat (regexp-quote pattern) "\\(\\sw\\|\\s_\\)+"))
-		      (t
-		       (concat (regexp-quote pattern)
-			       "\\(\\sw\\|\\s_\\)+")))))
-    (while (and (not result)
-		(if reverse
-		     (re-search-backward regpat limit t)
-		     (re-search-forward regpat limit t)))
-      (setq result (buffer-substring-no-properties (save-excursion
-                                                     (goto-char (match-beginning 0))
-                                                     (skip-syntax-backward "w_")
-                                                     (point))
-						   (match-end 0)))
-      (if (he-string-member result he-tried-table t)
-	  (setq result nil)))     ; ignore if bad prefix or already in table
-    result))
+(defadvice he-substitute-string (after he-paredit-fix)
+  "remove extra paren when expanding line in paredit"
+  (if (and paredit-mode (equal (substring str -1) ")"))
+      (progn (backward-delete-char 1) (forward-char))))
+
