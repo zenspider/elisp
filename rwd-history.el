@@ -1,22 +1,6 @@
 ;; TODO: move most of these defuns out to rwd-aliases (and rename)
 
 ;;;###autoload
-(progn
-  (require 'tramp)
-  (require 'timid)
-  (timid-mode t)
-  (setq timid-enable-globally t)
-  (dolist (cmd '(goto-line
-                 isearch-forward
-                 isearch-forward-regexp
-                 isearch-query-replace
-                 isearch-query-replace-regexp
-                 query-replace
-                 query-replace-regexp
-                 replace-regexp))
-    (put cmd 'timid-completion 'disabled)))
-
-;;;###autoload
 (defun canonical-file-path (path)
   (file-truename (expand-file-name path)))
 
@@ -36,30 +20,29 @@
   nil)
 
 ;;;###autoload
-(defconst rwd-tramp-method-regexp
-  (concat "^/" (regexp-opt (mapcar 'car tramp-methods) t) ":"))
-
-;;;###autoload
 (defun canonicalize-file-name-history ()
   "Set `file-name-history' to the first `history-length' - 100
 elements of `file-name-history' after sorting by mtime,
 canonicalizing, removing duplicates and filtering out all TRAMP
 paths, directories, backups, and non-existent files."
   (interactive)
-  (setq file-name-history
-        (head (sort (remove-duplicates
-                     (mapcar 'canonical-file-path
-                             (remove-if
-                              (lambda (path) 
-                                (or
-                                 (string-match "^/.+::" path)
-                                 (string-match rwd-tramp-method-regexp path)
-                                 (file-directory-p path)
-                                 (string-match "~$" path)
-                                 (not (file-exists-p path))))
-                              file-name-history)) :test #'equal)
-                    'sort-files-by-date)
-         (- history-length 100))))
+  (require 'tramp)
+  (let ((rwd-tramp-method-regexp 
+         (concat "^/" (regexp-opt (mapcar 'car tramp-methods) t) ":")))
+    (setq file-name-history
+          (head (sort (remove-duplicates
+                       (mapcar 'canonical-file-path
+                               (remove-if
+                                (lambda (path) 
+                                  (or
+                                   (string-match "^/.+::" path)
+                                   (string-match rwd-tramp-method-regexp path)
+                                   (file-directory-p path)
+                                   (string-match "~$" path)
+                                   (not (file-exists-p path))))
+                                file-name-history)) :test #'equal)
+                      'sort-files-by-date)
+                (- history-length 100)))))
 
 ;;;###autoload
 (progn 
