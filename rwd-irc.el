@@ -8,6 +8,7 @@
   (interactive)
   (erc-select :server "envy.zenspider.com"
               :port 16667
+              :nick "zenspider"
               :password (read-file-to-string "~/.erc_password")))
 
 ;;;###autoload
@@ -17,9 +18,9 @@
   (erc-join-channel "#appservices"))
 
 ;;;###autoload
-(defun my-irc-direct ()
+(defun rwd-irc-direct ()
   (interactive)
-  (erc-select :server "irc.freenode.net" :port 6667))
+  (erc-select :server "irc.freenode.net" :port 6667 :nick "zenspider"))
 
 ;; erc variables
 (setq erc-kill-buffer-on-part        t
@@ -65,5 +66,15 @@
   "Recall the last LEN lines from dIRCproxy for the current channel"
   (let* ((chan (erc-default-target)))
     (erc-server-send (format "dircproxy recall %s %s" chan len))))
+
+(defun erc-cmd-PROXY (line)
+  "Say shit to dircproxy."
+
+  (erc-server-send (format "dircproxy %s" (erc-trim-string line))))
+(put 'erc-cmd-PROXY 'do-not-parse-args t)
+
+(defun erc-cmd-UNPROXY ()
+  "Quit dircproxy."
+  (erc-server-send "dircproxy quit"))
 
 (provide 'rwd-irc)
