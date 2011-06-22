@@ -9,8 +9,26 @@
     ad-do-it
     (and line (goto-line line))))
 
+(defadvice imenu (before push-position compile activate)
+  (ring-insert find-tag-marker-ring (point-marker)))
+
 ;;;###autoload
 (defalias 'big 'rwd-resize-13)
+
+;;;###autoload
+(defalias 'full 'ns-toggle-fullscreen)
+
+;;;###autoload
+(defalias 'huge 'rwd-resize-full)
+
+;;;###autoload
+(defalias 'small 'rwd-resize-small)
+
+;;;###autoload
+(autoload 'grep-ed-start "grep-ed" nil t)
+
+;;;###autoload
+(defalias 'grep-edit 'grep-ed-start)
 
 ;;;###autoload
 (defalias 'repl 'ielm)
@@ -20,6 +38,46 @@
 
 ;;;###autoload
 (defalias 'myshell 'rwd-shell)
+
+;;;###autoload
+(defun align-regexp-= ()
+  (interactive)
+  (message "align = from %s to %s" (region-beginning) (region-end))
+  (save-excursion
+    (save-match-data
+      (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)="))))
+
+;;;###autoload
+(defun rwd-codesearch(searchstring)
+  "Code Search current word, or with optional prefix arg, on
+current region"
+  (interactive 
+   (let* ((default-entry
+            (codesearch-re-escape
+             (if current-prefix-arg 
+                 (buffer-substring (region-beginning) (region-end))
+               (or (current-word) ""))))
+          (input 
+           (read-string 
+            "Code Search: " default-entry 'codesearch-history default-entry)))
+     (if (string= input "")
+         (error "No search string specified"))
+     (list input)))
+
+  (require 'codesearch)
+  
+  ;; identification of lang
+  (let* ((lang (codesearch-mode-to-lang major-mode))
+         (url (format codesearch-url-format-string searchstring lang)))
+    (require 'browse-url)
+    (shell-command (format "w3m -S -no-graph -X -dump \"%s\" &" url))))
+
+;; (defun my-ruby-sexp (start end)
+;;   (interactive "r")
+;;   (save-excursion
+;;     (save-match-data
+;;       (replace-regexp "]" ")" nil start end)
+;;       (replace-regexp "\\[" "s(" nil start end))))
 
 ;;;###autoload
 (defun head (list n)
@@ -97,7 +155,7 @@
 ;;;###autoload
 (defun rwd-lappy ()
   (interactive)
-  (rwd-resize-13)
+  (rwd-resize-full)
   (rwd-shell)
   (rwd-swap-buffers))
 
@@ -112,10 +170,24 @@
   (munge-newlines start end "\\\\n" "\n"))
 
 ;;;###autoload
-(defun rwd-occur-buffer ()
-  (interactive)
+(defun rwd-occur (opt)
   (save-excursion
-    (shell-command-on-region (point-min) (point-max) "occur -n -p")))
+    (shell-command-on-region (point-min) (point-max)
+                             (concat "occur " opt))))
+
+;;;###autoload
+(defun rwd-occur-buffer (&optional all)
+  (interactive "P")
+  (if all
+      (rwd-occur "-p")
+      (rwd-occur "-p -o")))
+
+;;;###autoload
+(defun rwd-occur-n-buffer (&optional all)
+  (interactive "P")
+  (if all
+      (rwd-occur "-p -n")
+      (rwd-occur "-p -n -o")))
 
 ;;;###autoload
 (defun rwd-previous-line-6 ()
@@ -147,29 +219,37 @@
 ;;;###autoload
 (defun rwd-resize-13 (&optional nosplit)
   (interactive "P")
-  (rwd-set-mac-font "DejaVu Sans Mono" 12)
+  (rwd-set-font-size 12)
   (rwd-arrange-frame 163 48 nosplit))
 
 ;;;###autoload
 (defun rwd-resize-13-dense (&optional nosplit)
   "Yet another screen layout. Suitable for 13in but denser than medium."
   (interactive "P")
-  (rwd-set-mac-font "DejaVu Sans Mono" 10)
+  (rwd-set-font-size 10)
   (rwd-arrange-frame 200 52 nosplit))
 
 ;;;###autoload
 (defun rwd-resize-20 (&optional nosplit)
   "Create a really large window suitable for coding on a 20 inch cinema display."
   (interactive "P")
-  (rwd-set-mac-font "DejaVu Sans Mono" 12)
+  (rwd-set-font-size 12)
   (rwd-arrange-frame 200 60 nosplit))
+
+;;;###autoload
+(defun rwd-resize-full ()
+  (interactive)
+  (rwd-set-font-size 14)
+  (delete-other-windows)
+  (ns-toggle-fullscreen)
+  (split-window-horizontally))
 
 ;;;###autoload
 (defun rwd-resize-peepcode ()
   "Create a small font window suitable for doing live demos in 800x600."
   (interactive)
   (rwd-arrange-frame 80 30 t)
-  (rwd-set-mac-font "DejaVu Sans Mono" 15))
+  (rwd-set-font-size 15))
 
 ;;;###autoload
 (defun rwd-resize-presentation ()
@@ -177,13 +257,13 @@
   (interactive)
   (rwd-arrange-frame 92 34 t)
   ;; TODO: (set-frame-position frame 5 25)
-  (rwd-set-mac-font "DejaVu Sans Mono" 20))
+  (rwd-set-font-size 20))
 
 ;;;###autoload
 (defun rwd-resize-small (&optional split)
   "Create a small window suitable for coding on anything."
   (interactive "P")
-  (rwd-set-mac-font "DejaVu Sans Mono" 12)
+  (rwd-set-font-size 12)
   (rwd-arrange-frame 80 48 (not split)))
 
 ;;;###autoload
@@ -213,6 +293,10 @@
 (defun rwd-scroll-up ()
   (interactive)
   (scroll-down 1))
+
+;;;###autoload
+(defun rwd-set-font-size (size)
+  (rwd-set-mac-font "DejaVu Sans Mono" size))
 
 ;;;###autoload
 (defun rwd-set-mac-font (name size)
@@ -325,6 +409,13 @@
 ;; "Borrowed" defuns:
 
 ;;;###autoload
+(defun rwd-try-smerge ()
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "^<<<<<<< " 20480 t)
+      (smerge-mode 1))))
+
+;;;###autoload
 (defun split-horizontally-not-vertically ()
   "If there's only one window (excluding any possibly active
      minibuffer), then split the current window horizontally."
@@ -392,7 +483,6 @@
   (interactive)
   (indent-rigidly-n -2))
 
-
 ;; frame- or window-resizing function
 ;; from http://dse.livejournal.com/67732.html. Resizes either frame or window
 ;; to 80 columns. If the window can be sized to 80 columns wide, without 
@@ -433,14 +523,6 @@
     (fill-paragraph nil)))
 
 ;;;###autoload
-(defun rwd-geera ()
-  (interactive)
-  (let ((where (substring-no-properties (car (which-function)))))
-    (shell-command (format "geera quicky %s %s %s %s" 
-                           "AS" "rServices" "aavilla"
-                           (format "Write functional tests for %s" where)))))
-
-;;;###autoload
 (defun rwd-weighin ()
   (interactive)
   (let ((weight  (read-number "Weight (lbs): "))
@@ -467,3 +549,19 @@
            (url        (format "http:%s/blob/%s/%s#L%d-%d"
                                url-base branch rel-dir start-line end-line)))
       (browse-url url))))
+
+;;; http://www.emacswiki.org/emacs/SortWords
+(defun sort-words (reverse beg end)
+  "Sort words in region alphabetically, in REVERSE if negative.
+    Prefixed with negative \\[universal-argument], sorts in reverse.
+    The variable `sort-fold-case' determines whether alphabetic case
+    affects the sort order.
+    See `sort-regexp-fields'."
+  (interactive "*P\nr")
+  (sort-regexp-fields reverse "\\w+" "\\&" beg end))
+
+(defun sort-symbols (reverse beg end)
+  "Sort symbols in region alphabetically, in REVERSE if negative.
+    See `sort-words'."
+  (interactive "*P\nr")
+  (sort-regexp-fields reverse "\\(\\sw\\|\\s_\\)+" "\\&" beg end))
