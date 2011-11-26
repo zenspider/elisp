@@ -97,6 +97,18 @@
       (occur (if isearch-regexp
                  isearch-string (regexp-quote isearch-string))))))
 
+;;;###autoload
+(global-unset-key (kbd "M-o"))
+
+;;;###autoload
+(define-key isearch-mode-map (kbd "M-o")
+  (lambda ()
+    (interactive)
+    (let ((case-fold-search isearch-case-fold-search))
+      (multi-occur-in-matching-buffers "."
+       (if isearch-regexp
+           isearch-string (regexp-quote isearch-string))))))
+
 (define-key lisp-interaction-mode-map (kbd "C-j") 'newline-and-indent)
 
 ;; grep all same extension files from inside isearch
