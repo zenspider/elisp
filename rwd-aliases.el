@@ -9,14 +9,19 @@
     ad-do-it
     (and line (goto-line line))))
 
+;;;###autoload
 (defadvice imenu (before push-position compile activate)
   (ring-insert find-tag-marker-ring (point-marker)))
 
 ;;;###autoload
-(defalias 'big 'rwd-resize-13)
+(progn
+  (setq ns-is-fullscreen nil)
+
+  (defadvice ns-toggle-fullscreen (before record-state compile activate)
+    (setq ns-is-fullscreen (not ns-is-fullscreen))))
 
 ;;;###autoload
-(defalias 'full 'ns-toggle-fullscreen)
+(defalias 'big 'rwd-resize-13)
 
 ;;;###autoload
 (defalias 'huge 'rwd-resize-full)
@@ -170,6 +175,11 @@ current region"
   (munge-newlines start end "\\\\n" "\n"))
 
 ;;;###autoload
+(defun rwd-ns-fullscreen ()
+  (interactive)
+  (or ns-is-fullscreen (ns-toggle-fullscreen)))
+
+;;;###autoload
 (defun rwd-occur (opt)
   (save-excursion
     (shell-command-on-region (point-min) (point-max)
@@ -193,10 +203,6 @@ current region"
 (defun rwd-previous-line-6 ()
   (interactive)
   (forward-line -6))
-
-;; (set-frame-parameter nil 'fullscreen (if (frame-parameter nil 'fullscreen)
-;;                                          nil
-;;                                        'fullboth))
 
 ;;;###autoload
 (defun rwd-quickref ()
@@ -241,8 +247,15 @@ current region"
   (interactive)
   (rwd-set-font-size 14)
   (delete-other-windows)
-  (ns-toggle-fullscreen)
+  (rwd-ns-fullscreen)
   (split-window-horizontally))
+
+(defun rwd-resize-full-blind ()
+  "Create a giant font window suitable for doing live demos."
+  (interactive)
+  (rwd-set-font-size 18)
+  (delete-other-windows)
+  (rwd-ns-fullscreen))
 
 ;;;###autoload
 (defun rwd-resize-peepcode ()
@@ -265,6 +278,14 @@ current region"
   (interactive "P")
   (rwd-set-font-size 12)
   (rwd-arrange-frame 80 48 (not split)))
+
+;;;###autoload
+(defun rwd-split-thirds ()
+  "Splits the current frame vertically into even thirds."
+  (interactive)
+  (split-window-vertically)
+  (split-window-vertically)
+  (balance-windows))
 
 ;;;###autoload
 (defun rwd-rotate-windows ()
@@ -296,6 +317,7 @@ current region"
 
 ;;;###autoload
 (defun rwd-set-font-size (size)
+  (interactive "nSize: ")
   (rwd-set-mac-font "DejaVu Sans Mono" size))
 
 ;;;###autoload
@@ -424,7 +446,9 @@ current region"
        (> (frame-width) 80)
        (>= (frame-width) (* 2 (frame-height)))
        (= (length (window-list nil 'dont-include-minibuffer-even-if-active)) 1))
-      (split-window-horizontally)))
+      (if (not (active-minibuffer-window))
+          (split-window-horizontally)
+        (message "Don't know how yet"))))
 
 ;;;###autoload
 (add-hook 'temp-buffer-setup-hook 'split-horizontally-not-vertically)
@@ -565,3 +589,17 @@ current region"
     See `sort-words'."
   (interactive "*P\nr")
   (sort-regexp-fields reverse "\\(\\sw\\|\\s_\\)+" "\\&" beg end))
+
+(defun rwd-ruby-release-shell (proj)
+  (let* ((base              "~/Work/p4/zss/src")
+         (buffer-name       (format "shell-release--%s" proj))
+         (default-directory (concat base "/" proj "/dev/")))
+    (shell buffer-name)))
+
+(defun rwd-ruby-release-shells ()
+  (interactive)
+  (let* ((base  "~/Work/p4/zss/src/")
+         (dir   (concat base "seattlerb_dashboard/dev"))
+         (cmd   (concat "ruby -I " dir "/lib " dir "/bin/seattlerb_release"))
+         (stale (split-string (shell-command-to-string cmd))))
+    (mapc 'rwd-ruby-release-shell (reverse stale))))
