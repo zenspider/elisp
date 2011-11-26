@@ -6,7 +6,7 @@
 ;;;###autoload
 (defun my-irc ()
   (interactive)
-  (erc-select :server "envy.zenspider.com"
+  (erc-select :server "localhost"
               :port 16667
               :nick "zenspider"
               :password (read-file-to-string "~/.erc_password")))
