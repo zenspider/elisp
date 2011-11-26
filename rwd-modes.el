@@ -11,6 +11,8 @@
                 ("\\.js$"                    . ecmascript-mode)
                 ("\\.haml$"                  . haml-mode)
                 ("\\.rkt$"                   . scheme-mode)
+                ("\\.coffee$"                . coffee-mode)
+                ("Cakefile"                  . coffee-mode)
                 ("^\\(GNUm\\|M\\)akefile.*$" . makefile-mode)))
   (add-to-list 'auto-mode-alist spec))
 
