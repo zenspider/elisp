@@ -115,7 +115,7 @@
  '(sentence-end-double-space nil)
  '(show-paren-mode t)
  '(sql-sqlite-program "sqlite3")
- '(tab-width 2)
+ '(tab-width 8)
  '(tags-case-fold-search nil)
  '(tool-bar-mode nil nil (tool-bar))
  '(tooltip-mode nil)
