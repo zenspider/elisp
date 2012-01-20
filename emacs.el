@@ -55,7 +55,7 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(Info-additional-directory-list (quote ("/usr/share/info" "~/Bin/elisp/info" "/opt/local/share/info/")))
+ '(Info-additional-directory-list (quote ("/usr/share/info" "~/Bin/elisp/info" "/Developer/usr/share/info")))
  '(apropos-do-all t)
  '(backup-by-copying-when-linked t)
  '(blank-chars (quote (tabs trailing lines space-before-tab)))
