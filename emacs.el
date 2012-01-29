@@ -10,6 +10,7 @@
 (add-to-list 'load-path user-init-dir t)
 (add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
 (add-to-list 'load-path (concat user-init-dir "third-party/magit") t)
+(add-to-list 'load-path (concat user-init-dir "third-party/fuel") t)
 (add-to-list 'load-path (expand-file-name "~/Sites/emacs/elisp") t)
 
 (defun rwd-recompile-init ()
@@ -78,6 +79,8 @@
  '(eval-expression-print-level nil)
  '(ffap-file-finder (quote find-file-other-window))
  '(find-file-visit-truename t)
+ '(fuel-listener-factor-binary "/MyApplications/dev/factor/Factor.app/Contents/MacOS/factor")
+ '(fuel-listener-factor-image "/MyApplications/dev/factor/factor.image")
  '(global-auto-revert-mode t)
  '(hippie-expand-try-functions-list (quote (try-expand-all-abbrevs try-expand-list try-expand-dabbrev-visible try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill rwd-try-expand-tag try-complete-lisp-symbol-partially try-complete-lisp-symbol try-complete-file-name-partially try-complete-file-name)))
  '(history-length 1000)

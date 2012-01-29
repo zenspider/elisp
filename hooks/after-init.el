@@ -1,0 +1,1 @@
+(message "woot... after init")

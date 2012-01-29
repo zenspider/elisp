@@ -118,7 +118,9 @@
     (interactive)
     (grep-compute-defaults)
     (lgrep (if isearch-regexp isearch-string (regexp-quote isearch-string))
-           (format "*.%s" (file-name-extension (buffer-file-name)))
+           (if (file-name-extension (buffer-file-name))
+            (format "*.%s" (file-name-extension (buffer-file-name)))
+            "*")
            default-directory)
     (isearch-abort)))
 
