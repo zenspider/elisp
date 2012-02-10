@@ -1,7 +1,3 @@
-;; ============================================================
-;; Requiresx:
-
-
 ;;;###autoload
 (setq my-usual-programming-modes
       '(ruby-mode lisp-mode scheme-mode emacs-lisp-mode))
@@ -15,6 +11,3 @@
                 ("Cakefile"                  . coffee-mode)
                 ("^\\(GNUm\\|M\\)akefile.*$" . makefile-mode)))
   (add-to-list 'auto-mode-alist spec))
-
-;; ============================================================
-;; Misc Modes/Stuff:
