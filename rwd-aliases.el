@@ -91,7 +91,7 @@ current region"
 
 ;;;###autoload
 (defun list-join (sep lst)
-  (mapconcat (lambda (x) x) lst sep))
+  (mapconcat identity lst sep))
 
 ;;;###autoload
 (defun munge-newlines (start end from to)
@@ -381,19 +381,20 @@ current region"
 ;;;###autoload
 (defun rwd-toggle-split ()
   "Toggle vertical/horizontal window split."
+  ;; taken from http://www.emacswiki.org/emacs/dove-ext.el
   (interactive)
-  (if (one-window-p)
-      (error "Frame doesn't have two windows")
-    (let* ((cw (selected-window))
-           (nw (next-window cw))
-           (wf (window-frame cw))
-           ;;(cb (buffer-name (window-buffer cw)))
-           (nb (buffer-name (window-buffer nw)))
-           (sv (if (eq (window-width cw) (frame-width wf))
-                   t nil)))
-      (delete-window nw)
-      (split-window cw nil sv)
-      (switch-to-buffer-other-window nb))))
+  (if (= 2 (length (window-list)))
+      (let ((thisBuf (window-buffer))
+            (nextBuf (progn (other-window 1) (buffer-name)))
+            (split-type (if (= (window-width) (frame-width))
+                            'split-window-horizontally
+                          'split-window-vertically)))
+        (progn
+          (delete-other-windows)
+	  (funcall split-type)
+          (set-window-buffer nil thisBuf)
+          (set-window-buffer (next-window) nextBuf)))
+      (error "Frame doesn't have two windows")))
 
 ;;;###autoload
 (defun server-stop ()
