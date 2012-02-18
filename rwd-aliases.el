@@ -207,7 +207,7 @@ current region"
 ;;;###autoload
 (defun rwd-quickref ()
   (interactive)
-  (find-file-other-window (expand-file-name "~/Work/p4/zss/www/zenspider.com/data/Languages/Ruby/QuickRef")))
+  (find-file-other-window (expand-file-name "~/Work/p4/zss/www/zenspider.com/Languages/Ruby/QuickRef.html.md.erb")))
 
 ;;;###autoload
 (defun rwd-read-this ()
