@@ -11,3 +11,7 @@
                 ("Cakefile"                  . coffee-mode)
                 ("^\\(GNUm\\|M\\)akefile.*$" . makefile-mode)))
   (add-to-list 'auto-mode-alist spec))
+
+;;;###autoload
+(progn
+  (rwd-install-package 'expand-region))

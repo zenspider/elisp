@@ -12,6 +12,7 @@
 (add-to-list 'load-path (concat user-init-dir "third-party/magit") t)
 (add-to-list 'load-path (concat user-init-dir "third-party/fuel") t)
 (add-to-list 'load-path (expand-file-name "~/Sites/emacs/elisp") t)
+(add-to-list 'load-path (expand-file-name "~/Work/git/mark-multiple")) ; TODO nuke?
 
 (defun rwd-recompile-init ()
   (interactive)

@@ -30,10 +30,10 @@
 (defalias 'small 'rwd-resize-small)
 
 ;;;###autoload
-(autoload 'grep-ed-start "grep-ed" nil t)
-
-;;;###autoload
-(defalias 'grep-edit 'grep-ed-start)
+(progn
+ (autoload 'grep-ed-start  "grep-ed" nil t)
+ (defalias 'grep-edit      'grep-ed-start)
+ (defalias 'grep-edit-save 'grep-ed-save-changes-and-exit))
 
 ;;;###autoload
 (defalias 'repl 'ielm)
@@ -51,38 +51,6 @@
   (save-excursion
     (save-match-data
       (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)="))))
-
-;;;###autoload
-(defun rwd-codesearch(searchstring)
-  "Code Search current word, or with optional prefix arg, on
-current region"
-  (interactive 
-   (let* ((default-entry
-            (codesearch-re-escape
-             (if current-prefix-arg 
-                 (buffer-substring (region-beginning) (region-end))
-               (or (current-word) ""))))
-          (input 
-           (read-string 
-            "Code Search: " default-entry 'codesearch-history default-entry)))
-     (if (string= input "")
-         (error "No search string specified"))
-     (list input)))
-
-  (require 'codesearch)
-  
-  ;; identification of lang
-  (let* ((lang (codesearch-mode-to-lang major-mode))
-         (url (format codesearch-url-format-string searchstring lang)))
-    (require 'browse-url)
-    (shell-command (format "w3m -S -no-graph -X -dump \"%s\" &" url))))
-
-;; (defun my-ruby-sexp (start end)
-;;   (interactive "r")
-;;   (save-excursion
-;;     (save-match-data
-;;       (replace-regexp "]" ")" nil start end)
-;;       (replace-regexp "\\[" "s(" nil start end))))
 
 ;;;###autoload
 (defun head (list n)
@@ -420,6 +388,51 @@ current region"
 ;;       (replace-regexp "]" ")" nil start end)
 ;;       (replace-regexp "\\[" "s(" nil start end))))
 
+(defun rwd-select-sexp-at-point ()
+  (interactive)
+  (require 'thingatpt)
+  (let* ((bounds (bounds-of-thing-at-point 'sexp)))
+    (if bounds
+        (let ((start (car bounds))
+              (end   (cdr bounds)))
+          (goto-char end)
+          (set-mark start)))))
+
+(defun rwd-select-matching (s &optional end)
+  (interactive "sSelect all matching: ")
+
+  (require 'mark-multiple)
+
+  (let ((re (regexp-quote s)))
+    (mm/clear-all)
+
+    (goto-char (point-min))
+
+    (if (re-search-forward re nil t)
+        (progn
+          (mm/create-master (match-beginning 0) (match-end 0))
+          (goto-char (or end (match-end 0)))
+
+          (save-excursion
+            (while (re-search-forward re nil t)
+              (message "match! %S %S" (match-beginning 0) (match-end 0))
+
+              (mm/add-mirror (match-beginning 0) (match-end 0)))))
+      (message "No matches"))))
+
+(defun rwd-select-all-mm-at-point ()
+  (interactive)
+
+  (require 'thingatpt)
+  (let ((bounds (bounds-of-thing-at-point 'sexp)))
+    (if bounds
+        (let* ((start (car bounds))
+               (end   (cdr bounds))
+               (re    (regexp-quote (buffer-substring start end))))
+          
+          (rwd-select-matching re end))
+      (call-interactively 'rwd-select-matching))))
+
 (defun rwd-selective-display (column)
   "Rotate folding the buffer at no, 2, 4, 6, and 8 columns."
   (interactive "P")
@@ -604,3 +617,18 @@ current region"
          (cmd   (concat "ruby -I " dir "/lib " dir "/bin/seattlerb_release"))
          (stale (split-string (shell-command-to-string cmd))))
     (mapc 'rwd-ruby-release-shell (reverse stale))))
+
+(defun package-version (package)
+  (let ((pkg-desc (assq package package-alist)))
+    (if pkg-desc
+        (package-version-join (package-desc-vers (cdr pkg-desc))))))
+
+(defun rwd-uninstall-package (name)
+  (and (package-installed-p name)
+       (package-delete (symbol-name name) (package-version name))
+       (package-initialize t)))
+
+(defun rwd-html-to-markdown (beg end)
+  (interactive "r")
+  (shell-command-on-region beg end "/Users/ryan/Desktop/webby/octopress.blog/html2markdown.rb" t t nil t))
+

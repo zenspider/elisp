@@ -4,12 +4,14 @@
 
 ;;;###autoload
 (progn
-  (message "RAWR! loading rwd-keys.el")
+  (autoload 'inline-string-rectangle "inline-string-rectangle")
+
   (global-set-key (kbd "<f7>")    'rwd-toggle-split)
   (global-set-key (kbd "<f8>")    'rwd-swap-buffers) ;; FIX: this broke on 23
   (global-set-key (kbd "C-M-.")   'etags-select-find-tag)
   (global-set-key (kbd "C-M-x")   'bury-buffer)
   (global-set-key (kbd "C-c C-d") 'delete-trailing-whitespace)
+  (global-set-key (kbd "C-c C-s") 'rwd-select-all-mm-at-point)
   (global-set-key (kbd "C-c O")   'rwd-occur-n-buffer)
   (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
   (global-set-key (kbd "C-c c")   'rwd-clean)
@@ -19,6 +21,7 @@
   (global-set-key (kbd "C-c d q") 'ediff-quit)
   (global-set-key (kbd "C-c e")   'erase-buffer)
   (global-set-key (kbd "C-c g")   'magit-status)
+  (global-set-key (kbd "C-c h")   'rwd-html-to-markdown)
   (global-set-key (kbd "C-c i")   'imenu)
   (global-set-key (kbd "C-c m")   'smerge-start-session)
   (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
@@ -33,13 +36,13 @@
   (global-set-key (kbd "C-x C-p") 'find-file-at-point)
   (global-set-key (kbd "C-x C-t") 'toggle-buffer)
   (global-set-key (kbd "C-x f")   'find-file) ; very common typo
+  (global-set-key (kbd "C-x r t") 'inline-string-rectangle)
   (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point)
   (global-set-key (kbd "M-C-y")   'kill-ring-search)
+  (global-set-key (kbd "M-SPC")   'er/expand-region)
   (global-set-key (kbd "M-[")     'outdent-rigidly-2)
   (global-set-key (kbd "M-]")     'indent-rigidly-2)
   (global-set-key (kbd "M-s")     'fixup-whitespace)
-  (global-set-key (kbd "C-M-0") '(lambda () (interactive) (window-configuration-to-register ?0)))
-  (global-set-key (kbd "C-0") '(lambda () (interactive) (jump-to-register ?0)))
 
   (define-key read-expression-map [(tab)] 'hippie-expand)
   (define-key read-expression-map [(shift tab)] 'unexpand)
@@ -57,7 +60,7 @@
   (define-key lisp-interaction-mode-map (kbd "C-c e") 'my-eval-and-replace)
 
   ;; iconify bugs the crap out of me:
-  (when window-system (global-unset-key "\C-z"))
+  (when window-system (local-unset-key "\C-z"))
 
   ;; compatibility:
   (global-set-key (kbd "M-g")      'goto-line)
@@ -71,7 +74,8 @@
     (if (not (version< emacs-version "23"))
         (global-set-key (kbd "M-`") 'other-frame))
 
-    (define-key global-map [ns-drag-file] 'ns-find-file))
+    ;(define-key local-map [ns-drag-file] 'ns-find-file)
+    )
 
   ;; This allows me to enforce that bury-buffer is bound to C-M-x
   ;; regardless of mode (YAY!)
@@ -98,7 +102,7 @@
                  isearch-string (regexp-quote isearch-string))))))
 
 ;;;###autoload
-(global-unset-key (kbd "M-o"))
+(local-unset-key (kbd "M-o"))
 
 ;;;###autoload
 (define-key isearch-mode-map (kbd "M-o")
