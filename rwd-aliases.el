@@ -604,20 +604,6 @@
   (interactive "*P\nr")
   (sort-regexp-fields reverse "\\(\\sw\\|\\s_\\)+" "\\&" beg end))
 
-(defun rwd-ruby-release-shell (proj)
-  (let* ((base              "~/Work/p4/zss/src")
-         (buffer-name       (format "shell-release--%s" proj))
-         (default-directory (concat base "/" proj "/dev/")))
-    (shell buffer-name)))
-
-(defun rwd-ruby-release-shells ()
-  (interactive)
-  (let* ((base  "~/Work/p4/zss/src/")
-         (dir   (concat base "seattlerb_dashboard/dev"))
-         (cmd   (concat "ruby -I " dir "/lib " dir "/bin/seattlerb_release"))
-         (stale (split-string (shell-command-to-string cmd))))
-    (mapc 'rwd-ruby-release-shell (reverse stale))))
-
 (defun package-version (package)
   (let ((pkg-desc (assq package package-alist)))
     (if pkg-desc
@@ -632,3 +618,13 @@
   (interactive "r")
   (shell-command-on-region beg end "/Users/ryan/Desktop/webby/octopress.blog/html2markdown.rb" t t nil t))
 
+(defun rwd-faster-editing ()
+  (interactive)
+  (flyspell-mode nil)
+  (auto-fill-mode nil))
+
+(defun rwd-hide-region (start-re end-re)
+  (let ((start (re-search-forward start-re)))
+    (when (and start (re-search-forward end-re))
+      (let ((ov (make-overlay start (match-beginning 0))))
+        (overlay-put ov 'invisible 'rwd-hide-region)))))

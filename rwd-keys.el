@@ -39,10 +39,19 @@
   (global-set-key (kbd "C-x r t") 'inline-string-rectangle)
   (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point)
   (global-set-key (kbd "M-C-y")   'kill-ring-search)
-  (global-set-key (kbd "M-SPC")   'er/expand-region)
+  (global-set-key (kbd "C-M-SPC") 'er/expand-region)
   (global-set-key (kbd "M-[")     'outdent-rigidly-2)
   (global-set-key (kbd "M-]")     'indent-rigidly-2)
   (global-set-key (kbd "M-s")     'fixup-whitespace)
+
+;; Experiment with bookmark mode
+  (global-set-key (kbd "M-SPC")   'bc-set)
+  (global-set-key (kbd "M-j")     'bc-previous)
+  (global-set-key (kbd "M-J")     'bc-next)
+  (global-set-key (kbd "C-M-j")   'bc-local-previous)
+  (global-set-key (kbd "C-M-J")   'bc-local-next)
+  (global-set-key (kbd "C-c J b") 'bc-goto-current)
+  (global-set-key (kbd "C-c J l") 'bc-list)
 
   (define-key read-expression-map [(tab)] 'hippie-expand)
   (define-key read-expression-map [(shift tab)] 'unexpand)
