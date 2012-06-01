@@ -105,9 +105,9 @@
          (ranges (json-read-from-string json)))
     (rcov-clear)
     (dolist (range ranges)
-    (overlay-put
-     (make-overlay (car range) (cadr range))
-     'face (cons 'background-color rcov-overlay-fg-color)))))
+      (overlay-put
+       (make-overlay (car range) (cadr range))
+       'face (cons 'background-color rcov-overlay-fg-color)))))
 
 (defun rcov-buffer (buffer)
   (interactive (list (current-buffer)))
