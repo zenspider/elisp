@@ -22,6 +22,7 @@
   (global-set-key (kbd "C-c e")   'erase-buffer)
   (global-set-key (kbd "C-c g")   'magit-status)
   (global-set-key (kbd "C-c h")   'rwd-html-to-markdown)
+  (global-set-key (kbd "C-M-;")    'unfill-paragraph)
   (global-set-key (kbd "C-c i")   'imenu)
   (global-set-key (kbd "C-c m")   'smerge-start-session)
   (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
