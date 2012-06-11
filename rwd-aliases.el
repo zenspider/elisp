@@ -85,7 +85,6 @@
 (defun rwd-arrange-frame (w h &optional nosplit)
   "Rearrange the current frame to a custom width and height and split unless prefix."
   (let ((frame (selected-frame)))
-    ;; (when (or (equal 'mac (framep frame)) (equal 'ns (framep frame)))
     (when (memq (framep frame) '(mac ns))
       (delete-other-windows)
       (set-frame-position frame 5 25)
@@ -237,7 +236,6 @@
   "Create a giant font window suitable for doing live demos."
   (interactive)
   (rwd-arrange-frame 92 34 t)
-  ;; TODO: (set-frame-position frame 5 25)
   (rwd-set-font-size 20))
 
 ;;;###autoload
