@@ -2,6 +2,10 @@
 (setq running-osx (or (featurep 'mac-carbon) (eq 'ns window-system)))
 
 ;;;###autoload
+(and running-osx
+     (ns-set-resource nil "ApplePressAndHoldEnabled" "NO"))
+
+;;;###autoload
 (if (and running-osx (not (getenv "TERM_PROGRAM")))
     ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
     ;; argh this is stupid
