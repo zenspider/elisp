@@ -408,6 +408,7 @@ has `mark' as an element."
 			 (const :tag "SPACEs and HARD SPACEs" spaces)
 			 (const :tag "TABs" tabs)
 			 (const :tag "Lines" lines)
+			 (const :tag "Lines, tail only" lines-tail)
 			 (const :tag "SPACEs before TAB"
 				space-before-tab)
 			 (const :tag "NEWLINEs" newline)
