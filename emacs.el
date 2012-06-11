@@ -1,5 +1,7 @@
 (require 'autoload)                     ; = ;;;###autoload
 
+(setq running-osx (or (featurep 'mac-carbon) (eq 'ns window-system)))
+
 (autoload 'find-lisp-find-files "find-lisp" nil t)
 (autoload 'find-lisp-find-files-internal "find-lisp" nil t)
 
@@ -60,7 +62,7 @@
  '(Info-additional-directory-list (quote ("/usr/share/info" "~/Bin/elisp/info" "/Developer/usr/share/info")))
  '(apropos-do-all t)
  '(backup-by-copying-when-linked t)
- '(blank-chars (quote (tabs trailing lines space-before-tab)))
+ '(blank-chars (quote (tabs trailing lines-tail space-before-tab)))
  '(blank-line-length 82)
  '(blank-style (quote (color)))
  '(blink-cursor-mode nil)
@@ -78,6 +80,7 @@
  '(erc-modules (quote (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring scrolltobottom stamp track)))
  '(eval-expression-print-length nil)
  '(eval-expression-print-level nil)
+ '(explicit-bash-args (quote ("--noediting" "--login" "-i")))
  '(ffap-file-finder (quote find-file-other-window))
  '(find-file-visit-truename t)
  '(fuel-listener-factor-binary "/MyApplications/dev/factor/Factor.app/Contents/MacOS/factor")
