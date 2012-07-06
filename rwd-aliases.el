@@ -618,8 +618,8 @@
 
 (defun rwd-faster-editing ()
   (interactive)
-  (flyspell-mode nil)
-  (auto-fill-mode nil))
+  (flyspell-mode -1)
+  (auto-fill-mode -1))
 
 (defun rwd-hide-region (start-re end-re)
   (let ((start (re-search-forward start-re)))
