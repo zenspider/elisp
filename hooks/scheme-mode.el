@@ -20,9 +20,14 @@
 
       '((test-group 1)
         (let/cc     1)
+        (λg         1)
+        (λf         1)
+        (λ          1)
+        (run        1)
+        (run*       1)
         (module     0)))
 
-(symbol-plist 'module)
+;; (symbol-plist 'λ) ; check with this
 
 (setq font-lock-keywords-case-fold-search nil)
 
