@@ -2,8 +2,11 @@
 (progn
   (require 'autoinsert)
 
-  (setq auto-insert-directory "~/Bin/elisp/insert/")
-  (setq auto-insert-query nil)
+  (add-hook 'find-file-hooks 'auto-insert)
 
-  (define-auto-insert "\.rb"  "template.rb")
-  (define-auto-insert "\.scm" "template.scm"))
+  (add-to-list 'auto-insert-alist
+               '(("\\.scm" . "Scheme File")
+                 "#!/bin/sh\n"
+                 "#| -*- scheme -*-\n"
+                 "exec csi -s $0 \"$@\"\n"
+                 "|#\n\n")))
