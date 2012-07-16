@@ -25,6 +25,8 @@
         (λ          1)
         (run        1)
         (run*       1)
+        (run1       1)
+        (fresh      1)
         (module     0)))
 
 ;; (symbol-plist 'λ) ; check with this
