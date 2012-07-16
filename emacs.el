@@ -110,6 +110,7 @@
  '(pastebin-domain-versions (quote (("pastebin.com" "/api_public.php") ("zenspider.pastebin.com" "/api_public.php") ("pastebin.example.com" "/pastebin.php"))))
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values (quote ((encoding . utf-8) (backup-inhibited . t) (racc-token-length-max . 14))))
+ '(save-interprogram-paste-before-kill t)
  '(save-place t nil (saveplace))
  '(save-place-limit 100)
  '(save-place-save-skipped nil)
