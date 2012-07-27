@@ -20,6 +20,8 @@
   (interactive)
   (byte-recompile-directory (expand-file-name user-init-dir) 0))
 
+(setq generated-autoload-file "loaddefs.el") ;; HACK for emacs 24.1
+
 (defun rwd-autoloads ()
   "Regenerate the autoload definitions file if necessary and load it."
   (interactive)
