@@ -12,10 +12,11 @@
               :password (read-file-to-string "~/.erc_password")))
 
 ;;;###autoload
-(defun rwd-irc-atti ()
+(defun rwd-irc-att ()
   (interactive)
-  (erc-select :server "irc.corp.atti.com" :port 6667 :nick "rdavis")
-  (erc-join-channel "#appservices"))
+  (erc-ssl :server "irc.sl.attcompute.com" :port 6697
+           :nick "zenspider" :password "emdc2kIdHMaJ")
+  (erc-join-channel "#portal"))
 
 ;;;###autoload
 (defun rwd-irc-direct ()
