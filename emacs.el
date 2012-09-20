@@ -57,10 +57,10 @@
 (rwd-autohooks)
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(Info-additional-directory-list (quote ("/usr/share/info" "~/Bin/elisp/info" "/Developer/usr/share/info")))
  '(apropos-do-all t)
  '(backup-by-copying-when-linked t)
@@ -134,6 +134,7 @@
  '(transient-mark-mode t)
  '(truncate-partial-width-windows nil)
  '(use-dialog-box nil)
+ '(user-mail-address "ryand-ruby@zenspider.com")
  '(vc-command-messages t)
  '(vc-handled-backends (quote (CVS SVN GIT)))
  '(vc-p4-require-p4config t)
@@ -149,10 +150,10 @@
 ;;           (t                    (:background "white"))))
 
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(blank-line ((((background light)) (:background "gray80")) (((type tty)) (:background "gray20")) (t (:background "red"))))
  '(blank-line-face ((t (:background "gray90"))))
  '(cursor ((((background light)) (:background "Blue")) (((background dark)) (:background "Blue")) (t (:background "Blue"))))
