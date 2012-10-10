@@ -4,3 +4,4 @@
 (define-key shell-mode-map (kbd "M-<return>") 'shell-resync-dirs)
 (define-key comint-mode-map [C-up]            'rwd-previous-line-6)
 (define-key comint-mode-map [C-down]          'rwd-forward-line-6)
+(define-key comint-mode-map (kbd "C-c e")     'rwd-shell-clear)
