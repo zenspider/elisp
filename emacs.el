@@ -64,9 +64,6 @@
  '(Info-additional-directory-list (quote ("/usr/share/info" "~/Bin/elisp/info" "/Developer/usr/share/info")))
  '(apropos-do-all t)
  '(backup-by-copying-when-linked t)
- '(blank-chars (quote (tabs trailing lines-tail space-before-tab)))
- '(blank-line-length 82)
- '(blank-style (quote (color)))
  '(blink-cursor-mode nil)
  '(cluck-fontify-style nil)
  '(cluck-global-menu-p nil)
@@ -142,7 +139,9 @@
  '(vc-svn-program-name "/opt/local/bin/svn")
  '(visible-bell t)
  '(warning-suppress-types (quote ((undo discard-info))))
- '(wdired-allow-to-change-permissions (quote advanced)))
+ '(wdired-allow-to-change-permissions (quote advanced))
+ '(whitespace-global-modes (quote (ruby-mode emacs-lisp-mode scheme-mode)))
+ '(whitespace-style (quote (face tabs trailing lines-tail space-before-tab empty))))
 
 ;; TODO: figure out why this doesn't work in git-blame frames
 ;; '(cursor ((((background light)) (:background "black"))
@@ -154,8 +153,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(blank-line ((((background light)) (:background "gray80")) (((type tty)) (:background "gray20")) (t (:background "red"))))
- '(blank-line-face ((t (:background "gray90"))))
  '(cursor ((((background light)) (:background "Blue")) (((background dark)) (:background "Blue")) (t (:background "Blue"))))
  '(diff-added ((t (:inherit diff-changed :foreground "green4"))))
  '(diff-removed ((t (:inherit diff-changed :foreground "red4"))))
@@ -164,6 +161,7 @@
  '(flyspell-incorrect ((t (:underline "red"))))
  '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Dark Blue"))))
  '(font-lock-constant-face ((((class color) (min-colors 88) (background light)) (:foreground "SlateBlue4"))))
- '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "Forest Green")))))
+ '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "Forest Green"))))
+ '(whitespace-line ((((background light)) (:background "gray80")) (((type tty)) (:background "gray20")) (t (:background "red")))))
 
 (put 'narrow-to-region 'disabled nil)

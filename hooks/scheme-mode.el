@@ -6,8 +6,6 @@
 (paredit-mode +1)
 ;; (define-key scheme-mode-map "\t" 'scheme-complete-or-indent)
 
-(blank-mode)
-
 (make-local-variable 'eldoc-documentation-function)
 (setq eldoc-documentation-function 'scheme-get-current-symbol-info)
 (eldoc-mode)

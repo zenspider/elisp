@@ -8,4 +8,3 @@
 
 (imenu-add-menubar-index)
 (flyspell-prog-mode)
-(blank-mode)
