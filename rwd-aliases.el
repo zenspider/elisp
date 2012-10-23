@@ -72,7 +72,7 @@
 
 ;;;###autoload
 (defun read-file-to-string (path)
-  (with-temp-buffer
+  (with-temp-buffer 
     (insert-file-contents-literally path)
     (buffer-string)))
 
@@ -128,7 +128,8 @@
 (defun rwd-lappy ()
   (interactive)
   (rwd-resize-full)
-  (shell (rwd-unique-buffer "shell"))) ;; done manually to avoid swap oddities
+  (rwd-shell)
+  (rwd-swap-buffers))
 
 ;;;###autoload
 (defun rwd-newlines-escape (start end)
@@ -300,19 +301,17 @@
                       :height (* 10 size))
   (frame-parameter nil 'font))
 
-(defun rwd-unique-buffer (name)
-  (let* ((count 1)
-         (buffer-name (format "%s-%d" name count)))
-    (while (get-buffer buffer-name)
-      (set 'count (+ count 1))
-      (set 'buffer-name (format "%s-%d" name count)))
-    buffer-name))
-
 ;;;###autoload
 (defun rwd-shell ()
   "Create a shell buffer that is properly named (shell-<N>)"
   (interactive)
-  (shell (switch-to-buffer-other-window (rwd-unique-buffer "shell"))))
+  (let* ((name "shell")
+         (count 1)
+         (buffer-name (format "%s-%d" name count)))
+    (while (get-buffer buffer-name)
+      (set 'buffer-name (format "%s-%d" name count))
+      (set 'count (+ count 1)))
+    (shell buffer-name)))
 
 ;;;###autoload
 (defun sort-files-by-date (a b)
@@ -428,7 +427,7 @@
         (let* ((start (car bounds))
                (end   (cdr bounds))
                (re    (regexp-quote (buffer-substring start end))))
-
+          
           (rwd-select-matching re end))
       (call-interactively 'rwd-select-matching))))
 
@@ -522,9 +521,9 @@
 
 ;; frame- or window-resizing function
 ;; from http://dse.livejournal.com/67732.html. Resizes either frame or window
-;; to 80 columns. If the window can be sized to 80 columns wide, without
-;; resizing the frame itself, it will resize the window. Otherwise, it will
-;; resize the frame. You can use a prefix argument to specify a
+;; to 80 columns. If the window can be sized to 80 columns wide, without 
+;; resizing the frame itself, it will resize the window. Otherwise, it will 
+;; resize the frame. You can use a prefix argument to specify a 
 ;; different column width
 (defun fix-frame-horizontal-size (width)
   "Set the frame's size to 80 (or prefix arg WIDTH) columns wide."
@@ -543,7 +542,7 @@
   (interactive "P")
   (condition-case nil
       (fix-window-horizontal-size width)
-    (error
+    (error 
      (condition-case nil
      (fix-frame-horizontal-size width)
        (error
@@ -551,7 +550,7 @@
 
 (global-set-key (kbd "C-x W") 'fix-horizontal-size) ;; FIX move
 
-;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph    
 ;;;###autoload
 (defun unfill-paragraph ()
   "Takes a multi-line paragraph and makes it into a single line of text."
@@ -656,38 +655,3 @@ even beep.)"
 (defun rwd-comint-scroll-to-bottom-on-output ()
   (interactive)
   (setq comint-scroll-to-bottom-on-output t))
-
-(defun rwd-shell-clear ()
-  (interactive)
-  (let ((comint-buffer-maximum-size 0))
-    (comint-truncate-buffer)))
-
-
-(defun rwd-comint-trucate-buffer ()
-  (interactive)
-  (add-to-list 'comint-output-filter-functions 'comint-truncate-buffer))
-
-(defalias 'rwd-comint-trucate-buffer 'rwd-shell-truncate-buffer)
-
-;;  (require 'shell)
-;;  (require 'term)
-;;  (defun term-switch-to-shell-mode ()
-;;   (interactive)
-;;   (if (equal major-mode 'term-mode)
-;;       (progn
-;;         (shell-mode)
-;;         (set-process-filter  (get-buffer-process (current-buffer)) 'comint-output-filter )
-;;         (local-set-key (kbd "C-j") 'term-switch-to-shell-mode)
-;;         (compilation-shell-minor-mode 1)
-;;         (comint-send-input)
-;;       )
-;;     (progn
-;;         (compilation-shell-minor-mode -1)
-;;         (font-lock-mode -1)
-;;         (set-process-filter  (get-buffer-process (current-buffer)) 'term-emulate-terminal)
-;;         (term-mode)
-;;         (term-char-mode)
-;;         (term-send-raw-string (kbd "C-l"))
-;;         )))
-
-;;   (define-key term-raw-map (kbd "C-j") 'term-switch-to-shell-mode)

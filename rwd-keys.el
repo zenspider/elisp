@@ -66,6 +66,9 @@
   ;;       (mapcar 'expand-file-name
   ;;               (eshell-extended-glob "~/Work/p4/zss/src/*/dev/TAGS")))
 
+  (define-key emacs-lisp-mode-map       (kbd "C-c e") 'my-eval-and-replace)
+  (define-key lisp-interaction-mode-map (kbd "C-c e") 'my-eval-and-replace)
+
   ;; iconify bugs the crap out of me:
   (when window-system (local-unset-key "\C-z"))
 
@@ -138,11 +141,3 @@
 ;;;###autoload
 (eval-after-load 'p4
   '(define-key p4-prefix-map (kbd "A") 'p4-diff-all-opened))
-
-(require 'multiple-cursors)
-(global-set-key (kbd "C-c C-a") 'mc/edit-beginnings-of-lines)
-(global-set-key (kbd "C-c C-e") 'mc/edit-ends-of-lines)
-(global-set-key (kbd "C-c C-m") 'mc/edit-lines)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-(global-set-key (kbd "C-<")     'mc/mark-previous-like-this)
-;; (global-set-key (kbd "C-c m r") 'set-rectangular-region-anchor)

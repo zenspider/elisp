@@ -3,10 +3,10 @@
 ;; Copyright (C) 2006-2007 by Ryan Davis
 
 ;; Author: Ryan Davis <ryand-ruby@zenspider.com>
-;; Version 1.0.1
+;; Version 1.0
 ;; Keywords: testing, ruby, convenience
 ;; Created: 2006-11-17
-;; Compatibility: Emacs 24, 23, 22, 21?
+;; Compatibility: Emacs 22, 21?
 ;; URL(en): http://seattlerb.rubyforge.org/
 ;; by Ryan Davis - ryand-ruby@zenspider.com
 
@@ -41,7 +41,6 @@
 ;; Sets up an autotest buffer and provides convenience methods.
 
 ;;; History:
-;; 1.0.1 - 2012-10-10 - Tweak for emacs 24. Starts in other window again.
 ;; 1.0.0 - 2008-09-25 - Added an extra regexp for rspec/mspec. 1.0.0 release.
 ;; 1.0b4 - 2007-09-25 - Added autotest-use-ui and autotest-command vars.
 ;; 1.0b3 - 2007-05-10 - emacs compatibility fixes and improved regexps.
@@ -64,7 +63,7 @@
 (defun autotest ()
   "Fire up an instance of autotest in its own buffer with shell bindings and compile-mode highlighting and linking."
   (interactive)
-  (let ((buffer (shell (switch-to-buffer-other-window "*autotest*"))))
+  (let ((buffer (shell "*autotest*")))
 
     (define-key shell-mode-map "\C-c\C-a" 'autotest-switch)
 

@@ -6,25 +6,17 @@
 ;;;###autoload
 (defun my-irc ()
   (interactive)
-  (erc-select :server "localhost" :port 16667
-              :password (read-file-to-string "~/.erc_password")
-              :nick "zenspider"))
-
-;;;###autoload
-(defun my-irc-att2 ()
-  (interactive)
-  (erc-select :server "localhost" :port 16667
-              :password (concat (read-file-to-string "~/.erc_password") "1")
-              :nick "zenspider"))
+  (erc-select :server "localhost"
+              :port 16667
+              :nick "zenspider"
+              :password (read-file-to-string "~/.erc_password")))
 
 ;;;###autoload
 (defun rwd-irc-att ()
   (interactive)
   (erc-ssl :server "irc.sl.attcompute.com" :port 6697
-           :password "emdc2kIdHMaJ"
-           :nick "zenspider")
-  (erc-join-channel "#portal")
-  (erc-join-channel "#core" "dumberpipes"))
+           :nick "zenspider" :password "emdc2kIdHMaJ")
+  (erc-join-channel "#portal"))
 
 ;;;###autoload
 (defun rwd-irc-direct ()
