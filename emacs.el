@@ -43,12 +43,13 @@
     (load autoload-file)
     (message "done loading autoloads")))
 
-(when (load (expand-file-name "~/.emacs.d/elpa/package.el"))
-  (add-to-list 'package-archives
-               '("elpa" . "http://tromey.com/elpa/"))
-  (add-to-list 'package-archives
-               '("marmalade" . "http://marmalade-repo.org/packages/"))
-  (package-initialize))
+(require 'package)
+(dolist (repo '(("elpa"      . "http://tromey.com/elpa/")
+                ("marmalade" . "http://marmalade-repo.org/packages/")
+                ("melpa"     . "http://melpa.milkbox.net/packages/")))
+  (add-to-list 'package-archives repo))
+
+(package-initialize)
 
 (defun rwd-install-package (name)
   (or (package-installed-p name) (package-install name)))
