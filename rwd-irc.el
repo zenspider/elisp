@@ -6,16 +6,16 @@
 ;;;###autoload
 (defun my-irc ()
   (interactive)
-  (erc-select :server "localhost"
-              :port 16667
-              :nick "zenspider"
-              :password (read-file-to-string "~/.erc_password")))
+  (erc-select :server "localhost" :port 16667
+              :password (read-file-to-string "~/.erc_password")
+              :nick "zenspider"))
 
 ;;;###autoload
 (defun rwd-irc-att ()
   (interactive)
-  (erc-ssl :server "irc.sl.attcompute.com" :port 6697
-           :nick "zenspider" :password "emdc2kIdHMaJ")
+  (erc-ssl :server "irc.sl.attcompute.com" :port 443
+           :password "emdc2kIdHMaJ"
+           :nick "zenspider")
   (erc-join-channel "#portal"))
 
 ;;;###autoload
