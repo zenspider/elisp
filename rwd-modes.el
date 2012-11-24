@@ -1,8 +1,4 @@
 ;;;###autoload
-(setq my-usual-programming-modes
-      '(ruby-mode lisp-mode scheme-mode emacs-lisp-mode))
-
-;;;###autoload
 (dolist (spec '(("\\.bash.*$"                . ksh-mode)
                 ("\\.js$"                    . ecmascript-mode)
                 ("\\.haml$"                  . haml-mode)
