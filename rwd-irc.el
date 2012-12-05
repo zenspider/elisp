@@ -4,11 +4,14 @@
 (require 'easymenu)
 
 ;;;###autoload
-(defun my-irc ()
+(defun rwd-irc-freenode ()
   (interactive)
   (erc-select :server "localhost" :port 16667
               :password (read-file-to-string "~/.erc_password")
               :nick "zenspider"))
+
+;;;###autoload
+(defalias 'my-irc 'rwd-irc-freenode)
 
 ;;;###autoload
 (defun rwd-irc-att ()
