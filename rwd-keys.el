@@ -15,6 +15,7 @@
   (global-set-key (kbd "C-c O")   'rwd-occur-n-buffer)
   (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
   (global-set-key (kbd "C-c c")   'rwd-clean)
+  (global-set-key (kbd "C-c M-q") 'unfill-paragraph)
   (global-set-key (kbd "C-c d b") 'ediff-buffers)
   (global-set-key (kbd "C-c d d") 'ediff-directories)
   (global-set-key (kbd "C-c d f") 'ediff-files)
@@ -138,11 +139,12 @@
 ;;;###autoload
 (eval-after-load 'p4
   '(define-key p4-prefix-map (kbd "A") 'p4-diff-all-opened))
-
-(require 'multiple-cursors)
-(global-set-key (kbd "C-c C-c a") 'mc/edit-beginnings-of-lines)
-(global-set-key (kbd "C-c C-c e") 'mc/edit-ends-of-lines)
-(global-set-key (kbd "C-c C-c l") 'mc/edit-lines)
-(global-set-key (kbd "C-c C-c =") 'mc/mark-all-like-this)
-(global-set-key (kbd "C-c C-c <") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-c r") 'set-rectangular-region-anchor)
+;;;###autoload
+(progn
+  (require 'multiple-cursors)
+  (global-set-key (kbd "C-c C-c a") 'mc/edit-beginnings-of-lines)
+  (global-set-key (kbd "C-c C-c e") 'mc/edit-ends-of-lines)
+  (global-set-key (kbd "C-c C-c l") 'mc/edit-lines)
+  (global-set-key (kbd "C-c C-c =") 'mc/mark-all-like-this)
+  (global-set-key (kbd "C-c C-c <") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-c r") 'set-rectangular-region-anchor))
