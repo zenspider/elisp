@@ -111,6 +111,7 @@
  '(pastebin-default-subdomain "zenspider")
  '(pastebin-domain-versions (quote (("pastebin.com" "/api_public.php") ("zenspider.pastebin.com" "/api_public.php") ("pastebin.example.com" "/pastebin.php"))))
  '(read-buffer-completion-ignore-case t)
+ '(enh-ruby-check-syntax nil)
  '(safe-local-variable-values (quote ((encoding . utf-8) (backup-inhibited . t) (racc-token-length-max . 14))))
  '(save-interprogram-paste-before-kill t)
  '(save-place t nil (saveplace))
@@ -143,7 +144,7 @@
  '(visible-bell t)
  '(warning-suppress-types (quote ((undo discard-info))))
  '(wdired-allow-to-change-permissions (quote advanced))
- '(whitespace-global-modes (quote (ruby-mode emacs-lisp-mode scheme-mode)))
+ '(whitespace-global-modes (quote (ruby-mode emacs-lisp-mode scheme-mode enh-ruby-mode)))
  '(whitespace-style (quote (face tabs trailing lines-tail space-before-tab empty))))
 
 ;; TODO: figure out why this doesn't work in git-blame frames
@@ -165,6 +166,7 @@
  '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Dark Blue"))))
  '(font-lock-constant-face ((((class color) (min-colors 88) (background light)) (:foreground "SlateBlue4"))))
  '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "Forest Green"))))
+ '(enh-ruby-heredoc-delimiter-face-xxx ((t (:foreground "Brown"))))
  '(whitespace-line ((((background light)) (:background "gray80")) (((type tty)) (:background "gray20")) (t (:background "red")))))
 
 (put 'narrow-to-region 'disabled nil)
