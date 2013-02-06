@@ -78,13 +78,6 @@
   (global-set-key (kbd "<M-down>") 'rwd-scroll-down)
   (global-set-key (kbd "C-M-l")    'rwd-scroll-top)
 
-  (when running-osx
-    (if (not (version< emacs-version "23"))
-        (global-set-key (kbd "M-`") 'other-frame))
-
-    ;(define-key local-map [ns-drag-file] 'ns-find-file)
-    )
-
   ;; This allows me to enforce that bury-buffer is bound to C-M-x
   ;; regardless of mode (YAY!)
   (require 'override-keymaps)

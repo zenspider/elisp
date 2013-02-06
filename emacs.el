@@ -1,6 +1,7 @@
 (require 'autoload)                     ; = ;;;###autoload
 
-(setq running-osx (or (featurep 'mac-carbon) (eq 'ns window-system)))
+(load (concat "misc/" (symbol-name system-type)) t)                ;; misc/darwin
+(load (concat "misc/" (car (split-string (system-name) "\\."))) t) ;; misc/greed
 
 (autoload 'find-lisp-find-files "find-lisp" nil t)
 (autoload 'find-lisp-find-files-internal "find-lisp" nil t)
