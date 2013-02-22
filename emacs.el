@@ -1,11 +1,5 @@
 (require 'autoload)                     ; = ;;;###autoload
 
-(load (concat "misc/" (symbol-name system-type)) t)                ;; misc/darwin
-(load (concat "misc/" (car (split-string (system-name) "\\."))) t) ;; misc/greed
-
-(autoload 'find-lisp-find-files "find-lisp" nil t)
-(autoload 'find-lisp-find-files-internal "find-lisp" nil t)
-
 (defvar user-init-dir (file-name-directory
                        (or (file-symlink-p user-init-file) user-init-file))
   "Root directory of emacs.el, after following symlinks, etc.")
@@ -14,8 +8,11 @@
 (add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
 (add-to-list 'load-path (concat user-init-dir "third-party/magit") t)
 (add-to-list 'load-path (concat user-init-dir "third-party/fuel") t)
-(add-to-list 'load-path (expand-file-name "~/Sites/emacs/elisp") t)
-(add-to-list 'load-path (expand-file-name "~/Work/git/mark-multiple")) ; TODO nuke?
+
+(load (concat "misc/" (symbol-name system-type)) t)                ;; misc/darwin
+(load (concat "misc/" (car (split-string (system-name) "\\."))) t) ;; misc/greed
+
+(autoload 'find-lisp-find-files "find-lisp" nil t)
 
 (defun rwd-recompile-init ()
   (interactive)
@@ -140,8 +137,7 @@
  '(vc-command-messages t)
  '(vc-handled-backends (quote (CVS SVN GIT)))
  '(vc-p4-require-p4config t)
- '(vc-path (quote ("/opt/local/bin" "/usr/local/bin")))
- '(vc-svn-program-name "/opt/local/bin/svn")
+ '(vc-svn-program-name "/usr/bin/svn")
  '(visible-bell t)
  '(warning-suppress-types (quote ((undo discard-info))))
  '(wdired-allow-to-change-permissions (quote advanced))
