@@ -1,4 +1,4 @@
-(inf-ruby-keys)
+(inf-ruby-setup-keybindings)
 
 (define-key ruby-mode-map (kbd "C-c C-a") 'autotest-switch)
 (define-key ruby-mode-map (kbd "C-c C-p") 'pastebin)
