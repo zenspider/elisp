@@ -55,6 +55,14 @@
   (let* ((chan (erc-default-target)))
     (erc-server-send (format "MODE %s -b %s" chan nick))))
 
+(defun erc-cmd-VOICE (nick)
+  (let* ((chan (erc-default-target)))
+    (erc-server-send (format "MODE %s +v %s" chan nick))))
+
+(defun erc-cmd-DEVOICE (nick)
+  (let* ((chan (erc-default-target)))
+    (erc-server-send (format "MODE %s -v %s" chan nick))))
+
 (defun erc-cmd-KICKBAN (nick &rest reason)
   (setq reason (mapconcat #'identity reason " "))
   (and (string= reason "")
