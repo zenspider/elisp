@@ -387,15 +387,16 @@
 ;;       (replace-regexp "]" ")" nil start end)
 ;;       (replace-regexp "\\[" "s(" nil start end))))
 
+(defun rwd-select-thing-at-point (type)
+  (require 'thingatpt)
+  (let* ((bounds (bounds-of-thing-at-point type)))
+    (when bounds
+      (goto-char (cdr bounds))
+      (set-mark (car bounds)))))
+
 (defun rwd-select-sexp-at-point ()
   (interactive)
-  (require 'thingatpt)
-  (let* ((bounds (bounds-of-thing-at-point 'sexp)))
-    (if bounds
-        (let ((start (car bounds))
-              (end   (cdr bounds)))
-          (goto-char end)
-          (set-mark start)))))
+  (rwd-select-thing-at-point 'sexp))
 
 (defun rwd-select-matching (s &optional end)
   (interactive "sSelect all matching: ")
