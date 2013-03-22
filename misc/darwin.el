@@ -1,7 +1,8 @@
 (defvar running-osx (or (featurep 'mac-carbon) (eq 'ns window-system)))
 
 ;; Fixes a tweaky thing on 10.8
-(ns-set-resource nil "ApplePressAndHoldEnabled" "NO")
+(if running-osx
+ (ns-set-resource nil "ApplePressAndHoldEnabled" "NO"))
 
 (unless (getenv "TERM_PROGRAM")
   ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
