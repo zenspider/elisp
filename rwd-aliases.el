@@ -677,3 +677,33 @@ even beep.)"
   (condition-case nil
       (ns-get-selection-internal 'CLIPBOARD)
     (quit nil)))
+
+(defun rwd-workout ()
+  (interactive)
+
+  (save-excursion
+    (with-current-buffer "superslow.txt"
+      (let ((fmt "%-15s %3s# @ %3ss  -- \n")
+            (exercises '("leg press"
+                         "leg curl"
+                         "chest press"
+                         "pulldown"
+                         "leg extension"
+                         "overhead press"
+                         "back extension"
+                         "abdominals"
+                         "compound row")))
+
+        (goto-char (point-max))
+        (insert (format-time-string "\nworkout %Y-%m-%d\n\n"))
+
+        (mapc (lambda (exercise)
+                (let ((w-prompt (concat exercise " weight: "))
+                      (t-prompt   (concat exercise " time: ")))
+
+                  (let ((weight (read-from-minibuffer w-prompt)))
+                    (unless (string-equal weight "")
+                      (let ((time (read-from-minibuffer t-prompt)))
+                        (goto-char (point-max))
+                        (insert (format fmt (concat exercise ":") weight time)))))))
+              exercises)))))
