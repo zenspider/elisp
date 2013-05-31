@@ -44,7 +44,7 @@
 (require 'package)
 (dolist (repo '(("elpa"      . "http://tromey.com/elpa/")
                 ("marmalade" . "http://marmalade-repo.org/packages/")
-                ;; ("melpa"     . "http://melpa.milkbox.net/packages/")
+                ("melpa"     . "http://melpa.milkbox.net/packages/")
                 ))
   (add-to-list 'package-archives repo))
 
@@ -52,6 +52,9 @@
 
 (defun rwd-install-package (name)
   (or (package-installed-p name) (package-install name)))
+
+(defun rwd-install-packages (&rest packages)
+  (mapcar 'rwd-install-package packages))
 
 (rwd-autoloads)
 (rwd-autohooks)
@@ -73,7 +76,8 @@
  '(compilation-error-regexp-alist (quote (bash java gnu gcc-include)))
  '(completion-styles (quote (basic partial-completion initials emacs22)))
  '(dired-recursive-deletes (quote top))
- '(ediff-split-window-function (quote split-window-horizontally))
+ '(ediff-split-window-function (lambda (x) (if (> (frame-width) 150) (quote split-window-horizontally) (quote split-window-vertically))))
+ '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(emerge-diff-options "--ignore-all-space")
  '(enh-ruby-check-syntax nil)
  '(erc-fools (quote ("yorickpeterse" "ianm_")))

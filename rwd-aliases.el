@@ -682,6 +682,7 @@ even beep.)"
   (interactive)
 
   (save-excursion
+    (find-file "~/Work/p4/zss/usr/ryand/superslow.txt")
     (with-current-buffer "superslow.txt"
       (let ((fmt "%-15s %3s# @ %3ss  -- \n")
             (exercises '("leg press"
@@ -707,3 +708,14 @@ even beep.)"
                         (goto-char (point-max))
                         (insert (format fmt (concat exercise ":") weight time)))))))
               exercises)))))
+
+(defun rwd-renumber-debug ()
+  (interactive)
+  (save-excursion
+    (replace-regexp
+     "debug [0-9]+"
+     '(replace-eval-replacement concat "debug "
+                                (replace-quote (1+ replace-count)))
+     nil
+     (point-min)
+     (point-max))))
