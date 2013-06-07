@@ -13,6 +13,7 @@
 (load (concat "misc/" (car (split-string (system-name) "\\."))) t) ;; misc/greed
 
 (autoload 'find-lisp-find-files "find-lisp" nil t)
+(autoload 'find-lisp-find-files-internal "find-lisp" nil t)
 
 (defun rwd-recompile-init ()
   (interactive)
@@ -109,7 +110,7 @@
  '(ns-pop-up-frames nil)
  '(oddmuse-directory "~/Library/Caches/oddmuse")
  '(oddmuse-username "RyanDavis")
- '(override-keymap-rules (quote (("\230" bury-buffer (ruby python emacs-lisp)) ("\214" rwd-scroll-top (shell comint)))))
+ '(override-keymap-rules (quote (("\230" bury-buffer (ruby python emacs-lisp racc)) ("\214" rwd-scroll-top (shell comint)))))
  '(pastebin-default-domain "zenspider.pastebin.com")
  '(pastebin-default-subdomain "zenspider")
  '(pastebin-domain-versions (quote (("pastebin.com" "/api_public.php") ("zenspider.pastebin.com" "/api_public.php") ("pastebin.example.com" "/pastebin.php"))))
