@@ -4,14 +4,22 @@
 (require 'easymenu)
 
 ;;;###autoload
-(defun rwd-irc-freenode ()
+(defun rwd-irc-freenode1 ()
   (interactive)
   (erc-select :server "localhost" :port 16667
               :password (read-file-to-string "~/.erc_password")
               :nick "zenspider"))
 
 ;;;###autoload
-(defalias 'my-irc 'rwd-irc-freenode)
+(defun rwd-irc-freenode2 ()
+  (interactive)
+  (erc-select :server "localhost" :port 16668
+              :password (concat "zenspider/freenode:"
+                                (read-file-to-string "~/.erc_password"))
+              :nick "zenspider"))
+
+;;;###autoload
+(defalias 'my-irc 'rwd-irc-freenode2)
 
 ;;;###autoload
 (defun rwd-irc-att ()
@@ -78,6 +86,10 @@
   "Recall the last LEN lines from dIRCproxy for the current channel"
   (let* ((chan (erc-default-target)))
     (erc-server-send (format "dircproxy recall %s %s" chan len))))
+
+(defun erc-cmd-PLAY ()
+  "Replay the savebuffer in ZNC. Not as smart as dircproxy but..."
+  (erc-server-send (format "PRIVMSG *status PlayBuffer %s" (erc-default-target))))
 
 (defun erc-cmd-PROXY (line)
   "Say shit to dircproxy."
