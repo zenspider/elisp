@@ -46,7 +46,14 @@
   (global-set-key (kbd "M-]")     'indent-rigidly-2)
   (global-set-key (kbd "M-s")     'fixup-whitespace)
 
-;; Experiment with bookmark mode
+  ;; Experiment with goto-last-change
+  (global-set-key (kbd "C-x C-/") 'goto-last-change)
+
+  ;; Experement with smex
+  (global-set-key (kbd "M-x") 'smex)
+  (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+
+  ;; Experiment with bookmark mode
   (global-set-key (kbd "M-SPC")   'bc-set)
   (global-set-key (kbd "M-j")     'bc-previous)
   (global-set-key (kbd "M-J")     'bc-next)

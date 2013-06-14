@@ -6,8 +6,6 @@
 
 (add-to-list 'load-path user-init-dir t)
 (add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
-(add-to-list 'load-path (concat user-init-dir "third-party/magit") t)
-(add-to-list 'load-path (concat user-init-dir "third-party/fuel") t)
 
 (load (concat "misc/" (symbol-name system-type)) t)                ;; misc/darwin
 (load (concat "misc/" (car (split-string (system-name) "\\."))) t) ;; misc/greed
@@ -42,20 +40,7 @@
     (load autoload-file)
     (message "done loading autoloads")))
 
-(require 'package)
-(dolist (repo '(("elpa"      . "http://tromey.com/elpa/")
-                ("marmalade" . "http://marmalade-repo.org/packages/")
-                ("melpa"     . "http://melpa.milkbox.net/packages/")
-                ))
-  (add-to-list 'package-archives repo))
-
-(package-initialize)
-
-(defun rwd-install-package (name)
-  (or (package-installed-p name) (package-install name)))
-
-(defun rwd-install-packages (&rest packages)
-  (mapcar 'rwd-install-package packages))
+(load "rwd-packages")
 
 (rwd-autoloads)
 (rwd-autohooks)
@@ -129,6 +114,7 @@
  '(send-mail-function (quote smtpmail-send-it))
  '(sentence-end-double-space nil)
  '(show-paren-mode t)
+ '(smex-save-file "~/.emacs.d/.smex-items")
  '(smtpmail-smtp-server "envy.zenspider.com")
  '(smtpmail-smtp-service 25)
  '(smtpmail-smtp-user "ryan")
