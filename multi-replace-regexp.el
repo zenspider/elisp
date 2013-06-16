@@ -57,7 +57,7 @@
         (cons a b)))
 
 ;;;###autoload
-(defun multi-replace-regexp (&rest list) 
+(defun multi-replace-regexp (&rest list)
   "converts all occurrances in the buffer of a to b, c to d, etc.
 Regexps are supported and the resultant values may be lambdas."
   (save-excursion

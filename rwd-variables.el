@@ -19,4 +19,3 @@
 ;;;###autoload
 (defun rwd-find-project-files ()
   (split-string (shell-command-to-string (concat "find " (list-join " " (rwd-project-dirs)) " -name \\*.rb -o -name \\*.el -o -name \\*.y -o -name Rakefile"))))
-

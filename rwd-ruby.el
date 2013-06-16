@@ -69,8 +69,8 @@ Then switch to the process buffer."
 ;;;###autoload
 (defun ruby-pp-region (p m)
   (interactive "r")
-  (shell-command-on-region p m 
-                           "ruby -rpp -e 'pp eval($stdin.read)'" 
+  (shell-command-on-region p m
+                           "ruby -rpp -e 'pp eval($stdin.read)'"
                            (current-buffer) t))
 
 ;;;###autoload
@@ -112,7 +112,7 @@ end")
    (rwd-ws "lambda *{LHS}.must_raise(RHS)") "\\1assert_raises \\3 do\n\\2\nend"
 
    ;; more complex example because we need to remove spaces for underscores
-   "it \"\\(.+\\)\" do" 
+   "it \"\\(.+\\)\" do"
    (lambda ()
      (concat "def test_"
              (replace-regexp-in-string " " "_" (match-string 1))))

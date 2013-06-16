@@ -4,7 +4,7 @@
 ;;;###autoload
 (defun he-tag-beg ()
   (let ((p
-         (save-excursion 
+         (save-excursion
            (backward-word 1)
            (point))))
     p))
@@ -45,4 +45,3 @@
   "remove extra paren when expanding line in paredit"
   (if (and paredit-mode (equal (substring str -1) ")"))
       (progn (backward-delete-char 1) (forward-char))))
-

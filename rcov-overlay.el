@@ -62,7 +62,7 @@
 
 ;; (global-set-key (kbd "C-c C-r")   'rcov-buffer)
 
-;; 
+;;
 ;; If you use hoe and autotest with the autotest/rcov plugin, all of
 ;; this works straight up. Just fire up autotest, let it do its thing,
 ;; and you can trigger rcov-buffer to see the coverage on the file.

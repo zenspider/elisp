@@ -27,13 +27,13 @@ canonicalizing, removing duplicates and filtering out all TRAMP
 paths, directories, backups, and non-existent files."
   (interactive)
   (require 'tramp)
-  (let ((rwd-tramp-method-regexp 
+  (let ((rwd-tramp-method-regexp
          (concat "^/" (regexp-opt (mapcar 'car tramp-methods) t) ":")))
     (setq file-name-history
           (head (sort (remove-duplicates
                        (mapcar 'canonical-file-path
                                (remove-if
-                                (lambda (path) 
+                                (lambda (path)
                                   (or
                                    (string-match "^/.+::" path)
                                    (string-match rwd-tramp-method-regexp path)
@@ -45,7 +45,7 @@ paths, directories, backups, and non-existent files."
                 (- history-length 100)))))
 
 ;;;###autoload
-(progn 
+(progn
   (add-hook 'find-file-hooks     'rwd-add-file-hook)
   (add-hook 'write-file-hooks    'rwd-add-file-hook)
   (add-hook 'savehist-save-hook  'canonicalize-file-name-history))
