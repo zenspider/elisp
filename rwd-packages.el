@@ -25,14 +25,16 @@
 
 (defun rwd-package-manifest (&rest packages)
   (package-initialize)
-  (mapc 'package-maybe-install packages)
+  (condition-case nil
+      (mapc 'package-maybe-install packages)
+    (error (message "Couldn't install package. No network connection?")))
   (package-cleanup packages))
 
 (rwd-package-manifest 'ag
                       'expand-region
                       'magit
                       'mark-more-like-this
-                      'mark-multiple
+                      'multiple-cursors
                       'p4
                       'paredit
                       'ruby-mode
@@ -40,9 +42,10 @@
                       'window-number
 
                       ;; experimenting
-                      'goto-last-change
-                      'smex
                       'fuel
+                      'goto-last-change
+                      'mark-multiple
+                      'smex
 
                       ;; questionable
                       'cl-lib
@@ -72,7 +75,6 @@
                       'magithub
                       'markdown-mode
                       'melpa
-                      'multiple-cursors
                       'pabbrev
                       'pcache
                       'popwin
