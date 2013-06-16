@@ -22,14 +22,6 @@
 (defalias 'my-irc 'rwd-irc-freenode2)
 
 ;;;###autoload
-(defun rwd-irc-att ()
-  (interactive)
-  (erc-ssl :server "irc.sl.attcompute.com" :port 443
-           :password "emdc2kIdHMaJ"
-           :nick "zenspider")
-  (erc-join-channel "#portal"))
-
-;;;###autoload
 (defun rwd-irc-direct ()
   (interactive)
   (erc-select :server "irc.freenode.net" :port 6667 :nick "zenspider"))
