@@ -19,6 +19,8 @@
   (global-set-key (kbd "C-c d b") 'ediff-buffers)
   (global-set-key (kbd "C-c d d") 'ediff-directories)
   (global-set-key (kbd "C-c d f") 'ediff-files)
+  (global-set-key (kbd "C-c d r") 'ediff-regions-wordwise)
+  (global-set-key (kbd "C-c d R") 'ediff-regions-linewise)
   (global-set-key (kbd "C-c d q") 'ediff-quit)
   (global-set-key (kbd "C-c e")   'erase-buffer)
   (global-set-key (kbd "C-c g")   'magit-status)
