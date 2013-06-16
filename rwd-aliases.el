@@ -58,8 +58,11 @@
   (butlast list (- (length list) n)))
 
 ;;;###autoload
+(defun identity (a) a)
+
+;;;###autoload
 (defun list-join (sep lst)
-  (mapconcat identity lst sep))
+  (mapconcat 'identity lst sep))
 
 ;;;###autoload
 (defun munge-newlines (start end from to)
