@@ -722,3 +722,19 @@ even beep.)"
      nil
      (point-min)
      (point-max))))
+
+(unless (fboundp 'defvar-local)
+  (defmacro rwd-defvar-local (var val &optional docstring)
+    "Define VAR as a buffer-local variable with default value VAL.
+Like `defvar' but additionally marks the variable as being automatically
+buffer-local wherever it is set."
+    (declare (debug defvar) (doc-string 3))
+    ;; Can't use backquote here, it's too early in the bootstrap.
+    (list 'progn (list 'defvar var val docstring)
+          (list 'make-variable-buffer-local (list 'quote var)))))
+
+(unless (fboundp 'setq-local)
+  (defmacro setq-local (var val)
+    "Set variable VAR to value VAL in current buffer."
+    ;; Can't use backquote here, it's too early in the bootstrap.
+    (list 'set (list 'make-local-variable (list 'quote var)) val)))
