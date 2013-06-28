@@ -83,6 +83,14 @@
   "Replay the savebuffer in ZNC. Not as smart as dircproxy but..."
   (erc-server-send (format "PRIVMSG *status PlayBuffer %s" (erc-default-target))))
 
+(defun erc-cmd-CLEAR ()
+  "Replay the savebuffer in ZNC. Not as smart as dircproxy but..."
+  (erc-server-send (format "znc ClearBuffer %s" (erc-default-target))))
+
+(defun erc-cmd-CLEARALL ()
+  "Replay the savebuffer in ZNC. Not as smart as dircproxy but..."
+  (erc-server-send (format "znc ClearAllChannelBuffers")))
+
 (defun erc-cmd-PROXY (line)
   "Say shit to dircproxy."
 

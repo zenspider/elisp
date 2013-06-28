@@ -18,7 +18,9 @@
 (put 'erase-buffer 'disabled nil) ; nukes stupid warning
 
 ;;;###autoload
-(set-register ?e '(file . "~/Bin/elisp/emacs.el"))
+(progn
+  (set-register ?e '(file . "~/Bin/elisp/emacs.el"))
+  (set-register ?p '(file . "~/Bin/elisp/rwd-packages.el")))
 
 ;;;###autoload
 (progn

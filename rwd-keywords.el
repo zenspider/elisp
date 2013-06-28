@@ -15,8 +15,6 @@
 
 ;;;###autoload
 (progn
-  (load "rwd-modes.el") ; HACK: for now
-
   (setq yellow-tokens
         (delete ?\s "\\<\\(F IX\\|D OC\\|R ETIRE\\|T ODO\\|W ARN\\).*\\>"))
   (setq red-tokens

@@ -667,12 +667,17 @@ even beep.)"
     (comint-truncate-buffer)
     (goto-char (point-max))))
 
-
 (defun rwd-comint-trucate-buffer ()
   (interactive)
   (add-to-list 'comint-output-filter-functions 'comint-truncate-buffer))
 
 (defalias 'rwd-comint-trucate-buffer 'rwd-shell-truncate-buffer)
+
+;;;###autoload
+(defun rwd-load-modes ()
+  (interactive)
+  (dolist (path (directory-files (concat user-init-dir "modes") t ".*el$"))
+    (load path)))
 
 ;;;###autoload
 (defun ns-get-pasteboard ()
