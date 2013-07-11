@@ -24,9 +24,9 @@
 
 ;;;###autoload
 (progn
-  ;; (require 'popwin)
-  (autoload 'popwin:original-display-buffer "popwin")
-  (setq display-buffer-function 'popwin:original-display-buffer))
+  (when (require 'popwin nil t)
+    (autoload 'popwin:original-display-buffer "popwin")
+    (setq display-buffer-function 'popwin:original-display-buffer)))
 
 ;;;###autoload
 (eval-after-load 'vc
