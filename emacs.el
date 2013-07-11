@@ -34,8 +34,10 @@
                                 'find-lisp-file-predicate-is-directory
                                 'find-lisp-default-directory-predicate)))
           (apply 'update-directory-autoloads (cons user-init-dir el-root-subdirs))
+          (rwd-recompile-init)
           (load autoload-file) ; helps rwd-recompile-init dependencies
-          (rwd-recompile-init)))
+
+	  ))
     (message "loading autoloads")
     (load autoload-file)
     (message "done loading autoloads")))
@@ -95,6 +97,7 @@
  '(ns-pop-up-frames nil)
  '(oddmuse-directory "~/Library/Caches/oddmuse")
  '(oddmuse-username "RyanDavis")
+ '(outline-minor-mode-prefix "\M-o")
  '(override-keymap-rules (quote (("\230" bury-buffer (ruby python emacs-lisp racc)) ("\214" rwd-scroll-top (shell comint)))))
  '(pastebin-default-domain "zenspider.pastebin.com")
  '(pastebin-default-subdomain "zenspider")
