@@ -13,11 +13,7 @@
   (autoload 'run-ruby                        "inf-ruby"        "doco" t)
   (autoload 'yaml-mode                       "yaml-mode"       "doco" t))
 
-(dolist (spec '(("\\.mab$"   . ruby-mode)
-                ("\\.rb$"    . ruby-mode)
-                ("Rakefile"  . ruby-mode)
-                ("\\.rake$"  . ruby-mode)
-                ("\\.rhtml$" . html-mode)
+(dolist (spec '(("\\.rhtml$" . html-mode)
                 ("\\.xhtml$" . html-mode)
                 ("\\.yml$"   . yaml-mode)
                 ("\\.gem$"   . tar-mode)))
