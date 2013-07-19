@@ -53,6 +53,14 @@
       (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)="))))
 
 ;;;###autoload
+(defun align-regexp-comment ()
+  (interactive)
+  (message "align = from %s to %s" (region-beginning) (region-end))
+  (save-excursion
+    (save-match-data
+      (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)#"))))
+
+;;;###autoload
 (defun head (list n)
   "Return a copy of list with the first n elements"
   (butlast list (- (length list) n)))
@@ -103,10 +111,10 @@
 ;;;###autoload
 (defun rwd-forward-line-6 ()
   (interactive)
-  (forward-line 6))
+  (line-move 6))
 
 (eval-when-compile
-  (require 'htmlize))
+  (require 'htmlize nil t))
 
 ;;;###autoload
 (defun rwd-htmlize-buffer-as-string ()
@@ -171,7 +179,7 @@
 ;;;###autoload
 (defun rwd-previous-line-6 ()
   (interactive)
-  (forward-line -6))
+  (line-move-1 -6))
 
 ;;;###autoload
 (defun rwd-quickref ()
@@ -626,11 +634,14 @@
   (flyspell-mode -1)
   (auto-fill-mode -1))
 
+(add-to-invisibility-spec '(rwd-hide-region . t))
+
 (defun rwd-hide-region (start-re end-re)
   (let ((start (re-search-forward start-re)))
     (when (and start (re-search-forward end-re))
       (let ((ov (make-overlay start (match-beginning 0))))
-        (overlay-put ov 'invisible 'rwd-hide-region)))))
+        (overlay-put ov 'invisible 'rwd-hide-region)
+        (overlay-put ov 'display "...")))))
 
 (defun kill-matching-lines (regexp &optional rstart rend interactive)
   "Kill lines containing matches for REGEXP.
