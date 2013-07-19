@@ -88,3 +88,14 @@
 ;;  [ \n\t]*([a-z0-9 _,\n\t]*)[ \n\t]*\\(return[ \n\t]+[a-z0-9_]+[ \n\t]*\\)?;" 2)
 ;;         ("Indexes" "^\\s-*create\\s-+index\\s-+\\(\\w+\\)" 1)
 ;;         ("Tables" "^\\s-*create\\s-+table\\s-+\\(\\w+\\)" 1)))
+
+(defvar hexcolor-keywords
+  '(("#[abcdef[:digit:]]+"
+     (0 (put-text-property
+         (match-beginning 0)
+         (match-end 0)
+         'face (list :background
+                     (match-string-no-properties 0)))))))
+
+(defun hexcolor-add-to-font-lock ()
+  (font-lock-add-keywords nil hexcolor-keywords))
