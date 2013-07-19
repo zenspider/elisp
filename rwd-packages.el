@@ -1,8 +1,6 @@
 (require 'package)
 
-(dolist (repo '(("elpa"      . "http://tromey.com/elpa/")
-                ("marmalade" . "http://marmalade-repo.org/packages/")
-                ("melpa"     . "http://melpa.milkbox.net/packages/")))
+(dolist (repo '(("melpa" . "http://melpa.milkbox.net/packages/")))
   (add-to-list 'package-archives repo))
 
 (unless (fboundp 'package-cleanup)
@@ -16,7 +14,10 @@
                     (package-version-join (package-version-for package))))
 
   (defun package-maybe-install (name)
-    (or (package-installed-p name) (package-install name)))
+    (or (package-installed-p name)
+        (progn
+          (message "Installing %s" name)
+          (package-install name))))
 
   (defun package-cleanup (packages)
     "Remove packages not explicitly declared"
@@ -25,77 +26,77 @@
 
 (defun rwd-package-manifest (&rest packages)
   (package-initialize)
-  (condition-case nil
+
+  (unless package-archive-contents      ; why do I need this? package-install has it
+    (package-refresh-contents))
+
+  (condition-case err
       (mapc 'package-maybe-install packages)
-    (error (message "Couldn't install package. No network connection?")))
+    (error (message "Couldn't install package: %s" err)))
   (package-cleanup packages))
 
 (rwd-package-manifest 'ag
                       'expand-region
+                      'htmlize
+                      'keyfreq
                       'magit
-                      'mark-more-like-this
+                      'melpa
                       'multiple-cursors
                       'p4
                       'paredit
+                      'popwin
                       'ruby-mode
                       'ssh
                       'window-number
 
-                      ;; experimenting
-                      'fuel
-                      'goto-last-change
-                      'mark-multiple
-                      'smex
+                      ;; new
 
-                      ;; questionable
-                      'cl-lib
-                      'coffee-mode
-                      'color-theme
-                      'crontab-mode
+                      ;; shitty dependencies:
+
+                      'cl-lib           ; required by magit, but not declared
+
+                      ;; trying to decide:
+
+                      'simp
+
                       'dash
-                      'eproject
-                      'ess
-                      'find-file-in-git-repo
-                      'find-file-in-project
-                      'find-things-fast
-                      'findr
-                      'flycheck
-                      'gh
-                      'haml-mode
-                      'htmlize
-                      'inf-ruby
-                      'json
-                      'keyfreq
-                      'kill-ring-search
-                      'levenshtein
-                      'light-symbol
-                      'logito
-                      'lua-mode
-                      'magit-gh-pulls
-                      'magithub
-                      'markdown-mode
-                      'melpa
-                      'pabbrev
-                      'pcache
-                      'popwin
-                      'project
-                      'project-local-variables
-                      'project-mode
-                      'prolog
-                      'robe
-                      'ruby-test-mode
-                      'ruby-tools
                       's
-                      'scala-mode
-                      'shell-here
-                      'shell-switcher
-                      'smart-tab
-                      'ssh-config-mode
-                      'yagist
-                      'yaml-mode
-                      'yari
-                      'yasnippet
+
+                      ;; questionable:
+
+                      ;; 'coffee-mode
+                      ;; 'color-theme
+                      ;; 'crontab-mode
+                      ;; 'ess
+                      ;; 'flycheck
+                      ;; 'haml-mode
+                      ;; 'inf-ruby
+                      ;; 'json
+                      ;; 'kill-ring-search
+                      ;; 'levenshtein
+                      ;; 'light-symbol
+                      ;; 'logito
+                      ;; 'lua-mode
+                      ;; 'magithub
+                      ;; 'markdown-mode
+                      ;; 'pabbrev
+                      ;; 'pcache
+                      ;; 'prolog
+                      ;; 'robe
+                      ;; 'ruby-test-mode
+                      ;; 'ruby-tools
+                      ;; 'scala-mode
+                      ;; 'shell-here
+                      ;; 'shell-switcher
+                      ;; 'smart-tab
+                      ;; 'ssh-config-mode
+                      ;; 'yagist
+                      ;; 'yaml-mode
+                      ;; 'yari
+                      ;; 'yasnippet
                       )
+
+;; (package-refresh-contents)
 
 ;; Local variables:
 ;; byte-compile-warnings: (not cl-functions)
