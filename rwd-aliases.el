@@ -754,3 +754,10 @@ buffer-local wherever it is set."
     "Set variable VAR to value VAL in current buffer."
     ;; Can't use backquote here, it's too early in the bootstrap.
     (list 'set (list 'make-local-variable (list 'quote var)) val)))
+
+(fmakunbound 'kbd)
+(defun kbd (keys)
+  "Convert KEYS to the internal Emacs key representation.
+KEYS should be a string constant in the format used for
+saving keyboard macros (see `edmacro-mode')."
+  (read-kbd-macro keys))
