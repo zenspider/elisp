@@ -1,100 +1,71 @@
 (require 'package)
+(add-to-list 'load-path (expand-file-name "~/Work/git/package+") t)
+(require 'package+)
 
 (dolist (repo '(("melpa" . "http://melpa.milkbox.net/packages/")))
   (add-to-list 'package-archives repo))
 
-(unless (fboundp 'package-cleanup)
-  (require 'cl)
+(package-manifest 'ag
+                  'expand-region
+                  'htmlize
+                  'keyfreq
+                  'magit
+                  'melpa
+                  'multiple-cursors
+                  'p4
+                  'paredit
+                  'popwin
+                  'ruby-mode
+                  'ssh
+                  'window-number
+                  'kill-ring-search
 
-  (defun package-version-for (package)
-    (package-desc-vers (cdr (assoc package package-alist))))
+                  ;; new
 
-  (defun package-delete-by-name (package)
-    (package-delete (symbol-name package)
-                    (package-version-join (package-version-for package))))
+                  'yagist
 
-  (defun package-maybe-install (name)
-    (or (package-installed-p name)
-        (progn
-          (message "Installing %s" name)
-          (package-install name))))
+                  ;; shitty dependencies:
 
-  (defun package-cleanup (packages)
-    "Remove packages not explicitly declared"
-    (let ((removes (set-difference (mapcar 'car package-alist) packages)))
-      (mapc 'package-delete-by-name removes))))
+                  'cl-lib           ; required by magit, but not declared
 
-(defun rwd-package-manifest (&rest packages)
-  (package-initialize)
+                  ;; trying to decide:
 
-  (unless package-archive-contents      ; why do I need this? package-install has it
-    (package-refresh-contents))
+                  'simp
 
-  (condition-case err
-      (mapc 'package-maybe-install packages)
-    (error (message "Couldn't install package: %s" err)))
-  (package-cleanup packages))
+                  'dash
+                  's
 
-(rwd-package-manifest 'ag
-                      'expand-region
-                      'htmlize
-                      'keyfreq
-                      'magit
-                      'melpa
-                      'multiple-cursors
-                      'p4
-                      'paredit
-                      'popwin
-                      'ruby-mode
-                      'ssh
-                      'window-number
+                  ;; questionable:
 
-                      ;; new
-
-                      ;; shitty dependencies:
-
-                      'cl-lib           ; required by magit, but not declared
-
-                      ;; trying to decide:
-
-                      'simp
-
-                      'dash
-                      's
-
-                      ;; questionable:
-
-                      ;; 'coffee-mode
-                      ;; 'color-theme
-                      ;; 'crontab-mode
-                      ;; 'ess
-                      ;; 'flycheck
-                      ;; 'haml-mode
-                      ;; 'inf-ruby
-                      ;; 'json
-                      ;; 'kill-ring-search
-                      ;; 'levenshtein
-                      ;; 'light-symbol
-                      ;; 'logito
-                      ;; 'lua-mode
-                      ;; 'magithub
-                      ;; 'markdown-mode
-                      ;; 'pabbrev
-                      ;; 'pcache
-                      ;; 'prolog
-                      ;; 'robe
-                      ;; 'ruby-test-mode
-                      ;; 'ruby-tools
-                      ;; 'scala-mode
-                      ;; 'shell-here
-                      ;; 'shell-switcher
-                      ;; 'smart-tab
-                      ;; 'ssh-config-mode
-                      ;; 'yagist
-                      ;; 'yaml-mode
-                      ;; 'yari
-                      ;; 'yasnippet
-                      )
+                  ;; 'coffee-mode
+                  ;; 'color-theme
+                  ;; 'crontab-mode
+                  ;; 'ess
+                  ;; 'flycheck
+                  ;; 'haml-mode
+                  ;; 'inf-ruby
+                  ;; 'json
+                  ;; 'levenshtein
+                  ;; 'light-symbol
+                  ;; 'logito
+                  ;; 'lua-mode
+                  ;; 'magithub
+                  ;; 'markdown-mode
+                  ;; 'pabbrev
+                  ;; 'pcache
+                  ;; 'prolog
+                  ;; 'robe
+                  ;; 'ruby-test-mode
+                  ;; 'ruby-tools
+                  ;; 'scala-mode
+                  ;; 'shell-here
+                  ;; 'shell-switcher
+                  ;; 'smart-tab
+                  ;; 'ssh-config-mode
+                  ;; 'yaml-mode
+                  ;; 'yari
+                  ;; 'yasnippet
+                  )
 
 ;; (package-refresh-contents)
 
