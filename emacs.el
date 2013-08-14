@@ -6,6 +6,7 @@
 
 (add-to-list 'load-path user-init-dir t)
 (add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
+(add-to-list 'load-path (concat user-init-dir "third-party/outline-magic") t) ; TODO: remove
 
 (load (concat "misc/" (symbol-name system-type)) t)                ;; misc/darwin
 (load (concat "misc/" (car (split-string (system-name) "\\."))) t) ;; misc/greed
@@ -37,7 +38,7 @@
           (rwd-recompile-init)
           (load autoload-file) ; helps rwd-recompile-init dependencies
 
-	  ))
+          ))
     (message "loading autoloads")
     (load autoload-file)
     (message "done loading autoloads")))
