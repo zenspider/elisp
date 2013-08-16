@@ -24,10 +24,6 @@
 
                   'yagist
 
-                  ;; shitty dependencies:
-
-                  'cl-lib           ; required by magit, but not declared
-
                   ;; trying to decide:
 
                   'simp
