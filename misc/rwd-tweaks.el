@@ -19,11 +19,6 @@
 
 ;;;###autoload
 (progn
-  (set-register ?e '(file . "~/Bin/elisp/emacs.el"))
-  (set-register ?p '(file . "~/Bin/elisp/rwd-packages.el")))
-
-;;;###autoload
-(progn
   (when (require 'popwin nil t)
     (autoload 'popwin:original-display-buffer "popwin")
     (setq display-buffer-function 'popwin:original-display-buffer)))
