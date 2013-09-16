@@ -320,6 +320,15 @@
     buffer-name))
 
 ;;;###autoload
+(defun rwd-utf8 ()
+  "Change the current buffer to Latin 1 with Unix line-ends."
+  (interactive)
+  (set-buffer-file-coding-system 'utf-8-unix t))
+
+(defalias 'rwd-fuck-unicode 'rwd-utf8)
+(defalias 'rwd-unicode      'rwd-utf8)
+
+;;;###autoload
 (defun rwd-shell ()
   "Create a shell buffer that is properly named (shell-<N>)"
   (interactive)
