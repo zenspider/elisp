@@ -125,6 +125,7 @@
  '(sql-sqlite-program "sqlite3")
  '(tab-width 8)
  '(tags-case-fold-search nil)
+ '(tags-revert-without-query t)
  '(tool-bar-mode nil nil (tool-bar))
  '(tooltip-mode nil)
  '(tramp-copy-size-limit 1024)
