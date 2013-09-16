@@ -17,6 +17,7 @@
   (global-set-key (kbd "C-c M-q") 'unfill-paragraph)
   (global-set-key (kbd "C-c O")   'rwd-occur-n-buffer)
   (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
+  (global-set-key (kbd "C-c a")   'align-cols)
   (global-set-key (kbd "C-c c")   'rwd-clean)
   (global-set-key (kbd "C-c d R") 'ediff-regions-linewise)
   (global-set-key (kbd "C-c d b") 'ediff-buffers)
