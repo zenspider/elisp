@@ -23,6 +23,8 @@
                   ;; new
 
                   'yagist
+                  ;; 'geiser
+                  ;; 'quack ; not in packages?!?
 
                   ;; trying to decide:
 
@@ -30,6 +32,7 @@
 
                   'dash
                   's
+                  'litable
 
                   ;; questionable:
 
