@@ -1,5 +1,5 @@
 (require 'paredit)
-(require 'cmuscheme)
+;; (require 'cmuscheme)
 ;; (require 'scheme-complete)
 ;; (require 'cluck)
 
