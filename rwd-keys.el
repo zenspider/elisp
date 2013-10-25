@@ -49,6 +49,7 @@
   (global-set-key (kbd "C-M-SPC") 'er/expand-region)
   (global-set-key (kbd "M-[")     'outdent-rigidly-2)
   (global-set-key (kbd "M-]")     'indent-rigidly-2)
+  (global-set-key (kbd "M-j")     'rwd-join-lines)
   (global-set-key (kbd "M-s")     'fixup-whitespace)
 
   ;; Experiment with goto-last-change

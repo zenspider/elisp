@@ -136,6 +136,12 @@
       (insert "\n"))))
 
 ;;;###autoload
+(defun rwd-join-lines ()
+  "Join lines. Duh."
+  (interactive)
+  (join-line -1))
+
+;;;###autoload
 (defun rwd-lappy ()
   (interactive)
   (rwd-resize-full)
