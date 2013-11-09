@@ -1,5 +1,12 @@
 (require 'autoload)                     ; = ;;;###autoload
 
+(fmakunbound 'kbd)			; HACK for emacs <24.4
+(defun kbd (keys)
+    "Convert KEYS to the internal Emacs key representation.
+KEYS should be a string constant in the format used for
+saving keyboard macros (see `edmacro-mode')."
+      (read-kbd-macro keys))
+
 (defvar user-init-dir (file-name-directory
                        (or (file-symlink-p user-init-file) user-init-file))
   "Root directory of emacs.el, after following symlinks, etc.")
