@@ -135,9 +135,10 @@
 ;;;###autoload
 (progn
   (when (require 'multiple-cursors nil t)
-    (global-set-key (kbd "C-c C-c a") 'mc/edit-beginnings-of-lines)
     (global-set-key (kbd "C-c C-c e") 'mc/edit-ends-of-lines)
     (global-set-key (kbd "C-c C-c l") 'mc/edit-lines)
     (global-set-key (kbd "C-c C-c =") 'mc/mark-all-like-this)
+    (global-set-key (kbd "C-c C-c a") 'mc/mark-all-in-region)
     (global-set-key (kbd "C-c C-c <") 'mc/mark-previous-like-this)
+    (global-set-key (kbd "C-c C-c n") 'mc/mark-next-like-this)
     (global-set-key (kbd "C-c C-c r") 'set-rectangular-region-anchor)))
