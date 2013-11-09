@@ -6,26 +6,9 @@
 (paredit-mode +1)
 ;; (define-key scheme-mode-map "\t" 'scheme-complete-or-indent)
 
-(make-local-variable 'eldoc-documentation-function)
-(setq eldoc-documentation-function 'scheme-get-current-symbol-info)
-(eldoc-mode)
-
-(mapc (lambda (l)
-        (let ((name (car l))
-              (val  (cadr l)))
-          (unless (get name 'scheme-indent-function)
-            (put name 'scheme-indent-function val))))
-
-      '((test-group 1)
-        (let/cc     1)
-        (λg         1)
-        (λf         1)
-        (λ          1)
-        (run        1)
-        (run*       1)
-        (run1       1)
-        (fresh      1)
-        (module     0)))
+;; (make-local-variable 'eldoc-documentation-function)
+;; (setq eldoc-documentation-function 'scheme-get-current-symbol-info)
+;; (eldoc-mode)
 
 ;; (symbol-plist 'λ) ; check with this
 
