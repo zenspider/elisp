@@ -171,6 +171,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Dark Blue"))))
  '(font-lock-constant-face ((((class color) (min-colors 88) (background light)) (:foreground "SlateBlue4"))))
  '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "Forest Green"))))
+ '(magit-item-highlight ((t (:background "#eee"))))
  '(whitespace-line ((((background light)) (:background "gray80")) (((type tty)) (:background "gray20")) (t (:background "red")))))
 
 (put 'narrow-to-region 'disabled nil)
