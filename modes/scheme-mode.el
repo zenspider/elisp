@@ -40,7 +40,7 @@
                        splicing-syntax-parameterize for for/list
                        for/hash for/hasheq for/hasheqv
                        for/and for/or for/lists for/first
-                       for/last for/fold for/vector for/flvector
+                       for/last for/vector for/flvector
                        for/sum for/product for/set for* for*/list
                        for*/hash for*/hasheq for*/hasheqv
                        for*/and for*/or for*/lists for*/first
@@ -48,7 +48,7 @@
                        for*/flvector for*/sum for*/product
                        for*/set for: for/list: for/hash:
                        for/hasheq: for/hasheqv: for/and: for/or:
-                       for/lists: for/first: for/last: for/fold:
+                       for/lists: for/first: for/last:
                        for/vector: for/flvector: for/sum:
                        for/product: for/set: for*: for*/list:
                        for*/hash: for*/hasheq: for*/hasheqv:
@@ -72,11 +72,13 @@
                        call-with-input-file*
                        with-input-from-file with-input-from-port
                        call-with-output-file with-output-to-file
-                       with-output-to-port for-all type-case)))
+                       with-output-to-port for-all type-case))
+      (specials '(for/fold for/fold:)))
 
   (mapc (lambda (name) (put name 'scheme-indent-function 'defun)) defines)
-  (mapc (lambda (name) (put name 'scheme-indent-function 'defun)) begins)
-  (mapc (lambda (name) (put name 'scheme-indent-function 1))      lambdas))
+  (mapc (lambda (name) (put name 'scheme-indent-function 0))      begins)
+  (mapc (lambda (name) (put name 'scheme-indent-function 1))      lambdas)
+  (mapc (lambda (name) (put name 'scheme-indent-function 2))      specials))
 
 ;; (mapc (lambda (l)
 ;;         (let ((name (car l))
