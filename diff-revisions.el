@@ -11,6 +11,9 @@
 ;; diff-revisions finds all time machine backups for a given buffer
 ;; displays the rolling diffs in a single diff buffer.
 ;;
+;; This was originally inspired by:
+;;     http://www.emacswiki.org/emacs/ediff-trees.el
+;;
 ;; NOTE: this currently ONLY works with local time machine backups.
 ;; I'm sure it has problems and limitations, but I got it working for
 ;; my initial need and decided it should be out in the wild.
@@ -19,6 +22,8 @@
 
 (require 'dash)
 (require 'f)
+(require 'ediff)
+(require 'diff)
 
 (defun file-name-all-versions (buffer)
   (with-current-buffer buffer
@@ -44,10 +49,14 @@
   (-remove (lambda (pair) (ediff-same-file-contents (car pair) (cdr pair)))
            (each-cons pairs)))
 
+(defun diff-revisions-sort-files (files)
+  (sort files (lambda (a b) (string< (car a) (car b)))))
+
+;;;###autoload
 (defun diff-revisions (buffer)
   (interactive "bBuffer to compare:")
   (let* ((files   (file-name-all-versions buffer))
-         (changes (ediff-trees-sort-files
+         (changes (diff-revisions-sort-files
                    (ediff-multifile-collect-changed-files files)))
          (buf     (get-buffer-create "**Diff**"))
          (diffbuf (get-buffer-create "*Diff*")))
@@ -64,7 +73,7 @@
               (with-current-buffer diffbuf
                 (let ((inhibit-read-only t))
                   (goto-char (point-max))
-                  (insert-buffer buf)))))
+                  (insert-buffer-substring buf)))))
           changes)))
 
 (provide 'diff-revisions)
