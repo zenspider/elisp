@@ -9,7 +9,10 @@
                   'expand-region
                   'htmlize
                   'keyfreq
+                  'kill-ring-search
+                  'litable
                   'magit
+                  'magit-log-edit
                   'melpa
                   'multiple-cursors
                   'p4
@@ -17,22 +20,23 @@
                   'popwin
                   'ruby-mode
                   'ssh
+                  'w3m
                   'window-number
-                  'kill-ring-search
 
                   ;; new
 
                   'yagist
-                  ;; 'geiser
+                  'geiser
                   ;; 'quack ; not in packages?!?
 
                   ;; trying to decide:
 
                   'simp
-
                   'dash
                   's
-                  'litable
+                  'f
+                  'phi-search
+                  'phi-search-mc
 
                   ;; questionable:
 

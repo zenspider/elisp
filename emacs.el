@@ -1,6 +1,6 @@
 (require 'autoload)                     ; = ;;;###autoload
 
-(fmakunbound 'kbd)			; HACK for emacs <24.4
+(fmakunbound 'kbd)                      ; HACK for emacs <24.4
 (defun kbd (keys)
     "Convert KEYS to the internal Emacs key representation.
 KEYS should be a string constant in the format used for
@@ -110,6 +110,8 @@ saving keyboard macros (see `edmacro-mode')."
  '(pastebin-default-domain "zenspider.pastebin.com")
  '(pastebin-default-subdomain "zenspider")
  '(pastebin-domain-versions (quote (("pastebin.com" "/api_public.php") ("zenspider.pastebin.com" "/api_public.php") ("pastebin.example.com" "/pastebin.php"))))
+ '(quack-default-program "racket")
+ '(quack-pltcollect-dirs (quote ("/MyApplications/dev/lisp/Racket/collects/")))
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values (quote ((encoding . utf-8) (backup-inhibited . t) (racc-token-length-max . 14))))
  '(save-interprogram-paste-before-kill t)
