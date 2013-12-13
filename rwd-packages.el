@@ -12,6 +12,7 @@
                   'kill-ring-search
                   'litable
                   'magit
+                  'magit-bisect
                   'magit-log-edit
                   'melpa
                   'multiple-cursors
