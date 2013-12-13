@@ -4,6 +4,8 @@
   ;; Fixes a tweaky thing on 10.8
   (ns-set-resource nil "ApplePressAndHoldEnabled" "NO")
 
+  (setenv "LANG" "en_US.UTF-8") ; comes from terminal.app, not bash itself
+
   ;; resets cmd-~ on emacs 23 and up
   (unless (version< emacs-version "23")
     (global-set-key (kbd "M-`") 'other-frame)))
