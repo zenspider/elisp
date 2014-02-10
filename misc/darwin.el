@@ -6,6 +6,8 @@
 
   (setenv "LANG" "en_US.UTF-8") ; comes from terminal.app, not bash itself
 
+  (setq ns-function-modifier 'hyper) ; set Mac's Fn key to type Hyper
+
   ;; resets cmd-~ on emacs 23 and up
   (unless (version< emacs-version "23")
     (global-set-key (kbd "M-`") 'other-frame)))
