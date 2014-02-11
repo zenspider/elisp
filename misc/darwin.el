@@ -6,6 +6,12 @@
 
   (setenv "LANG" "en_US.UTF-8") ; comes from terminal.app, not bash itself
 
+  ;; Helloooo overkill.
+  (set-language-environment    'utf-8)
+  (set-default-coding-systems  'utf-8)
+  (set-locale-environment      "en_US.UTF-8")
+  (prefer-coding-system        'utf-8)
+
   (setq ns-function-modifier 'hyper) ; set Mac's Fn key to type Hyper
 
   ;; resets cmd-~ on emacs 23 and up
