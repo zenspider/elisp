@@ -12,7 +12,6 @@
                   'kill-ring-search
                   'litable
                   'magit
-                  'magit-bisect
                   'magit-log-edit
                   'melpa
                   'multiple-cursors
@@ -28,6 +27,7 @@
 
                   'yagist
                   'geiser
+                  'racket-mode
                   ;; 'quack ; not in packages?!?
 
                   ;; trying to decide:
@@ -38,6 +38,7 @@
                   'f
                   'phi-search
                   'phi-search-mc
+                  'github-browse-file
 
                   ;; questionable:
 
