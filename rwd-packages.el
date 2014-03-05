@@ -6,7 +6,11 @@
   (add-to-list 'package-archives repo))
 
 (package-manifest 'ag
+                  'dash
                   'expand-region
+                  'f
+                  'geiser
+                  'github-browse-file
                   'htmlize
                   'keyfreq
                   'kill-ring-search
@@ -17,62 +21,20 @@
                   'multiple-cursors
                   'p4
                   'paredit
+                  'phi-search
+                  'phi-search-mc
                   'popwin
+                  'racket-mode
                   'ruby-mode
+                  's
                   'ssh
                   'w3m
                   'window-number
-
-                  ;; new
-
                   'yagist
-                  'geiser
-                  'racket-mode
-                  ;; 'quack ; not in packages?!?
-
-                  ;; trying to decide:
-
-                  'simp
-                  'dash
-                  's
-                  'f
-                  'phi-search
-                  'phi-search-mc
-                  'github-browse-file
-
-                  ;; questionable:
-
-                  ;; 'coffee-mode
-                  ;; 'color-theme
-                  ;; 'crontab-mode
-                  ;; 'ess
-                  ;; 'flycheck
-                  ;; 'haml-mode
-                  ;; 'inf-ruby
-                  ;; 'json
-                  ;; 'levenshtein
-                  ;; 'light-symbol
-                  ;; 'logito
-                  ;; 'lua-mode
-                  ;; 'magithub
-                  ;; 'markdown-mode
-                  ;; 'pabbrev
-                  ;; 'pcache
-                  ;; 'prolog
-                  ;; 'robe
-                  ;; 'ruby-test-mode
-                  ;; 'ruby-tools
-                  ;; 'scala-mode
-                  ;; 'shell-here
-                  ;; 'shell-switcher
-                  ;; 'smart-tab
-                  ;; 'ssh-config-mode
-                  ;; 'yaml-mode
-                  ;; 'yari
-                  ;; 'yasnippet
                   )
 
 ;; (package-refresh-contents)
+;; (rwd-recompile-init)
 
 ;; Local variables:
 ;; byte-compile-warnings: (not cl-functions)
