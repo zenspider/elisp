@@ -52,16 +52,10 @@
   (global-set-key (kbd "M-]")     'indent-rigidly-2)
   (global-set-key (kbd "M-j")     'rwd-join-lines)
   (global-set-key (kbd "M-s")     'fixup-whitespace)
-
-  ;; Experiment with goto-last-change
-  (global-set-key (kbd "C-x C-/") 'goto-last-change)
+  (global-set-key (kbd "M-S")     'rwd-fixup-whitespace)
 
   (define-key read-expression-map [(tab)] 'hippie-expand)
   (define-key read-expression-map [(shift tab)] 'unexpand)
-
-;; TODO:
-;; (global-set-key (kbd "C-M-s")
-;;   (lambda () (interactive) (fixup-whitespace) (delete-blank-lines)))
 
   ;; (require 'em-glob)
   ;; (setq tags-table-list

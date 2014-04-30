@@ -109,6 +109,13 @@
   (dired (concat "~/Sites/emacs/static/")))
 
 ;;;###autoload
+(defun rwd-fixup-whitespace ()
+  (interactive)
+  (delete-horizontal-space)
+  (and (looking-at "$")
+       (delete-blank-lines)))
+
+;;;###autoload
 (defun rwd-forward-line-6 ()
   (interactive)
   (line-move 6))
