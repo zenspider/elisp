@@ -116,6 +116,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(safe-local-variable-values (quote ((encoding . utf-8) (backup-inhibited . t) (racc-token-length-max . 14))))
  '(save-interprogram-paste-before-kill t)
  '(save-place t nil (saveplace))
+ '(save-place-file "~/.emacs.d/emacs-places")
  '(save-place-limit 100)
  '(save-place-save-skipped nil)
  '(save-place-skip-check-regexp "\\`/\\(cdrom\\|floppy\\|mnt\\|\\([^@/:]*@\\)?[^@/:]*[^@/:.]:\\)")
@@ -174,6 +175,8 @@ saving keyboard macros (see `edmacro-mode')."
  '(font-lock-constant-face ((((class color) (min-colors 88) (background light)) (:foreground "SlateBlue4"))))
  '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "Forest Green"))))
  '(magit-item-highlight ((t (:background "#eee"))))
+ '(mode-line ((t (:background "grey75" :foreground "black"))))
+ '(mode-line-inactive ((t (:inherit mode-line :background "grey90" :foreground "grey20" :weight light))))
  '(whitespace-line ((((background light)) (:background "gray80")) (((type tty)) (:background "gray20")) (t (:background "red")))))
 
 (put 'narrow-to-region 'disabled nil)
