@@ -44,4 +44,9 @@ This function is intended to be used as a value of `ring-bell-function'."
   (message ""))
 
 ;;;###autoload
+(defun rwd-fix-bell ()
+  (interactive)
+  (setq ring-bell-function 'mode-line-bell))
+
+;;;###autoload
 (setq ring-bell-function 'mode-line-bell)
