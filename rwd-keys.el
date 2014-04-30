@@ -42,6 +42,7 @@
   (global-set-key (kbd "C-x C-b") 'bs-show)
   (global-set-key (kbd "C-x C-p") 'find-file-at-point)
   (global-set-key (kbd "C-x C-t") 'toggle-buffer)
+  (global-set-key (kbd "C-x D")   'dired-open-alias) ; very common typo
   (global-set-key (kbd "C-x f")   'find-file) ; very common typo
   (global-set-key (kbd "C-x r t") 'inline-string-rectangle)
   (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point)
