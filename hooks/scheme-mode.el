@@ -1,5 +1,4 @@
 (require 'paredit)
-(require 'quack)
 
 (paredit-mode +1)
 
