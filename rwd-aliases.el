@@ -14,7 +14,7 @@
   (ring-insert find-tag-marker-ring (point-marker)))
 
 ;;;###autoload
-(progn
+(unless (fboundp 'ns-is-fullscreen)
   (setq ns-is-fullscreen nil)
 
   (defadvice ns-toggle-fullscreen (before record-state compile activate)
@@ -165,9 +165,15 @@
   (munge-newlines start end "\\\\n" "\n"))
 
 ;;;###autoload
+(unless (fboundp 'package-desc-vers)
+  (defsubst package-desc-vers (desc)
+    "Extract version from a package description vector."
+    (aref desc 0)))
+
+;;;###autoload
 (defun rwd-ns-fullscreen ()
   (interactive)
-  (or ns-is-fullscreen (ns-toggle-fullscreen)))
+  (toggle-frame-fullscreen))
 
 ;;;###autoload
 (defun rwd-occur (opt)
@@ -640,7 +646,7 @@
 (defun package-version (package)
   (let ((pkg-desc (assq package package-alist)))
     (if pkg-desc
-        (package-version-join (package-desc-vers (cdr pkg-desc))))))
+        (package-version-join (package-desc-version (cdr pkg-desc))))))
 
 (defun rwd-uninstall-package (name)
   (and (package-installed-p name)
@@ -776,3 +782,14 @@ buffer-local wherever it is set."
     "Set variable VAR to value VAL in current buffer."
     ;; Can't use backquote here, it's too early in the bootstrap.
     (list 'set (list 'make-local-variable (list 'quote var)) val)))
+
+;;;###autoload
+(defun narrow-to-region-indirect (start end)
+  "Restrict editing in this buffer to the current region, indirectly."
+  ;; from http://demonastery.org/2013/04/emacs-narrow-to-region-indirect/
+  (interactive "r")
+  (deactivate-mark)
+  (let ((buf (clone-indirect-buffer nil nil)))
+    (with-current-buffer buf
+      (narrow-to-region start end))
+      (switch-to-buffer buf)))
