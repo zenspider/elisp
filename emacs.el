@@ -7,8 +7,13 @@ KEYS should be a string constant in the format used for
 saving keyboard macros (see `edmacro-mode')."
       (read-kbd-macro keys))
 
+(unless user-init-file                  ; if running w/: -q --debug-init
+  (setq user-init-file (expand-file-name "~/.emacs.el")))
+
 (defvar user-init-dir (file-name-directory
-                       (or (file-symlink-p user-init-file) user-init-file))
+                       (or (file-symlink-p user-init-file)
+                           (or user-init-file
+                               (expand-file-name "~/.emacs.el"))))
   "Root directory of emacs.el, after following symlinks, etc.")
 
 (add-to-list 'load-path user-init-dir t)
@@ -95,6 +100,8 @@ saving keyboard macros (see `edmacro-mode')."
  '(indicate-empty-lines t)
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
+ '(ispell-dictionary "english")
+ '(ispell-extra-args (quote ("\"--sug-mode=fast\"")))
  '(line-move-visual nil)
  '(lua-indent-level 2)
  '(magit-log-cutoff-length 250)
@@ -103,6 +110,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(ns-alternate-modifier (quote none))
  '(ns-command-modifier (quote meta))
  '(ns-pop-up-frames nil)
+ '(ns-use-native-fullscreen nil)
  '(oddmuse-directory "~/Library/Caches/oddmuse")
  '(oddmuse-username "RyanDavis")
  '(outline-minor-mode-prefix "\M-o")
