@@ -22,3 +22,7 @@
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
 (setq ruby-program-name "/usr/bin/irb")
+
+(defun ruby-find-file (s)
+  (interactive "sgem which ")
+  (find-file (substring (shell-command-to-string (concat "gem which " s)) 0 -1)))
