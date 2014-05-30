@@ -32,6 +32,14 @@
                   'w3m
                   'window-number
                   'yagist
+
+                  ;; trying out:
+
+                  'outline-magic
+                  'wgrep
+                  'wgrep-ag
+                  'js2-mode
+
                   )
 
 ;; (package-refresh-contents)
