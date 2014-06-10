@@ -40,6 +40,10 @@
                   'wgrep-ag
                   'js2-mode
 
+                  'company
+                  'find-file-in-project
+                  'swift-mode ;; not available yet
+
                   )
 
 ;; (package-refresh-contents)
