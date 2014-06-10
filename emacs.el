@@ -104,6 +104,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(ispell-extra-args (quote ("\"--sug-mode=fast\"")))
  '(line-move-visual nil)
  '(lua-indent-level 2)
+ '(magit-emacsclient-executable "/usr/local/bin/emacsclient")
  '(magit-log-cutoff-length 250)
  '(mediawiki-site-alist (quote (("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "Main Page") ("devchix" "http://www.wiki.devchix.com/" "zenspider" "" "Main Page"))))
  '(mediawiki-site-default "devchix")
