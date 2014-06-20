@@ -55,6 +55,11 @@
   (global-set-key (kbd "M-s")     'fixup-whitespace)
   (global-set-key (kbd "M-S")     'rwd-fixup-whitespace)
 
+  ;; experimenting with hyperspace :D
+  (global-set-key (kbd "H-SPC") 'point-to-register)
+  (global-set-key (kbd "H-j")   'jump-to-register)
+  (global-set-key (kbd "H-b")   'bury-buffer)
+
   (define-key read-expression-map [(tab)] 'hippie-expand)
   (define-key read-expression-map [(shift tab)] 'unexpand)
 
