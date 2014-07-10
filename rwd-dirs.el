@@ -7,7 +7,7 @@
   (mapcar (lambda (e) (car e)) *dired-dirs*))
 
 ;;;###autoload
-(defun dired-open-alias (&optional alias)
+(defun rwd-dired-open-alias (&optional alias)
   (interactive)
   (unless alias
     (setq alias
