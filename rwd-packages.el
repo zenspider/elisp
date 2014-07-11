@@ -7,7 +7,7 @@
 
 (package-manifest 'ag
                   'dash
-                  'ess
+                  ;; 'ess ; only when needed
                   'expand-region
                   'f
                   'geiser
