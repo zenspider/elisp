@@ -1,17 +1,13 @@
-;;; autotest.el - ZenTest's autotest integration with emacs.
+;;; autotest.el --- ZenTest's autotest integration with emacs.
 
 ;; Copyright (C) 2006-2007 by Ryan Davis
 
 ;; Author: Ryan Davis <ryand-ruby@zenspider.com>
-;; Version 1.0.1
+;; Version 1.1.0
 ;; Keywords: testing, ruby, convenience
 ;; Created: 2006-11-17
 ;; Compatibility: Emacs 24, 23, 22, 21?
-;; URL(en): http://seattlerb.rubyforge.org/
-;; by Ryan Davis - ryand-ruby@zenspider.com
-
-;;; Posted using:
-;; (emacswiki-post "autotest.el")
+;; URL: https://github.com/zenspider/elisp/blob/master/autotest.el
 
 ;;; The MIT License:
 
@@ -36,11 +32,17 @@
 ;; TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 ;; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+;;; Posted using:
+
+;; (emacswiki-post "autotest.el")
+
 ;;; Commentary:
 
 ;; Sets up an autotest buffer and provides convenience methods.
 
 ;;; History:
+
+;; 1.1.0 - 2014-07-13 - Split out autotest-dot from autotest.
 ;; 1.0.1 - 2012-10-10 - Tweak for emacs 24. Starts in other window again.
 ;; 1.0.0 - 2008-09-25 - Added an extra regexp for rspec/mspec. 1.0.0 release.
 ;; 1.0b4 - 2007-09-25 - Added autotest-use-ui and autotest-command vars.
@@ -49,6 +51,8 @@
 ;; 1.0b1 - 2007-03-06 - initial release
 
 (require 'shell)
+
+;;; Code:
 
 (defcustom autotest-use-ui nil
   "Should we use test-unit's UI?"
@@ -86,39 +90,14 @@
     (comint-send-string buffer (concat autotest-command "\n"))))
 
 (defun autotest-switch ()
-  "Switch back and forth between autotest and the previous buffer"
+  "Switch back and forth between autotest and the previous buffer."
   (interactive)
   (if (equal "*autotest*" (buffer-name))
       (switch-to-buffer (other-buffer))
     (switch-to-buffer "*autotest*")))
 
-(eval-when-compile
-  (require 'unit-test nil t))
-
-(if (and autotest-use-ui (require 'unit-test nil t))
-    (progn
-      (message "starting emacs server for autotest")
-      (setq unit-test-colours (acons "gray" "#999999" unit-test-colours))
-      (setq unit-test-colours (acons "dark-gray" "#666666" unit-test-colours))
-      (setq unit-test-running-xpm (unit-test-dot "gray"))
-      (server-start)
-      (defun autotest-update (status)
-        "Updates all buffer's modeline with the current test status."
-        (interactive "S")
-        (let ((autotest-map (make-sparse-keymap)))
-          (define-key autotest-map [mode-line mouse-1] 'autotest-switch)
-          (mapcar (lambda (buffer)
-                    (with-current-buffer buffer
-                      (if (eq status 'quit)
-                          (show-test-none)
-                        (progn
-                          (show-test-status status)
-                          (put-text-property
-                           0 3
-                           'keymap autotest-map
-                           (car mode-line-buffer-identification))))))
-                  (remove-if 'minibufferp (buffer-list))))
-        status))
-  (message "unit-test not found, not starting autotest/emacs integration"))
+(provide 'autotest)
 
 (provide 'autotest)
+
+;;; autotest.el ends here
