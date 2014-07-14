@@ -98,6 +98,4 @@
 
 (provide 'autotest)
 
-(provide 'autotest)
-
 ;;; autotest.el ends here
