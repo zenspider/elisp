@@ -47,6 +47,11 @@
 (eval-when-compile
   (require 'unit-test nil t))
 
+(defcustom autotest-use-ui nil
+  "Should we use test-unit's UI?"
+  :group 'autotest
+  :type '(boolean))
+
 (if (and autotest-use-ui (require 'unit-test nil t))
     (progn
       (message "starting emacs server for autotest")

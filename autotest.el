@@ -54,11 +54,6 @@
 
 ;;; Code:
 
-(defcustom autotest-use-ui nil
-  "Should we use test-unit's UI?"
-  :group 'autotest
-  :type '(boolean))
-
 (defcustom autotest-command "autotest"
   "Command name to use to execute autotest."
   :group 'autotest
