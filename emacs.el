@@ -79,6 +79,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(dired-recursive-deletes (quote top))
  '(ediff-split-window-function (lambda (x) (if (> (frame-width) 150) (quote split-window-horizontally) (quote split-window-vertically))))
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
+ '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
  '(enh-ruby-check-syntax nil)
  '(erc-fools (quote ("yorickpeterse" "ianm_")))

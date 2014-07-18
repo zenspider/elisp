@@ -43,6 +43,7 @@
                   'swift-mode
 
                   'git-timemachine
+                  'elscreen
                   )
 
 ;; (package-refresh-contents)
