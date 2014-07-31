@@ -82,7 +82,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
  '(enh-ruby-check-syntax nil)
- '(erc-fools (quote ("yorickpeterse" "ianm_")))
+ '(erc-fools (quote ("Hanmac" "yorickpeterse" "ianm_")))
  '(erc-modules (quote (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring scrolltobottom stamp track)))
  '(eval-expression-print-length nil)
  '(eval-expression-print-level nil)
