@@ -7,6 +7,7 @@
 
 (package-manifest 'ag
                   'dash
+                  'elscreen
                   ;; 'ess ; only when needed
                   'expand-region
                   'f
@@ -43,7 +44,6 @@
                   'swift-mode
 
                   'git-timemachine
-                  'elscreen
                   )
 
 ;; (package-refresh-contents)
