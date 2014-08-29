@@ -36,6 +36,8 @@
 
                   ;; trying out:
 
+                  'sml-mode
+
                   'outline-magic
                   'wgrep
                   'wgrep-ag
