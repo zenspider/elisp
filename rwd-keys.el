@@ -31,6 +31,7 @@
   (global-set-key (kbd "C-c i")   'imenu)
   (global-set-key (kbd "C-c m")   'smerge-start-session)
   (global-set-key (kbd "C-c n")   'narrow-to-region-indirect)
+  (global-set-key (kbd "C-c N")   'narrow-or-widen-dwim) ; TODO: switch to C-x n
   (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
   (global-set-key (kbd "C-c s c") 'sort-columns)
   (global-set-key (kbd "C-c s l") 'sort-lines)
