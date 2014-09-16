@@ -170,10 +170,42 @@
     "Extract version from a package description vector."
     (aref desc 0)))
 
+(defun rwd-is-fullscreen ()
+  (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth)))
+
 ;;;###autoload
 (defun rwd-ns-fullscreen ()
   (interactive)
+  (unless (rwd-is-fullscreen)
+    (toggle-frame-fullscreen)))
+
+(defun rwd-resize-something ()
+  (interactive)
+  (rwd-ns-fullscreen-off)
+  (rwd-set-font-size 12)
+  (rwd-arrange-frame 88 50 t)
+  (delete-other-windows)
+  (rwd-ns-fullscreen))
+
+(defun rwd-resize-default ()
+  (interactive)
+  (rwd-ns-fullscreen-off)
+  (rwd-set-font-size 12)
+  (rwd-arrange-frame 80 50 t)
+  (delete-other-windows))
+
+;;;###autoload
+(defun rwd-ns-fullscreen-off ()
+  (interactive)
+  (if (rwd-is-fullscreen)
+      (toggle-frame-fullscreen)))
+
+;;;###autoload
+(defun rwd-ns-fullscreen-toggle ()
+  (interactive)
   (toggle-frame-fullscreen))
+
+(defalias 'rwd-ns-toggle-fullscreen 'rwd-ns-fullscreen-toggle)
 
 ;;;###autoload
 (defun rwd-occur (opt)
@@ -229,7 +261,14 @@
   "Yet another screen layout. Suitable for 13in but denser than medium."
   (interactive "P")
   (rwd-set-font-size 10)
-  (rwd-arrange-frame 200 52 nosplit))
+  (rwd-arrange-frame 225 72 nosplit))
+
+;;;###autoload
+(defun rwd-resize-13-half (&optional nosplit)
+  "Create a large font window that only takes up half of a 13 inch laptop"
+  (interactive "P")
+  (rwd-set-font-size 14)
+  (rwd-arrange-frame 87 49 t))
 
 ;;;###autoload
 (defun rwd-resize-20 (&optional nosplit)
@@ -249,9 +288,22 @@
 (defun rwd-resize-full-blind ()
   "Create a giant font window suitable for doing live demos."
   (interactive)
-  (rwd-set-font-size 18)
   (delete-other-windows)
+  (rwd-set-font-size 18)
   (rwd-ns-fullscreen))
+
+;;;###autoload
+(defun rwd-resize-full-dense ()
+  "Yet another screen layout. Suitable for 13in but denser than medium."
+  (interactive)
+  (rwd-set-font-size 9)
+  (rwd-ns-fullscreen)
+  (delete-other-windows)
+  (split-window-horizontally)
+  (split-window-horizontally)
+  (balance-windows))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
 (defun rwd-resize-peepcode ()
@@ -313,7 +365,7 @@
 ;;;###autoload
 (defun rwd-set-font-size (size)
   (interactive "nSize: ")
-  (rwd-set-mac-font "DejaVu Sans Mono" size))
+  (rwd-set-mac-font "Menlo" size))
 
 ;;;###autoload
 (defun rwd-set-mac-font (name size)
