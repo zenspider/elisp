@@ -130,6 +130,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(save-place-limit 100)
  '(save-place-save-skipped nil)
  '(save-place-skip-check-regexp "\\`/\\(cdrom\\|floppy\\|mnt\\|\\([^@/:]*@\\)?[^@/:]*[^@/:.]:\\)")
+ '(savehist-additional-variables (quote (kill-ring)))
  '(savehist-ignored-variables (quote (yes-or-no-p-history)))
  '(savehist-mode t nil (savehist))
  '(scheme-program-name "csi -I ../lib")
