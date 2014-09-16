@@ -46,6 +46,8 @@
                   'swift-mode
 
                   'git-timemachine
+
+                  'browse-kill-ring
                   )
 
 ;; (package-refresh-contents)
