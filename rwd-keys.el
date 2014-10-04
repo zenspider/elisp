@@ -4,6 +4,8 @@
 
 ;;;###autoload
 (progn
+  (require 'smartrep)
+
   (autoload 'inline-string-rectangle "inline-string-rectangle")
 
   (global-set-key (kbd "<f7>")    'rwd-toggle-split)
@@ -27,7 +29,12 @@
   (global-set-key (kbd "C-c d r") 'ediff-regions-wordwise)
   (global-set-key (kbd "C-c e")   'erase-buffer)
   (global-set-key (kbd "C-c g")   'magit-status)
-  (global-set-key (kbd "C-c h")   'rwd-html-to-markdown)
+  (smartrep-define-key
+      global-map "C-c h" '(("s" . 'highlight-symbol-at-point)
+                           ("r" . 'highlight-symbol-remove-all)
+                           ("%" . 'highlight-symbol-query-replace)
+                           ("n" . 'highlight-symbol-next)
+                           ("p" . 'highlight-symbol-prev)))
   (global-set-key (kbd "C-c i")   'imenu)
   (global-set-key (kbd "C-c m")   'smerge-start-session)
   (global-set-key (kbd "C-c n")   'narrow-to-region-indirect)
