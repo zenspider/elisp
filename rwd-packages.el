@@ -48,6 +48,11 @@
                   'git-timemachine
 
                   'browse-kill-ring
+                  'highlight-symbol
+
+                  'smartrep
+
+                  'c-eldoc
                   )
 
 ;; (package-refresh-contents)
