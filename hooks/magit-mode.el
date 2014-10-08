@@ -15,3 +15,7 @@
   (magit-refresh))
 
 (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
+
+(defadvice magit-visit-item (around always-other-window compile activate)
+  (ad-set-arg 0 t)
+  ad-do-it)
