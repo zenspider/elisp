@@ -9,7 +9,7 @@
   (autoload 'inline-string-rectangle "inline-string-rectangle")
 
   (global-set-key (kbd "<f7>")    'rwd-toggle-split)
-  (global-set-key (kbd "<f8>")    'rwd-swap-buffers) ;; FIX: this broke on 23
+  (global-set-key (kbd "<f8>")    'rwd-swap-buffers)
   (global-set-key (kbd "C-M-.")   'etags-select-find-tag)
   (global-set-key (kbd "C-M-;")   'unfill-paragraph)
   (global-set-key (kbd "C-M-x")   'bury-buffer)
@@ -77,7 +77,8 @@
   ;;               (eshell-extended-glob "~/Work/p4/zss/src/*/dev/TAGS")))
 
   ;; iconify bugs the crap out of me:
-  (when window-system (local-unset-key "\C-z"))
+  ;; (when window-system (local-unset-key "\C-z"))
+  ;; this is currently overridden by elscreen and my comint extensions.
 
   ;; compatibility:
   (global-set-key (kbd "M-g")      'goto-line)
