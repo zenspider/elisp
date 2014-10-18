@@ -18,12 +18,6 @@
 (put 'erase-buffer 'disabled nil) ; nukes stupid warning
 
 ;;;###autoload
-(progn
-  (when (require 'popwin nil t)
-    (autoload 'popwin:original-display-buffer "popwin")
-    (setq display-buffer-function 'popwin:original-display-buffer)))
-
-;;;###autoload
 (eval-after-load 'vc
   '(defun vc-deduce-backend ()
      (cond ((derived-mode-p 'vc-dir-mode)   vc-dir-backend)
