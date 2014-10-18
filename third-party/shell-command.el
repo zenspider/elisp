@@ -1,10 +1,10 @@
 ;;; shell-command.el --- enables tab-completion for `shell-command'
 
-;; Copyright (C) 1998-2006 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
+;; Copyright (C) 1998-2007 TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 
 ;; Author: TSUCHIYA Masatoshi <tsuchiya@namazu.org>
 ;; Keywords: shell
-;; Version: $Revision: 1.37 $
+;; Version: $Revision: 1.38 $
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ detail, see the document of `shell-command-make-prompt-string'."
 
 (put 'shell-command/static-if 'lisp-indent-function 2)
 (defmacro shell-command/static-if (cond then &rest else)
-  (if (eval cond) then (` (progn  (,@ else)))))
+  (if (eval cond) then (cons 'progn else)))
 
 (defun shell-command-make-prompt-string (format-string current-directory) "\
 Function to generate prompt string
