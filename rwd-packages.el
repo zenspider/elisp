@@ -19,7 +19,6 @@
                   'litable
                   'magit
                   'magit-log-edit
-                  'melpa
                   'multiple-cursors
                   'p4
                   'paredit
@@ -53,6 +52,7 @@
                   'smartrep
 
                   'c-eldoc
+                  'bind-key
                   )
 
 ;; (package-refresh-contents)
