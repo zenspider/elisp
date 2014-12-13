@@ -29,14 +29,13 @@
                   'racket-mode
                   'ruby-mode
                   's
+                  'sml-mode
                   'ssh
                   'w3m
                   'window-number
                   'yagist
 
                   ;; trying out:
-
-                  'sml-mode
 
                   'outline-magic
                   'wgrep
