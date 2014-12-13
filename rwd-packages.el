@@ -8,10 +8,10 @@
 (package-manifest 'ag
                   'dash
                   'elscreen
-                  ;; 'ess ; only when needed
                   'expand-region
                   'f
                   'geiser
+                  'git-timemachine
                   'github-browse-file
                   'htmlize
                   'keyfreq
@@ -44,15 +44,12 @@
                   'find-file-in-project
                   'swift-mode
 
-                  'git-timemachine
-
                   'browse-kill-ring
-                  'highlight-symbol
 
+                  'perspective
                   'smartrep
-
-                  'c-eldoc
                   'bind-key
+                  'aggressive-indent
                   )
 
 ;; (package-refresh-contents)
