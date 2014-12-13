@@ -21,30 +21,24 @@
   (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
   (global-set-key (kbd "C-c a")   'align-cols)
   (global-set-key (kbd "C-c c")   'rwd-clean)
-  (global-set-key (kbd "C-c d R") 'ediff-regions-linewise)
-  (global-set-key (kbd "C-c d b") 'ediff-buffers)
-  (global-set-key (kbd "C-c d d") 'ediff-directories)
-  (global-set-key (kbd "C-c d f") 'ediff-files)
-  (global-set-key (kbd "C-c d q") 'ediff-quit)
-  (global-set-key (kbd "C-c d r") 'ediff-regions-wordwise)
+  (smartrep-define-key global-map "C-c d" '(("R" . 'ediff-regions-linewise)
+                                            ("b" . 'ediff-buffers)
+                                            ("d" . 'ediff-directories)
+                                            ("f" . 'ediff-files)
+                                            ("q" . 'ediff-quit)
+                                            ("r" . 'ediff-regions-wordwise)))
   (global-set-key (kbd "C-c e")   'erase-buffer)
   (global-set-key (kbd "C-c g")   'magit-status)
-  (smartrep-define-key
-      global-map "C-c h" '(("s" . 'highlight-symbol-at-point)
-                           ("r" . 'highlight-symbol-remove-all)
-                           ("%" . 'highlight-symbol-query-replace)
-                           ("n" . 'highlight-symbol-next)
-                           ("p" . 'highlight-symbol-prev)))
   (global-set-key (kbd "C-c i")   'imenu)
   (global-set-key (kbd "C-c m")   'smerge-start-session)
   (global-set-key (kbd "C-c n")   'narrow-to-region-indirect)
   (global-set-key (kbd "C-c N")   'narrow-or-widen-dwim) ; TODO: switch to C-x n
   (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
-  (global-set-key (kbd "C-c s c") 'sort-columns)
-  (global-set-key (kbd "C-c s l") 'sort-lines)
-  (global-set-key (kbd "C-c s p") 'sort-paragraphs)
-  (global-set-key (kbd "C-c s s") 'sort-symbols)
-  (global-set-key (kbd "C-c s w") 'sort-words)
+  (smartrep-define-key global-map "C-c s" '(("c" . 'sort-columns)
+                                            ("l" . 'sort-lines)
+                                            ("p" . 'sort-paragraphs)
+                                            ("s" . 'sort-symbols)
+                                            ("w" . 'sort-words)))
   (global-set-key (kbd "C-x /")   'align-regexp)
   (global-set-key (kbd "C-x =")   'align-regexp-=)
   (global-set-key (kbd "C-x #")   'align-regexp-comment)
@@ -70,11 +64,6 @@
 
   (define-key read-expression-map [(tab)] 'hippie-expand)
   (define-key read-expression-map [(shift tab)] 'unexpand)
-
-  ;; (require 'em-glob)
-  ;; (setq tags-table-list
-  ;;       (mapcar 'expand-file-name
-  ;;               (eshell-extended-glob "~/Work/p4/zss/src/*/dev/TAGS")))
 
   ;; iconify bugs the crap out of me:
   ;; (when window-system (local-unset-key "\C-z"))
@@ -142,6 +131,7 @@
 ;;;###autoload
 (eval-after-load 'p4
   '(define-key p4-prefix-map (kbd "A") 'p4-diff-all-opened))
+
 ;;;###autoload
 (progn
   (when (require 'multiple-cursors nil t)
@@ -152,3 +142,8 @@
     (global-set-key (kbd "C-c C-c <") 'mc/mark-previous-like-this)
     (global-set-key (kbd "C-c C-c n") 'mc/mark-next-like-this)
     (global-set-key (kbd "C-c C-c r") 'set-rectangular-region-anchor)))
+
+;;;###autoload
+(unless window-system
+  (global-set-key (kbd "C-z C-z") 'suspend-frame)
+  (global-set-key (kbd "C-Z") 'suspend-frame)) ; for shell-mode in terms
