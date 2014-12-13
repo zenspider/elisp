@@ -1,10 +1,10 @@
-(require 'paredit)
 (paredit-mode +1)
+(aggressive-indent-mode)
 
-(message "Racket mode has run!")
-
-(define-key racket-mode-map (kbd "C-c C-r") 'racket-run)
-(define-key racket-mode-map (kbd "C-c t") 'racket-test)
+(define-key racket-mode-map (kbd "C-c C-r")     'racket-run)
+(define-key racket-mode-map (kbd "C-c t")       'racket-test)
+(define-key racket-mode-map (kbd "C-c C-c C-d") 'racket-doc)
+(define-key racket-mode-map (kbd "C-c C-d")     'delete-trailing-whitespace)
 
 (defun paredit-space-for-delimiter-predicates-scheme (endp delimiter)
   "Do not automatically insert a space when a '#' precedes parentheses."
