@@ -1,5 +1,4 @@
-(require 'paredit)
-
+(aggressive-indent-mode)
 (paredit-mode +1)
 
 (setq font-lock-keywords-case-fold-search nil)
