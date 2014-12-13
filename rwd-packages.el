@@ -6,6 +6,7 @@
   (add-to-list 'package-archives repo))
 
 (package-manifest 'ag
+                  'browse-kill-ring
                   'dash
                   'elscreen
                   'expand-region
@@ -43,8 +44,6 @@
 
                   'find-file-in-project
                   'swift-mode
-
-                  'browse-kill-ring
 
                   'perspective
                   'smartrep
