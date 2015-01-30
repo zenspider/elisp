@@ -37,6 +37,8 @@
 
                   ;; trying out:
 
+                  'elisp-slime-nav
+
                   'outline-magic
                   'wgrep
                   'wgrep-ag
@@ -48,6 +50,8 @@
                   'smartrep
                   'bind-key
                   'aggressive-indent
+
+                  'phi-grep
                   )
 
 ;; (package-refresh-contents)
