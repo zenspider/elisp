@@ -51,6 +51,13 @@
          (user (erc-server-user-login who)))
     (erc-server-send (format "MODE %s +b *!%s@%s" chan user host))))
 
+(defun erc-cmd-FIXBAN (nick)
+  (let* ((chan (erc-default-target))
+         (who (erc-get-server-user nick))
+         (host (erc-server-user-host who))
+         (user (erc-server-user-login who)))
+    (erc-server-send (format "MODE %s +b *!%s@%s ##fix-your-connection" chan user host))))
+
 (defun erc-cmd-UNBAN (nick)
   (let* ((chan (erc-default-target)))
     (erc-server-send (format "MODE %s -b %s" chan nick))))
