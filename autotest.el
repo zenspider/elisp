@@ -68,7 +68,7 @@
     (define-key shell-mode-map "\C-c\C-a" 'autotest-switch)
 
     (set (make-local-variable 'comint-output-filter-functions)
-         '(comint-truncate-buffer comint-postoutput-scroll-to-bottom))
+         '(ansi-color-process-output comint-truncate-buffer comint-postoutput-scroll-to-bottom))
     (set (make-local-variable 'comint-buffer-maximum-size) 5000)
     (set (make-local-variable 'comint-scroll-show-maximum-output) t)
     (set (make-local-variable 'comint-scroll-to-bottom-on-output) t)
