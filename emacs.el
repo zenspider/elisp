@@ -18,7 +18,6 @@ saving keyboard macros (see `edmacro-mode')."
 
 (add-to-list 'load-path user-init-dir t)
 (add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
-(add-to-list 'load-path (concat user-init-dir "third-party/outline-magic") t) ; TODO: remove
 
 (let* ((host-cmd "hostname | /usr/bin/perl -pe 's/^.*?([^\.]+\.[^\.]+)$/$1/'")
        (nl          (string-to-char "\n"))
