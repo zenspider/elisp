@@ -20,8 +20,14 @@ saving keyboard macros (see `edmacro-mode')."
 (add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
 (add-to-list 'load-path (concat user-init-dir "third-party/outline-magic") t) ; TODO: remove
 
-(load (concat "misc/" (symbol-name system-type)) t)                ;; misc/darwin
-(load (concat "misc/" (car (split-string (system-name) "\\."))) t) ;; misc/greed
+(let* ((host-cmd "hostname | /usr/bin/perl -pe 's/^.*?([^\.]+\.[^\.]+)$/$1/'")
+       (nl          (string-to-char "\n"))
+       (os-name     (symbol-name system-type))
+       (domain-name (remove nl (shell-command-to-string host-cmd)))
+       (host-name   (car (split-string (system-name) "\\."))))
+  (load (concat "os/" os-name) t)         ;; os/darwin
+  (load (concat "domain/" domain-name) t) ;; domain/zenspider.com
+  (load (concat "host/" host-name) t))    ;; host/greed
 
 (autoload 'find-lisp-find-files "find-lisp" nil t)
 (autoload 'find-lisp-find-files-internal "find-lisp" nil t)
