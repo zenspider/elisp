@@ -19,8 +19,8 @@
                   'kill-ring-search
                   'litable
                   'magit
-                  'magit-log-edit
                   'multiple-cursors
+                  'outline-magic
                   'p4
                   'paredit
                   'phi-search
@@ -34,6 +34,7 @@
                   'w3m
                   'window-number
                   'yagist
+                  'shell-command
 
                   ;; trying out:
 
@@ -52,6 +53,8 @@
                   'aggressive-indent
 
                   'phi-grep
+
+                  'grizzl
                   )
 
 ;; (package-refresh-contents)
