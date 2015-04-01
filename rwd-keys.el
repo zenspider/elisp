@@ -139,11 +139,7 @@
     (global-set-key (kbd "C-c C-c l") 'mc/edit-lines)
     (global-set-key (kbd "C-c C-c =") 'mc/mark-all-like-this)
     (global-set-key (kbd "C-c C-c a") 'mc/mark-all-in-region)
+    (global-set-key (kbd "C-c C-c s") 'mc/mark-all-symbols-like-this)
     (global-set-key (kbd "C-c C-c <") 'mc/mark-previous-like-this)
     (global-set-key (kbd "C-c C-c n") 'mc/mark-next-like-this)
     (global-set-key (kbd "C-c C-c r") 'set-rectangular-region-anchor)))
-
-;;;###autoload
-(unless window-system
-  (global-set-key (kbd "C-z C-z") 'suspend-frame)
-  (global-set-key (kbd "C-Z") 'suspend-frame)) ; for shell-mode in terms
