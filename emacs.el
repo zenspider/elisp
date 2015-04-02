@@ -185,20 +185,22 @@ saving keyboard macros (see `edmacro-mode')."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(cursor ((((background light)) (:background "Blue")) (((background dark)) (:background "Blue")) (t (:background "Blue"))))
+ '(cursor ((((type ns)) (:background "Blue")) (((type tty)) (:background "Green")) (t (:background "Blue"))))
  '(diff-added ((t (:inherit diff-changed :foreground "green4"))))
  '(diff-removed ((t (:inherit diff-changed :foreground "red4"))))
  '(enh-ruby-heredoc-delimiter-face-xxx ((t (:foreground "Brown"))))
  '(erc-input-face ((t (:foreground "dark green"))))
  '(erc-my-nick-face ((t (:foreground "dark green" :weight bold))))
  '(flyspell-incorrect ((t (:underline "red"))))
- '(font-lock-comment-face ((((class color) (min-colors 88) (background light)) (:foreground "Dark Blue"))))
- '(font-lock-constant-face ((((class color) (min-colors 88) (background light)) (:foreground "SlateBlue4"))))
- '(font-lock-string-face ((((class color) (min-colors 88) (background light)) (:foreground "Forest Green"))))
+ '(font-lock-comment-face ((((type ns)) (:foreground "Dark Blue")) (((type tty)) (:foreground "Light Blue"))))
+ '(font-lock-constant-face ((((type ns)) (:foreground "SlateBlue4")) (((type tty)) (:foreground "RoyalBlue1"))))
+ '(font-lock-string-face ((((type ns)) (:foreground "Forest Green")) (((type tty)) (:foreground "green4"))))
  '(magit-item-highlight ((t (:background "#eee"))))
  '(mode-line ((t (:background "grey75" :foreground "black"))))
  '(mode-line-inactive ((t (:inherit mode-line :background "grey90" :foreground "grey20" :weight light))))
  '(racket-keyword-argument-face ((t (:foreground "dark blue"))))
- '(whitespace-line ((((background light)) (:background "gray80")) (((type tty)) (:background "gray20")) (t (:background "red")))))
+ '(region ((((type tty)) (:background "color-240"))))
+ '(whitespace-line ((((type ns)) (:background "gray90")) (((type tty)) (:background "gray20")) (t (:background "red"))))
+ '(whitespace-tab ((((type tty)) (:background "grey22")) (((type ns)) (:background "beige")) (t (:background "beige")))))
 
 (put 'narrow-to-region 'disabled nil)
