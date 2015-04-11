@@ -1,11 +1,15 @@
 (require 'package)
-(add-to-list 'load-path (expand-file-name "~/Work/git/package+") t)
-(require 'package+)
 
 (dolist (repo '(("melpa" . "http://melpa.milkbox.net/packages/")))
   (add-to-list 'package-archives repo))
 
-(package-manifest 'ag
+(package-initialize)
+
+(require 'package+)
+
+(package-manifest 'package+
+
+                  'ag
                   'browse-kill-ring
                   'dash
                   'elscreen
@@ -55,6 +59,7 @@
                   'phi-grep
 
                   'grizzl
+                  'names
                   )
 
 ;; (package-refresh-contents)
