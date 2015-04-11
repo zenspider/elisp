@@ -1,4 +1,4 @@
-(when (and running-osx (string= "/" default-directory))
+(when (and (boundp 'running-osx) running-osx (string= "/" default-directory))
   (cd "~"))
 
 (global-whitespace-mode 1)
