@@ -65,7 +65,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
  '(enh-ruby-check-syntax nil)
- '(erc-fools (quote ("Hanmac" "yorickpeterse" "ianm_" "Bish")))
+ '(erc-fools (quote ("Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish")))
  '(erc-modules
    (quote
     (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring scrolltobottom stamp track)))
@@ -78,6 +78,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(fuel-listener-factor-binary
    "/MyApplications/dev/factor/Factor.app/Contents/MacOS/factor")
  '(fuel-listener-factor-image "/MyApplications/dev/factor/factor.image")
+ '(git-commit-summary-max-length 78)
  '(global-auto-revert-mode t)
  '(hippie-expand-try-functions-list
    (quote
@@ -93,8 +94,10 @@ saving keyboard macros (see `edmacro-mode')."
  '(ispell-extra-args (quote ("\"--sug-mode=fast\"")))
  '(line-move-visual nil)
  '(lua-indent-level 2)
+ '(magit-diff-refine-hunk t)
  '(magit-emacsclient-executable "/usr/local/bin/emacsclient")
  '(magit-log-cutoff-length 250)
+ '(magit-push-always-verify nil)
  '(mediawiki-site-alist
    (quote
     (("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "Main Page")
@@ -157,7 +160,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(tooltip-mode nil)
  '(tramp-copy-size-limit 1024)
  '(tramp-default-method "rsync")
- '(transient-mark-mode t)
+ '(transient-mark-mode (quote (only . t)))
  '(truncate-partial-width-windows nil)
  '(use-dialog-box nil)
  '(user-mail-address "ryand-ruby@zenspider.com")
