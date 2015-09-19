@@ -35,8 +35,7 @@
       erc-mode-line-format           "%t %a")
 
 ;; erc-match variables
-(setq erc-keywords '("autotest\\|zentest\\|inline\\|parse_?tree")
-      erc-pals     '("^drbrain$" "^evan$"))
+(setq erc-keywords '("autotest\\|zentest\\|inline\\|parse_?tree\\|minitest"))
 
 ;; erc-track variables
 (setq erc-track-exclude-types         '("JOIN" "NICK" "PART" "QUIT")
@@ -80,6 +79,24 @@
                            nick
                            (or reason
                                "Kicked (kickban)"))))
+
+(defun erc-cmd-RB (nick)
+  (erc-send-message (format "!ban %s !T 1d" nick)))
+
+(defun erc-cmd-TROLL (nick)
+  (erc-send-message (format "!ban %s !T 1d trolls go home" nick)))
+
+(defun erc-cmd-FIX (nick)
+  (erc-send-message (format "!ban %s !T 1d please fix your connection" nick)))
+
+(defun erc-cmd-SPAM (nick)
+  (erc-send-message (format "!ban %s !T 1d spammers go home" nick)))
+
+(defun erc-cmd-MUTE (nick)
+  (erc-send-message (format "!mute %s" nick)))
+
+(defun erc-cmd-STFU (nick)
+  (erc-cmd-MUTE nick))
 
 (defun erc-cmd-LAST (len)
   "Recall the last LEN lines from dIRCproxy for the current channel"
