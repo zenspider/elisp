@@ -19,3 +19,5 @@
 (defadvice magit-visit-item (around always-other-window compile activate)
   (ad-set-arg 0 t)
   ad-do-it)
+
+(define-key magit-mode-map "\M-w" nil)
