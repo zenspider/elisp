@@ -13,9 +13,25 @@
              (not (looking-back "#\\|#hash\\|#rx\\|#px")))
             (t t))))
 
-(put 'test-case 'racket-indent-function 1)
-(put 'test-suite 'racket-indent-function 1)
-(put 'call-with-output-file* 'racket-indent-function 1)
+;; (let ((defines  '(struct local struct: define-struct: ...
+;;       (begins   '(case-lambda case-lambda: pcase-lambda: ...
+;;       (lambdas  '(cases instantiate super-instantiate syntax/loc ...
+;;       (specials '(for/fold for/fold:)))
+
+(let ((defines  '())
+      (begins   '(check-run* cond-e cond-a cond-u))
+      (lambdas  '(λg λf test-case test-suite call-with-output-file*
+                     lambdag@ lambdaf@ exists exist nom project run* run1
+                     run2 run3 run4 run5 run6 run7 run8 run9 run10
+                     case∞ case-inf take fresh))
+      (specials '(run)))
+
+  (mapc (lambda (name) (put name 'racket-indent-function 'defun)) defines)
+  (mapc (lambda (name) (put name 'racket-indent-function 0))      begins)
+  (mapc (lambda (name) (put name 'racket-indent-function 1))      lambdas)
+  (mapc (lambda (name) (put name 'racket-indent-function 2))      specials))
+
+;; (put 'fresh 'racket-indent-function 4)
 
 (add-to-list 'paredit-space-for-delimiter-predicates
              'paredit-space-for-delimiter-predicates-scheme)
