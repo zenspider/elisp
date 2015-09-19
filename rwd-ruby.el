@@ -98,6 +98,56 @@ end")
   ))
 
 ;;;###autoload
+(defun rwd-ruby-bacon-to-minitest-spec ()
+  (interactive)
+  (multi-replace-regexp
+   (rwd-ws "LHS.should.equal RHS")           "\\1\\2.must_equal \\3"
+   (rwd-ws "LHS.should == RHS")              "\\1\\2.must_equal \\3"
+   (rwd-ws "LHS.should.equal(RHS)")          "\\1\\2.must_equal \\3"
+   (rwd-ws "LHS.should.eql RHS")             "\\1\\2.must_equal \\3"
+   (rwd-ws "LHS.should.eql(RHS)")            "\\1\\2.must_equal \\3"
+   (rwd-ws "LHS.should.not.equal RHS")       "\\1\\2.wont_equal \\3"
+
+   (rwd-ws "LHS.should.be.instance_of RHS")  "\\1\\2.must_be_instance_of \\3"
+   (rwd-ws "LHS.should.be.instance_of(RHS)") "\\1\\2.must_be_instance_of \\3"
+   (rwd-ws "LHS.should.be.kind_of RHS")      "\\1\\2.must_be_kind_of \\3"
+   (rwd-ws "LHS.should.be.kind_of(RHS)")     "\\1\\2.must_be_kind_of \\3"
+
+   (rwd-ws "LHS.should.empty")               "\\1\\2.must_be_empty"
+
+   (rwd-ws "LHS.should.be.nil")              "\\1\\2.must_be_nil"
+   (rwd-ws "LHS.should.be.RHS")              "\\1\\2.must_be :\\3?"
+   (rwd-ws "LHS.should.not.be.RHS")          "\\1\\2.wont_be :\\3?"
+
+   (rwd-ws "LHS.should.be.true")             "\\1\\2.must_equal true"
+   (rwd-ws "LHS.should.be.false")            "\\1\\2.must_equal false"
+
+   (rwd-ws "LHS.should.include\\?? RHS")     "\\1\\2.must_include \\3"
+   (rwd-ws "LHS.should.include\\??(RHS)")    "\\1\\2.must_include \\3"
+   (rwd-ws "LHS.should.not.include RHS")     "\\1\\2.wont_include \\3"
+   (rwd-ws "LHS.should.not.include(RHS)")    "\\1\\2.wont_include \\3"
+
+   (rwd-ws "LHS.should.match RHS")           "\\1\\2.must_match(\\3)"
+   (rwd-ws "LHS.should.match(RHS)")          "\\1\\2.must_match(\\3)"
+   (rwd-ws "LHS.should =~ RHS")              "\\1\\2.must_match(\\3)"
+   (rwd-ws "LHS.should.not =~ RHS")          "\\1\\2.wont_match(\\3)"
+   (rwd-ws "LHS.should.not.match RHS")       "\\1\\2.wont_match(\\3)"
+   (rwd-ws "LHS.should.not.match(RHS)")      "\\1\\2.wont_match(\\3)"
+
+   (rwd-ws "LHS.should.raise(RHS)")          "\\1\\2.must_raise \\3"
+   (rwd-ws "LHS.should.raise RHS")           "\\1\\2.must_raise \\3"
+
+   (rwd-ws "LHS.should.throw(RHS)")          "\\1\\2.must_throw \\3"
+   (rwd-ws "LHS.should.throw RHS")           "\\1\\2.must_throw \\3"
+
+   (rwd-ws "LHS.should.respond_to(RHS)")     "\\1\\2.must_respond_to \\3"
+   (rwd-ws "LHS.should.respond_to RHS")      "\\1\\2.must_respond_to \\3"
+   (rwd-ws "LHS.should.not.respond_to(RHS)") "\\1\\2.wont_respond_to \\3"
+   (rwd-ws "LHS.should.not.respond_to RHS")  "\\1\\2.wont_respond_to \\3"
+
+  ))
+
+;;;###autoload
 (defun rwd-ruby-dejsonify ()
   (interactive)
 
