@@ -89,6 +89,7 @@
                 ("lib/\\1.rb"             . "test/unit/test_\\1.rb")))
     (ruby    . (("lib/\\1.rb"             . "test/test_\\1.rb")
                 ("\\1.rb"                 . "test_\\1.rb")))
+    (ruby2   . (("lib/\\1\\2.rb"          . "test/\\1test_\\2.rb")))
     (objc    . (("\\1.m"                  . "\\1.h")))
     (c       . (("\\1.c"                  . "\\1.h")))
     (cpp     . (("\\1.cpp"                . "\\1.hpp"))))
@@ -117,7 +118,7 @@
                          (cons
                           (concat
                            (replace-regexp-in-string
-                            "\\\\1" "\\\\(.*\\\\)"
+                            "\\\\[1-9]" "\\\\(.*\\\\)"
                             (replace-regexp-in-string ; special case for "\\1.ext"
                              "^\\\\1" "\\\\([^/]*\\\\)" (car pair))) "$")
                           (cdr pair)))
