@@ -7,3 +7,5 @@
   (grep-find (concat "git --no-pager grep -P -n "
                      search
                      " `git rev-parse --show-toplevel`")))
+
+(setq magit-last-seen-setup-instructions "1.4.0")
