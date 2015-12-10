@@ -11,3 +11,4 @@
 
 (add-to-list 'load-path (expand-file-name "~/Work/git/enhanced-ruby-mode"))
 (setq enh-ruby-program (expand-file-name "/usr/bin/ruby"))
+(setq enh-ruby-program "/Users/ryan/.rbenv/versions/2.2.2/bin/ruby")
