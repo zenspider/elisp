@@ -1,6 +1,7 @@
 ;;;###autoload
 (dolist (pair '((?e "~/Bin/elisp/emacs.el")
                 (?h "~/Work/p4/zss/src/hoe/dev/lib/hoe.rb")
+                (?a "~/Bin/elisp/rwd-aliases.el")
                 (?k "~/Bin/elisp/rwd-keys.el")
                 (?m "~/Work/p4/zss/src/minitest/dev/lib/minitest.rb") ;
                 (?p "~/Bin/elisp/rwd-packages.el")
