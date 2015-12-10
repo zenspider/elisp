@@ -87,7 +87,7 @@
   (erc-send-message (format "!ban %s !T 1d trolls go home" nick)))
 
 (defun erc-cmd-FIX (nick)
-  (erc-send-message (format "!ban %s !T 1d please fix your connection" nick)))
+  (erc-send-message (format "!ban %s !T 1h please fix your connection" nick)))
 
 (defun erc-cmd-SPAM (nick)
   (erc-send-message (format "!ban %s !T 1d spammers go home" nick)))
