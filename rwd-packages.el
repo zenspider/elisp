@@ -1,9 +1,14 @@
 (require 'package)
 
-(dolist (repo '(("melpa" . "http://melpa.milkbox.net/packages/")))
+(dolist (repo '(("melpa" . "http://melpa.milkbox.net/packages/")
+                ("melpa-stable" . "http://stable.melpa.org/packages/")))
   (add-to-list 'package-archives repo))
 
 (package-initialize)
+
+(unless (package-installed-p 'package+)
+  (package-refresh-contents)
+  (package-install 'package+))
 
 (require 'package+)
 
@@ -58,8 +63,15 @@
 
                   'phi-grep
 
+                  'company
                   'grizzl
                   'names
+
+                  'bison-mode
+
+                  'shrink-whitespace
+
+                  'markdown-mode
                   )
 
 ;; (package-refresh-contents)
