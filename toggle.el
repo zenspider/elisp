@@ -8,6 +8,7 @@
 ;; Created: 2006-03-22
 ;; Compatibility: Emacs 22, 21?
 ;; URL(en): http://seattlerb.rubyforge.org/
+;; Package-Requires: ((cl-lib "0.5"))
 
 ;;; Posted using:
 ;; (emacswiki-post "toggle.el")
@@ -61,7 +62,7 @@
 ;; 1.1.0 2007-03-30 Initial release to emacswiki.org. Added named styles and bidi.
 ;; 1.0.0 2006-03-22 Birfday.
 
-(require 'cl)
+(require 'cl-lib)
 
 ;; TODO:
 ;; It would also be great to be able to toggle between a model and
@@ -103,6 +104,9 @@
   :group 'toggle
   :type '(symbol))
 
+(defvar toggle-mappings (toggle-style toggle-mapping-style)
+  "*The current file mappings for `toggle-filename' to use.")
+
 ;;;###autoload
 (defun toggle-style (name)
   (interactive (list (completing-read "Style: "
@@ -122,18 +126,15 @@
                             (replace-regexp-in-string ; special case for "\\1.ext"
                              "^\\\\1" "\\\\([^/]*\\\\)" (car pair))) "$")
                           (cdr pair)))
-                       (mapcan 'list
-                               pairs
-                               (mapcar (lambda (pair)
-                                         (cons (cdr pair) (car pair)))
-                                       pairs)))))
-          (if (interactive-p)
+                       (cl-mapcan 'list
+                                  pairs
+                                  (mapcar (lambda (pair)
+                                            (cons (cdr pair) (car pair)))
+                                          pairs)))))
+          (if (called-interactively-p 'interactive)
               (setq toggle-mappings mappings)
             mappings))
       nil)))
-
-(defvar toggle-mappings (toggle-style toggle-mapping-style)
-  "*The current file mappings for `toggle-filename' to use.")
 
 (defun toggle-filename (path rules)
   "Transform a matching subpath in PATH as given by RULES.
@@ -144,7 +145,7 @@ matches, it returns nil"
   (cond ((null rules) nil)
     ((string-match (caar rules) path)
      (replace-match (cdar rules) nil nil path))
-    (t (toggle-filename path (rest rules)))))
+    (t (toggle-filename path (cl-rest rules)))))
 
 ;;;###autoload
 (defun toggle-buffer ()
