@@ -32,7 +32,7 @@
   (global-set-key (kbd "C-c i")   'imenu)
   (global-set-key (kbd "C-c m")   'smerge-start-session)
   (global-set-key (kbd "C-c n")   'narrow-to-region-indirect)
-  (global-set-key (kbd "C-c N")   'narrow-or-widen-dwim) ; TODO: switch to C-x n
+  (global-set-key (kbd "C-x n")   'narrow-or-widen-dwim) ; TODO: switch to C-x n
   (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
   (smartrep-define-key global-map "C-c s" '(("c" . 'sort-columns)
                                             ("l" . 'sort-lines)
@@ -75,7 +75,8 @@
   (global-set-key (kbd "<C-down>") 'rwd-forward-line-6)
   (global-set-key (kbd "<M-up>")   'rwd-scroll-up)
   (global-set-key (kbd "<M-down>") 'rwd-scroll-down)
-  (global-set-key (kbd "C-M-l")    'rwd-scroll-top)
+
+  (define-key emacs-lisp-mode-map (kbd "C-M-<return>") 'eval-defun)
 
   ;; This allows me to enforce that bury-buffer is bound to C-M-x
   ;; regardless of mode (YAY!)
@@ -103,6 +104,16 @@
 
 ;;;###autoload
 (global-unset-key (kbd "M-o"))
+
+;;;###autoload
+(global-set-key [remap isearch-forward]
+                (lambda (p)
+                  ;; http://endlessparentheses.com/quickly-search-for-occurrences-of-the-symbol-at-point.html
+                  (interactive "P")
+                  (let ((current-prefix-arg nil))
+                    (call-interactively
+                     (if p #'isearch-forward-symbol-at-point
+                       #'isearch-forward)))))
 
 ;;;###autoload
 (define-key isearch-mode-map (kbd "M-o")
@@ -135,6 +146,21 @@
 ;;;###autoload
 (progn
   (when (require 'multiple-cursors nil t)
+    ;; from: http://endlessparentheses.com/multiple-cursors-keybinds.html
+    ;;
+    ;; This is globally useful, so it goes under `C-x', and `m' for
+    ;; "multiple-cursors" is easy to remember.
+    (define-key ctl-x-map "\C-m" #'mc/mark-all-dwim)
+    ;; Usually, both `C-x C-m' and `C-x RET' invoke the `mule-keymap',
+    ;; but that's a waste of keys. Here we put it _just_ under `C-x
+    ;; RET'.
+    (define-key ctl-x-map (kbd "<return>") mule-keymap)
+
+    ;; Remember `er/expand-region' is bound to M-2!
+    (global-set-key (kbd "C-M-2") #'mc/expand-region)
+    (global-set-key (kbd "C-M-3") #'mc/mark-next-like-this)
+    (global-set-key (kbd "C-M-4") #'mc/mark-previous-like-this)
+
     (global-set-key (kbd "C-c C-c e") 'mc/edit-ends-of-lines)
     (global-set-key (kbd "C-c C-c l") 'mc/edit-lines)
     (global-set-key (kbd "C-c C-c =") 'mc/mark-all-like-this)
