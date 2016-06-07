@@ -179,21 +179,6 @@
   (unless (rwd-is-fullscreen)
     (toggle-frame-fullscreen)))
 
-(defun rwd-resize-something ()
-  (interactive)
-  (rwd-ns-fullscreen-off)
-  (rwd-set-font-size 12)
-  (rwd-arrange-frame 88 50 t)
-  (delete-other-windows)
-  (rwd-ns-fullscreen))
-
-(defun rwd-resize-default ()
-  (interactive)
-  (rwd-ns-fullscreen-off)
-  (rwd-set-font-size 12)
-  (rwd-arrange-frame 80 50 t)
-  (delete-other-windows))
-
 ;;;###autoload
 (defun rwd-ns-fullscreen-off ()
   (interactive)
@@ -250,81 +235,49 @@
   (letf ((query-replace-defaults '("\\(.+:\\)" . "\\,(1+ \\#):")))
     (call-interactively 'replace-regexp)))
 
-;;;###autoload
-(defun rwd-resize-13 (&optional nosplit)
-  (interactive "P")
-  (rwd-set-font-size 12)
-  (rwd-arrange-frame 163 48 nosplit))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Windowing
+
+(defmacro rwd-define-frame (name font-size &optional d-o-f splitfunc)
+  "Create a new function defining a frame-resizing set of options"
+
+  (let ((full-name  (intern (concat "rwd-resize-" name)))
+        (dimensions (and (listp d-o-f) d-o-f))
+        (full       (and (symbolp d-o-f) d-o-f)))
+    `(defun ,full-name ()
+       (interactive)
+       ,@(if full `((rwd-ns-fullscreen)) `((rwd-ns-fullscreen-off)))
+       (rwd-set-font-size ,font-size)
+       ,@(when dimensions `((rwd-arrange-frame ,@dimensions t)))
+       ,@(when splitfunc  `((,(intern (concat "rwd-split-" (symbol-name splitfunc))))))
+       )))
+
+(rwd-define-frame "13"           12 (163 48))
+(rwd-define-frame "13-dense"     10 (225 72))
+(rwd-define-frame "13-half"      14 (87 49))
+(rwd-define-frame "20"           12 (200 60))
+(rwd-define-frame "default"      12 (80 48))
+(rwd-define-frame "full"         14 full h)
+(rwd-define-frame "blind"        18 full)
+(rwd-define-frame "dense"        9  full thirds-h)
+(rwd-define-frame "peepcode"     15 (80 30))
+(rwd-define-frame "presentation" 20 (92 34))
+(rwd-define-frame "small"        12 (80 48) v)
+
+(defalias 'rwd-resize-reset 'rwd-resize-default)
+
+(defun rwd-resize (font-size h w split full-screen)
+  (unless full-screen (rwd-ns-fullscreen-off))
+  (rwd-set-font-size font-size)
+  (unless full-screen
+    (rwd-arrange-frame h w (not split)))
+  (unless split (delete-other-windows))
+  (when full-screen (rwd-ns-fullscreen)))
 
 ;;;###autoload
-(defun rwd-resize-13-dense (&optional nosplit)
-  "Yet another screen layout. Suitable for 13in but denser than medium."
-  (interactive "P")
-  (rwd-set-font-size 10)
-  (rwd-arrange-frame 225 72 nosplit))
-
-;;;###autoload
-(defun rwd-resize-13-half (&optional nosplit)
-  "Create a large font window that only takes up half of a 13 inch laptop"
-  (interactive "P")
-  (rwd-set-font-size 14)
-  (rwd-arrange-frame 87 49 t))
-
-;;;###autoload
-(defun rwd-resize-20 (&optional nosplit)
-  "Create a really large window suitable for coding on a 20 inch cinema display."
-  (interactive "P")
-  (rwd-set-font-size 12)
-  (rwd-arrange-frame 200 60 nosplit))
-
-;;;###autoload
-(defun rwd-resize-full ()
-  (interactive)
-  (rwd-set-font-size 14)
-  (delete-other-windows)
-  (rwd-ns-fullscreen)
-  (split-window-horizontally))
-
-(defun rwd-resize-full-blind ()
-  "Create a giant font window suitable for doing live demos."
-  (interactive)
-  (delete-other-windows)
-  (rwd-set-font-size 18)
-  (rwd-ns-fullscreen))
-
-;;;###autoload
-(defun rwd-resize-full-dense ()
-  "Yet another screen layout. Suitable for 13in but denser than medium."
-  (interactive)
-  (rwd-set-font-size 9)
-  (rwd-ns-fullscreen)
-  (delete-other-windows)
-  (split-window-horizontally)
-  (split-window-horizontally)
-  (balance-windows))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;###autoload
-(defun rwd-resize-peepcode ()
-  "Create a small font window suitable for doing live demos in 800x600."
-  (interactive)
-  (rwd-arrange-frame 80 30 t)
-  (rwd-set-font-size 15))
-
-;;;###autoload
-(defun rwd-resize-presentation ()
-  "Create a giant font window suitable for doing live demos."
-  (interactive)
-  (rwd-arrange-frame 92 34 t)
-  (rwd-set-font-size 20))
-
-;;;###autoload
-(defun rwd-resize-small (&optional split)
-  "Create a small window suitable for coding on anything."
-  (interactive "P")
-  (rwd-set-font-size 12)
-  (rwd-arrange-frame 80 48 (not split)))
+(progn
+  (defalias 'rwd-split-h 'split-window-horizontally)
+  (defalias 'rwd-split-v 'split-window-vertically))
 
 ;;;###autoload
 (defun rwd-split-thirds ()
