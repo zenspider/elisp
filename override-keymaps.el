@@ -52,6 +52,13 @@
 
 (eval-when-compile (require 'cl))
 
+;; TODO:
+;; (require 'bind-key)
+;; (defmacro bind-key* (key-name command)
+;;   `(progn
+;;      (bind-key ,key-name ,command)
+;;      (define-key override-global-map ,(read-kbd-macro key-name) ,command)))
+
 (defcustom override-keymap-rules
   '(("\M-\C-x" bury-buffer (ruby python emacs-lisp)))
   "A list of rules for overriding various modes that set their keymaps on your favorite keys"
