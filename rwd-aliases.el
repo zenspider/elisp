@@ -730,31 +730,42 @@ even beep.)"
       (ns-get-selection-internal 'CLIPBOARD)
     (quit nil)))
 
+(defun rwd-workout-search (name)
+  (save-excursion
+    (re-search-backward (concat name ": +\\([0-9]+\\)") nil t)
+    (cons name (match-string 1))))
+
 (defun rwd-workout ()
   (interactive)
 
   (save-excursion
     (find-file "~/Work/p4/zss/usr/ryand/superslow.txt")
     (with-current-buffer "superslow.txt"
-      (let ((fmt "%-15s %3s# @ %3ss  -- \n")
-            (exercises '("leg press"
-                         "leg curl"
-                         "chest press"
-                         "pulldown"
-                         "leg extension"
-                         "overhead press"
-                         "back extension"
-                         "abdominals"
-                         "compound row")))
+      (goto-char (point-max))
 
-        (goto-char (point-max))
+      (let* ((fmt "%-15s %3s# @ %3ss  -- \n")
+             (exercises '("leg press"
+                          "leg curl"
+                          "chest press"
+                          "pulldown"
+                          "leg extension"
+                          "overhead press"
+                          "back extension"
+                          "abdominals"
+                          "compound row"))
+             (weights (reverse (mapcar
+                                'rwd-workout-search
+                                (reverse exercises)))))
+
         (insert (format-time-string "\nworkout %Y-%m-%d\n\n"))
 
         (mapc (lambda (exercise)
                 (let ((w-prompt (concat exercise " weight: "))
                       (t-prompt   (concat exercise " time: ")))
 
-                  (let ((weight (read-from-minibuffer w-prompt)))
+                  (let ((weight (read-from-minibuffer
+                                 w-prompt
+                                 (assoc-default exercise weights))))
                     (unless (string-equal weight "")
                       (let ((time (read-from-minibuffer t-prompt)))
                         (goto-char (point-max))
