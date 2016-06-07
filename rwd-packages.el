@@ -18,6 +18,7 @@
                   'browse-kill-ring
                   'dash
                   'elscreen
+                  'elscreen-separate-buffer-list
                   'expand-region
                   'f
                   'geiser
@@ -64,12 +65,9 @@
                   'phi-grep
 
                   'company
-                  'grizzl
                   'names
 
                   'bison-mode
-
-                  'shrink-whitespace
 
                   'markdown-mode
                   )
