@@ -847,6 +847,37 @@ already narrowed."
 
     (when (= (length marked-files) 3)
       (ediff3 (buffer-file-name (nth 0 marked-files))
+
+;;;###autoload
+(defun ediff-2-windows-regions ()
+  (interactive)
+
+  (let* ((buffers (current-2-buffers))
+         (curr-buf (car buffers))
+         (next-buf (cdr buffers)))
+    (let ((curr-narrowed (progn
+                           (switch-to-buffer curr-buf)
+                           (narrow-to-region-indirect (region-beginning) (region-end))))
+          (next-narrowed (progn
+                           (switch-to-buffer next-buf)
+                           (narrow-to-region-indirect (region-beginning) (region-end)))))
+      (ediff-buffers curr-narrowed next-narrowed))))
+
+(defun current-2-buffers ()
+  (if (one-window-p)
+      (error "Frame doesn't have two windows")
+    (let* ((cw (selected-window))
+           (nw (next-window cw))
+           (cb (window-buffer cw))
+           (nb (window-buffer nw)))
+      (cons cb nb))))
+
               (buffer-file-name (nth 1 marked-files))
               (buffer-file-name (nth 2 marked-files))))))
 
+;;;###autoload
+(defun rwd-unfuck-modeline ()
+  (interactive)
+  (set-face-attribute 'mode-line nil
+                      :background "grey75"
+                      :foreground "black"))
