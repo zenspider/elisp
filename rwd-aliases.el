@@ -280,11 +280,21 @@
   (defalias 'rwd-split-v 'split-window-vertically))
 
 ;;;###autoload
-(defun rwd-split-thirds ()
+(defun rwd-split-thirds-v ()
   "Splits the current frame vertically into even thirds."
   (interactive)
+  (delete-other-windows)
   (split-window-vertically)
   (split-window-vertically)
+  (balance-windows))
+
+;;;###autoload
+(defun rwd-split-thirds-h ()
+  "Splits the current frame horizontally into even thirds."
+  (interactive)
+  (delete-other-windows)
+  (split-window-horizontally)
+  (split-window-horizontally)
   (balance-windows))
 
 ;;;###autoload
