@@ -812,18 +812,27 @@ buffer-local wherever it is set."
 
 ;;;###autoload
 (defun narrow-or-widen-dwim (p)
-  "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
-Intelligently means: region, subtree, or defun, whichever applies
-first.
+  "Widen if buffer is narrowed, narrow-dwim otherwise.
+Dwim means: region, org-src-block, org-subtree, or defun,
+whichever applies first. Narrowing to org-src-block actually
+calls `org-edit-src-code'.
 
-With prefix P, don't widen, just narrow even if buffer is already
-narrowed."
+With prefix P, don't widen, just narrow even if buffer is
+already narrowed."
+
   ;; from http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
   (interactive "P")
   (declare (interactive-only))
   (cond ((and (buffer-narrowed-p) (not p)) (widen))
         ((region-active-p) (narrow-to-region (region-beginning) (region-end)))
-        ((derived-mode-p 'org-mode) (org-narrow-to-subtree))
+        ((derived-mode-p 'org-mode)
+         ;; `org-edit-src-code' is not a real narrowing
+         ;; command. Remove this first conditional if you
+         ;; don't want it.
+         (cond ((ignore-errors (org-edit-src-code)) (delete-other-windows))
+               ((ignore-errors (org-narrow-to-block) t))
+               (t              (org-narrow-to-subtree))))
+        ((derived-mode-p 'latex-mode) (LaTeX-narrow-to-environment))
         (t (narrow-to-defun))))
 
 ;;;###autoload
@@ -831,11 +840,13 @@ narrowed."
   ;; from http://www.emacswiki.org/emacs/DavidBoon#toc4
   "Run ediff on marked ediff files."
   (interactive)
-  (set 'marked-files (dired-get-marked-files))
-  (when (= (safe-length marked-files) 2)
-    (ediff-files (nth 0 marked-files) (nth 1 marked-files)))
 
-  (when (= (safe-length marked-files) 3)
-    (ediff3 (buffer-file-name (nth 0 marked-files))
-            (buffer-file-name (nth 1 marked-files))
-            (buffer-file-name (nth 2 marked-files)))))
+  (let ((marked-files (dired-get-marked-files)))
+    (when (= (length marked-files) 2)
+      (ediff-files (nth 0 marked-files) (nth 1 marked-files)))
+
+    (when (= (length marked-files) 3)
+      (ediff3 (buffer-file-name (nth 0 marked-files))
+              (buffer-file-name (nth 1 marked-files))
+              (buffer-file-name (nth 2 marked-files))))))
+
