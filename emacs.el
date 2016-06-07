@@ -65,6 +65,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
  '(enh-ruby-check-syntax nil)
+ '(enh-ruby-program "/Users/ryan/.rbenv/versions/2.3.1/bin/ruby")
  '(erc-fools (quote ("Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish")))
  '(erc-modules
    (quote
@@ -116,6 +117,7 @@ saving keyboard macros (see `edmacro-mode')."
       (ruby python emacs-lisp racc))
      ("\214" rwd-scroll-top
       (shell comint)))))
+ '(p4-do-find-file nil)
  '(pastebin-default-domain "zenspider.pastebin.com")
  '(pastebin-default-subdomain "zenspider")
  '(pastebin-domain-versions
@@ -128,7 +130,8 @@ saving keyboard macros (see `edmacro-mode')."
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values
    (quote
-    ((ffip-prune-patterns . "tmp/isolate")
+    ((ffip-project-file . "Rakefile")
+     (ffip-prune-patterns . "tmp/isolate")
      (encoding . utf-8)
      (backup-inhibited . t)
      (racc-token-length-max . 14))))
@@ -160,6 +163,7 @@ saving keyboard macros (see `edmacro-mode')."
  '(tooltip-mode nil)
  '(tramp-copy-size-limit 1024)
  '(tramp-default-method "rsync")
+ '(tramp-use-ssh-controlmaster-options nil)
  '(transient-mark-mode (quote (only . t)))
  '(truncate-partial-width-windows nil)
  '(use-dialog-box nil)
