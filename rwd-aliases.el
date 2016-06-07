@@ -415,10 +415,10 @@
                           'split-window-vertically)))
         (progn
           (delete-other-windows)
-	  (funcall split-type)
+          (funcall split-type)
           (set-window-buffer nil thisBuf)
           (set-window-buffer (next-window) nextBuf)))
-      (error "Frame doesn't have two windows")))
+    (error "Frame doesn't have two windows")))
 
 ;;;###autoload
 (defun server-stop ()
@@ -503,6 +503,7 @@
 
 ;;;###autoload
 (defun rwd-try-smerge ()
+  (interactive)
   (save-excursion
     (goto-char (point-min))
     (when (re-search-forward "^<<<<<<< " 20480 t)
