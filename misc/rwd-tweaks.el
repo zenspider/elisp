@@ -10,7 +10,7 @@
         (top         . 0)
         (width       . 80)
         (height      . 48)
-        (font        . "Bitstream Vera Sans Mono-12")))
+        (font        . "Menlo-12")))
 
 
 ;; enable/disable commands:
