@@ -16,9 +16,9 @@
 ;;;###autoload
 (progn
   (setq yellow-tokens
-        (delete ?\s "\\<\\(F IX\\|D OC\\|R ETIRE\\|T ODO\\|W ARN\\).*\\>"))
+        (delete ?\s "\\<\\(F IX\\|D OC\\|R ETIRE\\|T ODO\\|W ARN\\)\\>.*"))
   (setq red-tokens
-        (delete ?\s "\\<\\(H ACK\\|R EFACTOR\\).*\\>"))
+        (delete ?\s "\\<\\(H ACK\\|R EFACTOR\\)\\>.*"))
 
   (mapc (lambda (mode)
           (font-lock-add-keywords
