@@ -1,6 +1,6 @@
 (require 'package)
 
-(dolist (repo '(("melpa" . "http://melpa.milkbox.net/packages/")
+(dolist (repo '(("melpa"        . "http://melpa.org/packages/")
                 ("melpa-stable" . "http://stable.melpa.org/packages/")))
   (add-to-list 'package-archives repo))
 
@@ -10,67 +10,90 @@
   (package-refresh-contents)
   (package-install 'package+))
 
+(add-to-list 'load-path
+             (expand-file-name "~/Work/git/zenspider/package+"))
+
 (require 'package+)
 
-(package-manifest 'package+
+(apply 'package-manifest
+       (setq rwd-manifest '(package+    ; duh
 
-                  'ag
-                  'browse-kill-ring
-                  'dash
-                  'elscreen
-                  'elscreen-separate-buffer-list
-                  'expand-region
-                  'f
-                  'geiser
-                  'git-timemachine
-                  'github-browse-file
-                  'htmlize
-                  'keyfreq
-                  'kill-ring-search
-                  'litable
-                  'magit
-                  'multiple-cursors
-                  'outline-magic
-                  'p4
-                  'paredit
-                  'phi-search
-                  'phi-search-mc
-                  'popwin
-                  'racket-mode
-                  'ruby-mode
-                  's
-                  'sml-mode
-                  'ssh
-                  'w3m
-                  'window-number
-                  'yagist
-                  'shell-command
+                            ag          ; the silver surfer
+                            browse-kill-ring
+                            dash
+                            elscreen
+                            elscreen-buffer-group
+                            expand-region
+                            f
+                            geiser
+                            git-timemachine
+                            github-browse-file
+                            htmlize
+                            keyfreq
+                            kill-ring-search
+                            litable
+                            magit
+                            multiple-cursors
+                            org
+                            outline-magic
+                            p4
+                            paredit
+                            phi-search
+                            phi-search-mc
+                            popwin
+                            racket-mode
+                            s
+                            shell-command                 ; tab-completion for `shell-command
+                            sml-mode
+                            ssh                           ; ssh-mode
+                            w3m
+                            window-number                 ; Jump to window by M-number
+                            yagist                        ; gist
+                            yaml-mode
 
-                  ;; trying out:
+                            ;; trying out:
 
-                  'elisp-slime-nav
+                            elisp-slime-nav
 
-                  'outline-magic
-                  'wgrep
-                  'wgrep-ag
+                            outline-magic
+                            wgrep
+                            wgrep-ag
 
-                  'find-file-in-project
-                  'swift-mode
+                            find-file-in-project
+                            swift-mode
 
-                  'perspective
-                  'smartrep
-                  'bind-key
-                  'aggressive-indent
+                            perspective
+                            smartrep
+                            aggressive-indent
 
-                  'phi-grep
+                            phi-grep
 
-                  'company
-                  'names
+                            names
 
-                  'bison-mode
+                            bison-mode
 
-                  'markdown-mode
-                  )
+                            markdown-mode
+                            web-mode
+                            dumb-jump
+                            inf-ruby
+
+                            bts
+                            bts-github
+                            magit-gh-pulls
+
+                            golden-ratio
+                            magithub
+                            magit-p4
+
+                            dockerfile-mode
+                            haskell-mode
+
+                            nand2tetris
+
+                            eval-in-repl)))
+
+;; (with-current-buffer "*scratch*" (cl-prettyprint (package-manifest-with-deps rwd-manifest)) (display-buffer "*scratch*"))
+
 
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
