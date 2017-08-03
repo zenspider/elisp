@@ -26,15 +26,9 @@
   (interactive)
   (scroll-up 1))
 
-;;;###autoload
-(defun rwd-scroll-top ()
-  (interactive)
-  (recenter 0))
-
 ;; compatibility:
 (global-set-key (kbd "M-g")      'goto-line)
 (global-set-key (kbd "<C-up>")   'rwd-previous-line-6)
 (global-set-key (kbd "<C-down>") 'rwd-forward-line-6)
 (global-set-key (kbd "<M-up>")   'rwd-scroll-up)
 (global-set-key (kbd "<M-down>") 'rwd-scroll-down)
-(global-set-key (kbd "C-M-l")    'rwd-scroll-top)
