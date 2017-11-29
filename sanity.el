@@ -4,7 +4,12 @@
 (require 'bs)
 (global-set-key (kbd "C-x C-b") 'bs-show)
 (global-set-key (kbd "M-s")     'fixup-whitespace)
-(when window-system (global-unset-key "\C-z"))
+(when window-system
+  (global-unset-key "\C-z")
+  (setq ns-alternate-modifier (quote none))
+  (setq ns-command-modifier (quote meta))
+  (setq ns-pop-up-frames nil)
+  (setq ns-use-native-fullscreen nil))
 
 ;;;###autoload
 (defun rwd-previous-line-6 ()
