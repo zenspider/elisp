@@ -1,9 +1,6 @@
-(defvar running-osx (or (featurep 'mac-carbon) (eq 'ns window-system)))
+(defvar running-osx (or (featurep 'cocoa) (eq 'ns window-system)))
 
 (when running-osx
-  ;; Fixes a tweaky thing on 10.8
-  (ns-set-resource nil "ApplePressAndHoldEnabled" "NO")
-
   (setenv "LANG" "en_US.UTF-8") ; comes from terminal.app, not bash itself
 
   ;; Helloooo overkill.
