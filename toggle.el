@@ -98,8 +98,7 @@
   :group 'toggle
   :type '(repeat (cons string string)))
 
-(defcustom toggle-mapping-style
-  'ruby
+(defcustom toggle-mapping-style 'ruby
   "The default toggle mapping style to load when initialized."
   :group 'toggle
   :type '(symbol))
@@ -114,6 +113,12 @@
                                        #'symbol-name
                                        (mapcar #'car toggle-mapping-styles))
                                       nil t "")))
+  (let ((mappings (toggle-style/internal name)))
+    (if (called-interactively-p 'interactive)
+        (setq toggle-mappings mappings)
+      mappings)))
+
+(defun toggle-style/internal (name)
   (let* ((style (if (stringp name) (intern name) name))
          (pairs (cdr (assoc style toggle-mapping-styles))))
     (if pairs
@@ -131,9 +136,7 @@
                                   (mapcar (lambda (pair)
                                             (cons (cdr pair) (car pair)))
                                           pairs)))))
-          (if (called-interactively-p 'interactive)
-              (setq toggle-mappings mappings)
-            mappings))
+          mappings)
       nil)))
 
 (defun toggle-filename (path rules)
