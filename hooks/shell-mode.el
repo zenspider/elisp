@@ -1,5 +1,6 @@
 (setq shell-dirstack-query "dirs -l")
 
+(define-key shell-mode-map (kbd "C-c C-d") nil)  ; keeps biting me
 (define-key shell-mode-map (kbd "C-z C-z")    'comint-stop-subjob)
 (define-key shell-mode-map (kbd "M-<return>") 'shell-resync-dirs)
 (define-key comint-mode-map [C-up]            'rwd-previous-line-6)
