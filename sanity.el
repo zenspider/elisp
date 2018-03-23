@@ -37,3 +37,5 @@
 (global-set-key (kbd "<C-down>") 'rwd-forward-line-6)
 (global-set-key (kbd "<M-up>")   'rwd-scroll-up)
 (global-set-key (kbd "<M-down>") 'rwd-scroll-down)
+
+(provide 'sanity)
