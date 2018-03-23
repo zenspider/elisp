@@ -9,3 +9,6 @@
                      " `git rev-parse --show-toplevel`")))
 
 (setq magit-last-seen-setup-instructions "1.4.0")
+
+(require 'magithub)
+(magithub-feature-autoinject t)
