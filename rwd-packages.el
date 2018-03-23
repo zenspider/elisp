@@ -1,5 +1,7 @@
 (require 'package)
 
+(setq package-archives (remove (assoc "gnu" package-archives) package-archives))
+
 (dolist (repo '(("melpa"        . "http://melpa.org/packages/")
                 ("melpa-stable" . "http://stable.melpa.org/packages/")))
   (add-to-list 'package-archives repo))
@@ -63,7 +65,6 @@
                             swift-mode
 
                             perspective
-                            smartrep
                             aggressive-indent
 
                             phi-grep
@@ -74,7 +75,7 @@
 
                             markdown-mode
                             web-mode
-                            dumb-jump
+                            smart-jump
                             inf-ruby
 
                             bts
@@ -86,14 +87,20 @@
                             magit-p4
 
                             dockerfile-mode
+
+                            ;; haskell stuff
                             haskell-mode
+                            flycheck
+                            shm
+                            hindent
+                            dante
+                            company
 
                             nand2tetris
 
                             eval-in-repl)))
 
 ;; (with-current-buffer "*scratch*" (cl-prettyprint (package-manifest-with-deps rwd-manifest)) (display-buffer "*scratch*"))
-
 
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
