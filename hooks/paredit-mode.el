@@ -4,7 +4,8 @@
 ;; paredit-forward-barf-sexp - also on C-}, which I apparently never use
 (define-key paredit-mode-map (kbd "C-<left>") nil)
 (define-key paredit-mode-map (kbd "C-M-)") 'paredit-forward-barf-sexp)
-
+(define-key paredit-mode-map (kbd "{") 'paredit-open-curly)
+(define-key paredit-mode-map (kbd "}") 'paredit-close-curly)
 ;; normally M-s -- no, you don't get that
 (define-key paredit-mode-map (kbd "C-c j") 'paredit-splice-sexp)
 (define-key paredit-mode-map (kbd "M-s") 'fixup-whitespace)
