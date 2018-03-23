@@ -25,4 +25,5 @@
            mode
            (list (list yellow-tokens 0 ''my-yellow-face 'prepend)
                  (list red-tokens    0 ''my-red-face    'prepend))))
-        '(ruby-mode enh-ruby-mode lisp-mode scheme-mode emacs-lisp-mode racket-mode rust-mode)))
+        '(ruby-mode enh-ruby-mode lisp-mode haskell-mode scheme-mode
+                    emacs-lisp-mode racket-mode rust-mode)))
