@@ -30,12 +30,12 @@
 (setq erc-kill-buffer-on-part        t
       erc-kill-queries-on-quit       t
       erc-kill-server-buffer-on-quit t
-      erc-input-line-position        -1
+      ;; erc-input-line-position        -1
       erc-server-auto-reconnect      nil
       erc-mode-line-format           "%t %a")
 
 ;; erc-match variables
-(setq erc-keywords '("autotest\\|zentest\\|inline\\|parse_?tree\\|minitest"))
+(setq erc-keywords '("autotest\\|zentest\\|inline\\|parse_?tree\\|minitest\\|parser"))
 
 ;; erc-track variables
 (setq erc-track-exclude-types         '("JOIN" "NICK" "PART" "QUIT")
