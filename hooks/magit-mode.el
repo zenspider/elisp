@@ -21,3 +21,20 @@
   ad-do-it)
 
 (define-key magit-mode-map "\M-w" nil)
+
+(require 'json)
+
+(defun yaml-to-json (path)
+  (let* ((rb "ruby -ryaml -rjson -e 'puts JSON.dump YAML.load File.read ARGV.shift' ")
+         (cmd (concat rb path)))
+    (json-read-from-string (shell-command-to-string cmd))))
+
+(defun get-hub-token ()
+  (let* ((json (yaml-to-json "~/.config/hub"))
+         (gh   (alist-get 'github.com json)))
+    (alist-get 'oauth_token (aref gh 0))))
+
+(get-hub-token)
+
+(setq ghub-username "zenspider")
+(setq ghub-token (get-hub-token)) ;; your personal access token
