@@ -4,6 +4,8 @@
 
 ;;;###autoload
 (defadvice find-file-at-point (around goto-line)
+  "If path at point is followed by :lineno, jump to that line."
+  (message "ffap: %s" (looking-at ".*?:\\([0-9]+\\)\\(:[0-9]+\\)?"))
   (let ((line (and (looking-at ".*?:\\([0-9]+\\)\\(:[0-9]+\\)?")
                    (string-to-number (match-string 1)))))
     ad-do-it
@@ -90,6 +92,17 @@
     (insert-file-contents-literally path)
     (buffer-string)))
 
+;;;###autoload
+(defun reverse-words (beg end)
+  "Reverse the order of words in region."
+  ;; stolen from https://www.emacswiki.org/emacs/ReverseWords
+    (interactive "*r")
+    (apply
+     'insert
+      (reverse
+       (split-string
+        (delete-and-extract-region beg end) "\\b"))))
+
 (defun rwd-add-to-load-path (dir)
   "Adds a path to the load-path"
   (interactive "DDirectory: ")
@@ -101,8 +114,8 @@
   (let ((frame (selected-frame)))
     (when (memq (framep frame) '(mac ns))
       (delete-other-windows)
-      (set-frame-position frame 5 25)
       (set-frame-size frame w h)
+      (set-frame-position (selected-frame) 0 23)
       (if (not nosplit)
           (split-window-horizontally)))))
 
@@ -154,7 +167,9 @@
 ;;;###autoload
 (defun rwd-lappy ()
   (interactive)
+  (delete-other-windows)
   (rwd-resize-full)
+  (other-window 1)
   (shell (rwd-unique-buffer "shell"))) ;; done manually to avoid swap oddities
 
 ;;;###autoload
@@ -223,7 +238,7 @@
 ;;;###autoload
 (defun rwd-quickref ()
   (interactive)
-  (find-file-other-window (expand-file-name "~/Work/p4/zss/www/zenspider.com/Languages/Ruby/QuickRef.html.md.erb")))
+  (find-file-other-window (expand-file-name "~/Work/p4/zss/www/zenspider.com/ruby/quickref.html.md.erb")))
 
 ;;;###autoload
 (defun rwd-read-this ()
@@ -257,7 +272,7 @@
 
 (rwd-define-frame "13"           12 (163 48))
 (rwd-define-frame "13-dense"     10 (225 72))
-(rwd-define-frame "13-half"      14 (87 49))
+(rwd-define-frame "13-half"      14 (87 54))
 (rwd-define-frame "20"           12 (200 60))
 (rwd-define-frame "default"      12 (80 48))
 (rwd-define-frame "full"         14 full h)
@@ -364,6 +379,7 @@
 
 (defalias 'rwd-fuck-unicode 'rwd-utf8)
 (defalias 'rwd-unicode      'rwd-utf8)
+(defalias 'rwd-unix         'rwd-utf8)
 
 ;;;###autoload
 (defun rwd-shell ()
@@ -545,6 +561,28 @@
               (insert content))))))))
 
 ;;;###autoload
+(defun rwd-cheap-autotest ()
+  "Set up the current shell buffer to be autotest-like."
+  (interactive)
+
+  ;; TODO: verify that we're in comint/shell buffer?
+
+  (set (make-local-variable 'comint-output-filter-functions)
+       '(comint-truncate-buffer comint-postoutput-scroll-to-bottom))
+  (set (make-local-variable 'comint-buffer-maximum-size) 5000)
+  (set (make-local-variable 'comint-scroll-show-maximum-output) t)
+  (set (make-local-variable 'comint-move-point-for-output) t)
+
+  (set (make-local-variable 'compilation-error-regexp-alist)
+       '(
+         ("^ +\\(#{RAILS_ROOT}/\\)?\\([^(:]+\\):\\([0-9]+\\)" 2 3)
+         ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
+         ("^ *\\(?:from \\)?\\([[+]\\)?\\([^:
+]+\\):\\([0-9]+\\):in" 2 3)
+         ("^.* at \\([^:]*\\):\\([0-9]+\\)$" 1 2)
+         )))
+
+;;;###autoload
 (defun rwd-clean ()
   "Untabifies, indents and deletes trailing whitespace from buffer or region."
   (interactive)
@@ -556,6 +594,16 @@
     (save-restriction
       (narrow-to-region (region-beginning) (region-end))
       (delete-trailing-whitespace))))
+
+;;;###autoload
+(defun rwd-ansi-colorize ()
+  (interactive)
+  (ansi-color-apply-on-region (point-min) (point-max)))
+
+;;;###autoload
+(defun rwd-ansi-colorize-strip ()
+  (interactive)
+  (ansi-color-filter-region (point-min) (point-max)))
 
 ;;; stolen from: http://www.emacswiki.org/cgi-bin/wiki/IndentRigidlyN
 ;;;###autoload
@@ -735,6 +783,7 @@ even beep.)"
 (defun rwd-load-modes ()
   (interactive)
   (dolist (path (directory-files (concat user-init-dir "modes") t ".*el$"))
+    (message "%S" `(load ,path))
     (load path)))
 
 ;;;###autoload
@@ -749,8 +798,17 @@ even beep.)"
     (re-search-backward (concat name ": +\\([0-9]+\\)") nil t)
     (cons name (match-string 1))))
 
-(defun rwd-workout ()
+(defun rwd-unfuck-bash-history ()
   (interactive)
+
+  (find-file "~/.bash_history")
+  (with-current-buffer ".bash_history"
+    (delete-matching-lines "[^[:graph:][:space:]]\\|" (point-min) (point-max))
+    (save-buffer)
+    (kill-buffer)))
+
+(defun rwd-workout (days-offset)
+  (interactive "P")                     ; "p" returns 1 w/ no args. bad.
 
   (save-excursion
     (find-file "~/Work/p4/zss/usr/ryand/superslow.txt")
@@ -758,11 +816,14 @@ even beep.)"
       (goto-char (point-max))
 
       (let* ((fmt "%-15s %3s# @ %3ss  -- \n")
+             (time (seconds-to-time (+ (* (or days-offset 0) 86400)
+                                       (time-to-seconds (current-time)))))
              (exercises '("leg press"
                           "leg curl"
                           "chest press"
                           "pulldown"
                           "leg extension"
+                          ;; "abduction"
                           "overhead press"
                           "back extension"
                           "abdominals"
@@ -771,7 +832,7 @@ even beep.)"
                                 'rwd-workout-search
                                 (reverse exercises)))))
 
-        (insert (format-time-string "\nworkout %Y-%m-%d\n\n"))
+        (insert (format-time-string "\nworkout %Y-%m-%d\n\n" time))
 
         (mapc (lambda (exercise)
                 (let ((w-prompt (concat exercise " weight: "))
@@ -784,7 +845,8 @@ even beep.)"
                       (let ((time (read-from-minibuffer t-prompt)))
                         (goto-char (point-max))
                         (insert (format fmt (concat exercise ":") weight time)))))))
-              exercises)))))
+              exercises))
+      (goto-char (point-max)))))
 
 (defun rwd-renumber-debug ()
   (interactive)
@@ -857,10 +919,13 @@ already narrowed."
 
   (let ((marked-files (dired-get-marked-files)))
     (when (= (length marked-files) 2)
-      (ediff-files (nth 0 marked-files) (nth 1 marked-files)))
+      (ediff-files (nth 0 marked-files)
+                   (nth 1 marked-files)))
 
     (when (= (length marked-files) 3)
-      (ediff3 (buffer-file-name (nth 0 marked-files))
+      (ediff3 (nth 0 marked-files)
+              (nth 1 marked-files)
+              (nth 2 marked-files)))))
 
 ;;;###autoload
 (defun ediff-2-windows-regions ()
@@ -877,6 +942,16 @@ already narrowed."
                            (narrow-to-region-indirect (region-beginning) (region-end)))))
       (ediff-buffers curr-narrowed next-narrowed))))
 
+;;;###autoload
+(defun ediff-2-windows ()
+  (interactive)
+
+  (let* ((buffers (current-2-buffers))
+         (curr-buf (car buffers))
+         (next-buf (cdr buffers)))
+    (ediff-buffers curr-buf next-buf)))
+
+;;;###autoload
 (defun current-2-buffers ()
   (if (one-window-p)
       (error "Frame doesn't have two windows")
@@ -885,9 +960,6 @@ already narrowed."
            (cb (window-buffer cw))
            (nb (window-buffer nw)))
       (cons cb nb))))
-
-              (buffer-file-name (nth 1 marked-files))
-              (buffer-file-name (nth 2 marked-files))))))
 
 ;;;###autoload
 (defun rwd-unfuck-modeline ()
