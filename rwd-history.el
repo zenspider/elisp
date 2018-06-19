@@ -36,6 +36,7 @@ paths, directories, backups, and non-existent files."
                                 (lambda (path)
                                   (or
                                    (string-match "^/.+::" path)
+                                   ;; (string-match "^/.+:" path) ; fix tramp pain
                                    (string-match rwd-tramp-method-regexp path)
                                    (file-directory-p path)
                                    (string-match "~$" path)
