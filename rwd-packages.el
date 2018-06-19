@@ -1,7 +1,6 @@
 (require 'package)
 
-(setq package-archives (remove (assoc "gnu" package-archives) package-archives))
-
+;; TODO: consider ONLY using stable? do any packages disappear?
 (dolist (repo '(("melpa"        . "http://melpa.org/packages/")
                 ("melpa-stable" . "http://stable.melpa.org/packages/")))
   (add-to-list 'package-archives repo))
@@ -81,9 +80,10 @@
                             bts
                             bts-github
                             magit-gh-pulls
+                            let-alist
 
                             golden-ratio
-                            magithub
+                            ;; magithub
                             magit-p4
 
                             dockerfile-mode
@@ -96,7 +96,10 @@
                             dante
                             company
 
-                            nand2tetris
+                            string-edit
+
+                            json-mode
+                            jq-mode
 
                             eval-in-repl)))
 
