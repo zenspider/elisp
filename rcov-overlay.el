@@ -83,6 +83,59 @@
 ;;   }.compact.inspect
 ;; end
 
+(defun buffer-line-regions (buffer-name)
+ (let ((lines '()))
+   (with-current-buffer buffer-name
+     (save-excursion
+       (goto-char (point-min))
+       (while (not (eobp))
+         (push (cons (line-beginning-position) (line-end-position)) lines)
+         (forward-line))))
+   (nreverse lines)))
+
+(defun find-coverage-for-buffer (buffer-name)
+ (with-current-buffer buffer-name
+   (let* ((cov-file "coverage/.resultset.json")
+          (base-dir (find-project-dir cov-file))
+          (cov-path (concat base-dir cov-file)))
+     cov-path)))
+
+(defun coverage-for-buffer (buffer-name)
+  (with-current-buffer buffer-name
+    (let* ((json-object-type 'alist)
+           (json-array-type 'list)
+           (json-key-type 'string)
+           (path (find-coverage-for-buffer buffer-name))
+           (resultset (json-read-file path))
+           (buffer (buffer-file-name))
+           (files (cdadar resultset))
+           (ranges (cdr (assoc buffer files))))
+      ranges)))
+
+(defun show-coverage ()
+  (interactive)
+  (let* ((buffer (current-buffer))
+         (coverage (coverage-for-buffer buffer)))
+    (with-current-buffer buffer
+      (remove-overlays)
+      (dolist (pair (-filter (lambda (pair)
+                               (let ((cov (cdr pair))) (and (numberp cov) (zerop cov))))
+                             (-zip (buffer-line-regions buffer)
+                                   coverage)))
+        (let* ((range (car pair))
+               (start (car range))
+               (stop (1+ (cdr range))))
+          ;; (message "cov %d to %d" start stop)
+          (overlay-put (make-overlay start stop)
+                       'face (cons 'background-color "#ffcccc")))))
+    (let* ((valid (-filter 'identity coverage))
+           (len   (length valid))
+           (zero  (-count 'zerop valid)))
+      (message "coverage = %.1f%%" (- 100 (/ (* 100.0 zero) len))))))
+
+(define-key enh-ruby-mode-map (kbd "C-c R") 'rcov-clear)
+(define-key enh-ruby-mode-map (kbd "C-c r") 'show-coverage)
+
 (defcustom rcov-overlay-fg-color
   "#ffcccc"
   "The default background color."
