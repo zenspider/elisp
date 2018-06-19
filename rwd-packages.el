@@ -23,7 +23,6 @@
                             browse-kill-ring
                             dash
                             elscreen
-                            elscreen-buffer-group
                             expand-region
                             f
                             geiser
