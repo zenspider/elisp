@@ -4,79 +4,126 @@
 
 ;;;###autoload
 (progn
-  (require 'smartrep)
+  (require 'map)
+
+  (defun rwd-smart-keys (prefix map)
+    "A simple function to bind a map of key/fn pairs to a prefix key."
+    (let ((key (kbd (format "C-c %s" prefix)))
+          (keymap (make-sparse-keymap)))
+
+      (map-apply (lambda (k v) (define-key keymap (kbd k) (cadr v)))
+                 map)
+
+      (define-key global-map key keymap)
+      keymap))
 
   (autoload 'inline-string-rectangle "inline-string-rectangle")
 
-  (global-set-key (kbd "<f7>")    'rwd-toggle-split)
-  (global-set-key (kbd "<f8>")    'rwd-swap-buffers)
-  (global-set-key (kbd "C-M-.")   'etags-select-find-tag)
-  (global-set-key (kbd "C-M-;")   'unfill-paragraph)
-  (global-set-key (kbd "C-M-x")   'bury-buffer)
-  (global-set-key (kbd "C-c -")   'rwd-selective-display)
-  (global-set-key (kbd "C-c C-d") 'delete-trailing-whitespace)
-  (global-set-key (kbd "C-c C-s") 'rwd-select-all-mm-at-point)
-  (global-set-key (kbd "C-c M-q") 'unfill-paragraph)
-  (global-set-key (kbd "C-c O")   'rwd-occur-n-buffer)
-  (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
-  (global-set-key (kbd "C-c a")   'align-cols)
-  (global-set-key (kbd "C-c c")   'rwd-clean)
-  (smartrep-define-key global-map "C-c d" '(("R" . 'ediff-regions-linewise)
-                                            ("b" . 'ediff-buffers)
-                                            ("d" . 'ediff-directories)
-                                            ("f" . 'ediff-files)
-                                            ("q" . 'ediff-quit)
-                                            ("r" . 'ediff-regions-wordwise)))
-  (global-set-key (kbd "C-c e")   'erase-buffer)
-  (global-set-key (kbd "C-c g")   'magit-status)
-  (global-set-key (kbd "C-c i")   'imenu)
-  (global-set-key (kbd "C-c m")   'smerge-start-session)
-  (global-set-key (kbd "C-c n")   'narrow-to-region-indirect)
-  (global-set-key (kbd "C-x n")   'narrow-or-widen-dwim) ; TODO: switch to C-x n
-  (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
-  (smartrep-define-key global-map "C-c s" '(("c" . 'sort-columns)
-                                            ("l" . 'sort-lines)
-                                            ("p" . 'sort-paragraphs)
-                                            ("s" . 'sort-symbols)
-                                            ("w" . 'sort-words)))
-  (global-set-key (kbd "C-x /")   'align-regexp)
-  (global-set-key (kbd "C-x =")   'align-regexp-=)
-  (global-set-key (kbd "C-x #")   'align-regexp-comment)
-  (global-set-key (kbd "C-x C-b") 'bs-show)
-  (global-set-key (kbd "C-x C-p") 'find-file-at-point)
-  (global-set-key (kbd "C-x C-t") 'toggle-buffer)
-  (global-set-key (kbd "C-x D")   'dired-open-alias) ; very common typo
-  (global-set-key (kbd "C-x f")   'find-file) ; very common typo
-  (global-set-key (kbd "C-x r t") 'inline-string-rectangle)
-  (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point)
-  (global-set-key (kbd "M-C-y")   'kill-ring-search)
-  (global-set-key (kbd "C-M-SPC") 'er/expand-region)
-  (global-set-key (kbd "M-[")     'outdent-rigidly-2)
-  (global-set-key (kbd "M-]")     'indent-rigidly-2)
-  (global-set-key (kbd "M-j")     'rwd-join-lines)
-  (global-set-key (kbd "M-s")     'fixup-whitespace)
-  (global-set-key (kbd "M-S")     'rwd-fixup-whitespace)
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; global overrides:
+  ;;
+  ;; This is for keybindings that are not composed as "C-c
+  ;; <letter>..." as such, they should be overriding something
+  ;; standard in such a way as makes sense. "C-x C-b" using 'bs-show
+  ;; to replace anemic 'list-buffers is a very good example of this.
+  ;; Some of these keys aren't actually bound globally, but they might
+  ;; be specific to modes (even though they should almost all be bound
+  ;; into "C-c C-<letter>...", per standard.
 
-  ;; experimenting with hyperspace :D
-  (global-set-key (kbd "H-SPC") 'point-to-register)
-  (global-set-key (kbd "H-j")   'jump-to-register)
-  (global-set-key (kbd "H-b")   'bury-buffer)
+  (global-set-key (kbd "<f7>")    'rwd-toggle-split)      ; undefined
+  (global-set-key (kbd "<f8>")    'rwd-swap-buffers)      ; undefined
+  (global-set-key (kbd "C-M-.")   'etags-select-find-tag) ; was xref-find-apropos
+  (global-set-key (kbd "C-M-;")   'unfill-paragraph)      ; undefined
+  (global-set-key (kbd "C-M-x")   'bury-buffer)           ; unassigned?
+  (global-set-key (kbd "C-x C-b") 'bs-show)               ; was list-buffers
+  (global-set-key (kbd "C-x C-p") 'find-file-at-point)    ; was mark-page
+  (global-set-key (kbd "C-x C-t") 'toggle-buffer) ; was transpose-lines
+  (global-set-key (kbd "C-x f")   'find-file) ; was set-fill-column, typos
+  (global-set-key (kbd "C-x r t") 'inline-string-rectangle) ; was string-rectangle
+  (global-set-key (kbd "C-M-SPC") 'er/expand-region) ; was mark-sexp
+  (global-set-key (kbd "M-C-y")   'kill-ring-search) ; undefined
+  (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point) ; was xref-find-references
+  (global-set-key (kbd "M-[")     'outdent-rigidly-2) ; undefined
+  (global-set-key (kbd "M-]")     'indent-rigidly-2) ; undefined
+  (global-set-key (kbd "M-j")     'rwd-join-lines) ; was indent-new-comment-line
 
-  (define-key read-expression-map [(tab)] 'hippie-expand)
-  (define-key read-expression-map [(shift tab)] 'unexpand)
-
-  ;; iconify bugs the crap out of me:
-  ;; (when window-system (local-unset-key "\C-z"))
-  ;; this is currently overridden by elscreen and my comint extensions.
-
-  ;; compatibility:
+  ;; sanity/compatibility (mostly stuff from xemacs):
   (global-set-key (kbd "M-g")      'goto-line)
   (global-set-key (kbd "<C-up>")   'rwd-previous-line-6)
   (global-set-key (kbd "<C-down>") 'rwd-forward-line-6)
   (global-set-key (kbd "<M-up>")   'rwd-scroll-up)
   (global-set-key (kbd "<M-down>") 'rwd-scroll-down)
 
+  ;; iconify bugs the crap out of me:
+  ;; (when window-system (local-unset-key "\C-z"))
+  ;; this is currently overridden by elscreen and my comint extensions.
+
+  (global-unset-key (kbd "M-o"))        ; I will *never* use facemenu styles
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; violations that need to be changed over time
+
+  (global-set-key (kbd "C-c C-d") 'delete-trailing-whitespace)
+  (global-set-key (kbd "C-c C-s") 'rwd-select-all-mm-at-point)
+  (global-set-key (kbd "C-c M-q") 'unfill-paragraph)
+  (global-set-key (kbd "M-s")     'fixup-whitespace) ; useful search/highlight stuff
+  (global-set-key (kbd "M-S")     'rwd-fixup-whitespace)
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; mode map bindings
+  ;;
+  ;; Think about moving these into hooks if they're not for global
+  ;; modes.
+
+  (define-key read-expression-map [(tab)] 'hippie-expand)
+  (define-key read-expression-map [(shift tab)] 'unexpand)
   (define-key emacs-lisp-mode-map (kbd "C-M-<return>") 'eval-defun)
+
+  ;; this is so awesome - occur easily inside isearch
+  (define-key isearch-mode-map (kbd "C-o")
+    (lambda ()
+      (interactive)
+      (let ((case-fold-search isearch-case-fold-search))
+        (occur (if isearch-regexp
+                   isearch-string (regexp-quote isearch-string))))))
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; normal user-level keybindings
+
+  (global-set-key (kbd "C-c -")   'rwd-selective-display)
+  (global-set-key (kbd "C-c O")   'rwd-occur-n-buffer)
+  (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
+  (global-set-key (kbd "C-c a")   'align-cols)
+  (global-set-key (kbd "C-c c")   'rwd-clean)
+  (rwd-smart-keys 'd '((   "R" .  'ediff-regions-linewise)
+                       (   "b" .  'ediff-buffers)
+                       (   "d" .  'ediff-directories)
+                       (   "f" .  'ediff-files)
+                       (   "q" .  'ediff-quit)
+                       (   "r" .  'ediff-regions-wordwise)
+                       (   "w" .  'delete-trailing-whitespace)))
+  (global-set-key (kbd "C-c e")   'erase-buffer)
+  (global-set-key (kbd "C-c g")   'magit-status)
+  (global-set-key (kbd "C-c i")   'imenu)
+  (global-set-key (kbd "C-c n")   'narrow-to-region-indirect)
+  (global-set-key (kbd "C-x n")   'narrow-or-widen-dwim) ; TODO: switch to C-x n
+  (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
+  (rwd-smart-keys 's '((   "c" .  'sort-columns)
+                       (   "l" .  'sort-lines)
+                       (   "p" .  'sort-paragraphs)
+                       (   "s" .  'sort-symbols)
+                       (   "w" .  'sort-words)))
+  (global-set-key (kbd "C-x /")   'align-regexp)
+  (global-set-key (kbd "C-x =")   'align-regexp-=)
+  (global-set-key (kbd "C-x #")   'align-regexp-comment)
+
+  ;; experimenting with hyperspace :D
+  (global-set-key (kbd "H-SPC") 'point-to-register)
+  (global-set-key (kbd "H-j")   'jump-to-register)
+  (global-set-key (kbd "H-b")   'bury-buffer)
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; unsorted
 
   ;; This allows me to enforce that bury-buffer is bound to C-M-x
   ;; regardless of mode (YAY!)
@@ -92,18 +139,6 @@
 ;;           diff-minor-mode-map
 ;;           grep-mode-map
 ;;           help-mode-map))
-
-;; this is so awesome - occur easily inside isearch
-;;;###autoload
-(define-key isearch-mode-map (kbd "C-o")
-  (lambda ()
-    (interactive)
-    (let ((case-fold-search isearch-case-fold-search))
-      (occur (if isearch-regexp
-                 isearch-string (regexp-quote isearch-string))))))
-
-;;;###autoload
-(global-unset-key (kbd "M-o"))
 
 ;;;###autoload
 (global-set-key [remap isearch-forward]
@@ -146,26 +181,15 @@
 ;;;###autoload
 (progn
   (when (require 'multiple-cursors nil t)
-    ;; from: http://endlessparentheses.com/multiple-cursors-keybinds.html
-    ;;
-    ;; This is globally useful, so it goes under `C-x', and `m' for
-    ;; "multiple-cursors" is easy to remember.
-    (define-key ctl-x-map "\C-m" #'mc/mark-all-dwim)
-    ;; Usually, both `C-x C-m' and `C-x RET' invoke the `mule-keymap',
-    ;; but that's a waste of keys. Here we put it _just_ under `C-x
-    ;; RET'.
-    (define-key ctl-x-map (kbd "<return>") mule-keymap)
-
-    ;; Remember `er/expand-region' is bound to M-2!
-    (global-set-key (kbd "C-M-2") #'mc/expand-region)
-    (global-set-key (kbd "C-M-3") #'mc/mark-next-like-this)
-    (global-set-key (kbd "C-M-4") #'mc/mark-previous-like-this)
-
-    (global-set-key (kbd "C-c C-c e") 'mc/edit-ends-of-lines)
-    (global-set-key (kbd "C-c C-c l") 'mc/edit-lines)
-    (global-set-key (kbd "C-c C-c =") 'mc/mark-all-like-this)
-    (global-set-key (kbd "C-c C-c a") 'mc/mark-all-in-region)
-    (global-set-key (kbd "C-c C-c s") 'mc/mark-all-symbols-like-this)
-    (global-set-key (kbd "C-c C-c <") 'mc/mark-previous-like-this)
-    (global-set-key (kbd "C-c C-c n") 'mc/mark-next-like-this)
-    (global-set-key (kbd "C-c C-c r") 'set-rectangular-region-anchor)))
+    (rwd-smart-keys 'm '(("<" . 'mc/mark-previous-like-this)
+                         ("=" . 'mc/mark-all-like-this)
+                         ("A" . 'mc/align)
+                         ("a" . 'mc/mark-all-in-region)
+                         ("e" . 'mc/edit-ends-of-lines)
+                         ("i" . 'mc/insert-numbers)
+                         ("h" . 'mc-hide-unmatched-lines-mode)
+                         ("l" . 'mc/edit-lines)
+                         ("m" . 'mc/mark-all-dwim)
+                         ("n" . 'mc/mark-next-like-this)
+                         ("r" . 'set-rectangular-region-anchor)
+                         ("s" . 'mc/mark-all-symbols-like-this)))))
