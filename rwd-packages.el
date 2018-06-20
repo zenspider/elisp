@@ -31,7 +31,6 @@
                             htmlize
                             keyfreq
                             kill-ring-search
-                            litable
                             magit
                             multiple-cursors
                             org
@@ -44,7 +43,6 @@
                             racket-mode
                             s
                             shell-command                 ; tab-completion for `shell-command
-                            sml-mode
                             ssh                           ; ssh-mode
                             w3m
                             window-number                 ; Jump to window by M-number
@@ -67,8 +65,6 @@
 
                             phi-grep
 
-                            names
-
                             bison-mode
 
                             markdown-mode
@@ -81,7 +77,6 @@
                             magit-gh-pulls
                             let-alist
 
-                            golden-ratio
                             ;; magithub
                             magit-p4
 

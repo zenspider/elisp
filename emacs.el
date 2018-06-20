@@ -150,7 +150,7 @@
  '(p4-do-find-file nil)
  '(package-selected-packages
    (quote
-    (lsp-haskell flycheck-popup-tip json-mode json-reformat json-snatcher jq-mode magit-gh-pulls let-alist string-edit boxquote rebox2 unicode-enbox yaml-mode yagist window-number wgrep-ag web-mode w3m swift-mode ssh sml-mode smart-jump shm shell-command racket-mode popwin phi-search-mc phi-grep perspective package+ outline-magic nand2tetris names markdown-mode magit-p4 litable kill-ring-search keyfreq inf-ruby htmlize hindent golden-ratio github-browse-file git-timemachine geiser find-file-in-project expand-region eval-in-repl elscreen-buffer-group elisp-slime-nav dockerfile-mode dante company bts-github browse-kill-ring bison-mode aggressive-indent ag)))
+    (lsp-haskell flycheck-popup-tip json-mode json-reformat json-snatcher jq-mode magit-gh-pulls let-alist string-edit boxquote rebox2 unicode-enbox yaml-mode yagist window-number wgrep-ag web-mode w3m swift-mode ssh smart-jump shm shell-command racket-mode popwin phi-search-mc phi-grep perspective package+ outline-magic nand2tetris markdown-mode magit-p4 kill-ring-search keyfreq inf-ruby htmlize hindent github-browse-file git-timemachine geiser find-file-in-project expand-region eval-in-repl elscreen-buffer-group elisp-slime-nav dockerfile-mode dante company bts-github browse-kill-ring bison-mode aggressive-indent ag)))
  '(racket-images-system-viewer "open")
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values
