@@ -40,6 +40,7 @@
  '(auto-revert-use-notify nil)
  '(backup-by-copying-when-linked t)
  '(blink-cursor-mode nil)
+ '(browse-kill-ring-display-duplicates nil)
  '(column-number-mode t)
  '(comint-input-ignoredups t)
  '(comment-empty-lines (quote (quote eol)))
@@ -64,7 +65,7 @@
  '(enh-ruby-program "/Users/ryan/.rbenv/versions/2.4.2/bin/ruby")
  '(erc-fools
    (quote
-    ("slack-irc-bot" "Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros")))
+    ("konsolebox" "`slikts" "slack-irc-bot" "Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros")))
  '(erc-keywords
    (quote
     ("autotest\\|zentest\\|inline\\|parse_?tree\\|minitest\\|parser")))
@@ -110,6 +111,7 @@
  '(initial-scratch-message nil)
  '(ispell-dictionary "english")
  '(ispell-extra-args (quote ("\"--sug-mode=fast\"")))
+ '(kill-ring-max 1000)
  '(line-move-visual nil)
  '(lua-indent-level 2)
  '(mac-pass-command-to-system nil)
