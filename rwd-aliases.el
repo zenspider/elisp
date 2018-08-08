@@ -280,6 +280,7 @@
 (rwd-define-frame "dense"        9  full thirds-h)
 (rwd-define-frame "peepcode"     15 (80 30))
 (rwd-define-frame "presentation" 20 (92 34))
+(rwd-define-frame "pres2"        24 (100 34))
 (rwd-define-frame "small"        12 (80 48) v)
 
 (defalias 'rwd-resize-reset 'rwd-resize-default)
