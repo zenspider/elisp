@@ -1,1 +1,1 @@
-(add-to-list 'auto-mode-alist '("\\.bash.*$" . ksh-mode))
+(add-to-list 'auto-mode-alist '("\\.bash.*$" . sh-mode))
