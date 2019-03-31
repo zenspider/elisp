@@ -16,13 +16,17 @@
 
 (require 'package+)
 
+(setq package-archive-priorities
+      '(("melpa-stable" . 20)
+        ("gnu"          . 10)
+        ("melpa"        .  0)))
+
 (apply 'package-manifest
        (setq rwd-manifest '(package+    ; duh
 
                             ag          ; the silver surfer
                             browse-kill-ring
                             dash
-                            elscreen
                             expand-region
                             f
                             geiser
@@ -44,6 +48,7 @@
                             s
                             shell-command                 ; tab-completion for `shell-command
                             ssh                           ; ssh-mode
+                            string-edit                   ; AMAZING string-edit-at-point
                             w3m
                             window-number                 ; Jump to window by M-number
                             yagist                        ; gist
@@ -59,8 +64,13 @@
 
                             find-file-in-project
                             swift-mode
+                            flycheck-swift3
+                            flycheck-swiftlint
 
-                            perspective
+                            perspective ; buffers-per-perspective
+                            cyphejor    ; mode renaming
+                            delight     ; ditto--I might have to merge these two
+
                             aggressive-indent
 
                             phi-grep
@@ -82,15 +92,8 @@
 
                             dockerfile-mode
 
-                            ;; haskell stuff
-                            haskell-mode
                             flycheck
-                            shm
-                            hindent
-                            dante
                             company
-
-                            string-edit
 
                             json-mode
                             jq-mode
