@@ -14,6 +14,12 @@
  :group 'my-faces)
 
 ;;;###autoload
+(setq rwd-programming-modes             ; TODO: move somewhere global
+      '(c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode lisp-mode
+               racc-mode racket-mode ruby-mode rust-mode scheme-mode sml-mode
+               text-mode))
+
+;;;###autoload
 (progn
   (setq yellow-tokens
         (delete ?\s "\\<\\(F IX\\|D OC\\|R ETIRE\\|T ODO\\|W ARN\\)\\>.*"))
@@ -25,5 +31,4 @@
            mode
            (list (list yellow-tokens 0 ''my-yellow-face 'prepend)
                  (list red-tokens    0 ''my-red-face    'prepend))))
-        '(ruby-mode enh-ruby-mode lisp-mode haskell-mode scheme-mode
-                    emacs-lisp-mode racket-mode rust-mode)))
+        rwd-programming-modes))
