@@ -231,6 +231,13 @@
       (rwd-occur "-p -n -o")))
 
 ;;;###autoload
+(defun rwd-occur-non-ascii ()
+  "Find any non-ascii characters in the current buffer."
+  ;; this might be a little confusing because this is emacs occur, not mine
+  (interactive)
+  (occur "[^[:ascii:]]"))
+
+;;;###autoload
 (defun rwd-previous-line-6 ()
   (interactive)
   (line-move-1 -6))
@@ -308,6 +315,15 @@
   (balance-windows))
 
 ;;;###autoload
+(defun rwd-toggle-window (buffer display-fn)
+  (let* ((window (and buffer
+                      (get-buffer buffer)
+                      (get-buffer-window (get-buffer buffer) nil))))
+    (if window
+        (delete-window window)
+      (call-interactively display-fn))))
+
+;;;###autoload
 (defun rwd-split-thirds-h ()
   "Splits the current frame horizontally into even thirds."
   (interactive)
@@ -365,6 +381,8 @@
   (frame-parameter nil 'font))
 
 (defun rwd-unique-buffer (name)
+  "Create a unique buffer name starting with the prefix in NAME.
+Essentially, I didn't like the format of generate-new-buffer-name."
   (let* ((count 1)
          (buffer-name (format "%s-%d" name count)))
     (while (get-buffer buffer-name)
@@ -385,8 +403,23 @@
 ;;;###autoload
 (defun rwd-shell ()
   "Create a shell buffer that is properly named (shell-<N>)"
-  (interactive)
-  (shell (switch-to-buffer-other-window (rwd-unique-buffer "shell"))))
+  (interactive "p")
+  (if (rwd-currently-only-scratch)
+      (progn
+        (when (eq 1 (length (window-list)))
+          (split-window-right))
+        (shell (switch-to-buffer (rwd-unique-buffer "shell") nil t)))
+    (let ((buf (rwd-unique-buffer "shell")))
+      (shell (switch-to-buffer-other-window buf)))))
+
+(defun rwd-currently-only-scratch ()
+  ;; Modified to check the name so perspective-mode scratch buffers
+  ;; count. Also checks any number of windows are all scratch, in case
+  ;; you've already split the window.
+  ;;
+  (-all? (lambda (w) (string-prefix-p "*scratch*"
+                                      (buffer-name (window-buffer w))))
+         (window-list)))
 
 ;;;###autoload
 (defun sort-files-by-date (a b)
@@ -416,8 +449,13 @@
   (interactive "p")
   (setq tab-width (or width 2) indent-tabs-mode nil)
   (save-excursion
-    (mark-whole-buffer)
     (untabify (point-min) (point-max))))
+
+;;;###autoload
+(defun rwd-flycheck-toggle-list-errors ()
+  (interactive)
+  (rwd-toggle-window flycheck-error-list-buffer
+                     'flycheck-list-errors))
 
 ;;;###autoload
 (defun rwd-toggle-split ()
@@ -585,16 +623,16 @@
 
 ;;;###autoload
 (defun rwd-clean ()
-  "Untabifies, indents and deletes trailing whitespace from buffer or region."
+  "Untabifies, indents and deletes trailing whitespace from buffer."
   (interactive)
-  (save-excursion
-    (unless (region-active-p)
-      (mark-whole-buffer))
-    (untabify (region-beginning) (region-end))
-    (indent-region (region-beginning) (region-end))
-    (save-restriction
-      (narrow-to-region (region-beginning) (region-end))
-      (delete-trailing-whitespace))))
+
+  (let ((whitespace-style '(empty
+                            trailing
+                            indentation::space
+                            spece-before-tab::space
+                            space-after-tab::space)))
+    (whitespace-cleanup)
+    (indent-region (point-min) (point-max))))
 
 ;;;###autoload
 (defun rwd-ansi-colorize ()
@@ -804,7 +842,8 @@ even beep.)"
 
   (find-file "~/.bash_history")
   (with-current-buffer ".bash_history"
-    (delete-matching-lines "[^[:graph:][:space:]]\\|" (point-min) (point-max))
+    (delete-matching-lines "[^[:graph:][:space:]\n]\\|"
+                           (point-min) (point-max))
     (save-buffer)
     (kill-buffer)))
 
@@ -950,7 +989,7 @@ already narrowed."
   (let* ((buffers (current-2-buffers))
          (curr-buf (car buffers))
          (next-buf (cdr buffers)))
-    (ediff-buffers curr-buf next-buf)))
+    (ediff-buffers next-buf curr-buf)))
 
 ;;;###autoload
 (defun current-2-buffers ()
@@ -968,3 +1007,17 @@ already narrowed."
   (set-face-attribute 'mode-line nil
                       :background "grey75"
                       :foreground "black"))
+
+;;;###autoload
+(defun re-seq (regexp string)
+  "Get a list of all regexp matches in a string"
+  (save-match-data
+    (let ((pos 0)
+          matches)
+      (while (string-match regexp string pos)
+        (push (match-string-no-properties 0 string) matches)
+        (setq pos (match-end 0)))
+      matches)))
+
+;; (setq urlreg "\\(?:http://\\)?www\\(?:[./#\+-]\\w*\\)+")
+;; (re-seq urlreg (buffer-string))
