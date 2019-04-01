@@ -35,6 +35,10 @@ or else the number of characters matched by `outline-regexp'."
 
   (set (make-local-variable 'outline-regexp) outline-regexp-ruby))
 
+(require 'eval-in-repl)
+(require 'eval-in-repl-ruby)
+(define-key enh-ruby-mode-map (kbd "<C-return>") 'eir-eval-in-ruby)
+
 (enh-update-outline)
 (outline-minor-mode)
 
