@@ -41,6 +41,18 @@
  '(backup-by-copying-when-linked t)
  '(blink-cursor-mode nil)
  '(browse-kill-ring-display-duplicates nil)
+ '(bs-attributes-list
+   (quote
+    (("" 1 1 left bs--get-marked-string)
+     ("M" 1 1 left bs--get-modified-string)
+     ("R" 2 2 left bs--get-readonly-string)
+     ("Buffer" bs--get-name-length 10 left bs--get-name)
+     ("" 1 1 left " ")
+     ("Mode" 4 8 right bs--get-mode-name)
+     ("" 2 2 left "  ")
+     ("File" 12 12 left bs--get-file-name)
+     ("" 2 2 left "  "))))
+ '(bs-default-configuration "persp")
  '(column-number-mode t)
  '(comint-input-ignoredups t)
  '(comment-empty-lines (quote (quote eol)))
@@ -65,7 +77,8 @@
  '(enh-ruby-program "/Users/ryan/.rbenv/versions/2.4.2/bin/ruby")
  '(erc-fools
    (quote
-    ("konsolebox" "`slikts" "slack-irc-bot" "Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros")))
+    ("Welkin" "konsolebox" "`slikts" "slack-irc-bot" "Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros")))
+ '(erc-join-buffer (quote bury))
  '(erc-keywords
    (quote
     ("autotest\\|zentest\\|inline\\|parse_?tree\\|minitest\\|parser")))
@@ -86,23 +99,20 @@
  '(eval-expression-print-level nil)
  '(explicit-bash-args (quote ("--noediting" "--login" "-i")))
  '(ffap-file-finder (quote find-file-other-window))
+ '(ffap-machine-p-known (quote accept))
  '(find-file-visit-truename t)
+ '(flycheck-display-errors-function (quote flycheck-display-error-messages-unless-error-list))
  '(flyspell-delayed-commands (quote (kmacro-call-macro kmacro-end-and-call-macro)))
  '(fuel-listener-factor-binary
    "/MyApplications/dev/factor/Factor.app/Contents/MacOS/factor")
  '(fuel-listener-factor-image "/MyApplications/dev/factor/factor.image")
  '(git-commit-summary-max-length 78)
  '(global-auto-revert-mode t)
- '(golden-ratio-exclude-modes (quote (\'ediff-mode)))
- '(golden-ratio-inhibit-functions (quote (rwd-golden-ratio-inhibitor)))
- '(haskell-ask-also-kill-buffers nil)
- '(haskell-process-auto-import-loaded-modules nil)
- '(haskell-process-log t)
- '(haskell-process-suggest-remove-import-lines t)
  '(hippie-expand-try-functions-list
    (quote
     (try-expand-all-abbrevs try-expand-dabbrev-visible try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill rwd-try-expand-tag try-complete-lisp-symbol-partially try-complete-lisp-symbol try-complete-file-name-partially try-complete-file-name try-expand-list)))
  '(history-length 1000)
+ '(icomplete-mode t)
  '(imenu-max-items 50)
  '(imenu-sort-function (quote imenu--sort-by-name))
  '(indent-tabs-mode nil)
@@ -152,7 +162,10 @@
  '(p4-do-find-file nil)
  '(package-selected-packages
    (quote
-    (lsp-haskell flycheck-popup-tip json-mode json-reformat json-snatcher jq-mode magit-gh-pulls let-alist string-edit boxquote rebox2 unicode-enbox yaml-mode yagist window-number wgrep-ag web-mode w3m swift-mode ssh smart-jump shm shell-command racket-mode popwin phi-search-mc phi-grep perspective package+ outline-magic nand2tetris markdown-mode magit-p4 kill-ring-search keyfreq inf-ruby htmlize hindent github-browse-file git-timemachine geiser find-file-in-project expand-region eval-in-repl elscreen-buffer-group elisp-slime-nav dockerfile-mode dante company bts-github browse-kill-ring bison-mode aggressive-indent ag)))
+    (diminish delight cyphejor perspective-el flycheck-swiftlint flycheck-swift3 js2-mode font-lock-studio faceup highlight2clipboard highlight-refontification graphviz-dot-mode lsp-haskell flycheck-popup-tip json-mode json-reformat json-snatcher jq-mode magit-gh-pulls let-alist string-edit boxquote rebox2 unicode-enbox yaml-mode yagist window-number wgrep-ag web-mode w3m swift-mode ssh smart-jump shm shell-command racket-mode popwin phi-search-mc phi-grep perspective package+ outline-magic nand2tetris markdown-mode magit-p4 kill-ring-search keyfreq inf-ruby htmlize github-browse-file git-timemachine geiser find-file-in-project expand-region eval-in-repl elscreen-buffer-group elisp-slime-nav dockerfile-mode dante company bts-github browse-kill-ring bison-mode aggressive-indent ag)))
+ '(persp-initial-frame-name "*")
+ '(persp-mode t)
+ '(persp-mode-prefix-key "")
  '(racket-images-system-viewer "open")
  '(read-buffer-completion-ignore-case t)
  '(safe-local-variable-values
@@ -200,7 +213,7 @@
  '(user-mail-address "ryand-ruby@zenspider.com")
  '(vc-annotate-display-mode (quote scale))
  '(vc-command-messages t)
- '(vc-handled-backends (quote (CVS SVN GIT)))
+ '(vc-handled-backends (quote (CVS SVN Git)))
  '(vc-p4-require-p4config t)
  '(vc-svn-program-name "/usr/bin/svn")
  '(visible-bell t)
