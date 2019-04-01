@@ -100,6 +100,11 @@
 
                             eval-in-repl)))
 
+(setq package-selected-packages rwd-manifest)
+
+;; TODO: maybe?
+;; (customize-set-variable 'package-selected-packages rwd-manifest)
+
 ;; (with-current-buffer "*scratch*" (cl-prettyprint (package-manifest-with-deps rwd-manifest)) (display-buffer "*scratch*"))
 
 ;; (package-refresh-contents)

@@ -162,7 +162,8 @@
  '(p4-do-find-file nil)
  '(package-selected-packages
    (quote
-    (diminish delight cyphejor perspective-el flycheck-swiftlint flycheck-swift3 js2-mode font-lock-studio faceup highlight2clipboard highlight-refontification graphviz-dot-mode lsp-haskell flycheck-popup-tip json-mode json-reformat json-snatcher jq-mode magit-gh-pulls let-alist string-edit boxquote rebox2 unicode-enbox yaml-mode yagist window-number wgrep-ag web-mode w3m swift-mode ssh smart-jump shm shell-command racket-mode popwin phi-search-mc phi-grep perspective package+ outline-magic nand2tetris markdown-mode magit-p4 kill-ring-search keyfreq inf-ruby htmlize github-browse-file git-timemachine geiser find-file-in-project expand-region eval-in-repl elscreen-buffer-group elisp-slime-nav dockerfile-mode dante company bts-github browse-kill-ring bison-mode aggressive-indent ag)))
+    (package+ ag browse-kill-ring dash expand-region f geiser git-timemachine github-browse-file htmlize keyfreq kill-ring-search magit multiple-cursors org outline-magic p4 paredit phi-search phi-search-mc popwin racket-mode s shell-command ssh string-edit w3m window-number yagist yaml-mode elisp-slime-nav outline-magic wgrep wgrep-ag find-file-in-project swift-mode flycheck-swift3 flycheck-swiftlint perspective cyphejor delight aggressive-indent phi-grep bison-mode markdown-mode web-mode smart-jump inf-ruby bts bts-github magit-gh-pulls let-alist magit-p4 dockerfile-mode flycheck company json-mode jq-mode eval-in-repl)))
+ '(package-selected-packagse nil t)
  '(persp-initial-frame-name "*")
  '(persp-mode t)
  '(persp-mode-prefix-key "")
