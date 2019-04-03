@@ -8,8 +8,4 @@
     (not (member buf (persp-buffers (persp-curr))))))
 
 ;; TODO: switch to customize when I get this right
-(add-to-list 'bs-configurations
-             '("persp"
-               nil nil
-               "^\\*"
-               rwd/bs-config/persp))
+(add-to-list 'bs-configurations '("persp" nil nil "^\\*" rwd/bs-config/persp))
