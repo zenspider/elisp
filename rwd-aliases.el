@@ -403,13 +403,13 @@ Essentially, I didn't like the format of generate-new-buffer-name."
 ;;;###autoload
 (defun rwd-shell ()
   "Create a shell buffer that is properly named (shell-<N>)"
-  (interactive "p")
-  (if (rwd-currently-only-scratch)
-      (progn
-        (when (eq 1 (length (window-list)))
-          (split-window-right))
-        (shell (switch-to-buffer (rwd-unique-buffer "shell") nil t)))
-    (let ((buf (rwd-unique-buffer "shell")))
+  (interactive)
+  (let ((buf (rwd-unique-buffer "shell")))
+    (if (rwd-currently-only-scratch)
+        (progn
+          (when (eq 1 (length (window-list)))
+            (split-window-right))
+          (shell (switch-to-buffer buf)))
       (shell (switch-to-buffer-other-window buf)))))
 
 (defun rwd-currently-only-scratch ()
