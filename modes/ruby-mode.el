@@ -21,7 +21,7 @@
 
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
-(setq ruby-program-name "/usr/bin/irb")
+(setq ruby-program-name "/usr/bin/env irb")
 
 (defun ruby-find-file (s)
   (interactive "sgem which ")
