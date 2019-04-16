@@ -102,12 +102,10 @@
 
                             eval-in-repl)))
 
-(setq package-selected-packages rwd-manifest)
+;; removes anything I hand-install to test out.
+(customize-save-variable 'package-selected-packages rwd-manifest)
 
-;; TODO: maybe?
-;; (customize-set-variable 'package-selected-packages rwd-manifest)
-
-;; (with-current-buffer "*scratch*" (cl-prettyprint (package-manifest-with-deps rwd-manifest)) (display-buffer "*scratch*"))
+;; (with-help-window "my-packages" (with-current-buffer "my-packages" (cl-prettyprint (package-manifest-with-deps rwd-manifest))))
 
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
