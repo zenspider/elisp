@@ -2,3 +2,4 @@
                                      (display-buffer-reuse-window
                                       display-buffer-below-selected)
                                      (window-height   . 0.33)))
+(flycheck-package-setup)
