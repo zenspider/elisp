@@ -63,7 +63,6 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; violations that need to be changed over time
 
-  (global-set-key (kbd "C-c C-d") 'delete-trailing-whitespace)
   (global-set-key (kbd "C-c C-s") 'rwd-select-all-mm-at-point)
   (global-set-key (kbd "C-c M-q") 'unfill-paragraph)
   (global-set-key (kbd "M-s")     'fixup-whitespace) ; useful search/highlight stuff
@@ -92,14 +91,16 @@
 
   (global-set-key (kbd "C-c -")   'rwd-selective-display)
   (global-set-key (kbd "C-c O")   'rwd-occur-n-buffer)
-  (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
+  (global-set-key (kbd "C-c SPC") 'delete-trailing-whitespace)
   (global-set-key (kbd "C-c a")   'align-cols)
+  (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
   (global-set-key (kbd "C-c c")   'rwd-clean)
   (rwd-smart-keys 'd '((   "R" .  'ediff-regions-linewise)
                        (   "b" .  'ediff-buffers)
                        (   "d" .  'ediff-directories)
                        (   "f" .  'ediff-files)
                        (   "q" .  'ediff-quit)
+                       ( "SPC" .  'delete-trailing-whitespace)
                        (   "r" .  'ediff-regions-wordwise)
                        (   "w" .  'delete-trailing-whitespace)))
   (global-set-key (kbd "C-c e")   'erase-buffer)
@@ -110,7 +111,9 @@
   (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
   (rwd-smart-keys 's '((   "c" .  'sort-columns)
                        (   "l" .  'sort-lines)
+                       (   "n" .  'sort-numbers)
                        (   "p" .  'sort-paragraphs)
+                       (   "S" .  'sort-sexps)
                        (   "s" .  'sort-symbols)
                        (   "w" .  'sort-words)))
   (global-set-key (kbd "C-x /")   'align-regexp)
