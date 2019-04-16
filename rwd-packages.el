@@ -66,6 +66,8 @@
                             swift-mode
                             flycheck-swift3
                             flycheck-swiftlint
+                            flycheck-package
+                            package-lint
 
                             perspective ; buffers-per-perspective
                             cyphejor    ; mode renaming
