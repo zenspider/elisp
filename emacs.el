@@ -162,22 +162,13 @@
  '(p4-do-find-file nil)
  '(package-selected-packages
    (quote
-    (package+ ag browse-kill-ring dash expand-region f geiser git-timemachine github-browse-file htmlize keyfreq kill-ring-search magit multiple-cursors org outline-magic p4 paredit phi-search phi-search-mc popwin racket-mode s shell-command ssh string-edit w3m window-number yagist yaml-mode elisp-slime-nav outline-magic wgrep wgrep-ag find-file-in-project swift-mode flycheck-swift3 flycheck-swiftlint perspective cyphejor delight aggressive-indent phi-grep bison-mode markdown-mode web-mode smart-jump inf-ruby bts bts-github magit-gh-pulls let-alist magit-p4 dockerfile-mode flycheck company json-mode jq-mode eval-in-repl)))
+    (package+ ag browse-kill-ring dash expand-region f geiser git-timemachine github-browse-file htmlize keyfreq kill-ring-search magit multiple-cursors org outline-magic p4 paredit phi-search phi-search-mc popwin racket-mode s shell-command ssh string-edit w3m window-number yagist yaml-mode elisp-slime-nav outline-magic wgrep wgrep-ag find-file-in-project swift-mode flycheck-swift3 flycheck-swiftlint flycheck-package package-lint perspective cyphejor delight aggressive-indent phi-grep bison-mode markdown-mode web-mode smart-jump inf-ruby bts bts-github magit-gh-pulls let-alist magit-p4 dockerfile-mode flycheck company json-mode jq-mode eval-in-repl)))
  '(package-selected-packagse nil t)
  '(persp-initial-frame-name "*")
  '(persp-mode t)
  '(persp-mode-prefix-key "")
  '(racket-images-system-viewer "open")
  '(read-buffer-completion-ignore-case t)
- '(safe-local-variable-values
-   (quote
-    ((lexical . t)
-     (ffip-project-root . "/Users/ryan/Work/p4/zss/src/minitest/dev/")
-     (ffip-project-file . "Rakefile")
-     (ffip-prune-patterns . "tmp/isolate")
-     (encoding . utf-8)
-     (backup-inhibited . t)
-     (racc-token-length-max . 14))))
  '(save-interprogram-paste-before-kill t)
  '(save-place-file "~/.emacs.d/emacs-places")
  '(save-place-limit 100)
