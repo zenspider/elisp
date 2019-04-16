@@ -430,6 +430,33 @@ Essentially, I didn't like the format of generate-new-buffer-name."
       (> (nth 0 ta) (nth 0 tb)))))
 
 ;;;###autoload
+(defun sort-numbers (reverse beg end)
+  "Sort numbers in the Region."
+  ;; from https://emacs-china.github.io/blog/2017/08/19/sort-sexps/
+  (interactive "*P\nr")
+  (save-restriction
+    (narrow-to-region beg end)
+    (goto-char (point-min))
+    (let ((nextrecfun (lambda () (skip-syntax-forward "-.>")))
+          (endrecfun  #'forward-sexp)
+          (startkeyfun (lambda ()
+                         (or (number-at-point)
+                             (user-error "Sexp doesn't looks like a number")))))
+      (sort-subr reverse nextrecfun endrecfun startkeyfun))))
+
+;;;###autoload
+(defun sort-sexps (reverse beg end)
+  "Sort sexps in the Region."
+  ;; from https://emacs-china.github.io/blog/2017/08/19/sort-sexps/
+  (interactive "*P\nr")
+  (save-restriction
+    (narrow-to-region beg end)
+    (goto-char (point-min))
+    (let ((nextrecfun (lambda () (skip-syntax-forward "-.>")))
+          (endrecfun  #'forward-sexp))
+      (sort-subr reverse nextrecfun endrecfun))))
+
+;;;###autoload
 (defun rwd-swap-buffers ()
   "Swap the current 2 buffers in their windows"
   (interactive)
