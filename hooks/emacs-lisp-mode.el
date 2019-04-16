@@ -2,6 +2,16 @@
 ;; (aggressive-indent-mode)
 (turn-on-elisp-slime-nav-mode)
 
-;; TODO: remap these and bring back my binding for delete-trailing-whitespace
-;; C-c C-d C-d     elisp-slime-nav-describe-elisp-thing-at-point
-;; C-c C-d d       elisp-slime-nav-describe-elisp-thing-at-point
+(let ((map elisp-slime-nav-mode-map))
+  (define-key map (kbd "C-c C-d d")   nil)
+  (define-key map (kbd "C-c C-d C-d") nil))
+
+(define-key emacs-lisp-mode-map       (kbd "<M-return>") 'eir-eval-in-ielm)
+(define-key lisp-interaction-mode-map (kbd "<M-return>") 'eir-eval-in-ielm)
+(define-key lisp-interaction-mode-map (kbd "C-M-<return>") 'eval-defun)
+
+(defun rwd-elisp-sanity-check ()
+  (interactive)
+  (checkdoc)
+  (byte-compile-file (buffer-file-name))
+  (package-buffer-info))
