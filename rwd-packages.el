@@ -103,7 +103,9 @@
                             eval-in-repl)))
 
 ;; removes anything I hand-install to test out.
-(customize-save-variable 'package-selected-packages rwd-manifest)
+(add-hook 'after-init-hook
+          (lambda ()
+            (customize-save-variable 'package-selected-packages rwd-manifest)))
 
 ;; (with-help-window "my-packages" (with-current-buffer "my-packages" (cl-prettyprint (package-manifest-with-deps rwd-manifest))))
 
