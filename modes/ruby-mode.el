@@ -16,6 +16,7 @@
 (dolist (spec '(("\\.rhtml$" . html-mode)
                 ("\\.xhtml$" . html-mode)
                 ("\\.yml$"   . yaml-mode)
+                ("\\.rdoc$"  . rdoc-mode)
                 ("\\.gem$"   . tar-mode)))
   (add-to-list 'auto-mode-alist spec))
 

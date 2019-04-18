@@ -214,7 +214,7 @@
  '(web-mode-markup-indent-offset 2)
  '(whitespace-global-modes
    (quote
-    (ruby-mode emacs-lisp-mode scheme-mode enh-ruby-mode c-mode racket-mode sml-mode racc-mode rust-mode diff-mode haskell-mode text-mode)))
+    (c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode markdown-mode racc-mode racket-mode ruby-mode rust-mode scheme-mode sml-mode text-mode)))
  '(whitespace-style
    (quote
     (face tabs trailing lines-tail space-before-tab empty))))
