@@ -1,6 +1,10 @@
-;; racc-mode.el
+;;; racc-mode.el --- A mode for editing racc (like yacc/bison for ruby) files.
 ;;
-;; Copyright (c) 2001 sheepman
+;; Author: sheepman
+;; Maintainer: Ryan Davis
+;; URL: http://github.com/zenspider/elisp
+;; Copyright: (c) 2001 sheepman
+;;
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -24,15 +28,30 @@
 ;; THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 ;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 ;; THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-;;
-;; write the following in your .emacs file
-;; racc-mode
-;; (autoload 'racc-mode "racc-mode" "alternate mode for editing racc files" t)
-;; (setq auto-mode-alist (append '(("\\.ry$" . racc-mode)) auto-mode-alist))
-;;
 
+;;; Commentary:
+
+;; This is a fork of the original from "sheepman", who has been
+;; incommunicado for years. It is largely unchanged from the 2001
+;; version but I've added some changes to make it work better with
+;; emacs changes over the years.
+;;
+;; Add the following to your emacs setup:
+;;
+;;   (autoload 'racc-mode "racc-mode" "alternate mode for editing racc files" t)
+;;   (add-to-list 'load-path "/path/to/racc-mode-directory")
+;;   (add-to-list 'auto-mode-alist '("\\.ry$" . racc-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.yy$" . racc-mode))
 
 (require 'derived)
+
+;;; Code:
+
+(defcustom racc-token-length-max 11
+  "The maximum length of a racc-token. Helps with indentation."
+  :type 'integer
+  :safe #'integerp
+  :group 'racc)
 
 (define-derived-mode racc-mode ruby-mode "Racc"
   "Major mode for Racc editing."
@@ -126,7 +145,6 @@
     nil))
 
 (defvar racc-indent-level 2)
-(setq racc-token-length-max 11)
 
 (defun racc-indent-to (x)
   (ruby-indent-to x))
@@ -178,7 +196,6 @@
          0)
         (t 0)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general functions
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -201,3 +218,5 @@
     (re-search-backward str nil t)))
 
 (provide 'racc-mode)
+
+;;; racc-mode.el ends here
