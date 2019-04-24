@@ -81,7 +81,7 @@
 
                             markdown-mode
                             web-mode
-                            smart-jump
+                            ;; smart-jump
                             inf-ruby
 
                             bts
