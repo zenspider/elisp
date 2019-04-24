@@ -407,10 +407,13 @@ Essentially, I didn't like the format of generate-new-buffer-name."
   (let ((buf (rwd-unique-buffer "shell")))
     (if (rwd-currently-only-scratch)
         (progn
-          (when (eq 1 (length (window-list)))
+          (when (and (eq 1 (length (window-list)))
+                     (> (window-width) 82))
             (split-window-right))
           (shell (switch-to-buffer buf)))
       (shell (switch-to-buffer-other-window buf)))))
+
+(require 'dash)
 
 (defun rwd-currently-only-scratch ()
   ;; Modified to check the name so perspective-mode scratch buffers
