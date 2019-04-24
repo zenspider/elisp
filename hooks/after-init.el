@@ -2,3 +2,5 @@
   (cd "~"))
 
 (rwd-load-modes)
+
+(server-start)
