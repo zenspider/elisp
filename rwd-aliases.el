@@ -211,6 +211,15 @@
 (defalias 'rwd-ns-toggle-fullscreen 'rwd-ns-fullscreen-toggle)
 
 ;;;###autoload
+(defun rwd-ns-fullscreen-resize ()
+  (interactive)
+  (when (rwd-is-fullscreen)
+    (toggle-frame-fullscreen)
+    (toggle-frame-fullscreen)))
+
+(defalias 'rwd-fix-fullscreen 'rwd-ns-fullscreen-resize)
+
+;;;###autoload
 (defun rwd-occur (opt)
   (save-excursion
     (shell-command-on-region (point-min) (point-max)
