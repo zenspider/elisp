@@ -237,7 +237,7 @@
   (interactive "P")
   (if all
       (rwd-occur "-p -n")
-      (rwd-occur "-p -n -o")))
+      (rwd-occur "-p -x -n -o")))
 
 ;;;###autoload
 (defun rwd-occur-non-ascii ()
