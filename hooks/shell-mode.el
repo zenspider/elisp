@@ -1,3 +1,8 @@
+(require 'xterm-color)
+(setq comint-output-filter-functions
+      (remove 'ansi-color-process-output comint-output-filter-functions))
+(add-hook 'comint-preoutput-filter-functions 'xterm-color-filter nil t)
+
 (setq shell-dirstack-query "dirs -l")
 
 (define-key shell-mode-map (kbd "C-c C-d") nil)  ; keeps biting me
