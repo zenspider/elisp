@@ -56,6 +56,8 @@
 
                             ;; trying out:
 
+                            xterm-color
+
                             elisp-slime-nav
 
                             outline-magic
