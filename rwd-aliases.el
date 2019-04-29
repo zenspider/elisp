@@ -93,6 +93,10 @@
     (buffer-string)))
 
 ;;;###autoload
+(defmacro remove-from-list (var x)
+  `(setq ,var (remove ,x ,var)))
+
+;;;###autoload
 (defun reverse-words (beg end)
   "Reverse the order of words in region."
   ;; stolen from https://www.emacswiki.org/emacs/ReverseWords
