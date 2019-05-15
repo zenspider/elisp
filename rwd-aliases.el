@@ -251,6 +251,9 @@
   (occur "[^[:ascii:]]"))
 
 ;;;###autoload
+(defalias 'rwd-find-utf-8 'rwd-occur-non-ascii)
+
+;;;###autoload
 (defun rwd-previous-line-6 ()
   (interactive)
   (line-move-1 -6))
