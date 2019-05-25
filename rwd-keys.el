@@ -32,8 +32,10 @@
 
   (global-set-key (kbd "<f7>")    'rwd-toggle-split)        ; undefined
   (global-set-key (kbd "<f8>")    'rwd-swap-buffers)        ; undefined
+  (global-set-key (kbd "C-M--")   'default-text-scale-decrease) ; was negative-argument
   (global-set-key (kbd "C-M-.")   'etags-select-find-tag)   ; was xref-find-apropos
   (global-set-key (kbd "C-M-;")   'unfill-paragraph)        ; undefined
+  (global-set-key (kbd "C-M-=")   'default-text-scale-increase) ; undefined
   (global-set-key (kbd "C-M-SPC") 'er/expand-region)        ; was mark-sexp
   (global-set-key (kbd "C-M-x")   'bury-buffer)             ; unassigned?
   (global-set-key (kbd "C-M-y")   'kill-ring-search)        ; undefined

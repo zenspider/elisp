@@ -98,6 +98,8 @@
                             json-mode
                             jq-mode
 
+                            default-text-scale
+
                             eval-in-repl)))
 
 ;; removes anything I hand-install to test out.
