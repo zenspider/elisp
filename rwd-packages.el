@@ -86,12 +86,8 @@
                             ;; smart-jump
                             inf-ruby
 
-                            bts
-                            bts-github
-                            magit-gh-pulls
                             let-alist
 
-                            ;; magithub
                             magit-p4
 
                             dockerfile-mode
