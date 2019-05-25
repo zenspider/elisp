@@ -162,7 +162,7 @@
  '(p4-do-find-file nil)
  '(package-selected-packages
    (quote
-    (package+ ag browse-kill-ring dash expand-region f geiser git-timemachine github-browse-file htmlize keyfreq kill-ring-search magit multiple-cursors org outline-magic p4 paredit phi-search phi-search-mc popwin racket-mode s shell-command ssh string-edit w3m window-number yagist yaml-mode xterm-color elisp-slime-nav outline-magic wgrep wgrep-ag find-file-in-project swift-mode flycheck-swift3 flycheck-swiftlint flycheck-package package-lint perspective cyphejor delight aggressive-indent phi-grep bison-mode markdown-mode web-mode inf-ruby bts bts-github magit-gh-pulls let-alist magit-p4 dockerfile-mode flycheck company json-mode jq-mode eval-in-repl)))
+    (package+ ag browse-kill-ring dash expand-region f geiser git-timemachine github-browse-file htmlize keyfreq kill-ring-search magit multiple-cursors org outline-magic p4 paredit phi-search phi-search-mc popwin racket-mode s shell-command ssh string-edit w3m window-number yagist yaml-mode xterm-color elisp-slime-nav outline-magic wgrep wgrep-ag find-file-in-project swift-mode flycheck-swift3 flycheck-swiftlint flycheck-package package-lint perspective cyphejor delight aggressive-indent phi-grep bison-mode markdown-mode web-mode inf-ruby let-alist magit-p4 dockerfile-mode flycheck company json-mode jq-mode eval-in-repl)))
  '(package-selected-packagse nil t)
  '(persp-initial-frame-name "*")
  '(persp-mode t)
