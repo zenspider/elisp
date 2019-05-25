@@ -30,22 +30,22 @@
   ;; be specific to modes (even though they should almost all be bound
   ;; into "C-c C-<letter>...", per standard.
 
-  (global-set-key (kbd "<f7>")    'rwd-toggle-split)      ; undefined
-  (global-set-key (kbd "<f8>")    'rwd-swap-buffers)      ; undefined
-  (global-set-key (kbd "C-M-.")   'etags-select-find-tag) ; was xref-find-apropos
-  (global-set-key (kbd "C-M-;")   'unfill-paragraph)      ; undefined
-  (global-set-key (kbd "C-M-x")   'bury-buffer)           ; unassigned?
-  (global-set-key (kbd "C-x C-b") 'bs-show)               ; was list-buffers
-  (global-set-key (kbd "C-x C-p") 'find-file-at-point)    ; was mark-page
-  (global-set-key (kbd "C-x C-t") 'toggle-buffer) ; was transpose-lines
-  (global-set-key (kbd "C-x f")   'find-file) ; was set-fill-column, typos
+  (global-set-key (kbd "<f7>")    'rwd-toggle-split)        ; undefined
+  (global-set-key (kbd "<f8>")    'rwd-swap-buffers)        ; undefined
+  (global-set-key (kbd "C-M-.")   'etags-select-find-tag)   ; was xref-find-apropos
+  (global-set-key (kbd "C-M-;")   'unfill-paragraph)        ; undefined
+  (global-set-key (kbd "C-M-SPC") 'er/expand-region)        ; was mark-sexp
+  (global-set-key (kbd "C-M-x")   'bury-buffer)             ; unassigned?
+  (global-set-key (kbd "C-M-y")   'kill-ring-search)        ; undefined
+  (global-set-key (kbd "C-x C-b") 'bs-show)                 ; was list-buffers
+  (global-set-key (kbd "C-x C-p") 'find-file-at-point)      ; was mark-page
+  (global-set-key (kbd "C-x C-t") 'toggle-buffer)           ; was transpose-lines
+  (global-set-key (kbd "C-x f")   'find-file)               ; was set-fill-column, typos
   (global-set-key (kbd "C-x r t") 'inline-string-rectangle) ; was string-rectangle
-  (global-set-key (kbd "C-M-SPC") 'er/expand-region) ; was mark-sexp
-  (global-set-key (kbd "M-C-y")   'kill-ring-search) ; undefined
   (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point) ; was xref-find-references
-  (global-set-key (kbd "M-[")     'outdent-rigidly-2) ; undefined
-  (global-set-key (kbd "M-]")     'indent-rigidly-2) ; undefined
-  (global-set-key (kbd "M-j")     'rwd-join-lines) ; was indent-new-comment-line
+  (global-set-key (kbd "M-[")     'outdent-rigidly-2)       ; undefined
+  (global-set-key (kbd "M-]")     'indent-rigidly-2)        ; undefined
+  (global-set-key (kbd "M-j")     'rwd-join-lines)          ; was indent-new-comment-line
 
   ;; sanity/compatibility (mostly stuff from xemacs):
   (global-set-key (kbd "M-g")      'goto-line)
