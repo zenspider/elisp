@@ -169,6 +169,7 @@
  '(persp-mode-prefix-key "")
  '(racket-images-system-viewer "open")
  '(read-buffer-completion-ignore-case t)
+ '(require-final-newline t)
  '(save-interprogram-paste-before-kill t)
  '(save-place-file "~/.emacs.d/emacs-places")
  '(save-place-limit 100)
