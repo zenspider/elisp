@@ -98,6 +98,8 @@
                             json-mode
                             jq-mode
 
+                            which-key
+
                             default-text-scale
 
                             projectile
