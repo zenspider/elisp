@@ -71,7 +71,7 @@
                             flycheck-package
                             package-lint
 
-                            perspective ; buffers-per-perspective
+                            ; perspective ; buffers-per-perspective
                             cyphejor    ; mode renaming
                             delight     ; ditto--I might have to merge these two
 
@@ -99,6 +99,8 @@
                             jq-mode
 
                             default-text-scale
+
+                            projectile
 
                             eval-in-repl)))
 
