@@ -5,7 +5,6 @@
 (define-key ruby-mode-map (kbd "C-c C-r") 'rcov-buffer)
 (define-key ruby-mode-map (kbd "C-c C-b") 'ruby-run-buffer-clean)
 (define-key ruby-mode-map (kbd "C-c C-t") 'ri-show-term-composite-at-point)
-(define-key ruby-mode-map (kbd "C-c f")   'ruby-find-file)
 
 (imenu-add-menubar-index)
 (flyspell-prog-mode)
