@@ -74,7 +74,7 @@
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
  '(enh-ruby-check-syntax nil)
- '(enh-ruby-program "/Users/ryan/.rbenv/versions/2.6.2/bin/ruby")
+ '(enh-ruby-program "/Users/ryan/.rbenv/versions/2.6.3/bin/ruby")
  '(erc-fools
    (quote
     ("Welkin" "konsolebox" "`slikts" "slack-irc-bot" "Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros")))
@@ -162,11 +162,12 @@
  '(p4-do-find-file nil)
  '(package-selected-packages
    (quote
-    (package+ ag browse-kill-ring dash expand-region f geiser git-timemachine github-browse-file htmlize keyfreq kill-ring-search magit multiple-cursors org outline-magic p4 paredit phi-search phi-search-mc popwin racket-mode s shell-command ssh string-edit w3m window-number yagist yaml-mode xterm-color elisp-slime-nav outline-magic wgrep wgrep-ag find-file-in-project swift-mode flycheck-swift3 flycheck-swiftlint flycheck-package package-lint perspective cyphejor delight aggressive-indent phi-grep bison-mode markdown-mode web-mode inf-ruby let-alist magit-p4 dockerfile-mode flycheck company json-mode jq-mode default-text-scale eval-in-repl)))
+    (package+ ag browse-kill-ring dash expand-region f geiser git-timemachine github-browse-file htmlize keyfreq kill-ring-search magit multiple-cursors org outline-magic p4 paredit phi-search phi-search-mc popwin racket-mode s shell-command ssh string-edit w3m window-number yagist yaml-mode xterm-color elisp-slime-nav outline-magic wgrep wgrep-ag find-file-in-project swift-mode flycheck-swift3 flycheck-swiftlint flycheck-package package-lint cyphejor delight aggressive-indent phi-grep bison-mode markdown-mode web-mode inf-ruby let-alist magit-p4 dockerfile-mode flycheck company json-mode jq-mode default-text-scale projectile eval-in-repl)))
  '(package-selected-packagse nil t)
  '(persp-initial-frame-name "*")
  '(persp-mode t)
  '(persp-mode-prefix-key "")
+ '(persp-sort (quote created))
  '(racket-images-system-viewer "open")
  '(read-buffer-completion-ignore-case t)
  '(require-final-newline t)
@@ -239,7 +240,6 @@
  '(ediff-fine-diff-C ((t (:background "#aaaaff" :foreground "black"))))
  '(ediff-odd-diff-A ((t (:background "Grey" :foreground "black"))))
  '(ediff-odd-diff-C ((t (:background "Grey" :foreground "black"))))
- '(enh-ruby-heredoc-delimiter-face-xxx ((t (:foreground "Brown"))))
  '(erc-input-face ((t (:foreground "dark green"))))
  '(erc-my-nick-face ((t (:foreground "dark green" :weight bold))))
  '(flyspell-incorrect ((t (:underline "red"))))
