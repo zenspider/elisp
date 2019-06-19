@@ -107,6 +107,7 @@
                        (   "w" .  'delete-trailing-whitespace)))
   (global-set-key (kbd "C-c e")   'erase-buffer)
   (global-set-key (kbd "C-c g")   'magit-status)
+  (global-set-key (kbd "C-c f")   'magit-file-popup)
   (global-set-key (kbd "C-c i")   'imenu)
   (global-set-key (kbd "C-c n")   'narrow-to-region-indirect)
   (global-set-key (kbd "C-x n")   'narrow-or-widen-dwim) ; TODO: switch to C-x n
