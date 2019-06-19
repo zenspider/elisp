@@ -41,6 +41,9 @@ Then switch to the process buffer."
                            (current-buffer) t))
 
 ;;;###autoload
+(set-register ?p "require \"pry\"; binding.pry")
+
+;;;###autoload
 (set-register ?t "require 'minitest/autorun'
 
 class TestXXX < Minitest::Test
