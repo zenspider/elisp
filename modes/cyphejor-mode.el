@@ -22,4 +22,6 @@
            (flyspell-mode          nil  "flyspell")
            (global-whitespace-mode nil  "whitespace")
            (outline-minor-mode     nil  "outline")
-           (paredit-mode           nil  "paredit")))
+           (paredit-mode           nil  "paredit")
+           (projectile-mode        nil  "projectile")
+           ))
