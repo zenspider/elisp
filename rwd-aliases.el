@@ -287,10 +287,12 @@
         (full       (and (symbolp d-o-f) d-o-f)))
     `(defun ,full-name ()
        (interactive)
+       (message "%s: %s %s %s" ',full-name ,font-size ',d-o-f ',splitfunc)
+       (when (and ',full (featurep 'cocoa)) (sleep-for 0.01))
        ,@(if full `((rwd-ns-fullscreen)) `((rwd-ns-fullscreen-off)))
        (rwd-set-font-size ,font-size)
        ,@(when dimensions `((rwd-arrange-frame ,@dimensions t)))
-       ,@(when splitfunc  `((,(intern (concat "rwd-split-" (symbol-name splitfunc))))))
+       ,@(when splitfunc `((,(intern (concat "rwd-split-" (symbol-name splitfunc))))))
        )))
 
 (rwd-define-frame "13"           12 (163 48))
@@ -298,7 +300,7 @@
 (rwd-define-frame "13-half"      14 (87 54))
 (rwd-define-frame "20"           12 (200 60))
 (rwd-define-frame "default"      12 (80 48))
-(rwd-define-frame "full"         14 full h)
+(rwd-define-frame "full"         14 full smart)
 (rwd-define-frame "blind"        18 full)
 (rwd-define-frame "dense"        9  full thirds-h)
 (rwd-define-frame "peepcode"     15 (80 30))
@@ -320,6 +322,14 @@
 (progn
   (defalias 'rwd-split-h 'split-window-horizontally)
   (defalias 'rwd-split-v 'split-window-vertically))
+
+(defun rwd-split-smart ()
+  "Splits the current frame either in 2 or 3 depending on size"
+  (interactive)
+  (delete-other-windows)
+  (if (eq 3 (/ (frame-width) 80))
+      (rwd-split-thirds-h)
+    (rwd-split-h)))
 
 ;;;###autoload
 (defun rwd-split-thirds-v ()
