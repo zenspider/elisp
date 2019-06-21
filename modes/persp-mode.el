@@ -6,3 +6,5 @@
 (unless window-system                   ; restore C-z z and C-z C-z to suspend
   (define-key perspective-map (kbd "z")   'suspend-frame)
   (define-key perspective-map (kbd "C-z") 'suspend-frame))
+
+(persp-mode)
