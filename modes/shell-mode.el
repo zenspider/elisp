@@ -4,6 +4,14 @@
   (setq comint-scroll-to-bottom-on-output t)
   (setq comint-move-point-for-output t))
 
+(defun rwd/comint/send-input ()
+  (interactive)
+  (comint-send-input)
+  (sleep-for 0.05)
+  (comint-show-output))
+
+(define-key comint-mode-map (kbd "<C-return>") 'rwd/comint/send-input)
+
 (defun rwd/comint-show-full-color ()
   (interactive)
   (font-lock-mode -1)
