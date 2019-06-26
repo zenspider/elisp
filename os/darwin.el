@@ -1,4 +1,4 @@
-(defvar running-osx (or (featurep 'cocoa) (eq 'ns window-system)))
+(defvar running-osx (memq window-system '(mac ns)))
 
 (when running-osx
   (setenv "LANG" "en_US.UTF-8") ; comes from terminal.app, not bash itself
@@ -16,11 +16,14 @@
     (global-set-key (kbd "M-`") 'other-frame)))
 
 (unless (getenv "TERM_PROGRAM")
+  (setenv "EDITOR" "emacsclient")
+  (setenv "VISUAL" (getenv "EDITOR"))
+
   ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
   ;; argh this is stupid
   (let ((fix-env
          (lambda (v) (setenv v (shell-command-to-string
-                                (concat "/bin/bash -ilc 'echo -n $" v "'"))))))
+                                (format "/bin/bash -ilc 'echo -n $%s'" v))))))
 
     (funcall fix-env "PATH")
     (funcall fix-env "CDPATH")
