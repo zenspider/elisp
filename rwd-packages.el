@@ -56,7 +56,7 @@
 
                             ;; trying out:
 
-                            xterm-color
+                            xterm-color ; used in modes/shall-mode.el
 
                             elisp-slime-nav
 
@@ -103,6 +103,8 @@
                             default-text-scale
 
                             projectile
+
+                            rx          ; regexp -> xr
 
                             eval-in-repl)))
 
