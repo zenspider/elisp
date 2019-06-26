@@ -22,12 +22,12 @@
         ("melpa"        .  0)))
 
 (apply 'package-manifest
-       (setq rwd-manifest '(package+    ; duh
+       (setq rwd-manifest '(package+           ; duh
 
                             ag                 ; the silver surfer
                             browse-kill-ring
                             dash
-                            expand-region
+                            expand-region      ; mandatory
                             f
                             geiser
                             git-timemachine    ; fantastic spelunking tool
@@ -35,16 +35,16 @@
                             htmlize
                             keyfreq
                             kill-ring-search
-                            magit
-                            multiple-cursors
+                            magit              ; the only reason I can use git
+                            multiple-cursors   ; mandatory
                             org
                             outline-magic
-                            p4
-                            paredit
+                            p4                 ; mandatory
+                            paredit            ; mandatory
                             phi-search
                             phi-search-mc
                             popwin
-                            racket-mode
+                            racket-mode        ; mandatory
                             s
                             shell-command      ; tab-completion for `shell-command
                             ssh                ; ssh-mode
@@ -54,7 +54,7 @@
                             yagist             ; gist
                             yaml-mode
 
-                                               ;; trying out:
+                            ;; trying out:
 
                             aggressive-indent
                             bison-mode
@@ -66,11 +66,11 @@
                             elisp-slime-nav
                             eval-in-repl
                             find-file-in-project
-                            flycheck
+                            flycheck           ; smoother than flyspell
                             flycheck-package
                             flycheck-swift3
                             flycheck-swiftlint
-                            inf-ruby
+                            inf-ruby           ; trying to use more
                             jq-mode
                             json-mode
                             let-alist
@@ -78,17 +78,17 @@
                             markdown-mode
                             outline-magic
                             package-lint
-                                               ; perspective     ; buffers-per-perspective
+                            ;; perspective     ; buffers-per-perspective
                             phi-grep
                             projectile
-                            rx                 ; regexp -> xr
-                            ; smart-jump
+                            xr                 ; regexp -> xr (lispy regexps)
+                            ;; smart-jump      ; seemed troublesome. not smart?
                             swift-mode
                             web-mode
                             wgrep
                             wgrep-ag
                             which-key
-                            xterm-color ; used in modes/shall-mode.el
+                            xterm-color        ; used in modes/shall-mode.el
                             )))
 
 ;; removes anything I hand-install to test out.
