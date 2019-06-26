@@ -24,14 +24,14 @@
 (apply 'package-manifest
        (setq rwd-manifest '(package+    ; duh
 
-                            ag          ; the silver surfer
+                            ag                 ; the silver surfer
                             browse-kill-ring
                             dash
                             expand-region
                             f
                             geiser
-                            git-timemachine
-                            github-browse-file
+                            git-timemachine    ; fantastic spelunking tool
+                            github-browse-file ; jump to code browser on github
                             htmlize
                             keyfreq
                             kill-ring-search
@@ -46,67 +46,50 @@
                             popwin
                             racket-mode
                             s
-                            shell-command                 ; tab-completion for `shell-command
-                            ssh                           ; ssh-mode
-                            string-edit                   ; AMAZING string-edit-at-point
+                            shell-command      ; tab-completion for `shell-command
+                            ssh                ; ssh-mode
+                            string-edit        ; AMAZING string-edit-at-point
                             w3m
-                            window-number                 ; Jump to window by M-number
-                            yagist                        ; gist
+                            window-number      ; Jump to window by M-number
+                            yagist             ; gist
                             yaml-mode
 
-                            ;; trying out:
-
-                            xterm-color ; used in modes/shall-mode.el
-
-                            elisp-slime-nav
-
-                            outline-magic
-                            wgrep
-                            wgrep-ag
-
-                            find-file-in-project
-                            swift-mode
-                            flycheck-swift3
-                            flycheck-swiftlint
-                            flycheck-package
-                            package-lint
-
-                            ; perspective ; buffers-per-perspective
-                            cyphejor    ; mode renaming
-                            delight     ; ditto--I might have to merge these two
+                                               ;; trying out:
 
                             aggressive-indent
-
-                            phi-grep
-
                             bison-mode
-
-                            markdown-mode
-                            web-mode
-                            ;; smart-jump
-                            inf-ruby
-
-                            let-alist
-
-                            magit-p4
-
-                            dockerfile-mode
-
-                            flycheck
                             company
-
-                            json-mode
-                            jq-mode
-
-                            which-key
-
+                            cyphejor           ; mode renaming--FIX delight
+                            delight            ; mode renaming--FIX cyphejor
                             default-text-scale
-
+                            dockerfile-mode
+                            elisp-slime-nav
+                            eval-in-repl
+                            find-file-in-project
+                            flycheck
+                            flycheck-package
+                            flycheck-swift3
+                            flycheck-swiftlint
+                            inf-ruby
+                            jq-mode
+                            json-mode
+                            let-alist
+                            magit-p4
+                            markdown-mode
+                            outline-magic
+                            package-lint
+                                               ; perspective     ; buffers-per-perspective
+                            phi-grep
                             projectile
-
-                            rx          ; regexp -> xr
-
-                            eval-in-repl)))
+                            rx                 ; regexp -> xr
+                            ; smart-jump
+                            swift-mode
+                            web-mode
+                            wgrep
+                            wgrep-ag
+                            which-key
+                            xterm-color ; used in modes/shall-mode.el
+                            )))
 
 ;; removes anything I hand-install to test out.
 (add-hook 'after-init-hook
