@@ -117,6 +117,7 @@
  '(imenu-sort-function (quote imenu--sort-by-name))
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
+ '(inf-ruby-default-implementation "pry")
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
  '(ispell-dictionary "english")
@@ -162,7 +163,7 @@
  '(p4-do-find-file nil)
  '(package-selected-packages
    (quote
-    (package+ ag browse-kill-ring dash expand-region f geiser git-timemachine github-browse-file htmlize keyfreq kill-ring-search magit multiple-cursors org outline-magic p4 paredit phi-search phi-search-mc popwin racket-mode s shell-command ssh string-edit w3m window-number yagist yaml-mode xterm-color elisp-slime-nav outline-magic wgrep wgrep-ag find-file-in-project swift-mode flycheck-swift3 flycheck-swiftlint flycheck-package package-lint cyphejor delight aggressive-indent phi-grep bison-mode markdown-mode web-mode inf-ruby let-alist magit-p4 dockerfile-mode flycheck company json-mode jq-mode default-text-scale projectile eval-in-repl)))
+    (ag aggressive-indent bison-mode browse-kill-ring company cyphejor dash default-text-scale delight dockerfile-mode elisp-slime-nav eval-in-repl expand-region f find-file-in-project flycheck flycheck-package flycheck-swift3 flycheck-swiftlint geiser git-timemachine github-browse-file htmlize inf-ruby jq-mode json-mode keyfreq kill-ring-search let-alist magit magit-p4 markdown-mode multiple-cursors org outline-magic outline-magic p4 package+ package-lint paredit phi-grep phi-search phi-search-mc popwin projectile racket-mode s shell-command ssh string-edit swift-mode w3m web-mode wgrep wgrep-ag which-key window-number xr xterm-color yagist yaml-mode)))
  '(package-selected-packagse nil t)
  '(persp-initial-frame-name "*")
  '(persp-mode t)
