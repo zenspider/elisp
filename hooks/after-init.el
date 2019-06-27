@@ -3,4 +3,5 @@
 
 (rwd-load-modes)
 
-(server-start)
+(when (eq 1 (length command-line-args))
+  (server-start))
