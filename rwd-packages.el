@@ -91,16 +91,9 @@
                             xterm-color        ; used in modes/shall-mode.el
                             )))
 
-;; removes anything I hand-install to test out.
-(add-hook 'after-init-hook
-          (lambda ()
-            (unless (equal package-selected-packages rwd-manifest)
-              (customize-save-variable 'package-selected-packages rwd-manifest))))
-
-;; (with-help-window "my-packages" (with-current-buffer "my-packages" (cl-prettyprint (package-manifest-with-deps rwd-manifest))))
-
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
+;; (package-view-manifest)
 
 ;; Local variables:
 ;; byte-compile-warnings: (not cl-functions)
