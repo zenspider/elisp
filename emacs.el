@@ -2,6 +2,12 @@
 
 (require 'autoload)                     ; = ;;;###autoload
 
+(defvar normal-gui-startup
+  (and window-system
+       (not noninteractive)
+       (eq 1 (length command-line-args)))
+  "t if this is a plain GUI emacs startup (eg not batch nor task oriented).")
+
 (unless user-init-file                  ; if running w/: -q --debug-init
   (setq user-init-file (expand-file-name "~/.emacs.el")))
 

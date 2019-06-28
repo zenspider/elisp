@@ -877,9 +877,11 @@ even beep.)"
 ;;;###autoload
 (defun rwd-load-modes ()
   (interactive)
+  (message "START: rwd-load-modes")
   (dolist (path (directory-files (concat user-init-dir "modes") t ".*el$"))
     (message "%S" `(load ,path))
-    (load path)))
+    (load path))
+  (message "DONE: rwd-load-modes"))
 
 ;;;###autoload
 (defun ns-get-pasteboard ()
