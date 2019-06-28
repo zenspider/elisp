@@ -3,11 +3,21 @@
 (when running-osx
   (setenv "LANG" "en_US.UTF-8") ; comes from terminal.app, not bash itself
 
+  (when (string= "/" default-directory) ; GUI starts up in root
+    (cd "~"))
+
   ;; Helloooo overkill.
-  (set-language-environment    'utf-8)
-  (set-default-coding-systems  'utf-8)
-  (set-locale-environment      "en_US.UTF-8")
-  (prefer-coding-system        'utf-8)
+  ;; (set-language-environment    'utf-8)
+  ;; (set-default-coding-systems  'utf-8)
+  ;; (set-locale-environment      "en_US.UTF-8")
+  ;; (prefer-coding-system        'utf-8)
+  (set-charset-priority 'unicode)
+  (setq locale-coding-system   'utf-8)   ; pretty
+  (set-terminal-coding-system  'utf-8)   ; pretty
+  (set-keyboard-coding-system  'utf-8)   ; pretty
+  (set-selection-coding-system 'utf-8)   ; please
+  (prefer-coding-system        'utf-8)   ; with sugar on top
+  (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
   (setq ns-function-modifier 'hyper) ; set Mac's Fn key to type Hyper
 
