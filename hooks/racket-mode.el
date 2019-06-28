@@ -5,6 +5,7 @@
 (define-key racket-mode-map (kbd "C-c r")       'racket-run)
 (define-key racket-mode-map (kbd "C-c t")       'racket-test)
 (define-key racket-mode-map (kbd "C-c C-d")     'delete-trailing-whitespace)
+(define-key racket-mode-map (kbd "<C-return>")  'eir-eval-in-racket)
 ;; (define-key racket-mode-map (kbd "C-c C-c C-d") 'racket-doc)
 
 (defun paredit-space-for-delimiter-predicates-scheme (endp delimiter)
