@@ -1,5 +1,8 @@
 ;; (package-initialize)
 
+(setq gc-cons-threshold (* 32 1000 1000)
+      garbage-collection-messages t) ;; indicator of thrashing
+
 (require 'autoload)                     ; = ;;;###autoload
 
 (defvar normal-gui-startup
