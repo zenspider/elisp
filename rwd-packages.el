@@ -24,71 +24,68 @@
 (apply 'package-manifest
        (setq rwd-manifest '(package+           ; duh
 
-                            ag                 ; the silver surfer
-                            browse-kill-ring
-                            dash
-                            expand-region      ; mandatory
-                            f
-                            geiser
-                            git-timemachine    ; fantastic spelunking tool
-                            github-browse-file ; jump to code browser on github
-                            htmlize
-                            keyfreq
-                            kill-ring-search
-                            magit              ; the only reason I can use git
-                            multiple-cursors   ; mandatory
-                            org
-                            outline-magic
-                            p4                 ; mandatory
-                            paredit            ; mandatory
-                            phi-search
-                            phi-search-mc
-                            popwin
-                            racket-mode        ; mandatory
-                            s
-                            shell-command      ; tab-completion for `shell-command
-                            ssh                ; ssh-mode
-                            string-edit        ; AMAZING string-edit-at-point
-                            w3m
-                            window-number      ; Jump to window by M-number
-                            yagist             ; gist
-                            yaml-mode
+                            ag                   ; the silver surfer
+                            browse-kill-ring     ; M-y kill ring browsing
+                            dash                 ; better api for lists
+                            expand-region        ; mandatory
+                            f                    ; better api for files/dirs
+                            git-timemachine      ; fantastic spelunking tool
+                            github-browse-file   ; jump to code browser on github
+                            htmlize              ; colorizing as html
+                            keyfreq              ; stats on actual usage FIX?
+                            kill-ring-search     ; C-M-y kill ring search FIX
+                            magit                ; the only reason I can use git
+                            multiple-cursors     ; mandatory
+                            outline-magic        ; outline-cycle FIX?
+                            p4                   ; mandatory
+                            paredit              ; mandatory
+                            phi-search           ; TODO
+                            phi-search-mc        ; TODO
+                            popwin               ; popup window manager FIX
+                            racket-mode          ; mandatory
+                            s                    ; better api for strings
+                            shell-command        ; tab-completion for `shell-command
+                            ssh                  ; ssh-mode
+                            string-edit          ; AMAZING string-edit-at-point
+                            w3m                  ; strange web browser FIX
+                            window-number        ; Jump to window by M-number
+                            yagist               ; gist
+                            yaml-mode            ; for yaml files.
 
                             ;; trying out:
 
-                            aggressive-indent
-                            bison-mode
-                            company
-                            cyphejor           ; mode renaming--FIX delight
-                            delight            ; mode renaming--FIX cyphejor
-                            default-text-scale
-                            dockerfile-mode
-                            elisp-slime-nav
-                            eval-in-repl
-                            find-file-in-project
-                            flycheck           ; smoother than flyspell
-                            flycheck-package
-                            flycheck-swift3
-                            flycheck-swiftlint
-                            inf-ruby           ; trying to use more
-                            jq-mode
-                            json-mode
-                            let-alist
-                            magit-p4
-                            markdown-mode
-                            outline-magic
-                            package-lint
-                            ;; perspective     ; buffers-per-perspective
-                            phi-grep
-                            projectile
-                            xr                 ; regexp -> xr (lispy regexps)
-                            ;; smart-jump      ; seemed troublesome. not smart?
-                            swift-mode
-                            web-mode
-                            wgrep
-                            wgrep-ag
-                            which-key
-                            xterm-color        ; used in modes/shall-mode.el
+                            aggressive-indent    ; apparently used in scheme-mode
+                            bison-mode           ; for yacc/bison files
+                            company              ; a completer--use or FIX?
+                            cyphejor             ; mode renaming--FIX delight
+                            delight              ; mode renaming--FIX cyphejor
+                            default-text-scale   ; change font sizes globally
+                            dockerfile-mode      ; for Dockerfile files
+                            elisp-slime-nav      ; M-. M-, for elisp
+                            eval-in-repl         ; C-RET to send to repls
+                            find-file-in-project ; ffip alternative to projectile FIX?
+                            flycheck             ; smoother than flyspell
+                            flycheck-package     ; flycheck elisp package files
+                            flycheck-swift3      ; flicheck for swift syntax
+                            flycheck-swiftlint   ; flycheck for swiftlint tool
+                            inf-ruby             ; trying to use more
+                            ialign               ; TODO
+                            jq-mode              ; live view of jq queries
+                            json-mode            ; for json files
+                            magit-p4             ; TODO
+                            markdown-mode        ; for md files
+                            package-lint         ; for checking elisp packages
+                            ;; perspective       ; buffers-per-perspective
+                            phi-grep             ; TODO
+                            projectile           ; project oriented commands
+                            xr                   ; regexp -> xr (lispy regexps)
+                            ;; smart-jump        ; seemed troublesome. not smart?
+                            swift-mode           ; for swift files
+                            web-mode             ; TODO
+                            wgrep                ; editable grep results
+                            wgrep-ag             ; editable ag results
+                            which-key            ; show options in sub-keys
+                            xterm-color          ; used in modes/shall-mode.el
                             )))
 
 ;; (package-refresh-contents)
