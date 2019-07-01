@@ -16,6 +16,4 @@ File: dir,	Node: Top	This is the top of the INFO tree
 
 Emacs
 * SICP: (sicp).               SICP.
-* Chicken: (chicken).         Chicken.
 * Auto-Insert: (auto-insert). Automatically setting up default text when creating a new file.
-* Magit: (magit).        Using Git from Emacs with Magit.
