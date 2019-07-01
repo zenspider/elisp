@@ -7,6 +7,8 @@
    (quote
     ("/usr/share/info" "~/Bin/elisp/info" "/Developer/usr/share/info")))
  '(apropos-do-all t)
+ '(auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
+ '(auto-dim-other-buffers-mode t)
  '(auto-revert-use-notify nil)
  '(backup-by-copying-when-linked t)
  '(blink-cursor-mode nil)
@@ -39,7 +41,7 @@
           (frame-width)
           150)
          (quote split-window-horizontally)
-       (quote split-window-vertically))))
+       (quote split-window-vertically))) nil nil "TODO: phase out? I think this might not be needed with the general window work")
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
@@ -130,7 +132,7 @@
  '(p4-do-find-file nil)
  '(package-selected-packages
    (quote
-    (ag aggressive-indent bison-mode browse-kill-ring company cyphejor dash default-text-scale delight dockerfile-mode elisp-slime-nav eval-in-repl expand-region f find-file-in-project flycheck flycheck-package flycheck-swift3 flycheck-swiftlint git-timemachine github-browse-file htmlize ialign inf-ruby jq-mode json-mode keyfreq kill-ring-search magit magit-p4 markdown-mode multiple-cursors outline-magic p4 package+ package-lint paredit phi-grep phi-search phi-search-mc popwin projectile racket-mode s shell-command ssh string-edit swift-mode w3m web-mode wgrep wgrep-ag which-key window-number xr xterm-color yagist yaml-mode)))
+    (ag aggressive-indent auto-dim-other-buffers bison-mode browse-kill-ring company cyphejor dash default-text-scale delight dockerfile-mode elisp-slime-nav eval-in-repl expand-region f find-file-in-project flycheck flycheck-package flycheck-swift3 flycheck-swiftlint git-timemachine github-browse-file htmlize ialign inf-ruby jq-mode json-mode keyfreq kill-ring-search magit magit-p4 markdown-mode multiple-cursors outline-magic p4 package+ package-lint paredit phi-grep phi-search phi-search-mc popwin projectile racket-mode s shell-command ssh string-edit swift-mode w3m web-mode wgrep wgrep-ag which-key window-number xr xterm-color yagist yaml-mode)))
  '(package-selected-packagse nil t)
  '(persp-initial-frame-name "*")
  '(persp-mode t)
@@ -198,6 +200,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(auto-dim-other-buffers-face ((t (:background "gray95"))))
  '(cursor ((((type ns)) (:background "Blue")) (((type tty)) (:background "Green")) (t (:background "Blue"))))
  '(diff-added ((t (:inherit diff-changed :foreground "green4"))))
  '(diff-removed ((t (:inherit diff-changed :foreground "red4"))))
