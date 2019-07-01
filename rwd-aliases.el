@@ -435,7 +435,7 @@ Essentially, I didn't like the format of generate-new-buffer-name."
         (progn
           (when (and (eq 1 (length (window-list)))
                      (> (window-width) 82))
-            (split-window-right))
+            (rwd-split-smart))
           (shell (switch-to-buffer buf)))
       (shell (switch-to-buffer-other-window buf)))))
 
