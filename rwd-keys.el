@@ -39,6 +39,7 @@
   (global-set-key (kbd "C-M-SPC") 'er/expand-region)        ; was mark-sexp
   (global-set-key (kbd "C-M-x")   'bury-buffer)             ; unassigned?
   (global-set-key (kbd "C-M-y")   'kill-ring-search)        ; undefined
+  (global-set-key (kbd "C-x 1")   'sanityinc/toggle-delete-other-windows)
   (global-set-key (kbd "C-x C-b") 'bs-show)                 ; was list-buffers
   (global-set-key (kbd "C-x C-p") 'find-file-at-point)      ; was mark-page
   (global-set-key (kbd "C-x C-t") 'toggle-buffer)           ; was transpose-lines

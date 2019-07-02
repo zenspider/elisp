@@ -453,6 +453,16 @@ Essentially, I didn't like the format of generate-new-buffer-name."
          (window-list)))
 
 ;;;###autoload
+(defun sanityinc/toggle-delete-other-windows ()
+  "Delete other windows in frame if any, or restore previous window config."
+  ;; https://github.com/purcell/emacs.d/blob/master/lisp/init-windows.el
+  (interactive)
+  (if (and winner-mode
+           (equal (selected-window) (next-window)))
+      (winner-undo)
+    (delete-other-windows)))
+
+;;;###autoload
 (defun sort-files-by-date (a b)
   (let ((ta (nth 5 (file-attributes a)))
         (tb (nth 5 (file-attributes b))))
