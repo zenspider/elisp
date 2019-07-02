@@ -354,8 +354,10 @@
   "Splits the current frame horizontally into even thirds."
   (interactive)
   (delete-other-windows)
-  (split-window-horizontally)
-  (split-window-horizontally)
+  (let ((win/a (split-window-horizontally))
+        (win/b (split-window-horizontally)))
+    (set-window-buffer win/a (other-buffer))
+    (set-window-buffer win/b (other-buffer (other-buffer))))
   (balance-windows))
 
 ;;;###autoload
