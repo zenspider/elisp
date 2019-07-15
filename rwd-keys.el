@@ -39,6 +39,13 @@
   (global-set-key (kbd "C-M-SPC") 'er/expand-region)        ; was mark-sexp
   (global-set-key (kbd "C-M-x")   'bury-buffer)             ; unassigned?
   (global-set-key (kbd "C-M-y")   'kill-ring-search)        ; undefined
+  (global-set-key (kbd "C-h C")   'helpful-command)
+  (global-set-key (kbd "C-h C-p") 'helpful-at-point)
+  (global-set-key (kbd "C-h F")   'helpful-function)
+  (global-set-key (kbd "C-h K")   'helpful-kill-buffers)
+  (global-set-key (kbd "C-h f")   'helpful-callable)
+  (global-set-key (kbd "C-h k")   'helpful-key)
+  (global-set-key (kbd "C-h v")   'helpful-variable)
   (global-set-key (kbd "C-x 1")   'sanityinc/toggle-delete-other-windows)
   (global-set-key (kbd "C-x C-b") 'bs-show)                 ; was list-buffers
   (global-set-key (kbd "C-x C-p") 'find-file-at-point)      ; was mark-page
@@ -109,9 +116,10 @@
   (global-set-key (kbd "C-c e")   'erase-buffer)
   (global-set-key (kbd "C-c g")   'magit-status)
   (global-set-key (kbd "C-c f")   'magit-file-popup)
+  (global-set-key (kbd "C-c I")   'popwin:ielm)
   (global-set-key (kbd "C-c i")   'imenu)
   (global-set-key (kbd "C-c n")   'narrow-to-region-indirect)
-  (global-set-key (kbd "C-x n")   'narrow-or-widen-dwim) ; TODO: switch to C-x n
+  (global-set-key (kbd "C-x n")   'narrow-or-widen-dwim)
   (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
   (rwd-smart-keys 's '((   "c" .  'sort-columns)
                        (   "l" .  'sort-lines)
@@ -146,6 +154,8 @@
 ;;           diff-minor-mode-map
 ;;           grep-mode-map
 ;;           help-mode-map))
+
+;; TODO: what if M-~ instead flipped the current window to the next buffer of that type?
 
 ;;;###autoload
 (global-set-key [remap isearch-forward]
