@@ -391,7 +391,7 @@
 ;;;###autoload
 (defun rwd-set-font-size (size)
   (interactive "nSize: ")
-  (rwd-set-mac-font "Menlo" size))
+  (rwd-set-mac-font "Fira Code" size))
 
 ;;;###autoload
 (defun rwd-set-mac-font (name size)
@@ -873,6 +873,26 @@ even beep.)"
 (defun rwd-comint-scroll-to-bottom-on-output ()
   (interactive)
   (setq comint-scroll-to-bottom-on-output t))
+
+(defvar rwd-window-config nil)
+
+(defun rwd-window-save ()
+  (interactive)
+  (setq rwd-window-config
+        (cons (current-window-configuration)
+              rwd-window-config))
+  (message "Window configuration pushed"))
+
+(defun rwd-window-restore ()
+  (interactive)
+  (when rwd-window-config
+    (set-window-configuration (car rwd-window-config))
+    (unless (= (length rwd-window-config) 1)
+      (setq rwd-window-config (cdr rwd-window-config))
+      (message "Popped window configuration"))))
+
+(global-set-key (kbd "C-c <up>")   'rwd-window-save)
+(global-set-key (kbd "C-c <down>") 'rwd-window-restore)
 
 (defun rwd-shell-clear ()
   (interactive)
