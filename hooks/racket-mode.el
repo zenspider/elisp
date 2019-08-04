@@ -1,4 +1,5 @@
 (paredit-mode +1)
+(racket-unicode-input-method-enable)
 
 (define-key racket-mode-map (kbd "C-c u")       'racket-unicode-input-method-enable)
 (define-key racket-mode-map (kbd "C-c C-r")     'racket-run)
@@ -38,6 +39,8 @@
   (mapc (lambda (name) (put name 'racket-indent-function 'defun)) defines)
   (mapc (lambda (name) (put name 'racket-indent-function 0))      begins)
   (mapc (lambda (name) (put name 'racket-indent-function 1))      lambdas)
+
+  ;; (put 'module 'racket-indent-function 2)
 
   (mapc (lambda (txs)
           (let* ((type (car txs))
