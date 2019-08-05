@@ -1,5 +1,7 @@
 (require 'package)
 
+(setq package-archives '())
+
 ;; TODO: consider ONLY using stable? do any packages disappear?
 (dolist (repo '(("melpa"        . "http://melpa.org/packages/")
                 ("melpa-stable" . "http://stable.melpa.org/packages/")))
@@ -59,6 +61,7 @@
          bison-mode              ; for yacc/bison files
          company                 ; a completer--use or FIX?
          cyphejor                ; mode renaming--FIX delight
+         dedicated               ; "stick" buffers to windows
          delight                 ; mode renaming--FIX cyphejor
          default-text-scale      ; change font sizes globally
          dockerfile-mode         ; for Dockerfile files
@@ -77,8 +80,7 @@
          json-mode               ; for json files
          markdown-mode           ; for md files
          package-lint            ; for checking elisp packages
-         window-purpose                 ; trying to find a workflow that works
-         shackle                        ; for me... ugh.
+         shackle                 ; for me... ugh.
          phi-grep                ; TODO
          projectile              ; project oriented commands
          xr                      ; regexp -> xr (lispy regexps)
@@ -87,6 +89,8 @@
          wgrep                   ; editable grep results
          wgrep-ag                ; editable ag results
          which-key               ; show options in sub-keys
+         window-purpose          ; trying to find a workflow that works
+         xr                      ; regexp -> xr (lispy regexps)
          xterm-color             ; used in modes/shall-mode.el
          ))
 
