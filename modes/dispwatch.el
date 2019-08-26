@@ -18,3 +18,5 @@
 (require 'dispwatch)
 (add-hook 'dispwatch-display-change-hooks 'rwd/display-change)
 (dispwatch-enable)
+
+(defalias 'rwd/display-reset 'dispwatch-reset)
