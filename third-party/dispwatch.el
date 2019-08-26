@@ -66,6 +66,11 @@ These hooks are run when a display change is detected.")
   (setq dispwatch-timer (run-at-time dispwatch-interval dispwatch-interval #'dispwatch--check-display))
   (message "dispwatch enabled"))
 
+(defun dispwatch-reset ()
+  "Reset and force dispwatch to trigger again."
+  (interactive)
+  (setq dispwatch-current-display nil))
+
 (defun dispwatch-disable ()
   "Disable display reconfiguration detection."
   (interactive)
