@@ -27,6 +27,7 @@
        '(package+                ; duh
 
          ag                      ; the silver surfer
+         auto-dim-other-buffers  ; makes current buffer "pop"
          browse-kill-ring        ; M-y kill ring browsing
          dash                    ; better api for lists
          expand-region           ; mandatory
@@ -57,7 +58,6 @@
          ;; trying out:
 
          aggressive-indent       ; apparently used in scheme-mode
-         auto-dim-other-buffers  ; TODO
          bison-mode              ; for yacc/bison files
          company                 ; a completer--use or FIX?
          cyphejor                ; mode renaming--FIX delight
@@ -92,6 +92,8 @@
          window-purpose          ; trying to find a workflow that works
          xr                      ; regexp -> xr (lispy regexps)
          xterm-color             ; used in modes/shall-mode.el
+
+         copy-as-format
          ))
 
 ;; (package-refresh-contents)
