@@ -24,6 +24,7 @@
      ("" 2 2 left "  ")
      ("File" 12 12 left bs--get-file-name)
      ("" 2 2 left "  "))))
+ '(bs-cycle-configuration-name "current-mode")
  '(bs-default-configuration "persp")
  '(column-number-mode t)
  '(comint-input-ignoredups t)
@@ -46,7 +47,7 @@
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
  '(enh-ruby-check-syntax nil)
- '(enh-ruby-program "/Users/ryan/.rbenv/versions/2.6.3/bin/ruby")
+ '(enh-ruby-program "/Users/ryan/.rubies/ruby-2.6.4/bin/ruby")
  '(erc-fools
    (quote
     ("Welkin" "konsolebox" "`slikts" "slack-irc-bot" "Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros")))
