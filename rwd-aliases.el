@@ -173,7 +173,7 @@
   (interactive)
   (delete-other-windows)
   (rwd-resize-full)
-  (other-window 1)
+  (other-window 1)                      ; to put it back on the left
   (shell (rwd-unique-buffer "shell"))) ;; done manually to avoid swap oddities
 
 ;;;###autoload
