@@ -8,10 +8,23 @@
 
 (defun rwd/bs-config/persp (buf)
   (with-current-buffer buf
-    (not (memq buf (rwd/persp/current-buffers)))))
+    (memq buf (rwd/persp/current-buffers))))
 
-;; TODO: switch to customize when I get this right
-(add-to-list 'bs-configurations '("persp" nil nil
-                                  "^\\*"
-                                  rwd/bs-config/persp
+(defun rwd/bs-config/not-persp (buf)
+  (not (rwd/bs-config/persp buf)))
+
+(defun rwd/persp/same-mode (current-buf)
+  (let* ((orig-mode    (with-current-buffer bs--buffer-coming-from major-mode))
+         (current-mode (with-current-buffer current-buf            major-mode)))
+    (and (rwd/bs-config/persp current-buf)
+         (equal orig-mode current-mode))))
+
+(add-to-list 'bs-configurations '("persp"
+                                  nil nil
+                                  "^\\*" rwd/bs-config/not-persp
                                   bs-sort-buffer-interns-are-last))
+
+(add-to-list 'bs-configurations '("current-mode"
+                                  nil rwd/persp/same-mode
+                                  "." nil
+                                  nil))

@@ -55,7 +55,9 @@
   (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point) ; was xref-find-references
   (global-set-key (kbd "M-[")     'outdent-rigidly-2)       ; undefined
   (global-set-key (kbd "M-]")     'indent-rigidly-2)        ; undefined
+  (global-set-key (kbd "M-`")     'bs-cycle-next)
   (global-set-key (kbd "M-j")     'rwd-join-lines)          ; was indent-new-comment-line
+  (global-set-key (kbd "M-~")     'bs-cycle-previous)
 
   ;; TODO: I think I want this cycling that window with other buffers of the same mode
   (global-set-key [remap other-frame] 'other-window)
