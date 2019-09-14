@@ -123,6 +123,19 @@
       (if (not nosplit)
           (split-window-horizontally)))))
 
+(defun rwd-local-extend-env (&rest kvs)
+  (make-local-variable 'process-environment)
+  (setq process-environment (copy-sequence process-environment))
+  (mapc (lambda (kv) (apply 'setenv kv)) kvs))
+
+(defun ohmygems! (name)
+  (let* ((home (concat "/Users/ryan/.gem/repos/" name))
+         (bin  (concat home "/bin"))
+         (path (concat bin ":" (getenv "PATH"))))
+    (rwd-local-extend-env `("GEM_HOME" ,home)
+                          `("PATH"     ,path))))
+(put 'ohmygems! 'safe-local-eval-function t)
+
 ;;;###autoload
 (defun rwd-emacs-wiki ()
   (interactive)
