@@ -69,6 +69,7 @@
          eval-in-repl            ; C-RET to send to repls
          find-file-in-project    ; ffip alternative to projectile FIX?
          flycheck                ; smoother than flyspell
+         flycheck-color-mode-line; colors modeline based on status
          flycheck-package        ; flycheck elisp package files
          flycheck-swift3         ; flicheck for swift syntax
          flycheck-swiftlint      ; flycheck for swiftlint tool
