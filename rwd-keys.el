@@ -59,8 +59,11 @@
   (gsk (kbd "M-]")     'indent-rigidly-2)        ; undefined
   (gsk (kbd "M-j")     'rwd-join-lines)          ; was indent-new-comment-line
 
-  ;; TODO: I think I want this cycling that window with other buffers of the same mode
-  (gsk [remap other-frame] 'other-window)
+  ;; experiment: cycle through buffers of the same mode
+  (gsk (kbd "M-`")     'bs-cycle-next)           ; go to next buffer of same mode
+  (gsk (kbd "M-~")     'bs-cycle-previous)       ; go to prev buffer of same mode
+  (gsk (kbd "H-`")     'goto-last-change)        ; go to last change in buffer
+  (gsk (kbd "H-~")     'goto-last-change-reverse); go to prev change
 
   ;; sanity/compatibility (mostly stuff from xemacs):
   (gsk (kbd "M-g")      'goto-line)
