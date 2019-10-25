@@ -94,6 +94,7 @@
          xr                      ; regexp -> xr (lispy regexps)
          xterm-color             ; used in modes/shall-mode.el
 
+         goto-chg
          copy-as-format
          ))
 
