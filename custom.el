@@ -89,7 +89,7 @@
  '(inf-ruby-default-implementation "pry")
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
- '(ispell-dictionary "english")
+ '(ispell-dictionary "english" t)
  '(ispell-extra-args (quote ("\"--sug-mode=fast\"")))
  '(kill-ring-max 1000)
  '(line-move-visual nil)
@@ -138,7 +138,7 @@
  '(p4-do-find-file nil)
  '(package-selected-packages
    (quote
-    (ag aggressive-indent auto-dim-other-buffers bison-mode browse-kill-ring company copy-as-format cyphejor dash dedicated default-text-scale delight dockerfile-mode elisp-slime-nav eval-in-repl expand-region f find-file-in-project flycheck flycheck-color-mode-line flycheck-package flycheck-swift3 flycheck-swiftlint git-timemachine github-browse-file github-review helpful htmlize ialign inf-ruby jq-mode json-mode keyfreq kill-ring-search magit markdown-mode multiple-cursors outline-magic p4 package+ package-lint paredit phi-grep phi-search phi-search-mc popwin projectile racket-mode s shackle shell-command ssh string-edit swift-mode w3m web-mode wgrep wgrep-ag which-key window-number window-purpose xr xr xterm-color yagist yaml-mode)))
+    (ag aggressive-indent auto-dim-other-buffers bison-mode browse-kill-ring company copy-as-format cyphejor dash dedicated default-text-scale delight dockerfile-mode elisp-slime-nav eval-in-repl expand-region f find-file-in-project flycheck flycheck-color-mode-line flycheck-package flycheck-swift3 flycheck-swiftlint git-timemachine github-browse-file github-review goto-chg helpful htmlize ialign inf-ruby jq-mode json-mode keyfreq kill-ring-search magit markdown-mode multiple-cursors outline-magic p4 package+ package-lint paredit phi-grep phi-search phi-search-mc popwin projectile racket-mode s shackle shell-command ssh string-edit swift-mode w3m web-mode wgrep wgrep-ag which-key window-number window-purpose xr xr xterm-color yagist yaml-mode)))
  '(package-selected-packagse nil t)
  '(persp-initial-frame-name "*")
  '(persp-mode t)
@@ -159,12 +159,13 @@
    (quote
     (kill-ring compile-command search-ring regexp-search-ring)))
  '(savehist-ignored-variables (quote (yes-or-no-p-history)))
- '(savehist-mode t nil (savehist))
+ '(savehist-mode t)
  '(scheme-program-name "csi -I ../lib")
  '(scroll-bar-mode nil)
  '(search-whitespace-regexp nil)
  '(send-mail-function (quote smtpmail-send-it))
  '(sentence-end-double-space nil)
+ '(set-mark-command-repeat-pop t)
  '(show-paren-mode t)
  '(smtpmail-smtp-server "envy.zenspider.com")
  '(smtpmail-smtp-service 25)
