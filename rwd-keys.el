@@ -30,44 +30,44 @@
   ;; be specific to modes (even though they should almost all be bound
   ;; into "C-c C-<letter>...", per standard.
 
-  (global-set-key (kbd "<f7>")    'rwd-toggle-split)        ; undefined
-  (global-set-key (kbd "<f8>")    'rwd-swap-buffers)        ; undefined
-  (global-set-key (kbd "C-M--")   'default-text-scale-decrease) ; was negative-argument
-  (global-set-key (kbd "C-M-.")   'etags-select-find-tag)   ; was xref-find-apropos
-  (global-set-key (kbd "C-M-;")   'unfill-paragraph)        ; undefined
-  (global-set-key (kbd "C-M-=")   'default-text-scale-increase) ; undefined
-  (global-set-key (kbd "C-M-SPC") 'er/expand-region)        ; was mark-sexp
-  (global-set-key (kbd "C-M-x")   'bury-buffer)             ; unassigned?
-  (global-set-key (kbd "C-M-y")   'kill-ring-search)        ; undefined
-  (global-set-key (kbd "C-h C")   'helpful-command)
-  (global-set-key (kbd "C-h C-p") 'helpful-at-point)
-  (global-set-key (kbd "C-h F")   'helpful-function)
-  (global-set-key (kbd "C-h K")   'helpful-kill-buffers)
-  (global-set-key (kbd "C-h f")   'helpful-callable)
-  (global-set-key (kbd "C-h k")   'helpful-key)
-  (global-set-key (kbd "C-h v")   'helpful-variable)
-  (global-set-key (kbd "C-x 1")   'sanityinc/toggle-delete-other-windows)
-  (global-set-key (kbd "C-x C-b") 'bs-show)                 ; was list-buffers
-  (global-set-key (kbd "C-x C-p") 'find-file-at-point)      ; was mark-page
-  (global-set-key (kbd "C-x C-t") 'toggle-buffer)           ; was transpose-lines
-  (global-set-key (kbd "C-x f")   'find-file)               ; was set-fill-column, typos
-  (global-set-key (kbd "C-x r t") 'inline-string-rectangle) ; was string-rectangle
-  (global-set-key (kbd "M-?")     'etags-select-find-tag-at-point) ; was xref-find-references
-  (global-set-key (kbd "M-[")     'outdent-rigidly-2)       ; undefined
-  (global-set-key (kbd "M-]")     'indent-rigidly-2)        ; undefined
-  (global-set-key (kbd "M-`")     'bs-cycle-next)
-  (global-set-key (kbd "M-j")     'rwd-join-lines)          ; was indent-new-comment-line
-  (global-set-key (kbd "M-~")     'bs-cycle-previous)
+  (defalias 'gsk 'global-set-key)
+  (defalias 'rsk 'rwd-smart-keys)
+
+  (gsk (kbd "<f7>")    'rwd-toggle-split)        ; undefined
+  (gsk (kbd "<f8>")    'rwd-swap-buffers)        ; undefined
+  (gsk (kbd "C-M--")   'default-text-scale-decrease) ; was negative-argument
+  (gsk (kbd "C-M-.")   'etags-select-find-tag)   ; was xref-find-apropos
+  (gsk (kbd "C-M-;")   'unfill-paragraph)        ; unwrap a parapgraph!
+  (gsk (kbd "C-M-=")   'default-text-scale-increase) ; bigger font everywhere
+  (gsk (kbd "C-M-SPC") 'er/expand-region)        ; was mark-sexp
+  (gsk (kbd "C-M-x")   'bury-buffer)             ; unassigned?
+  (gsk (kbd "C-M-y")   'kill-ring-search)        ; undefined
+  (gsk (kbd "C-h C")   'helpful-command)         ; better help for commands
+  (gsk (kbd "C-h C-p") 'helpful-at-point)        ; better help at point
+  (gsk (kbd "C-h F")   'helpful-function)        ; better help for functions
+  (gsk (kbd "C-h K")   'helpful-kill-buffers)    ; better help kill windows
+  (gsk (kbd "C-h f")   'helpful-callable)        ; better help for a thing
+  (gsk (kbd "C-h k")   'helpful-key)             ; better help for a key
+  (gsk (kbd "C-h v")   'helpful-variable)        ; better help for a var
+  (gsk (kbd "C-x C-b") 'bs-show)                 ; was list-buffers
+  (gsk (kbd "C-x C-p") 'find-file-at-point)      ; was mark-page
+  (gsk (kbd "C-x C-t") 'toggle-buffer)           ; was transpose-lines
+  (gsk (kbd "C-x f")   'find-file)               ; was set-fill-column, typos
+  (gsk (kbd "C-x r t") 'inline-string-rectangle) ; was string-rectangle
+  (gsk (kbd "M-?")     'etags-select-find-tag-at-point) ; was xref-find-references
+  (gsk (kbd "M-[")     'outdent-rigidly-2)       ; undefined
+  (gsk (kbd "M-]")     'indent-rigidly-2)        ; undefined
+  (gsk (kbd "M-j")     'rwd-join-lines)          ; was indent-new-comment-line
 
   ;; TODO: I think I want this cycling that window with other buffers of the same mode
-  (global-set-key [remap other-frame] 'other-window)
+  (gsk [remap other-frame] 'other-window)
 
   ;; sanity/compatibility (mostly stuff from xemacs):
-  (global-set-key (kbd "M-g")      'goto-line)
-  (global-set-key (kbd "<C-up>")   'rwd-previous-line-6)
-  (global-set-key (kbd "<C-down>") 'rwd-forward-line-6)
-  (global-set-key (kbd "<M-up>")   'rwd-scroll-up)
-  (global-set-key (kbd "<M-down>") 'rwd-scroll-down)
+  (gsk (kbd "M-g")      'goto-line)
+  (gsk (kbd "<C-up>")   'rwd-previous-line-6)
+  (gsk (kbd "<C-down>") 'rwd-forward-line-6)
+  (gsk (kbd "<M-up>")   'rwd-scroll-up)
+  (gsk (kbd "<M-down>") 'rwd-scroll-down)
 
   ;; iconify bugs the crap out of me:
   ;; (when window-system (local-unset-key "\C-z"))
@@ -78,10 +78,10 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; violations that need to be changed over time
 
-  (global-set-key (kbd "C-c C-s") 'rwd-select-all-mm-at-point)
-  (global-set-key (kbd "C-c M-q") 'unfill-paragraph)
-  (global-set-key (kbd "M-s")     'fixup-whitespace) ; useful search/highlight stuff
-  (global-set-key (kbd "M-S")     'rwd-fixup-whitespace)
+  (gsk (kbd "C-c C-s") 'rwd-select-all-mm-at-point)
+  (gsk (kbd "C-c M-q") 'unfill-paragraph)
+  (gsk (kbd "M-s")     'fixup-whitespace) ; useful search/highlight stuff
+  (gsk (kbd "M-S")     'rwd-fixup-whitespace)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; mode map bindings
@@ -104,43 +104,43 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; normal user-level keybindings
 
-  (global-set-key (kbd "C-c -")   'rwd-selective-display)
-  (global-set-key (kbd "C-c O")   'rwd-occur-n-buffer)
-  (global-set-key (kbd "C-c SPC") 'delete-trailing-whitespace)
-  (global-set-key (kbd "C-c a")   'align-cols)
-  (global-set-key (kbd "C-c b")   'rwd-rotate-windows)
-  (global-set-key (kbd "C-c c")   'rwd-clean)
-  (rwd-smart-keys 'd '((   "R" .  'ediff-regions-linewise)
-                       (   "b" .  'ediff-buffers)
-                       (   "d" .  'ediff-directories)
-                       (   "f" .  'ediff-files)
-                       (   "q" .  'ediff-quit)
-                       ( "SPC" .  'delete-trailing-whitespace)
-                       (   "r" .  'ediff-regions-wordwise)
-                       (   "w" .  'delete-trailing-whitespace)))
-  (global-set-key (kbd "C-c e")   'erase-buffer)
-  (global-set-key (kbd "C-c g")   'magit-status)
-  (global-set-key (kbd "C-c f")   'magit-file-popup)
-  (global-set-key (kbd "C-c I")   'popwin:ielm)
-  (global-set-key (kbd "C-c i")   'imenu)
-  (global-set-key (kbd "C-c n")   'narrow-to-region-indirect)
-  (global-set-key (kbd "C-x n")   'narrow-or-widen-dwim)
-  (global-set-key (kbd "C-c o")   'rwd-occur-buffer)
-  (rwd-smart-keys 's '((   "c" .  'sort-columns)
-                       (   "l" .  'sort-lines)
-                       (   "n" .  'sort-numbers)
-                       (   "p" .  'sort-paragraphs)
-                       (   "s" .  'sort-sexps)
-                       (   "S" .  'sort-symbols)
-                       (   "w" .  'sort-words)))
-  (global-set-key (kbd "C-x /")   'align-regexp)
-  (global-set-key (kbd "C-x =")   'align-regexp-=)
-  (global-set-key (kbd "C-x #")   'align-regexp-comment)
+  (gsk (kbd "C-c -")   'rwd-selective-display)
+  (gsk (kbd "C-c O")   'rwd-occur-n-buffer)
+  (gsk (kbd "C-c SPC") 'delete-trailing-whitespace)
+  (gsk (kbd "C-c a")   'align-cols)
+  (gsk (kbd "C-c b")   'rwd-rotate-windows)
+  (gsk (kbd "C-c c")   'rwd-clean)
+  (rsk 'd '((   "R" .  'ediff-regions-linewise)
+            (   "b" .  'ediff-buffers)
+            (   "d" .  'ediff-directories)
+            (   "f" .  'ediff-files)
+            (   "q" .  'ediff-quit)
+            ( "SPC" .  'delete-trailing-whitespace)
+            (   "r" .  'ediff-regions-wordwise)
+            (   "w" .  'delete-trailing-whitespace)))
+  (gsk (kbd "C-c e")   'erase-buffer)
+  (gsk (kbd "C-c g")   'magit-status)
+  (gsk (kbd "C-c f")   'magit-file-popup)
+  (gsk (kbd "C-c I")   'popwin:ielm)
+  (gsk (kbd "C-c i")   'imenu)
+  (gsk (kbd "C-c n")   'narrow-to-region-indirect)
+  (gsk (kbd "C-x n")   'narrow-or-widen-dwim)
+  (gsk (kbd "C-c o")   'rwd-occur-buffer)
+  (rsk 's '((   "c" .  'sort-columns)
+            (   "l" .  'sort-lines)
+            (   "n" .  'sort-numbers)
+            (   "p" .  'sort-paragraphs)
+            (   "s" .  'sort-sexps)
+            (   "S" .  'sort-symbols)
+            (   "w" .  'sort-words)))
+  (gsk (kbd "C-x /")   'align-regexp)
+  (gsk (kbd "C-x =")   'align-regexp-=)
+  (gsk (kbd "C-x #")   'align-regexp-comment)
 
   ;; experimenting with hyperspace :D
-  (global-set-key (kbd "H-SPC") 'point-to-register)
-  (global-set-key (kbd "H-j")   'jump-to-register)
-  (global-set-key (kbd "H-b")   'bury-buffer)
+  (gsk (kbd "H-SPC") 'point-to-register)
+  (gsk (kbd "H-j")   'jump-to-register)
+  (gsk (kbd "H-b")   'bury-buffer)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; unsorted
@@ -160,17 +160,15 @@
 ;;           grep-mode-map
 ;;           help-mode-map))
 
-;; TODO: what if M-~ instead flipped the current window to the next buffer of that type?
-
 ;;;###autoload
-(global-set-key [remap isearch-forward]
-                (lambda (p)
-                  ;; http://endlessparentheses.com/quickly-search-for-occurrences-of-the-symbol-at-point.html
-                  (interactive "P")
-                  (let ((current-prefix-arg nil))
-                    (call-interactively
-                     (if p #'isearch-forward-symbol-at-point
-                       #'isearch-forward)))))
+(gsk [remap isearch-forward]
+     (lambda (p)
+       ;; http://endlessparentheses.com/quickly-search-for-occurrences-of-the-symbol-at-point.html
+       (interactive "P")
+       (let ((current-prefix-arg nil))
+         (call-interactively
+          (if p #'isearch-forward-symbol-at-point
+            #'isearch-forward)))))
 
 ;;;###autoload
 (define-key isearch-mode-map (kbd "M-o")
@@ -203,15 +201,15 @@
 ;;;###autoload
 (progn
   (when (require 'multiple-cursors nil t)
-    (rwd-smart-keys 'm '(("<" . 'mc/mark-previous-like-this)
-                         ("=" . 'mc/mark-all-like-this)
-                         ("A" . 'mc/align)
-                         ("a" . 'mc/mark-all-in-region)
-                         ("e" . 'mc/edit-ends-of-lines)
-                         ("i" . 'mc/insert-numbers)
-                         ("h" . 'mc-hide-unmatched-lines-mode)
-                         ("l" . 'mc/edit-lines)
-                         ("m" . 'mc/mark-all-dwim)
-                         ("n" . 'mc/mark-next-like-this)
-                         ("r" . 'set-rectangular-region-anchor)
-                         ("s" . 'mc/mark-all-symbols-like-this)))))
+    (rsk 'm '(("<" . 'mc/mark-previous-like-this)
+              ("=" . 'mc/mark-all-like-this)
+              ("A" . 'mc/align)
+              ("a" . 'mc/mark-all-in-region)
+              ("e" . 'mc/edit-ends-of-lines)
+              ("i" . 'mc/insert-numbers)
+              ("h" . 'mc-hide-unmatched-lines-mode)
+              ("l" . 'mc/edit-lines)
+              ("m" . 'mc/mark-all-dwim)
+              ("n" . 'mc/mark-next-like-this)
+              ("r" . 'set-rectangular-region-anchor)
+              ("s" . 'mc/mark-all-symbols-like-this)))))
