@@ -41,7 +41,7 @@ Then switch to the process buffer."
                            (current-buffer) t))
 
 ;;;###autoload
-(set-register ?P "require \"pry\"; binding.pry")
+(set-register ?P "require \"pry\"; binding.pry\n")
 
 ;;;###autoload
 (set-register ?T "require 'minitest/autorun'
