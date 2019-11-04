@@ -56,5 +56,28 @@
          "config" "--add" "remote.origin.fetch"
          fetch-address)))))
 
+;;; https://magit.vc/manual/magit/Performance.html
+
+;; (setq magit-refresh-status-buffer nil)
+
+;; (setq auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffers-p)
+
+;; magit-refresh-buffer-hook
+;; magit-status-refresh-hook
+;; magit-pre-refresh-hook
+;; magit-post-refresh-hook
+
+;; magit-revision-insert-related-refs
+;; magit-diff-highlight-indentation
+;; magit-diff-highlight-trailing
+;; magit-diff-paint-whitespace
+;; magit-diff-highlight-hunk-body
+;; magit-diff-refine-hunk
+
+;; (remove-hook 'server-switch-hook 'magit-commit-diff)
+
+;; (setq vc-handled-backends nil)
+;; (setq vc-handled-backends (delq 'Git vc-handled-backends))
+
 ;; (require 'magithub)
 ;; (magithub-feature-autoinject t)
