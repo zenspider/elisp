@@ -1,6 +1,8 @@
 (paredit-mode +1)
 (racket-unicode-input-method-enable)
 
+(flyspell-prog-mode)
+
 (define-key racket-mode-map (kbd "C-c u")       'racket-unicode-input-method-enable)
 (define-key racket-mode-map (kbd "C-c C-r")     'racket-run)
 (define-key racket-mode-map (kbd "C-c r")       'racket-run)
