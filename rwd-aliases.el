@@ -23,6 +23,10 @@
     (setq ns-is-fullscreen (not ns-is-fullscreen))))
 
 ;;;###autoload
+(defalias 'info-on-current-buffer 'Info-on-current-buffer
+  "fuck you...")
+
+;;;###autoload
 (defalias 'big 'rwd-resize-13)
 
 ;;;###autoload
