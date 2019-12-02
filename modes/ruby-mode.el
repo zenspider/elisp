@@ -24,6 +24,4 @@
 
 (setq ruby-program-name "/usr/bin/env irb")
 
-(defun ruby-find-file (s)
-  (interactive "sgem which ")
-  (find-file (substring (shell-command-to-string (concat "gem which " s)) 0 -1)))
+(defalias 'ruby-find-file 'enh-ruby-find-file)
