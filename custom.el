@@ -141,7 +141,6 @@
     (ag aggressive-indent auto-dim-other-buffers bison-mode browse-kill-ring company copy-as-format cyphejor dash dedicated default-text-scale delight dockerfile-mode elisp-slime-nav eval-in-repl expand-region f find-file-in-project flycheck flycheck-color-mode-line flycheck-package flycheck-swift3 flycheck-swiftlint git-timemachine github-browse-file github-review goto-chg helpful htmlize ialign inf-ruby jq-mode json-mode keyfreq kill-ring-search magit markdown-mode multiple-cursors outline-magic p4 package+ package-lint paredit phi-grep phi-search phi-search-mc popwin projectile racket-mode s shackle shell-command ssh string-edit swift-mode w3m web-mode wgrep wgrep-ag which-key window-number window-purpose xr xr xterm-color yagist yaml-mode)))
  '(package-selected-packagse nil t)
  '(persp-initial-frame-name "*")
- '(persp-mode t)
  '(persp-mode-prefix-key "")
  '(persp-sort (quote created))
  '(purpose-user-regexp-purposes (quote (("^magit" . magit))))
