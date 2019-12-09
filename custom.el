@@ -31,7 +31,7 @@
  '(comment-empty-lines (quote (quote eol)))
  '(comment-style (quote extra-line))
  '(company-idle-delay nil)
- '(compilation-error-regexp-alist (quote (bash java gnu gcc-include)))
+ '(compilation-error-regexp-alist (quote (bash clang-include gnu gcc-include ruby-Test::Unit)))
  '(completion-styles (quote (basic partial-completion initials emacs22)))
  '(dired-recursive-deletes (quote top))
  '(ediff-split-window-function
