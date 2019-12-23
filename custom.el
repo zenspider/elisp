@@ -31,7 +31,9 @@
  '(comment-empty-lines (quote (quote eol)))
  '(comment-style (quote extra-line))
  '(company-idle-delay nil)
- '(compilation-error-regexp-alist (quote (bash clang-include gnu gcc-include ruby-Test::Unit)))
+ '(compilation-error-regexp-alist
+   (quote
+    (bash clang-include gnu gcc-include ruby-Test::Unit)))
  '(completion-styles (quote (basic partial-completion initials emacs22)))
  '(dired-recursive-deletes (quote top))
  '(ediff-split-window-function
@@ -47,7 +49,7 @@
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
  '(enh-ruby-check-syntax nil)
- '(enh-ruby-program "/Users/ryan/.rubies/ruby-2.6.4/bin/ruby")
+ '(enh-ruby-program "/Users/ryan/.rubies/ruby-2.6.5/bin/ruby")
  '(erc-fools
    (quote
     ("Welkin" "konsolebox" "`slikts" "slack-irc-bot" "Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros")))
@@ -72,6 +74,7 @@
  '(eval-expression-print-level nil)
  '(explicit-bash-args (quote ("--noediting" "--login" "-i")))
  '(ffap-file-finder (quote find-file-other-window))
+ '(ffap-lax-url nil)
  '(ffap-machine-p-known (quote accept))
  '(find-file-visit-truename t)
  '(flycheck-display-errors-function (quote flycheck-display-error-messages-unless-error-list))
@@ -162,6 +165,10 @@
  '(scheme-program-name "csi -I ../lib")
  '(scroll-bar-mode nil)
  '(search-whitespace-regexp nil)
+ '(seeing-is-believing-executable "~/Bin/seeing_is_believing")
+ '(seeing-is-believing-max-length 80)
+ '(seeing-is-believing-max-results 3)
+ '(seeing-is-believing-timeout 2)
  '(send-mail-function (quote smtpmail-send-it))
  '(sentence-end-double-space nil)
  '(set-mark-command-repeat-pop t)
