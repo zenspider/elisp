@@ -10,3 +10,12 @@
 (add-to-list 'interpreter-mode-alist '("ruby" . enh-ruby-mode))
 
 (add-to-list 'load-path (expand-file-name "~/Work/git/zenspider/enhanced-ruby-mode"))
+(add-to-list 'load-path (expand-file-name "~/Work/git/jcinnamond/seeing-is-believing"))
+
+(require 'seeing-is-believing)
+
+(defun zenspider/sib/erm+refresh ()
+  (erm-reset-buffer))
+
+(add-hook 'seeing-is-believing-after-run-hooks
+          'zenspider/sib/erm+refresh)
