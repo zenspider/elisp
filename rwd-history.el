@@ -19,31 +19,33 @@
          (push expanded-path file-name-history)))
   nil)
 
-;;;###autoload
-(defun canonicalize-file-name-history ()
-  "Set `file-name-history' to the first `history-length' - 100
-elements of `file-name-history' after sorting by mtime,
-canonicalizing, removing duplicates and filtering out all TRAMP
-paths, directories, backups, and non-existent files."
-  (interactive)
+(defun rwd/filter-file-list (files)
+  "Canonicalize FILES, removing duplicates and
+filtering out all TRAMP paths, directories, backups, and
+non-existent files."
   (require 'tramp)
   (let ((rwd-tramp-method-regexp
          (concat "^/" (regexp-opt (mapcar 'car tramp-methods) t) ":")))
-    (setq file-name-history
-          (head (sort (remove-duplicates
-                       (mapcar 'canonical-file-path
-                               (remove-if
-                                (lambda (path)
-                                  (or
-                                   (string-match "^/.+::" path)
-                                   ;; (string-match "^/.+:" path) ; fix tramp pain
-                                   (string-match rwd-tramp-method-regexp path)
-                                   (file-directory-p path)
-                                   (string-match "~$" path)
-                                   (not (file-exists-p path))))
-                                file-name-history)) :test #'equal)
-                      'sort-files-by-date)
-                (- history-length 100)))))
+    (-uniq                              ; TODO: removed sorting
+     (mapcar 'canonical-file-path
+             (-reject (lambda (path)
+                        (or
+                         (string-match "^/.+::" path)
+                         (string-match rwd-tramp-method-regexp path)
+                         (file-directory-p path)
+                         (string-match "~$" path)
+                         (not (file-exists-p path))))
+                      files)))))
+
+;;;###autoload
+(defun canonicalize-file-name-history ()
+  "Set `file-name-history' to the first `history-length' - 100
+elements of `file-name-history' after canonicalizing, removing
+duplicates and filtering out all TRAMP paths, directories,
+backups, and non-existent files."
+  (interactive)
+  (setq file-name-history (head (rwd/filter-file-list file-name-history)
+                                (- history-length 100))))
 
 ;;;###autoload
 (progn
@@ -54,5 +56,7 @@ paths, directories, backups, and non-existent files."
 ;;;###autoload
 (defun repopulate-file-name-history ()
   (interactive)
-  (setq file-name-history (rwd-find-project-files))
+  (setq file-name-history
+        (reverse (sort (rwd/filter-file-list (rwd-find-project-files))
+                       'sort-files-by-mtime)))
   (canonicalize-file-name-history))
