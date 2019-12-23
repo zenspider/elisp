@@ -3,20 +3,32 @@
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
-(defadvice find-file-at-point (around goto-line)
+(defun rwd/find-file-at-point/numbers (orig-fun &rest args)
   "If path at point is followed by :lineno, jump to that line."
-  (message "ffap: %s" (looking-at ".*?:\\([0-9]+\\)\\(:[0-9]+\\)?"))
-  (let ((line (and (looking-at ".*?:\\([0-9]+\\)\\(:[0-9]+\\)?")
-                   (string-to-number (match-string 1)))))
-    ad-do-it
-    (and line (goto-line line))))
+  (let* ((uri-re    ":\\([0-9]+\\)\\(?::\\([0-9]+\\)\\)?$")
+         (file-str (ffap-string-at-point))
+         (match?   (string-match uri-re file-str))
+         (line     (and match? (match-string 1 file-str)))
+         (col      (and match? (match-string 2 file-str)))
+         (line     (and line (string-to-number line)))
+         (col      (and col  (string-to-number col))))
+    (apply orig-fun args)
+    (and line (goto-line line))
+    (and col  (move-to-column (max col 0)))))
+
+;; ;;;###autoload
+(advice-add 'find-file-at-point :around #'rwd/find-file-at-point/numbers)
+;; (advice-remove 'find-file-at-point #'rwd/find-file-at-point/numbers)
 
 ;;;###autoload
-(defadvice imenu (before push-position compile activate)
-  (ring-insert find-tag-marker-ring (point-marker)))
+(defun rwd/imenu/push (_item)
+  (xref-push-marker-stack))
 
 ;;;###autoload
-(unless (fboundp 'ns-is-fullscreen)
+(advice-add 'imenu :before #'rwd/imenu/push)
+
+;;;###autoload
+(unless (boundp 'ns-is-fullscreen)
   (setq ns-is-fullscreen nil)
 
   (defadvice ns-toggle-fullscreen (before record-state compile activate)
@@ -70,9 +82,9 @@
       (align-regexp (region-beginning) (region-end) "\\(\\s-*\\)#"))))
 
 ;;;###autoload
-(defun head (list n)
+(defun head (list &optional n)
   "Return a copy of list with the first n elements"
-  (butlast list (- (length list) n)))
+  (butlast list (- (length list) (or n 10))))
 
 ;;;###autoload
 (defun identity (a) a)
@@ -478,12 +490,16 @@ Essentially, I didn't like the format of generate-new-buffer-name."
     (delete-other-windows)))
 
 ;;;###autoload
-(defun sort-files-by-date (a b)
-  (let ((ta (nth 5 (file-attributes a)))
-        (tb (nth 5 (file-attributes b))))
-    (if (= (nth 0 ta) (nth 0 tb))
-        (> (nth 1 ta) (nth 1 tb))
-      (> (nth 0 ta) (nth 0 tb)))))
+(defun sort-files-by-mtime (a b)
+  (let ((ta (file-attribute-modification-time (file-attributes a)))
+        (tb (file-attribute-modification-time (file-attributes b))))
+    (time-less-p ta tb)))
+
+;;;###autoload
+(defun sort-files-by-atime (a b)
+  (let ((ta (file-attribute-access-time (file-attributes a)))
+        (tb (file-attribute-access-time (file-attributes b))))
+    (time-less-p ta tb)))
 
 ;;;###autoload
 (defun sort-numbers (reverse beg end)
