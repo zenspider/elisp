@@ -1,5 +1,5 @@
 (paredit-mode +1)
-(racket-unicode-input-method-enable)
+;; (racket-unicode-input-method-enable)
 
 (flyspell-prog-mode)
 
@@ -9,6 +9,7 @@
 (define-key racket-mode-map (kbd "C-c t")       'racket-test)
 (define-key racket-mode-map (kbd "C-c C-d")     'delete-trailing-whitespace)
 (define-key racket-mode-map (kbd "<C-return>")  'eir-eval-in-racket)
+
 ;; (define-key racket-mode-map (kbd "C-c C-c C-d") 'racket-doc)
 
 (defun paredit-space-for-delimiter-predicates-scheme (endp delimiter)
@@ -33,7 +34,7 @@
                      case∞ case-inf take fresh
                      pattern-case-filter))
       (specials '((for/fold for/fold/1)
-                  (for/list for/list/flat)
+                  (for/list for/list/flat for/list/min)
                   (for/or for/all for/none)
                   (for/sum for/count)
                   (do run))))
