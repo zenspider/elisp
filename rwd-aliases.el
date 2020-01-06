@@ -5,7 +5,7 @@
 ;;;###autoload
 (defun rwd/find-file-at-point/numbers (orig-fun &rest args)
   "If path at point is followed by :lineno, jump to that line."
-  (let* ((uri-re    ":\\([0-9]+\\)\\(?::\\([0-9]+\\)\\)?$")
+  (let* ((uri-re    ":\\([0-9]+\\)\\(?::\\([0-9]+\\)\\)?")
          (file-str (ffap-string-at-point))
          (match?   (string-match uri-re file-str))
          (line     (and match? (match-string 1 file-str)))
