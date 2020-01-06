@@ -939,11 +939,15 @@ even beep.)"
 
 ;;;###autoload
 (defun rwd-load-modes ()
-  (interactive)
+  (require 'subr-x)
   (message "START: rwd-load-modes")
-  (dolist (path (directory-files (concat user-init-dir "modes") t ".*el$"))
-    (message "%S" `(load ,path))
-    (load path))
+  (let* ((default-directory user-init-dir)
+         (paths (file-expand-wildcards "./modes/*.el"))
+         (clean (lambda (s) (string-remove-suffix ".el" s)))
+         (names (mapcar clean paths)))
+    (dolist (name names)
+      (message "%S" `(load ,name))
+      (load name)))
   (message "DONE: rwd-load-modes"))
 
 ;;;###autoload
@@ -969,7 +973,23 @@ even beep.)"
     (kill-buffer)))
 
 (defun rwd-workout (days-offset)
-  (interactive "P")                     ; "p" returns 1 w/ no args. bad.
+  (interactive "P")
+  (let ((time (seconds-to-time (+ (* (or days-offset 0) 86400)
+                                  (time-to-seconds (current-time)))))
+        (date (format-time-string "workout %Y-%m-%d" time)))
+    (rwd/workout/2 date)))
+
+
+(defvar workout-last-date nil)
+
+(defun rwd/workout/2 (date)
+  (interactive (list
+                (read-from-minibuffer
+                 "Date: "
+                 (or workout-last-date
+                     (format-time-string "%Y-%m-%d" (current-time))))))
+
+  (setq workout-last-date date)
 
   (save-excursion
     (find-file "~/Work/p4/zss/usr/ryand/superslow.txt")
@@ -977,37 +997,41 @@ even beep.)"
       (goto-char (point-max))
 
       (let* ((fmt "%-15s %3s# @ %3ss  -- \n")
-             (time (seconds-to-time (+ (* (or days-offset 0) 86400)
-                                       (time-to-seconds (current-time)))))
              (exercises '("leg press"
                           "leg curl"
                           "chest press"
                           "pulldown"
                           "leg extension"
-                          ;; "abduction"
                           "overhead press"
                           "back extension"
                           "abdominals"
-                          "compound row"))
+                          ;; "abduction"
+                          "compound row"
+                          ))
              (weights (reverse (mapcar
                                 'rwd-workout-search
                                 (reverse exercises)))))
 
-        (insert (format-time-string "\nworkout %Y-%m-%d\n\n" time))
-
-        (mapc (lambda (exercise)
-                (let ((w-prompt (concat exercise " weight: "))
-                      (t-prompt   (concat exercise " time: ")))
-
-                  (let ((weight (read-from-minibuffer
-                                 w-prompt
-                                 (assoc-default exercise weights))))
-                    (unless (string-equal weight "")
-                      (let ((time (read-from-minibuffer t-prompt)))
-                        (goto-char (point-max))
-                        (insert (format fmt (concat exercise ":") weight time)))))))
-              exercises))
-      (goto-char (point-max)))))
+        (goto-char (point-max))
+        (apply 'insert
+               (format "\nworkout %s\n\n" date)
+               (-non-nil
+                (mapcar (lambda (exercise)
+                          (let* ((w-prompt (concat exercise " weight: "))
+                                 (t-prompt (concat exercise   " time: "))
+                                 (weight (read-from-minibuffer
+                                          w-prompt
+                                          (assoc-default exercise weights))))
+                            (unless (string-equal weight "")
+                              (let ((time (read-from-minibuffer t-prompt)))
+                                (format fmt
+                                        (concat exercise ":")
+                                        weight
+                                        time)))))
+                        exercises))))
+      (goto-char (point-max))))
+  (with-current-buffer "superslow.txt"  ; outside save-excursion?!?
+    (goto-char (point-max))))
 
 (defun rwd-renumber-debug ()
   (interactive)
