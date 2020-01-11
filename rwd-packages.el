@@ -34,7 +34,9 @@
          f                       ; better api for files/dirs
          git-timemachine         ; fantastic spelunking tool
          github-browse-file      ; jump to code browser on github
+         helpful                 ; better help system
          htmlize                 ; colorizing as html
+         inf-ruby                ; trying to use more
          keyfreq                 ; stats on actual usage FIX?
          kill-ring-search        ; C-M-y kill ring search FIX
          magit                   ; the only reason I can use git
@@ -71,21 +73,14 @@
          flycheck                ; smoother than flyspell
          flycheck-color-mode-line; colors modeline based on status
          flycheck-package        ; flycheck elisp package files
-         flycheck-swift3         ; flicheck for swift syntax
-         flycheck-swiftlint      ; flycheck for swiftlint tool
          github-review           ; interesting workflow for reviews
-         helpful                 ; better help system
-         inf-ruby                ; trying to use more
-         ialign                  ; TODO
          jq-mode                 ; live view of jq queries
          json-mode               ; for json files
          markdown-mode           ; for md files
          package-lint            ; for checking elisp packages
          shackle                 ; for me... ugh.
          phi-grep                ; TODO
-         projectile              ; project oriented commands
          xr                      ; regexp -> xr (lispy regexps)
-         swift-mode              ; for swift files
          web-mode                ; TODO
          wgrep                   ; editable grep results
          wgrep-ag                ; editable ag results
