@@ -1,5 +1,8 @@
+(defvar rwd/erm/flycheck t "should we use flycheck mode?")
+
 (defun zenspider/erm/flycheck ()
-  (flycheck-mode 1)
+  (when rwd/erm/flycheck
+    (flycheck-mode 1))
   (define-key enh-ruby-mode-map (kbd "C-c e")
     'rwd-flycheck-toggle-list-errors))
 
