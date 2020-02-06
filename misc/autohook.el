@@ -8,7 +8,7 @@
            (raw-name   (concat "rwd-" mode "-hook"))
            (defun-name (intern raw-name))
            (lisp       (read-file-to-string path))
-           (debug      t))
+           (debug      nil))
 
       (eval (read (concat "(defun " raw-name " () "
                           (if debug
