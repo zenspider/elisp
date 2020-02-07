@@ -1164,5 +1164,15 @@ already narrowed."
         (setq pos (match-end 0)))
       matches)))
 
+(defun rwd/unfuck/text (start end)
+  (interactive "r")
+  (set-text-properties (or start (mark)) (or end (point)) nil))
+
+(defun rwd/unfuck/yank (_arg)
+  (rwd/unfuck/text (mark) (point)))
+
+(advice-add 'yank :after #'rwd/unfuck/yank)
+;; (advice-remove 'yank #'rwd/unfuck/text)
+
 ;; (setq urlreg "\\(?:http://\\)?www\\(?:[./#\+-]\\w*\\)+")
 ;; (re-seq urlreg (buffer-string))
