@@ -5,6 +5,7 @@
                 (?a "~/Bin/elisp/rwd-aliases.el")
                 (?k "~/Bin/elisp/rwd-keys.el")
                 (?m "~/Work/p4/zss/src/minitest/dev/lib/minitest.rb") ;
+                (?M "~/Work/p4/zss/src/minitest/dev/lib/minitest/assertions.rb") ;
                 (?s "~/Desktop/steak.org")
                 (?p "~/Bin/elisp/rwd-packages.el")
                 (?w "~/Work/p4/zss/usr/ryand/superslow.txt")))
