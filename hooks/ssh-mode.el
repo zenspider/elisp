@@ -1,3 +1,5 @@
+;;; NOTE: using my own private fork at ~/Work/git/zenspider/ssh-el/ssh.el
+
 ;; (ssh-directory-tracking-mode) -- causes an error on connection
 
 (shell-dirtrack-mode t)

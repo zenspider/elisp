@@ -50,7 +50,7 @@
          racket-mode             ; mandatory
          s                       ; better api for strings
          shell-command           ; tab-completion for `shell-command
-         ssh                     ; ssh-mode
+         ;; ssh                  ; ssh-mode -- USING MY OWN FORK
          string-edit             ; AMAZING string-edit-at-point
          w3m                     ; strange web browser FIX
          window-number           ; Jump to window by M-number
