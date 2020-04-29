@@ -1,4 +1,6 @@
-(require 'perspective "../persp/perspective.el")
+(add-to-list 'load-path (expand-file-name "~/Work/git/nex3/perspective-el"))
+
+(require 'perspective)
 
 (define-key perspective-map (kbd "d") 'persp-kill)
 (define-key perspective-map (kbd "RET") 'persp-switch-last)
