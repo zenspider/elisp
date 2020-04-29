@@ -5,6 +5,36 @@
 (define-key enh-ruby-mode-map (kbd "C-c C-r") 'rcov-buffer)
 (define-key enh-ruby-mode-map (kbd "C-c C-b") 'ruby-run-buffer-clean)
 (define-key enh-ruby-mode-map (kbd "C-c C-t") 'ri-show-term-composite-at-point)
+(define-key enh-ruby-mode-map (kbd "C-c C-c") 'recompile)
+
+;; TODO: this doesn't affect spawning compilations windows?!?
+(set (make-local-variable 'compilation-error-regexp-alist)
+     '(
+       ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
+       ("^ *\\(?:from \\)?\\([[+]\\)?\\([^:
+]+\\):\\([0-9]+\\):in" 2 3)
+       ("^.* at \\([^:]*\\):\\([0-9]+\\)$" 1 2)
+       ))
+
+(setq compilation-error-regexp-alist ;; HACK fix this for C-c C-c from here
+      '(
+        ("\\[\\(.*\\):\\([0-9]+\\)\\]:$" 1 2)
+        ("^ *\\(?:from \\)?\\([[+]\\)?\\([^:
+]+\\):\\([0-9]+\\):in" 2 3)
+        ("^.* at \\([^:]*\\):\\([0-9]+\\)$" 1 2)
+        ))
+
+(add-hook 'compilation-filter-hook 'rwd-ansi-colorize-strip)
+;; (remove-hook 'compilation-filter-hook 'rwd-ansi-colorize)
+
+;; ;; TODO: fix this for just C-c C-c
+;; (setq comint-output-filter-functions
+;;       '(fuck-me
+;;         comint-truncate-buffer
+;;         comint-postoutput-scroll-to-bottom))
+;; 
+;; (setq comint-preoutput-filter-functions
+;;       '(fuck-me))
 
 (defun ruby-outline-level ()
   "Return the depth to which a statement is nested in the outline.
