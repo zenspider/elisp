@@ -49,7 +49,7 @@
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
  '(enh-ruby-check-syntax nil)
- '(enh-ruby-program "/Users/ryan/.rubies/ruby-2.6.5/bin/ruby")
+ '(enh-ruby-program "~/.rubies.current/bin/ruby")
  '(erc-fools
    (quote
     ("Welkin" "konsolebox" "`slikts" "slack-irc-bot" "Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros")))
@@ -201,7 +201,7 @@
  '(web-mode-markup-indent-offset 2)
  '(whitespace-global-modes
    (quote
-    (c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode markdown-mode racc-mode racket-mode ruby-mode rust-mode scheme-mode sml-mode text-mode)))
+    (c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode markdown-mode racc-mode racket-mode ruby-mode rust-mode scheme-mode sml-mode text-mode conf-unix-mode yaml-mode)))
  '(whitespace-style
    (quote
     (face tabs trailing lines-tail space-before-tab empty))))
