@@ -10,6 +10,13 @@
 
 (package-initialize)
 
+(defun rwd/customize-save-variable/packages (oldfn variable value &optional comment)
+  (if (eq variable 'package-selected-packages)
+      (setq package-selected-packages value) ; prevent writing to custom.el
+    (apply oldfn variable value comment)))
+
+(advice-add 'customize-save-variable :around #'rwd/customize-save-variable/packages)
+
 (unless (package-installed-p 'package+)
   (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") ; HACK
   (package-refresh-contents)
