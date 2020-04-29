@@ -1,5 +1,6 @@
 (defvar rwd/displays
   `(("1440x900"  ,(* 1 80) ,(* 2 80) "Menlo" 14)
+    ("1792x1120" ,(* 1 80) ,(* 2 80) "Menlo" 16)
     ("4000x1440" ,(* 2 60) ,(* 2 80) "Menlo" 16))
   "Contains a list of display entries for emacs' dispwatch")
 
