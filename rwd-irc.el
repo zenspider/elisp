@@ -6,7 +6,7 @@
 ;;;###autoload
 (defun rwd-irc-freenode1 ()
   (interactive)
-  (erc-select :server "localhost" :port 16667
+  (erc-select :server "localhost" :port 16668
               :password (read-file-to-string "~/.erc_password")
               :nick "zenspider"))
 
