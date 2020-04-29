@@ -1,6 +1,7 @@
 (require 'package)
 
-(setq package-archives '())
+;; TODO: need to keep elpa for delight. Want to remove that
+;; (setq package-archives '())
 
 ;; TODO: consider ONLY using stable? do any packages disappear?
 (dolist (repo '(("melpa"        . "http://melpa.org/packages/")
@@ -10,6 +11,7 @@
 (package-initialize)
 
 (unless (package-installed-p 'package+)
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") ; HACK
   (package-refresh-contents)
   (package-install 'package+))
 
