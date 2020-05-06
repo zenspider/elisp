@@ -42,16 +42,24 @@
 
 ;; http://endlessparentheses.com/automatically-configure-magit-to-access-github-prs.html
 
+(defcustom zenspider/magit-exclude-projects '()
+  "A list of regexp patterns to exclude from the endless/add-PR-fetch hook."
+  :group 'rwd
+  :type '(repeat string))
+
 (defun endless/add-PR-fetch ()
   "If refs/pull is not defined on a GH repo, define it."
   (let ((fetch-address
          "+refs/pull/*/head:refs/pull/origin/*")
+        (magit-url     (magit-get "remote" "origin" "url"))
         (magit-remotes
          (magit-get-all "remote" "origin" "fetch")))
     (unless (or (not magit-remotes)
+                (--any? (string-match-p it magit-url)
+                        zenspider/magit-exclude-projects)
                 (member fetch-address magit-remotes))
       (when (string-match
-             "github" (magit-get "remote" "origin" "url"))
+             "github" magit-url)
         (magit-git-string
          "config" "--add" "remote.origin.fetch"
          fetch-address)))))
