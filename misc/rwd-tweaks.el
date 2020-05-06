@@ -10,8 +10,7 @@
         (top         . 0)
         (width       . 80)
         (height      . 48)
-        (font        . "Menlo-14")))
-
+        (font        . "Fira Code-14")))
 
 ;; enable/disable commands:
 ;;;###autoload
