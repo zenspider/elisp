@@ -49,6 +49,7 @@
 
 (defun endless/add-PR-fetch ()
   "If refs/pull is not defined on a GH repo, define it."
+  (require 'dash)                       ; ironic, magit uses this
   (let ((fetch-address
          "+refs/pull/*/head:refs/pull/origin/*")
         (magit-url     (magit-get "remote" "origin" "url"))
