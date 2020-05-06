@@ -204,7 +204,8 @@
     (c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode markdown-mode racc-mode racket-mode ruby-mode rust-mode scheme-mode sml-mode text-mode conf-unix-mode yaml-mode)))
  '(whitespace-style
    (quote
-    (face tabs trailing lines-tail space-before-tab empty))))
+    (face tabs trailing lines-tail space-before-tab empty)))
+ '(zenspider/magit-exclude-projects (quote ("zendesk/zendesk"))))
 
 ;; TODO: figure out why this doesn't work in git-blame frames
 ;; '(cursor ((((background light)) (:background "black"))
