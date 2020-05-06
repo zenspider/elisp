@@ -13,19 +13,23 @@
 
 (defun rwd/display-change (disp)
   (interactive)
-  (message "rwd/display-change %s" disp)
-  (let ((args (assoc disp rwd/displays)))
-    (unless args
-      (find-variable 'rwd/displays)
-      (error "Please extend rwd/displays with %S" disp))
-    (apply 'rwd/display-setup (cdr args))
-    (rwd-fix-fullscreen)
-    (sleep-for 0.25)
-    (rwd-split-smart)))
+  (when window-system
+    (message "rwd/display-change %s" disp)
+    (let ((args (assoc disp rwd/displays)))
+      (unless args
+        (find-variable 'rwd/displays)
+        (error "Please extend rwd/displays with %S" disp))
+      (apply 'rwd/display-setup (cdr args))
+      (rwd-fix-fullscreen)
+      (sleep-for 0.25)
+      (rwd-split-smart))))
 
 ;; https://github.com/mnp/dispwatch
 (require 'dispwatch)
-(add-hook 'dispwatch-display-change-hooks 'rwd/display-change)
-(dispwatch-enable)
+
+(when window-system
+  ;; (remove-hook 'dispwatch-display-change-hooks 'rwd/display-change)
+  (add-hook 'dispwatch-display-change-hooks 'rwd/display-change)
+  (dispwatch-enable))
 
 (defalias 'rwd/display-reset 'dispwatch-reset)
