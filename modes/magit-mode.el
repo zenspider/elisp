@@ -65,6 +65,18 @@
          "config" "--add" "remote.origin.fetch"
          fetch-address)))))
 
+;; https://endlessparentheses.com/easily-create-github-prs-from-magit.html
+(defun endless/visit-pull-request-url ()
+  "Visit the current branch's PR on Github."
+  (interactive)
+  (let ((url (format "https://github.com/%s/pull/new/%s"
+                     (replace-regexp-in-string
+                      "\\`.+github\\.com:\\(.+\\)\\.git\\'" "\\1"
+                      (magit-get "remote" (magit-get-push-remote) "url"))
+                     (magit-get-current-branch))))
+    (message "Visiting PR @ %s" url)
+    (browse-url url)))
+
 ;;; https://magit.vc/manual/magit/Performance.html
 
 ;; (setq magit-refresh-status-buffer nil)
