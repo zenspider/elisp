@@ -1,5 +1,9 @@
 (require 'package)
 
+(when (<= emacs-major-version 25)
+  (setq package-check-signature nil))
+
+
 ;; TODO: need to keep elpa for delight. Want to remove that
 ;; (setq package-archives '())
 
@@ -89,14 +93,15 @@
          package-lint            ; for checking elisp packages
          shackle                 ; for me... ugh.
          phi-grep                ; TODO
-         xr                      ; regexp -> xr (lispy regexps)
          web-mode                ; TODO
          wgrep                   ; editable grep results
          wgrep-ag                ; editable ag results
          which-key               ; show options in sub-keys
          window-purpose          ; trying to find a workflow that works
-         xr                      ; regexp -> xr (lispy regexps)
+         ;; xr                      ; regexp -> xr (lispy regexps)
          xterm-color             ; used in modes/shall-mode.el
+
+         perspective
 
          goto-chg
          copy-as-format
