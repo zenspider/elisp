@@ -1,4 +1,8 @@
-(add-to-list 'load-path (expand-file-name "~/Work/git/nex3/perspective-el"))
+
+(setq persp-path (expand-file-name "~/Work/git/nex3/perspective-el"))
+
+(when (file-directory-p persp-path)
+  (add-to-list 'load-path persp-path))
 
 (require 'perspective)
 
