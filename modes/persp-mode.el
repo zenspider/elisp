@@ -13,4 +13,5 @@
   (define-key perspective-map (kbd "z")   'suspend-frame)
   (define-key perspective-map (kbd "C-z") 'suspend-frame))
 
-(persp-mode)
+(when window-system
+  (persp-mode))
