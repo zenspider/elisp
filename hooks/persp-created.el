@@ -2,8 +2,9 @@
 
 (let* ((curr-name (persp-current-name))
        (maybe-dir (concat (f-canonical (f-join "~/Links" curr-name)) "/"))
+       (main-persp (equal "*" curr-name))
        (proj--dir
-        (cond ((equal "*" curr-name) (f-canonical "~/"))
+        (cond (main-persp (f-canonical "~/"))
               ((f-directory? maybe-dir) maybe-dir)
               ((s-lowercase? curr-name) default-directory)
               (t (call-interactively
@@ -11,4 +12,5 @@
   (with-current-buffer (persp-scratch-buffer)
     (message "creating perspective in %s" proj--dir)
     (setq default-directory proj--dir)
-    (rwd-shell)))
+    (unless main-persp
+      (rwd-shell))))
