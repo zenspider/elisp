@@ -1,10 +1,12 @@
 (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
 (define-key magit-mode-map        (kbd "M-w") nil)
+(define-key magit-mode-map        (kbd "V") #'endless/visit-pull-request-url)
 
 ;; TODO: "hub pull-request --no-edit -o"
 ;; TODO: "git absorb"
 
 (endless/add-PR-fetch)
+(turn-on-magit-gh-pulls)
 
 (defadvice magit-visit-item (around always-other-window compile activate)
   (ad-set-arg 0 t)
