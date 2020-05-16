@@ -20,6 +20,9 @@
 (advice-add 'find-file-at-point :around #'rwd/find-file-at-point/numbers)
 ;; (advice-remove 'find-file-at-point #'rwd/find-file-at-point/numbers)
 
+(defun buffer-string-no-properties ()
+  (buffer-substring-no-properties (point-min) (point-max)))
+
 ;;;###autoload
 (defun rwd/imenu/push (_item)
   (xref-push-marker-stack))
