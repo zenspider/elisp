@@ -3,7 +3,6 @@
 (when (<= emacs-major-version 25)
   (setq package-check-signature nil))
 
-
 ;; TODO: need to keep elpa for delight. Want to remove that
 ;; (setq package-archives '())
 
@@ -103,6 +102,7 @@
 
          perspective
 
+         diff-at-point
          goto-chg
          copy-as-format
          magit-gh-pulls
