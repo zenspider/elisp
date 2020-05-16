@@ -105,6 +105,9 @@
 
          goto-chg
          copy-as-format
+         magit-gh-pulls
+         gist
+         github-review
          ))
 
 ;; (package-refresh-contents)
