@@ -6,6 +6,14 @@
   (when (string= "/" default-directory) ; GUI starts up in root
     (cd "~"))
 
+  ;; BSDs have an INPUT_MAX of 1024 and emacs shell gets bit by that
+  ;; so, we drop pty for our shells on osx by setting
+  ;; process-connection-type to nil temporarily
+  (defun zenspider/osx/shell (orig-shell &rest args)
+    (let ((process-connection-type nil))
+      (apply orig-shell args)))
+  (advice-add 'shell :around 'zenspider/osx/shell)
+
   ;; Helloooo overkill.
   ;; (set-language-environment    'utf-8)
   ;; (set-default-coding-systems  'utf-8)
