@@ -6,7 +6,7 @@
 ;; TODO: "git absorb"
 
 (endless/add-PR-fetch)
-(turn-on-magit-gh-pulls)
+;; (turn-on-magit-gh-pulls) ; broken on current versions of magit
 
 (defadvice magit-visit-item (around always-other-window compile activate)
   (ad-set-arg 0 t)
