@@ -3,8 +3,7 @@
 (when (<= emacs-major-version 25)
   (setq package-check-signature nil))
 
-;; TODO: need to keep elpa for delight. Want to remove that
-;; (setq package-archives '())
+(setq package-archives '())             ; remove elpa... fuck that thing
 
 ;; TODO: consider ONLY using stable? do any packages disappear?
 (dolist (repo '(("melpa"        . "http://melpa.org/packages/")
@@ -71,12 +70,11 @@
 
          ;; trying out:
 
-         aggressive-indent       ; apparently used in scheme-mode
          bison-mode              ; for yacc/bison files
          company                 ; a completer--use or FIX?
          cyphejor                ; mode renaming--FIX delight
          dedicated               ; "stick" buffers to windows
-         delight                 ; mode renaming--FIX cyphejor
+         ;; delight              ; now in third-party. TODO: phase out
          default-text-scale      ; change font sizes globally
          dockerfile-mode         ; for Dockerfile files
          elisp-slime-nav         ; M-. M-, for elisp
@@ -107,8 +105,7 @@
          copy-as-format
          magit-gh-pulls
          gist
-         github-review
-         ))
+         github-review))
 
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
