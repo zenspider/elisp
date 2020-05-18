@@ -12,7 +12,8 @@
   (defun zenspider/osx/shell (orig-shell &rest args)
     (let ((process-connection-type nil))
       (apply orig-shell args)))
-  (advice-add 'shell :around 'zenspider/osx/shell)
+  ;; (advice-add 'shell :around 'zenspider/osx/shell)
+  ;; (advice-remove 'shell 'zenspider/osx/shell)
 
   ;; Helloooo overkill.
   ;; (set-language-environment    'utf-8)
