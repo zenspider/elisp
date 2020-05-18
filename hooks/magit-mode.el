@@ -8,6 +8,8 @@
 (endless/add-PR-fetch)
 ;; (turn-on-magit-gh-pulls) ; broken on current versions of magit
 
+(transient-bind-q-to-quit)
+
 (defadvice magit-visit-item (around always-other-window compile activate)
   (ad-set-arg 0 t)
   ad-do-it)
