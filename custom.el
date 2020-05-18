@@ -187,6 +187,7 @@
  '(tramp-copy-size-limit 1024)
  '(tramp-default-method "rsync")
  '(tramp-use-ssh-controlmaster-options nil)
+ '(transient-display-buffer-action (quote (display-buffer-below-selected)))
  '(truncate-partial-width-windows nil)
  '(use-dialog-box nil)
  '(user-mail-address "ryand-ruby@zenspider.com")
