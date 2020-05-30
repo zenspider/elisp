@@ -100,6 +100,7 @@
 
          perspective
 
+         dispwatch
          diff-at-point
          goto-chg
          copy-as-format
