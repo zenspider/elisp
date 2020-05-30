@@ -57,7 +57,6 @@
          paredit                 ; mandatory
          phi-search              ; TODO
          phi-search-mc           ; TODO
-         popwin                  ; popup window manager FIX
          racket-mode             ; mandatory
          s                       ; better api for strings
          shell-command           ; tab-completion for `shell-command
