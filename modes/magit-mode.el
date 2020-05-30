@@ -1,3 +1,6 @@
+(require 'transient)
+(transient-bind-q-to-quit)
+
 ;; from http://www.ogre.com/node/447
 
 (defun git-grep (search)
