@@ -351,17 +351,15 @@
   (when full-screen (rwd-ns-fullscreen)))
 
 ;;;###autoload
-(progn
-  (defalias 'rwd-split-h 'split-window-horizontally)
-  (defalias 'rwd-split-v 'split-window-vertically))
-
 (defun rwd-split-smart ()
   "Splits the current frame either in 2 or 3 depending on size"
   (interactive)
+
   (delete-other-windows)
-  (if (eq 3 (/ (frame-width) 80))
-      (rwd-split-thirds-h)
-    (rwd-split-h)))
+  (dotimes (n (1- (/ (frame-width) 80)))
+    (message "splitting %d" n)
+    (split-window-horizontally))
+  (balance-windows))
 
 ;;;###autoload
 (defun rwd-split-thirds-v ()
