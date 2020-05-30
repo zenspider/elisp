@@ -10,25 +10,44 @@
   `(("default" ,(* 1 80) ,(* 2 80) "Fira Code" 14) ; basics
 
     ("1440x900"  ,(* 1 80) ,(* 2 80) "Fira Code" 14) ; normal 13" lappy
+
     ("1792x1120" ,(* 2 80) ,(* 2 80) "Fira Code" 16) ; mpb 16" at regular
     ("2048x1280" ,(* 2 60) ,(* 2 80) "Fira Code" 16) ; mbp 16" at densest
 
     ;; pairing MPB 16" w/ HP 27Z @ 60hz
-    ("1280x720"  400 160 "Fira Code"  9) ; largest  text
-    ("1920x1080" 400 160 "Fira Code" 12) ; larger   text
-    ("2560x1440" 400 160 "Fira Code" 15) ; medium   text
-    ("3200x1800" 400 160 "Fira Code" 18) ; smaller  text
-    ("3840x2160" 400 160 "Fira Code" 24) ; smallest text (*)
+    ("1280x720"  ,(* 2 60) ,(* 2 80) "Fira Code"  9) ; largest  text
+    ("1920x1080" ,(* 2 60) ,(* 2 80) "Fira Code" 12) ; larger   text
+    ("2560x1440" ,(* 2 60) ,(* 2 80) "Fira Code" 16) ; medium   text <--
+    ("3200x1800" ,(* 2 60) ,(* 2 80) "Fira Code" 18) ; smaller  text
+    ("3840x2160" ,(* 2 60) ,(* 2 80) "Fira Code" 24) ; smallest text (*)
     ("4000x1440" ,(* 2 60) ,(* 2 80) "Fira Code" 16) ; chef POS (dell?) monitor
+
+    ;; 13" MBP paired with HP 27Z @ 60hz usbc
+    ;;1920x1080                                      ; largest  text
+    ;;2560x1440                                      ; larger   text
+    ("3008x1692" ,(* 2 60) ,(* 2 80) "Fira Code" 18) ; medium   text
+    ("3360x1890" ,(* 2 60) ,(* 2 80) "Fira Code" 20) ; smaller  text
+    ;;3840x2160                                      ; smallest text
     ))
 
 ;; (rwd/display-reset)
+;; (rwd-split-smart)
+;; (rwd/current-display)
 
 (defun rwd/display-setup (h w f s)
   (setq split-height-threshold h
         split-width-threshold w)
   (rwd-set-mac-font f s)
   (message "rwd/display-setup %s %s %s %s" h w f s))
+
+(defun rwd/current-display ()
+  (let* ((attr (frame-monitor-attributes))
+         (geom (assoc 'geometry attr))
+         (w (nth 3 geom))
+         (h (nth 4 geom))
+         (disp (format "%sx%s" w h))  ; calculated from actual geometry
+         )
+    disp))
 
 (defun rwd/display-change (_disp)       ; ignore this incoming var
   (interactive)
