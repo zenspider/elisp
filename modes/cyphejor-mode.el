@@ -17,6 +17,7 @@
 
 (require 'delight)
 (delight '((abbrev-mode            nil  "abbrev")
+           (dispwatch-mode         nil  "dispwatch")
            (eldoc-mode             nil  "eldoc")
            (elisp-slime-nav-mode   nil  "elisp-slime-nav")
            (flyspell-mode          nil  "flyspell")
@@ -25,3 +26,6 @@
            (paredit-mode           nil  "paredit")
            (projectile-mode        nil  "projectile")
            ))
+
+;; TODO: remove delight and replace it with this:?
+;; (cyphejor--cypher "elisp-slime-nav-mode" cyphejor-rules)
