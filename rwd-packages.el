@@ -81,12 +81,12 @@
          find-file-in-project    ; ffip alternative to projectile FIX?
          flycheck                ; smoother than flyspell
          flycheck-color-mode-line; colors modeline based on status
-         flycheck-package        ; flycheck elisp package files
+         ;; flycheck-package        ; flycheck elisp package files
          github-review           ; interesting workflow for reviews
          jq-mode                 ; live view of jq queries
          json-mode               ; for json files
          markdown-mode           ; for md files
-         package-lint            ; for checking elisp packages
+         ;; package-lint            ; for checking elisp packages
          shackle                 ; for me... ugh.
          phi-grep                ; TODO
          web-mode                ; TODO
