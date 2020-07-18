@@ -41,6 +41,7 @@
          auto-dim-other-buffers  ; makes current buffer "pop"
          browse-kill-ring        ; M-y kill ring browsing
          dash                    ; better api for lists
+         dispwatch               ; auto-switching on monitor changes
          expand-region           ; mandatory
          f                       ; better api for files/dirs
          git-timemachine         ; fantastic spelunking tool
@@ -99,7 +100,7 @@
 
          perspective
 
-         dispwatch
+         dumb-jump
          diff-at-point
          goto-chg
          copy-as-format
