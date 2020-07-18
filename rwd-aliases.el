@@ -12,10 +12,6 @@
         (cons path (cons line col))
       (cons path nil))))
 
-(rwd/parse-path-with-pos "/a/path/to")
-(rwd/parse-path-with-pos "/a/path/to:42")
-(rwd/parse-path-with-pos )
-
 ;;;###autoload
 (defun rwd/find-file-at-point/numbers (orig-fun &rest args)
   "If path at point is followed by :lineno, jump to that line."
