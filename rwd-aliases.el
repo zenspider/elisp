@@ -3,15 +3,24 @@
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
+(defun rwd/parse-path-with-pos (path)
+  (-let* ((re "^\\(.*?\\)\\(?::\\([0-9]+\\)?\\(?::\\([0-9]+\\)\\)?\\)?$")
+          ((path line col) (cdar (s-match-strings-all re path)))
+          (line     (and line (string-to-number line)))
+          (col      (or (and col (string-to-number col)) 0)))
+    (if line
+        (cons path (cons line col))
+      (cons path nil))))
+
+(rwd/parse-path-with-pos "/a/path/to")
+(rwd/parse-path-with-pos "/a/path/to:42")
+(rwd/parse-path-with-pos )
+
+;;;###autoload
 (defun rwd/find-file-at-point/numbers (orig-fun &rest args)
   "If path at point is followed by :lineno, jump to that line."
-  (let* ((uri-re    ":\\([0-9]+\\)\\(?::\\([0-9]+\\)\\)?")
-         (file-str (ffap-string-at-point))
-         (match?   (string-match uri-re file-str))
-         (line     (and match? (match-string 1 file-str)))
-         (col      (and match? (match-string 2 file-str)))
-         (line     (and line (string-to-number line)))
-         (col      (and col  (string-to-number col))))
+  (-let* ((file-str (ffap-string-at-point))
+          ((path line . col) (rwd/parse-path-with-pos file-str)))
     (apply orig-fun args)
     (and line (goto-line line))
     (and col  (move-to-column (max col 0)))))
