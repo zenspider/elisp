@@ -143,7 +143,7 @@
  '(persp-initial-frame-name "*")
  '(persp-mode-prefix-key "")
  '(persp-sort (quote created))
- '(purpose-user-regexp-purposes (quote (("^magit" . magit))))
+ '(purpose-user-regexp-purposes nil)
  '(racket-images-system-viewer "open")
  '(read-buffer-completion-ignore-case t)
  '(require-final-newline t)
