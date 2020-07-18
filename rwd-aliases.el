@@ -16,7 +16,7 @@
 (defun rwd/find-file-at-point/numbers (orig-fun &rest args)
   "If path at point is followed by :lineno, jump to that line."
   (-let* ((file-str (ffap-string-at-point))
-          ((path line . col) (rwd/parse-path-with-pos file-str)))
+          ((path line col) (rwd/parse-path-with-pos file-str)))
     (apply orig-fun args)
     (and line (goto-line line))
     (and col  (move-to-column (max col 0)))))
