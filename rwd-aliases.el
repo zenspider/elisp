@@ -2,6 +2,10 @@
 ;; ;; Aliases: (use sort-paragraphs on this section)
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(eval-when-compile
+  (require 's)
+  (require 'dash))
+
 ;;;###autoload
 (defun rwd/parse-path-with-pos (path)
   (-let* ((re "^\\(.*?\\)\\(?::\\([0-9]+\\)?\\(?::\\([0-9]+\\)\\)?\\)?$")
