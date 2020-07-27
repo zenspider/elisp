@@ -13,8 +13,8 @@
           (line     (and line (string-to-number line)))
           (col      (or (and col (string-to-number col)) 0)))
     (if line
-        (cons path (cons line col))
-      (cons path nil))))
+        (list path line col)
+      (list path))))
 
 ;;;###autoload
 (defun rwd/find-file-at-point/numbers (orig-fun &rest args)
