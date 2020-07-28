@@ -1,5 +1,5 @@
 (defun rwd/server-visit-files (orig-fn files &rest args)
-  (let ((new-files (mapcar (-lambda ((path pos))
+  (let ((new-files (mapcar (-lambda ((path . pos))
                              (if pos (cons path pos)
                                (rwd/parse-path-with-pos path)))
                            files)))

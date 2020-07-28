@@ -13,17 +13,19 @@
           (line     (and line (string-to-number line)))
           (col      (or (and col (string-to-number col)) 0)))
     (if line
-        (list path line col)
+        (cons path (cons line col))
       (list path))))
 
 ;;;###autoload
 (defun rwd/find-file-at-point/numbers (orig-fun &rest args)
   "If path at point is followed by :lineno, jump to that line."
   (-let* ((file-str (ffap-string-at-point))
-          ((path line col) (rwd/parse-path-with-pos file-str)))
+          ((path . pos) (rwd/parse-path-with-pos file-str)))
     (apply orig-fun args)
-    (and line (goto-line line))
-    (and col  (move-to-column (max col 0)))))
+    (when pos
+      (-let (((line . col) pos))
+        (and line (goto-line line))
+        (and col  (move-to-column (max col 0)))))))
 
 ;; ;;;###autoload
 (advice-add 'find-file-at-point :around #'rwd/find-file-at-point/numbers)
