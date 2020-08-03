@@ -1,6 +1,6 @@
 (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
 (define-key magit-mode-map        (kbd "M-w") nil)
-(define-key magit-mode-map        (kbd "V") #'endless/visit-pull-request-url)
+(define-key magit-mode-map        (kbd "@") #'endless/visit-pull-request-url)
 
 ;; TODO: "hub pull-request --no-edit -o"
 ;; TODO: "git absorb"
