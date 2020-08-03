@@ -6,9 +6,17 @@
   (require 's)
   (require 'dash))
 
+(setq path-re
+      (rx bol
+          (group (1+ (not (any ":"))))
+          (? ":"
+             (? (group (1+ (any "0-9"))))
+             (? ":"
+                (group (1+ (any "0-9")))))))
+
 ;;;###autoload
 (defun rwd/parse-path-with-pos (path)
-  (-let* ((re "^\\(.*?\\)\\(?::\\([0-9]+\\)?\\(?::\\([0-9]+\\)\\)?\\)?$")
+  (-let* ((re path-re)
           ((path line col) (cdar (s-match-strings-all re path)))
           (line     (and line (string-to-number line)))
           (col      (or (and col (string-to-number col)) 0)))
