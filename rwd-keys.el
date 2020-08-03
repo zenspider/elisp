@@ -150,7 +150,8 @@
   ;; ;; This allows me to enforce that bury-buffer is bound to C-M-x
   ;; ;; regardless of mode (YAY!)
   ;; (require 'override-keymaps)
-  ;; (override-keymaps))
+  ;; (override-keymaps)
+  )
 
 ;; (define-key erc-mode-map (kbd "C-c C-a") 'autotest-switch)
 
