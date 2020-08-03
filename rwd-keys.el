@@ -40,7 +40,7 @@
   (gsk (kbd "C-M-;")   'unfill-paragraph)        ; unwrap a parapgraph!
   (gsk (kbd "C-M-=")   'default-text-scale-increase) ; bigger font everywhere
   (gsk (kbd "C-M-SPC") 'er/expand-region)        ; was mark-sexp
-  (gsk (kbd "C-M-x")   'bury-buffer)             ; unassigned?
+  (gsk (kbd "C-c B")   'bury-buffer)             ; unassigned?
   (gsk (kbd "C-M-y")   'kill-ring-search)        ; undefined
   (gsk (kbd "C-h C")   'helpful-command)         ; better help for commands
   (gsk (kbd "C-h C-p") 'helpful-at-point)        ; better help at point
@@ -135,9 +135,9 @@
             (   "s" .  'sort-sexps)
             (   "S" .  'sort-symbols)
             (   "w" .  'sort-words)))
-  (gsk (kbd "C-x /")   'align-regexp)
-  (gsk (kbd "C-x =")   'align-regexp-=)
-  (gsk (kbd "C-x #")   'align-regexp-comment)
+  (gsk (kbd "C-c /")   'align-regexp)
+  (gsk (kbd "C-c =")   'align-regexp-=)
+  (gsk (kbd "C-c #")   'align-regexp-comment)
 
   ;; experimenting with hyperspace :D
   (gsk (kbd "H-SPC") 'point-to-register)
@@ -147,10 +147,10 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; unsorted
 
-  ;; This allows me to enforce that bury-buffer is bound to C-M-x
-  ;; regardless of mode (YAY!)
-  (require 'override-keymaps)
-  (override-keymaps))
+  ;; ;; This allows me to enforce that bury-buffer is bound to C-M-x
+  ;; ;; regardless of mode (YAY!)
+  ;; (require 'override-keymaps)
+  ;; (override-keymaps))
 
 ;; (define-key erc-mode-map (kbd "C-c C-a") 'autotest-switch)
 
