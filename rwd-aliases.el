@@ -73,12 +73,6 @@
 (defalias 'rwd-conflict 'smerge-ediff)
 
 ;;;###autoload
-(progn
- (autoload 'grep-ed-start  "grep-ed" nil t)
- (defalias 'grep-edit      'grep-ed-start)
- (defalias 'grep-edit-save 'grep-ed-save-changes-and-exit))
-
-;;;###autoload
 (defalias 'repl 'ielm)
 
 ;;;###autoload
