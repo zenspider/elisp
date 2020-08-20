@@ -14,3 +14,5 @@
 
 (setq ghub-username "zenspider")
 (setq ghub-token (get-hub-token)) ;; your personal access token
+
+(remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
