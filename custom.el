@@ -145,6 +145,7 @@
  '(persp-sort (quote created))
  '(purpose-user-regexp-purposes nil)
  '(racket-images-system-viewer "open")
+ '(racket-program "~/Applications/dev/lisp/Racket/bin/racket")
  '(read-buffer-completion-ignore-case t)
  '(require-final-newline t)
  '(safe-local-variable-values
