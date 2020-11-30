@@ -96,7 +96,7 @@
          which-key               ; show options in sub-keys
          window-purpose          ; trying to find a workflow that works
          ;; xr                      ; regexp -> xr (lispy regexps)
-         xterm-color             ; used in modes/shall-mode.el
+         xterm-color             ; used in modes/shell-mode.el
 
          perspective
 
@@ -106,11 +106,14 @@
          copy-as-format
          magit-gh-pulls
          gist
-         github-review))
+         github-review
+	 ))
 
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
 ;; (package-view-manifest)
+
+(provide 'rwd-packages)
 
 ;; Local variables:
 ;; byte-compile-warnings: (not cl-functions)
