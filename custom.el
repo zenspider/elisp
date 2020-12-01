@@ -31,6 +31,12 @@
  '(company-idle-delay nil)
  '(compilation-error-regexp-alist '(bash clang-include gnu gcc-include ruby-Test::Unit))
  '(completion-styles '(basic partial-completion initials emacs22))
+ '(default-frame-alist
+    '((wait-for-wm)
+      (top . 0)
+      (width . 80)
+      (height . 48)
+      (font . "Fira Code-18")))
  '(dired-recursive-deletes 'top)
  '(ediff-split-window-function
    (lambda
@@ -71,6 +77,7 @@
  '(find-file-visit-truename t)
  '(flycheck-display-errors-function 'flycheck-display-error-messages-unless-error-list)
  '(flyspell-delayed-commands '(kmacro-call-macro kmacro-end-and-call-macro))
+ '(frame-inhibit-implied-resize t)
  '(git-commit-summary-max-length 78)
  '(global-auto-revert-mode t)
  '(hippie-expand-try-functions-list
@@ -81,7 +88,10 @@
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(inf-ruby-default-implementation "pry")
+ '(inhibit-startup-buffer-menu t)
+ '(inhibit-startup-echo-area-message nil)
  '(inhibit-startup-screen t)
+ '(initial-major-mode 'fundamental-mode)
  '(initial-scratch-message nil)
  '(ispell-dictionary "english")
  '(ispell-extra-args '("\"--sug-mode=fast\""))
@@ -136,6 +146,7 @@
  '(racket-program "~/Applications/dev/lisp/Racket/bin/racket")
  '(read-buffer-completion-ignore-case t)
  '(require-final-newline t)
+ '(rg-keymap-prefix "r")
  '(safe-local-variable-values
    '((ffip-project-root . "~/Work/git/zenspider/minitest-lint/")
      (flycheck-checker . chefstyle)))
