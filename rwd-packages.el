@@ -10,7 +10,7 @@
                 ("melpa-stable" . "http://stable.melpa.org/packages/")))
   (add-to-list 'package-archives repo))
 
-(package-initialize)
+;; (package-initialize)
 
 (defun rwd/customize-save-variable/packages (oldfn variable value &optional comment)
   (if (eq variable 'package-selected-packages)
@@ -37,13 +37,13 @@
 (apply 'package-manifest
        '(package+                ; duh
 
-         ag                      ; the silver surfer
          auto-dim-other-buffers  ; makes current buffer "pop"
          browse-kill-ring        ; M-y kill ring browsing
          dash                    ; better api for lists
          dispwatch               ; auto-switching on monitor changes
          expand-region           ; mandatory
          f                       ; better api for files/dirs
+         gcmh                    ; Garbage Collector Magic Hack
          git-timemachine         ; fantastic spelunking tool
          github-browse-file      ; jump to code browser on github
          helpful                 ; better help system
@@ -59,6 +59,7 @@
          phi-search              ; TODO
          phi-search-mc           ; TODO
          racket-mode             ; mandatory
+         rg                      ; ripgrep
          s                       ; better api for strings
          shell-command           ; tab-completion for `shell-command
          ;; ssh                  ; ssh-mode -- USING MY OWN FORK
@@ -92,7 +93,6 @@
          phi-grep                ; TODO
          web-mode                ; TODO
          wgrep                   ; editable grep results
-         wgrep-ag                ; editable ag results
          which-key               ; show options in sub-keys
          window-purpose          ; trying to find a workflow that works
          ;; xr                      ; regexp -> xr (lispy regexps)
@@ -107,7 +107,7 @@
          magit-gh-pulls
          gist
          github-review
-	 ))
+         ))
 
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
