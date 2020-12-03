@@ -78,6 +78,7 @@
  '(flycheck-display-errors-function 'flycheck-display-error-messages-unless-error-list)
  '(flyspell-delayed-commands '(kmacro-call-macro kmacro-end-and-call-macro))
  '(frame-inhibit-implied-resize t)
+ '(gc-cons-percentage 0.2)
  '(git-commit-summary-max-length 78)
  '(global-auto-revert-mode t)
  '(hippie-expand-try-functions-list
