@@ -952,19 +952,6 @@ even beep.)"
 (defalias 'rwd-comint-trucate-buffer 'rwd-shell-truncate-buffer)
 
 ;;;###autoload
-(defun rwd-load-modes ()
-  (require 'subr-x)
-  (message "START: rwd-load-modes")
-  (let* ((default-directory user-init-dir)
-         (paths (file-expand-wildcards "./modes/*.el"))
-         (clean (lambda (s) (string-remove-suffix ".el" s)))
-         (names (mapcar clean paths)))
-    (dolist (name names)
-      (message "%S" `(load ,name))
-      (load name)))
-  (message "DONE: rwd-load-modes"))
-
-;;;###autoload
 (defun ns-get-pasteboard ()
   "Returns the value of the pasteboard, or nil for unsupported formats."
   (condition-case nil
