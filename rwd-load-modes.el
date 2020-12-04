@@ -7,9 +7,7 @@
          (clean (lambda (s) (string-remove-suffix ".el" s)))
          (names (mapcar clean paths)))
     (dolist (name names)
-      (let ((t2 (current-time)))
-        (load name nil t)
-        (message "DONE: %-50S in %.2f sec" `(load ,name) (float-time (time-since t2))))))
+      (rwd-load name nil t)))
   (message "DONE: %-50S in %.2f sec" "rwd-load-modes" (float-time (time-since t1))))
 
 (provide 'rwd-load-modes)
