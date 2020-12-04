@@ -8,8 +8,7 @@
          (names (mapcar clean paths)))
     (dolist (name names)
       (let ((t2 (current-time)))
-        (message "%S" `(load ,name))
-        (load name)
+        (load name nil t)
         (message "DONE: %-50S in %.2f sec" `(load ,name) (float-time (time-since t2))))))
   (message "DONE: %-50S in %.2f sec" "rwd-load-modes" (float-time (time-since t1))))
 
