@@ -1,4 +1,5 @@
-;;;###autoload
+;; -*- lexical-binding: t; -*-
+
 (defun rwd-autohooks ()
   (interactive)
   (message "START: rwd-autohooks")
@@ -10,13 +11,13 @@
            (lisp       (read-file-to-string path))
            (debug      nil))
       (when (functionp defun-name)
-        (message "remove-hook %s" defun-name)
         (remove-hook hook-name defun-name))
       (eval (read (concat "(defun " raw-name " () "
                           (if debug
                               (format "%S" `(message "running %s" ,raw-name))
                             "")
                           lisp ")")))
-      (message "add-hook %s %s" hook-name defun-name)
       (add-hook hook-name defun-name)))
   (message "DONE: rwd-autohooks"))
+
+(provide 'rwd-autohooks)
