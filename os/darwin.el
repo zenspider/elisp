@@ -36,16 +36,16 @@
 
 (unless (getenv "TERM_PROGRAM")
   (setenv "EDITOR" "emacsclient")
-  (setenv "VISUAL" (getenv "EDITOR"))
+  (setenv "VISUAL" "emacsclient")
 
   ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
   ;; argh this is stupid
-  (let ((fix-env
-         (lambda (v) (setenv v (shell-command-to-string
-                                (format "/bin/bash -ilc 'echo -n $%s'" v))))))
-
-    (funcall fix-env "PATH")
-    (funcall fix-env "CDPATH")
-
-    (dolist (p (split-string (getenv "PATH") ":" t))
+  (let* ((paths  (split-string
+                  (shell-command-to-string
+                   (format "/bin/bash -ilc 'echo -n $%s $%s'" "PATH" "CDPATH"))))
+         (path   (car paths))
+         (cdpath (cadr paths)))
+    (setenv "PATH" path)
+    (setenv "CDPATH" cdpath)
+    (dolist (p (split-string path ":" t))
       (add-to-list 'exec-path p t))))
