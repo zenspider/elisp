@@ -1,3 +1,6 @@
+(eval-when-compile
+  (require 'dash))
+
 (defun rwd/server-visit-files (orig-fn files &rest args)
   (let ((new-files (mapcar (-lambda ((path . pos))
                              (if pos (cons path pos)
