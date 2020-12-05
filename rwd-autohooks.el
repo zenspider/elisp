@@ -2,7 +2,6 @@
 
 (defun rwd-autohooks ()
   (interactive)
-  (message "START: rwd-autohooks")
   (dolist (path (directory-files (concat user-init-dir "hooks") t ".*el$"))
     (let* ((mode       (file-name-nondirectory (file-name-sans-extension path)))
            (hook-name  (intern (concat mode "-hook")))
