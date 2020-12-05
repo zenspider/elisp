@@ -1,6 +1,5 @@
 (eval-when-compile
-  (require 'rwd-load)
-  (require 'find-lisp))
+  (require 'rwd-load))
 
 (require 'autoload)                     ; = ;;;###autoload
 
@@ -11,6 +10,7 @@
 
 (setq generated-autoload-file (concat user-init-dir "loaddefs.el"))
 
+(require 'find-lisp)
 
 (defun rwd-autoloads-out-of-date-p (autoload-file)
   (report-time 'rwd-autoloads-out-of-date-p
