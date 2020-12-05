@@ -35,7 +35,7 @@
         (and line (goto-line line))
         (and col  (move-to-column (max col 0)))))))
 
-;; ;;;###autoload
+;;;###autoload
 (advice-add 'find-file-at-point :around #'rwd/find-file-at-point/numbers)
 ;; (advice-remove 'find-file-at-point #'rwd/find-file-at-point/numbers)
 
