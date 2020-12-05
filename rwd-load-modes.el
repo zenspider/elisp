@@ -1,13 +1,13 @@
 (defun rwd-load-modes ()
-  (setq-local t1 (current-time))
   (require 'subr-x)
-  (message "START: rwd-load-modes")
-  (let* ((default-directory user-init-dir)
-         (paths (file-expand-wildcards "./modes/*.el"))
-         (clean (lambda (s) (string-remove-suffix ".el" s)))
-         (names (mapcar clean paths)))
-    (dolist (name names)
-      (rwd-load name nil t)))
-  (message "DONE: %-50S in %.2f sec" "rwd-load-modes" (float-time (time-since t1))))
+  (report-time 'rwd-load-modes
+    (let* ((default-directory user-init-dir)
+           (paths (file-expand-wildcards "./modes/*.el"))
+           (clean (lambda (s) (string-remove-suffix ".el" s)))
+           (names (mapcar clean paths)))
+      (dolist (name (reverse names))
+        (run-with-idle-timer 1 nil
+                             (lambda (name) (rwd-load name nil t))
+                             name)))))
 
 (provide 'rwd-load-modes)
