@@ -1,44 +1,44 @@
-;; (package-initialize)
-
-(setq gc-cons-threshold (* 32 1000 1000)
-      garbage-collection-messages t) ;; indicator of thrashing
-
-(require 'autoload)                     ; = ;;;###autoload
-
-(defvar normal-gui-startup
-  (and window-system
-       (not noninteractive)
-       (eq 1 (length command-line-args)))
-  "t if this is a plain GUI emacs startup (eg not batch nor task oriented).")
+;; see also: early-init.el
 
 (unless user-init-file                  ; if running w/: -q --debug-init
   (setq user-init-file (expand-file-name "~/.emacs.el")))
 
 (defvar user-init-dir (file-name-directory
                        (or (file-symlink-p user-init-file)
-                           (or user-init-file
-                               (expand-file-name "~/.emacs.el"))))
+                           user-init-file))
   "Root directory of emacs.el, after following symlinks, etc.")
 
 (setq custom-file (concat user-init-dir "custom.el"))
 
-(add-to-list 'load-path user-init-dir t)
+(add-to-list 'load-path user-init-dir)
 (add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
+
+(require 'rwd-load)
+
+(defvar normal-startup
+  (and (not noninteractive)
+       (not (cdr command-line-args))))
+(defvar normal-gui-startup
+  (and window-system
+       normal-startup)
+  "t if this is a plain GUI emacs startup (eg not batch nor task oriented).")
 
 (let* ((os-name     (symbol-name system-type))
        (host-list   (split-string (system-name) "\\."))
        (host-name   (car host-list))
        (domain-name (mapconcat 'identity (cdr host-list) ".")))
-  (load (concat "os/" os-name) t)         ;; os/darwin
-  (load (concat "domain/" domain-name) t) ;; domain/zenspider.com
-  (load (concat "host/" host-name) t))    ;; host/greed
+  (rwd-load (concat "os/" os-name)         t)  ;; os/darwin
+  (rwd-load (concat "domain/" domain-name) t)  ;; domain/zenspider.com
+  (rwd-load (concat "host/" host-name)     t)) ;; host/greed
 
-(load "rwd-autoloads")
-(load "rwd-packages")
+(require 'rwd-autoloads)
+(require 'rwd-packages)
+(require 'rwd-autohooks)
+(require 'rwd-load-modes)
 
 (rwd-autoloads)
 (rwd-autohooks)
 
-(load custom-file)
+(rwd-load custom-file)
 
 (put 'narrow-to-region 'disabled nil)
