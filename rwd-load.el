@@ -13,4 +13,8 @@
   (report-time `(rwd-load ,@args)
     (apply 'load args)))
 
+(defun rwd-require (&rest args)
+  (report-time `(rwd-require ,@args)
+    (apply 'require args)))
+
 (provide 'rwd-load)

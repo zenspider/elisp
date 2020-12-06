@@ -31,10 +31,10 @@
   (rwd-load (concat "domain/" domain-name) t)  ;; domain/zenspider.com
   (rwd-load (concat "host/" host-name)     t)) ;; host/greed
 
-(require 'rwd-autoloads)
-(require 'rwd-packages)
-(require 'rwd-autohooks)
-(require 'rwd-load-modes)
+(rwd-require 'rwd-autoloads)
+(rwd-require 'rwd-packages)
+(rwd-require 'rwd-autohooks)
+(rwd-require 'rwd-load-modes)
 
 (rwd-autoloads)
 (rwd-autohooks)
