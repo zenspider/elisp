@@ -21,6 +21,7 @@
            (eldoc-mode             nil  "eldoc")
            (elisp-slime-nav-mode   nil  "elisp-slime-nav")
            (flyspell-mode          nil  "flyspell")
+           (gcmh-mode              nil  "gcmh")
            (global-whitespace-mode nil  "whitespace")
            (outline-minor-mode     nil  "outline")
            (paredit-mode           nil  "paredit")
