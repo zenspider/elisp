@@ -128,6 +128,7 @@
   (gsk (kbd "C-c n")   'narrow-to-region-indirect)
   (gsk (kbd "C-x n")   'narrow-or-widen-dwim)
   (gsk (kbd "C-c o")   'rwd-occur-buffer)
+  (gsk (kbd "C-c S")   'string-edit-at-point)
   (rsk 's '((   "c" .  'sort-columns)
             (   "l" .  'sort-lines)
             (   "n" .  'sort-numbers)
