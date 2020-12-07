@@ -15,4 +15,16 @@
 (setq ghub-username "zenspider")
 (setq ghub-token (get-hub-token)) ;; your personal access token
 
-(remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
+(setq magit-display-file-buffer-function 'magit-display-file-buffer-other-window)
+
+(remove-hook 'magit-refs-sections-hook   'magit-insert-tags)
+(remove-hook 'magit-status-headers-hook  'magit-insert-tags-header)
+(remove-hook 'magit-status-sections-hook 'magit-insert-unpushed-to-pushremote)
+(remove-hook 'magit-status-sections-hook 'magit-insert-unpulled-from-pushremote)
+
+;; (eval . (magit-disable-section-inserter 'magit-insert-status-headers))
+;; (eval . (magit-disable-section-inserter 'magit-insert-staged-changes))
+;; (eval . (magit-disable-section-inserter 'forge-insert-pullreqs))
+;; (eval . (magit-disable-section-inserter 'magit-insert-stashes))
+;; (eval . (magit-disable-section-inserter 'magit-insert-unpulled-from-upstream))
+;; (eval . (magit-disable-section-inserter 'magit-insert-unpushed-to-upstream-or-recent))
