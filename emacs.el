@@ -1,4 +1,5 @@
-;; see also: early-init.el
+(when (< emacs-major-version 27)
+  (load "~/.emacs.d/early-init.el"))
 
 (unless user-init-file                  ; if running w/: -q --debug-init
   (setq user-init-file (expand-file-name "~/.emacs.el")))
