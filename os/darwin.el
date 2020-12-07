@@ -43,7 +43,7 @@
    (message "Setting PATH and CDPATH in osx")
    (let* ((paths  (split-string
                    (shell-command-to-string
-                    (format "/bin/bash -ilc 'echo -n $%s $%s'" "PATH" "CDPATH"))))
+                    (format "/bin/bash -ilc 'echo -n $%s $%s' 2>/dev/null" "PATH" "CDPATH"))))
           (path   (car paths))
           (cdpath (cadr paths)))
      (setenv "PATH" path)
