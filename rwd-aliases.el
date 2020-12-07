@@ -370,7 +370,6 @@
 
   (delete-other-windows)
   (dotimes (n (1- (/ (frame-width) 80)))
-    (message "splitting %d" n)
     (split-window-horizontally))
   (balance-windows))
 
