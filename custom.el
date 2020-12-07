@@ -107,6 +107,8 @@
  '(magit-git-executable "/usr/local/bin/git")
  '(magit-log-cutoff-length 250)
  '(magit-push-always-verify nil)
+ '(magit-refresh-verbose t)
+ '(magit-refs-pad-commit-counts t)
  '(magit-repository-directories
    '(("~/Work/git/zenspider" . 1)
      ("~/Work/git/searbsg" . 1)
@@ -114,7 +116,7 @@
      ("~/Work/git/chef" . 1)))
  '(magit-save-repository-buffers nil)
  '(magit-stashes-margin '(t age-abbreviated magit-log-margin-width nil 18))
- '(magit-status-margin '(t age-abbreviated magit-log-margin-width nil 18))
+ '(magit-status-margin '(t age-abbreviated magit-log-margin-width t 5))
  '(magithub-api-low-threshold 30)
  '(magithub-api-timeout 3)
  '(markdown-fontify-code-blocks-natively t)
@@ -148,7 +150,8 @@
  '(require-final-newline t)
  '(rg-keymap-prefix "r")
  '(safe-local-variable-values
-   '((ffip-project-root . "~/Work/git/zenspider/minitest-lint/")
+   '((ffip-project-root . "~/Work/git/zendesk/zendesk--rails5/")
+     (ffip-project-root . "~/Work/git/zenspider/minitest-lint/")
      (flycheck-checker . chefstyle)))
  '(save-interprogram-paste-before-kill t)
  '(save-place-file "~/.emacs.d/emacs-places")
