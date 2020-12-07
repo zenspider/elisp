@@ -10,7 +10,8 @@
                 ("melpa-stable" . "http://stable.melpa.org/packages/")))
   (add-to-list 'package-archives repo))
 
-;; (package-initialize)
+(when (< emacs-major-version 27)
+  (package-initialize))
 
 (defun rwd/customize-save-variable/packages (oldfn variable value &optional comment)
   (if (eq variable 'package-selected-packages)
