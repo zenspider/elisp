@@ -52,16 +52,21 @@
 ;; (rwd/current-display)
 
 (defcustom rwd/default-font "Fira Code"
-  "Default font to use in all windows.")
+  "Default font to use in all windows."
+  :type 'string
+  :group 'rwd/gui)
 
-(defcustom rwd/default-split-height (* 2 60) "Used by rwd/display-setup")
-(defcustom rwd/default-split-width  (* 2 80) "Used by rwd/display-setup")
+(defcustom rwd/default-split-height (* 2 60) "Used by rwd/display-setup"
+  :type 'integer
+  :group 'rwd/dispwatch)
+(defcustom rwd/default-split-width  (* 2 80) "Used by rwd/display-setup"
+  :type 'integer
+  :group 'rwd/dispwatch)
 
 (defun rwd/display-setup (s)
   (setq split-height-threshold rwd/default-split-height
         split-width-threshold  rwd/default-split-width)
-  (rwd-set-mac-font rwd/default-font s)
-  (message "rwd/display-setup %s %s %s %s" h w rwd/default-font s))
+  (rwd-set-mac-font rwd/default-font s))
 
 (defun rwd/current-display ()
   (let* ((attr (frame-monitor-attributes))
@@ -72,34 +77,31 @@
          )
     disp))
 
-(defun rwd/display-change (_disp)       ; ignore this incoming var
-  (interactive)
-  (when window-system
-    (let* ((attr (frame-monitor-attributes))
-           (geom (assoc 'geometry attr))
-           (w (nth 3 geom))
-           (h (nth 4 geom))
-           (disp (format "%sx%s" w h))  ; calculated from actual geometry
-           (args (assoc disp rwd/displays))
-           (default (assoc "default" rwd/displays)))
-      (message "rwd/display-change %s" disp)
-      (unless args
-        (find-variable 'rwd/displays)
-        (insert (format "%S\n" (list disp 'w 'h 16)))
-        (message "Please extend rwd/displays with %S" disp)
-        (setq args default))
-      (apply 'rwd/display-setup (cdr args))
-      (rwd-fix-fullscreen)
-      (sleep-for 0.25)
-      (rwd-split-smart))))
+(defun rwd/dispwatch-geom-changed (disp)
+  (let* ((args    (assoc disp      rwd/displays))
+         (default (assoc "default" rwd/displays)))
+    (unless args
+      (find-variable 'rwd/displays)
+      (insert (format "%S\n" (list disp 'w 'h 16)))
+      (message "Please extend rwd/displays with %S" disp)
+      (setq args default))
+    (apply 'rwd/display-setup (cdr args))
+    (rwd-split-smart)))
+
+;; TODO: push upstream
+(defvar dispwatch-geom-changed-hooks '())
+(defun rwd/dispwatch-display-change-hook (_disp)
+  (let* ((attr (frame-monitor-attributes))
+         (geom (assoc 'geometry attr))
+         (w (nth 3 geom))
+         (h (nth 4 geom))
+         (disp (format "%sx%s" w h))) ; calculated from actual geometry
+    (run-hook-with-args 'dispwatch-geom-changed-hooks disp)))
+
+(add-hook 'dispwatch-geom-changed-hooks 'rwd/dispwatch-geom-changed)
 
 ;; https://github.com/mnp/dispwatch
-(require 'dispwatch)
-
-(when window-system
-  ;; (remove-hook 'dispwatch-display-change-hooks 'rwd/display-change)
-  (add-hook 'dispwatch-display-change-hooks 'rwd/display-change)
-  (dispwatch-mode 1))
+(rwd-require 'dispwatch)
 
 (defun rwd/display-reset ()
   "Reset and force dispwatch to trigger again."
@@ -107,3 +109,5 @@
   (setq dispwatch-current-display nil))
 
 ;; (rwd/display-reset)
+
+(provide 'modes/dispwatch)
