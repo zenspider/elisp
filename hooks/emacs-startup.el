@@ -1,4 +1,4 @@
 (rwd-load-modes)
 
-(when normal-gui-startup
+(when (and normal-gui-startup (not (getenv "INSIDE_EMACS")))
   (server-start))
