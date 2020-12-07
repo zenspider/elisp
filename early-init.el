@@ -1,5 +1,5 @@
 (unless (cdr command-line-args)
-  (add-to-list 'default-frame-alist '(fullscreen . maximized)))
+  (add-to-list 'default-frame-alist '(fullscreen . fullboth)))
 
 (setq garbage-collection-messages t          ; indicator of thrashing
       gc-cons-threshold most-positive-fixnum ; 2^61 bytes
