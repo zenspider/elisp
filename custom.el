@@ -36,6 +36,7 @@
       (top . 0)
       (width . 80)
       (height . 48)
+      (fullscreen . fullboth)
       (font . "Fira Code-18")))
  '(dired-recursive-deletes 'top)
  '(ediff-split-window-function
