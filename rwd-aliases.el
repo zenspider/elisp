@@ -588,10 +588,7 @@ Essentially, I didn't like the format of generate-new-buffer-name."
     (error "Frame doesn't have two windows")))
 
 ;;;###autoload
-(defun server-stop ()
-  "Stop the server"
-  (interactive)
-  (server-start t))
+(defalias 'server-stop 'server-force-delete "Stop the server")
 
 ;; (defun my-get-mac-font ()
 ;;   (list (face-attribute 'default :family)
