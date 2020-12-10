@@ -216,7 +216,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(auto-dim-other-buffers-face ((t (:background "gray95"))))
+ '(default ((((type tty)) (:background "black" :foreground "brightgreen"))))
+ '(auto-dim-other-buffers-face ((((type tty)) (:foreground "#aaaaaa" :background "#444444")) (t (:background "gray95"))))
  '(cursor ((((type tty)) (:background "Green")) (t (:background "Blue"))))
  '(diff-added ((t (:inherit diff-changed :foreground "green4"))))
  '(diff-removed ((t (:inherit diff-changed :foreground "red4"))))
