@@ -78,15 +78,16 @@
     disp))
 
 (defun rwd/dispwatch-geom-changed (disp)
-  (let* ((args    (assoc disp      rwd/displays))
-         (default (assoc "default" rwd/displays)))
-    (unless args
-      (find-variable 'rwd/displays)
-      (insert (format "%S\n" (list disp 'w 'h 16)))
-      (message "Please extend rwd/displays with %S" disp)
-      (setq args default))
-    (apply 'rwd/display-setup (cdr args))
-    (rwd-split-smart)))
+  (when window-system
+   (let* ((args    (assoc disp      rwd/displays))
+          (default (assoc "default" rwd/displays)))
+     (unless args
+       (find-variable 'rwd/displays)
+       (insert (format "%S\n" (list disp 'w 'h 16)))
+       (message "Please extend rwd/displays with %S" disp)
+       (setq args default))
+     (apply 'rwd/display-setup (cdr args))
+     (rwd-split-smart))))
 
 ;; TODO: push upstream
 (defvar dispwatch-geom-changed-hooks '())
