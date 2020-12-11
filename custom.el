@@ -31,6 +31,7 @@
  '(company-idle-delay nil)
  '(compilation-error-regexp-alist '(bash clang-include gnu gcc-include ruby-Test::Unit))
  '(completion-styles '(basic partial-completion initials emacs22))
+ '(confirm-kill-processes nil)
  '(default-frame-alist
     '((wait-for-wm)
       (top . 0)
