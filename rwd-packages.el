@@ -57,6 +57,7 @@
          outline-magic           ; outline-cycle FIX?
          p4                      ; mandatory
          paredit                 ; mandatory
+         perspective
          phi-search              ; TODO
          phi-search-mc           ; TODO
          racket-mode             ; mandatory
@@ -71,6 +72,8 @@
          yaml-mode               ; for yaml files.
 
          ;; trying out:
+
+         magit-delta
 
          bison-mode              ; for yacc/bison files
          company                 ; a completer--use or FIX?
@@ -98,8 +101,6 @@
          window-purpose          ; trying to find a workflow that works
          ;; xr                      ; regexp -> xr (lispy regexps)
          xterm-color             ; used in modes/shell-mode.el
-
-         perspective
 
          dumb-jump
          diff-at-point
