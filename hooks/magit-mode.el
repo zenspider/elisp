@@ -22,6 +22,8 @@
 (remove-hook 'magit-status-sections-hook 'magit-insert-unpushed-to-pushremote)
 (remove-hook 'magit-status-sections-hook 'magit-insert-unpulled-from-pushremote)
 
+(magit-delta-mode +1)
+
 ;; (eval . (magit-disable-section-inserter 'magit-insert-status-headers))
 ;; (eval . (magit-disable-section-inserter 'magit-insert-staged-changes))
 ;; (eval . (magit-disable-section-inserter 'forge-insert-pullreqs))
