@@ -1,5 +1,5 @@
-(require 'transient)
-(transient-bind-q-to-quit)
+(with-eval-after-load 'transient
+  (transient-bind-q-to-quit))
 
 ;; from http://www.ogre.com/node/447
 
@@ -12,6 +12,7 @@
                      " `git rev-parse --show-toplevel`")))
 
 (eval-when-compile
+  (require 'json)
   (require 'magit)
   (require 'magit-diff))
 
@@ -30,8 +31,6 @@
   (interactive)
   (setq magit-diff-arguments (remove "-w" magit-diff-arguments))
   (magit-refresh))
-
-(require 'json)
 
 (defun yaml-to-json (path)
   (let* ((rb "ruby -ryaml -rjson -e 'puts JSON.dump YAML.load File.read ARGV.shift' ")
