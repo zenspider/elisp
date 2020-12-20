@@ -6,6 +6,7 @@
   (when (string= "/" default-directory) ; GUI starts up in root
     (cd "~"))
 
+  ;; TODO: turns out this SUCKS. need something better
   ;; BSDs have an INPUT_MAX of 1024 and emacs shell gets bit by that
   ;; so, we drop pty for our shells on osx by setting
   ;; process-connection-type to nil temporarily
@@ -31,7 +32,7 @@
   (setq ns-function-modifier 'hyper) ; set Mac's Fn key to type Hyper
 
   ;; resets cmd-~ on emacs 23 and up
-  (unless (version< emacs-version "23")
+  (unless (< emacs-major-version 23)
     (global-set-key (kbd "M-`") 'other-frame)))
 
 (unless (getenv "TERM_PROGRAM")
@@ -39,7 +40,7 @@
   (setenv "VISUAL" "emacsclient")
   ;; deal with OSX's wonky enivronment by forcing PATH to be correct.
   ;; argh this is stupid
-  (when-idle 1
+  (when-idle rwd-idle-time
    (message "Setting PATH and CDPATH in osx")
    (let* ((paths  (split-string
                    (shell-command-to-string
