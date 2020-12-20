@@ -21,7 +21,8 @@
 (advice-add 'customize-save-variable :around #'rwd/customize-save-variable/packages)
 
 (unless (package-installed-p 'package+)
-  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3") ; HACK
+  (when (< emacs-major-version 27)
+    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")) ; HACK
   (package-refresh-contents)
   (package-install 'package+))
 
@@ -110,6 +111,8 @@
          gist
          github-review
          ))
+
+(package-quickstart-refresh)
 
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
