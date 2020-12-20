@@ -7,8 +7,6 @@
            (idle-time (if normal-gui-startup 1 0))
            (names (mapcar clean paths)))
       (dolist (name (reverse names))
-        (run-with-idle-timer idle-time nil
-                             (lambda (name) (rwd-load name nil t))
-                             name)))))
+        (rwd-load name nil t)))))
 
 (provide 'rwd-load-modes)
