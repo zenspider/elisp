@@ -4,13 +4,6 @@
 ;;       1         2         3         4         5         6         7         8         9         0         1         2         3         4         5         6         7         8         9         0
 ;;34567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012
 
-;;;###autoload
-(progn
-  (windmove-default-keybindings)
-  (winner-mode 1)
-  (require 'window-number)
-  (window-number-meta-mode 1))
-
 (defun interactive-split-current-window ()
   "Interactively split the current window, either horizontally or
 vertically. The rule of thumb is that this function favors a
