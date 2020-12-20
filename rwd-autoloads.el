@@ -26,6 +26,7 @@
                   (throw 'newer file)))))))))
 
 (defun rwd-generate-autoloads ()
+  (interactive)
   (report-time 'rwd-generate-autoloads
     (let ((generated-autoload-file autoload-file)
           (el-root-subdirs (find-lisp-find-files-internal
@@ -36,12 +37,17 @@
       (rwd-recompile-init)
       (set-file-times autoload-file))))
 
-(defun rwd-autoloads ()
+(defun rwd-autoloads (&optional force)
   "Regenerate the autoload definitions file if necessary and load it."
-  (interactive)
+  (interactive "p")
   (report-time 'rwd-autoloads
-    (when (rwd-autoloads-out-of-date-p)
-      (rwd-generate-autoloads))
+    (when (or force (rwd-autoloads-out-of-date-p))
+      (rwd-generate-autoloads)
+      (rwd-recompile-init))
     (rwd-load autoload-file)))
+
+(defun rwd-optimize ()
+  (interactive)
+  (rwd-autoloads t))
 
 (provide 'rwd-autoloads)
