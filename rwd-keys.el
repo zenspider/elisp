@@ -180,8 +180,8 @@
     (interactive)
     (let ((case-fold-search isearch-case-fold-search))
       (multi-occur-in-matching-buffers "."
-       (if isearch-regexp
-           isearch-string (regexp-quote isearch-string))))))
+                                       (if isearch-regexp
+                                           isearch-string (regexp-quote isearch-string))))))
 
 (define-key lisp-interaction-mode-map (kbd "C-j") 'newline-and-indent)
 
@@ -199,21 +199,15 @@
     (isearch-abort)))
 
 ;;;###autoload
-(eval-after-load 'p4
-  '(define-key p4-prefix-map (kbd "A") 'p4-diff-all-opened))
-
-;;;###autoload
-(progn
-  (when (require 'multiple-cursors nil t)
-    (rsk 'm '(("<" . 'mc/mark-previous-like-this)
-              ("=" . 'mc/mark-all-like-this)
-              ("A" . 'mc/align)
-              ("a" . 'mc/mark-all-in-region)
-              ("e" . 'mc/edit-ends-of-lines)
-              ("i" . 'mc/insert-numbers)
-              ("h" . 'mc-hide-unmatched-lines-mode)
-              ("l" . 'mc/edit-lines)
-              ("m" . 'mc/mark-all-dwim)
-              ("n" . 'mc/mark-next-like-this)
-              ("r" . 'set-rectangular-region-anchor)
-              ("s" . 'mc/mark-all-symbols-like-this)))))
+(rsk 'm '(("<" . 'mc/mark-previous-like-this)
+          ("=" . 'mc/mark-all-like-this)
+          ("A" . 'mc/align)
+          ("a" . 'mc/mark-all-in-region)
+          ("e" . 'mc/edit-ends-of-lines)
+          ("i" . 'mc/insert-numbers)
+          ("h" . 'mc-hide-unmatched-lines-mode)
+          ("l" . 'mc/edit-lines)
+          ("m" . 'mc/mark-all-dwim)
+          ("n" . 'mc/mark-next-like-this)
+          ("r" . 'set-rectangular-region-anchor)
+          ("s" . 'mc/mark-all-symbols-like-this)))
