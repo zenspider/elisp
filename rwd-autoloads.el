@@ -1,6 +1,7 @@
 (eval-when-compile
   (require 'rwd-load))
 
+(require 'bytecomp)
 (require 'autoload)                     ; = ;;;###autoload
 
 (defun rwd-recompile-init ()
