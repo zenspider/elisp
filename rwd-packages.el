@@ -34,7 +34,9 @@
 
          auto-dim-other-buffers  ; makes current buffer "pop"
          browse-kill-ring        ; M-y kill ring browsing
+         cyphejor                ; mode renaming. TODO: nuke
          dash                    ; better api for lists
+         ;; delight              ; mode renaming. now in third-party. TODO: nuke
          dispwatch               ; auto-switching on monitor changes
          expand-region           ; mandatory
          f                       ; better api for files/dirs
@@ -43,10 +45,12 @@
          github-browse-file      ; jump to code browser on github
          helpful                 ; better help system
          htmlize                 ; colorizing as html
+         find-file-in-project    ; ffip alternative to projectile FIX?
          inf-ruby                ; trying to use more
          keyfreq                 ; stats on actual usage FIX?
          kill-ring-search        ; C-M-y kill ring search FIX
          magit                   ; the only reason I can use git
+         mode-line-bell          ; visual bell
          multiple-cursors        ; mandatory
          outline-magic           ; outline-cycle FIX?
          p4                      ; mandatory
@@ -67,46 +71,42 @@
 
          ;; trying out:
 
-         magit-delta
-
          bison-mode              ; for yacc/bison files
          company                 ; a completer--use or FIX?
-         cyphejor                ; mode renaming--FIX delight
-         dedicated               ; "stick" buffers to windows
-         ;; delight              ; now in third-party. TODO: phase out
+         copy-as-format
          default-text-scale      ; change font sizes globally
+         diff-at-point
          dockerfile-mode         ; for Dockerfile files
+         dumb-jump
          elisp-slime-nav         ; M-. M-, for elisp
          eval-in-repl            ; C-RET to send to repls
-         find-file-in-project    ; ffip alternative to projectile FIX?
          flycheck                ; smoother than flyspell
          flycheck-color-mode-line; colors modeline based on status
          ;; flycheck-package        ; flycheck elisp package files
+         gist
+         github-review
          github-review           ; interesting workflow for reviews
+         goto-chg
          jq-mode                 ; live view of jq queries
          json-mode               ; for json files
+         magit-delta
+         magit-gh-pulls
          markdown-mode           ; for md files
          ;; package-lint            ; for checking elisp packages
-         shackle                 ; for me... ugh.
          phi-grep                ; TODO
          web-mode                ; TODO
          wgrep                   ; editable grep results
          which-key               ; show options in sub-keys
-         window-purpose          ; trying to find a workflow that works
-         ;; xr                      ; regexp -> xr (lispy regexps)
          xterm-color             ; used in modes/shell-mode.el
+         ;; xr                      ; regexp -> xr (lispy regexps)
 
-         mode-line-bell
-
-         dumb-jump
-         diff-at-point
-         goto-chg
-         copy-as-format
-         magit-gh-pulls
-         gist
-         github-review
+         ;;; fighting with window mgmt & big screens:
+         dedicated               ; "stick" buffers to windows
+         shackle                 ; for me... ugh.
+         window-purpose          ; trying to find a workflow that works
          ))
 
+;; (package-quickstart-refresh)
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
 ;; (package-view-manifest)
