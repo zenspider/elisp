@@ -69,9 +69,8 @@
          yagist                  ; gist
          yaml-mode               ; for yaml files.
 
-         ;; trying out:
+         ;; trying out:          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-         bison-mode              ; for yacc/bison files
          company                 ; a completer--use or FIX?
          copy-as-format
          default-text-scale      ; change font sizes globally
@@ -84,21 +83,23 @@
          flycheck-color-mode-line; colors modeline based on status
          ;; flycheck-package        ; flycheck elisp package files
          gist
-         github-review
          github-review           ; interesting workflow for reviews
          goto-chg
-         jq-mode                 ; live view of jq queries
-         json-mode               ; for json files
          magit-delta
          magit-gh-pulls
-         markdown-mode           ; for md files
          ;; package-lint            ; for checking elisp packages
          phi-grep                ; TODO
-         web-mode                ; TODO
          wgrep                   ; editable grep results
          which-key               ; show options in sub-keys
          xterm-color             ; used in modes/shell-mode.el
          ;; xr                      ; regexp -> xr (lispy regexps)
+
+         ;;; file formats
+         bison-mode              ; for yacc/bison files
+         jq-mode                 ; live view of jq queries
+         json-mode               ; for json files
+         markdown-mode           ; for md files
+         web-mode                ; TODO
 
          ;;; fighting with window mgmt & big screens:
          dedicated               ; "stick" buffers to windows
