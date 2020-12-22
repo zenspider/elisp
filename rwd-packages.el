@@ -1,7 +1,7 @@
-(require 'package)
+(eval-when-compile
+  (require 'gnutls))
 
-(when (<= emacs-major-version 25)
-  (setq package-check-signature nil))
+(require 'package)
 
 (setq package-archives '())             ; remove elpa... fuck that thing
 
@@ -10,18 +10,11 @@
                 ("melpa-stable" . "http://stable.melpa.org/packages/")))
   (add-to-list 'package-archives repo))
 
-(when (< emacs-major-version 27)
-  (package-initialize))
-
-(defun rwd/customize-save-variable/packages (oldfn variable value &optional comment)
-  (if (eq variable 'package-selected-packages)
-      (setq package-selected-packages value) ; prevent writing to custom.el
-    (apply oldfn variable value comment)))
-
-(advice-add 'customize-save-variable :around #'rwd/customize-save-variable/packages)
-
 (unless (package-installed-p 'package+)
+  (when (<= emacs-major-version 25)
+    (setq package-check-signature nil))
   (when (< emacs-major-version 27)
+    (package-initialize)                ; is this needed?
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")) ; HACK
   (package-refresh-contents)
   (package-install 'package+))
@@ -111,8 +104,6 @@
          gist
          github-review
          ))
-
-(package-quickstart-refresh)
 
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
