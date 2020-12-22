@@ -26,11 +26,11 @@
  '(bs-default-configuration "persp")
  '(column-number-mode t)
  '(comint-input-ignoredups t)
- '(comment-empty-lines ''eol)
+ '(comment-empty-lines 'eol)
  '(comment-style 'extra-line)
  '(company-idle-delay nil)
  '(compilation-error-regexp-alist '(bash clang-include gnu gcc-include ruby-Test::Unit))
- '(completion-styles '(basic partial-completion initials emacs22))
+ '(completion-styles '(basic partial-completion initials flex))
  '(confirm-kill-processes nil)
  '(default-frame-alist
     '((wait-for-wm)
