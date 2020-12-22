@@ -141,6 +141,10 @@
      ("\214" rwd-scroll-top
       (shell comint))))
  '(p4-do-find-file nil)
+ '(package-archive-priorities '(("melpa-stable" . -20) ("gnu" . 0) ("melpa" . 10)))
+ '(package-archives
+   '(("melpa-stable" . "http://stable.melpa.org/packages/")
+     ("melpa" . "http://melpa.org/packages/")))
  '(persp-initial-frame-name "*")
  '(persp-mode-prefix-key "")
  '(persp-sort 'created)
