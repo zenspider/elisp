@@ -1,0 +1,1 @@
+(mode-line-bell-mode)

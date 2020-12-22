@@ -96,6 +96,8 @@
          ;; xr                      ; regexp -> xr (lispy regexps)
          xterm-color             ; used in modes/shell-mode.el
 
+         mode-line-bell
+
          dumb-jump
          diff-at-point
          goto-chg
