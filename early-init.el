@@ -5,7 +5,5 @@
       gc-cons-threshold most-positive-fixnum ; 2^61 bytes
       gc-cons-percentage 0.6                 ; blah
       load-prefer-newer t                    ; ignore stale elc files
-      ;; TODO: package-enable-at-startup nil       ; check w/ package--initialized
-      ;; TODO: package-load-list '()
-      ;; TODO: package--init-file-ensured t
+      package-quickstart t                   ; package+ to write quickstart
       )
