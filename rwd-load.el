@@ -1,8 +1,20 @@
+(defvar normal-startup
+  (and (not noninteractive)
+       (not (cdr command-line-args))))
+
+(defvar normal-gui-startup
+  (and window-system
+       normal-startup)
+  "t if this is a plain GUI emacs startup (eg not batch nor task oriented).")
+
+(defconst rwd-idle-time (if normal-gui-startup 1 0))
+
 (defmacro report-time (name &rest body)
   (declare (indent defun))
   `(let ((t1 (current-time))
+         (float-output-format nil)
          (result (progn ,@body)))
-     (message "DONE: %-50S in %.2f sec" ,name (float-time (time-since t1)))
+     (message "DONE: %-50S in %.3f sec" ,name (float-time (time-since t1)))
      result))
 
 (defmacro when-idle (delay &rest body)
@@ -16,5 +28,11 @@
 (defun rwd-require (&rest args)
   (report-time `(rwd-require ,@args)
     (apply 'require args)))
+
+(defun rwd-packages-up-to-date ()
+  (and
+   (file-readable-p package-quickstart-file)
+   (file-newer-than-file-p package-quickstart-file
+                           (concat user-init-dir "rwd-packages.el"))))
 
 (provide 'rwd-load)

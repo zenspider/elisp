@@ -1,13 +1,15 @@
-(when (< emacs-major-version 27)
-  (load "~/.emacs.d/early-init.el"))
+;; -*- lexical-binding: t; -*-
 
 (unless user-init-file                  ; if running w/: -q --debug-init
-  (setq user-init-file (expand-file-name "~/.emacs.el")))
+  (setq user-init-file (expand-file-name "~/.emacs.d/init.el")))
 
 (defvar user-init-dir (file-name-directory
                        (or (file-symlink-p user-init-file)
                            user-init-file))
   "Root directory of emacs.el, after following symlinks, etc.")
+
+(when (< emacs-major-version 27)
+  (load (concat user-init-dir "early-init.el")))
 
 (setq custom-file (concat user-init-dir "custom.el"))
 
@@ -15,14 +17,6 @@
 (add-to-list 'load-path (concat user-init-dir "third-party") t) ; TODO: remove
 
 (require 'rwd-load)
-
-(defvar normal-startup
-  (and (not noninteractive)
-       (not (cdr command-line-args))))
-(defvar normal-gui-startup
-  (and window-system
-       normal-startup)
-  "t if this is a plain GUI emacs startup (eg not batch nor task oriented).")
 
 (let* ((os-name     (symbol-name system-type))
        (host-list   (split-string (system-name) "\\."))
@@ -33,7 +27,8 @@
   (rwd-load (concat "host/" host-name)     t)) ;; host/greed
 
 (rwd-require 'rwd-autoloads)
-(rwd-require 'rwd-packages)
+(unless (rwd-packages-up-to-date)
+  (rwd-require 'rwd-packages))
 (rwd-require 'rwd-autohooks)
 (rwd-require 'rwd-load-modes)
 
