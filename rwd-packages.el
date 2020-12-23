@@ -71,7 +71,6 @@
 
          ;; trying out:          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-         company                 ; a completer--use or FIX?
          copy-as-format
          default-text-scale      ; change font sizes globally
          diff-at-point
