@@ -148,7 +148,7 @@
 (defun rwd-arrange-frame (w h &optional nosplit)
   "Rearrange the current frame to a custom width and height and split unless prefix."
   (let ((frame (selected-frame)))
-    (when (memq (framep frame) '(mac ns))
+    (when running-osx
       (delete-other-windows)
       (set-frame-size frame w h)
       (set-frame-position (selected-frame) 0 23)
