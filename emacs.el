@@ -28,6 +28,7 @@
 
 (rwd-require 'rwd-autoloads)
 (unless (rwd-packages-up-to-date)
+  (delete-file package-quickstart-file) ; force refresh?
   (rwd-require 'rwd-packages))
 (rwd-require 'rwd-autohooks)
 (rwd-require 'rwd-load-modes)
