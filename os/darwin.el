@@ -1,4 +1,5 @@
-(defvar running-osx (memq window-system '(mac ns)))
+(require 'seq)
+(setq running-osx (seq-find #'featurep '(cocoa mac)))
 
 (when running-osx
   (setenv "LANG" "en_US.UTF-8") ; comes from terminal.app, not bash itself
