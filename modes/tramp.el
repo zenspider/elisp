@@ -2,7 +2,7 @@
   (require 'tramp)
   (require 'tramp-sh))
 
-(eval-after-load 'tramp
+(with-eval-after-load 'tramp
   ;; (setq tramp-verbose 9)
   (setq tramp-ssh-controlmaster-options
         "-o ControlPath=~/.ssh/tramp.%%C -o ControlMaster=auto -o ControlPersist=no"))

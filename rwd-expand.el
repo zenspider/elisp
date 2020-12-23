@@ -1,5 +1,9 @@
+(eval-when-compile
+  (require 'hippie-exp))
+
 ;;;###autoload
-(eval-after-load "dabbrev" '(defalias 'dabbrev-expand 'hippie-expand))
+(with-eval-after-load 'dabbrev
+  (defalias 'dabbrev-expand 'hippie-expand))
 
 ;;;###autoload
 (defun he-tag-beg ()
