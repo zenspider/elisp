@@ -106,7 +106,8 @@
          window-purpose          ; trying to find a workflow that works
          ))
 
-;; (package-quickstart-refresh)
+(package-quickstart-refresh)
+
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
 ;; (package-view-manifest)
