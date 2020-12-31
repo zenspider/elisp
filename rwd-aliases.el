@@ -57,6 +57,9 @@
     (setq ns-is-fullscreen (not ns-is-fullscreen))))
 
 ;;;###autoload
+(defalias 'elisp-mode 'emacs-lisp-mode "constantly screwing this one up...")
+
+;;;###autoload
 (defalias 'info-on-current-buffer 'Info-on-current-buffer
   "fuck you...")
 
