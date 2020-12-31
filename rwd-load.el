@@ -1,3 +1,9 @@
+(defun rwd/require/handler (orig-fun &rest args)
+  (let ((file-name-handler-alist nil))
+    (apply orig-fun args)))
+(advice-add 'require :around #'rwd/require/handler)
+;; (advice-remove 'require 'rwd/require/handler)
+
 (defvar normal-startup
   (and (not noninteractive)
        (not (cdr command-line-args))))
@@ -32,6 +38,9 @@
 (defun rwd-packages-up-to-date ()
   (and
    (file-readable-p package-quickstart-file)
+   (file-directory-p package-user-dir)
+   (file-newer-than-file-p package-quickstart-file
+                           package-user-dir)
    (file-newer-than-file-p package-quickstart-file
                            (concat user-init-dir "rwd-packages.el"))))
 
