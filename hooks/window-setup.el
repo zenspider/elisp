@@ -2,7 +2,7 @@
   (rwd-require 'modes/dispwatch "modes/dispwatch.el")
 
   (add-hook 'dispwatch-display-change-hooks 'rwd/dispwatch-display-change-hook)
-  ;; (remove-hook 'dispwatch-display-change-hooks 'rwd/display-change)
+  ;; (remove-hook  'dispwatch-display-change-hooks 'rwd/dispwatch-display-change-hook)
 
   (dispwatch-mode 1)
   (rwd/display-reset))
