@@ -27,6 +27,8 @@
   (interactive)
   (report-time 'rwd-generate-autoloads
     (let ((generated-autoload-file autoload-file)
+          (default-directory user-init-dir)
+          (autoload-compute-prefixes nil)
           (el-root-subdirs (seq-filter
                             #'file-directory-p
                             (directory-files-recursively user-init-dir "." t))))
