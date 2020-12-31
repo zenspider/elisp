@@ -1,8 +1,7 @@
 (eval-when-compile
+  (require 'bytecomp)
+  (require 'autoload)                     ; = ;;;###autoload
   (require 'rwd-load))
-
-(require 'bytecomp)
-(require 'autoload)                     ; = ;;;###autoload
 
 (defun rwd-recompile-init ()
   (interactive)
@@ -11,13 +10,11 @@
 
 (setq autoload-file (concat user-init-dir "loaddefs.el"))
 
-(require 'find-lisp)
-
 (defun rwd-autoloads-out-of-date-p ()
   (report-time 'rwd-autoloads-out-of-date-p
     (or (not (file-exists-p autoload-file))
         (catch 'newer
-          (dolist (file (find-lisp-find-files user-init-dir "\\.el$"))
+          (dolist (file (directory-files-recursively user-init-dir "\\.el$"))
             (unless (equal file autoload-file)
               (let ((elc-file (byte-compile-dest-file file)))
                 (when (or (file-newer-than-file-p file autoload-file)
@@ -30,10 +27,9 @@
   (interactive)
   (report-time 'rwd-generate-autoloads
     (let ((generated-autoload-file autoload-file)
-          (el-root-subdirs (find-lisp-find-files-internal
-                            user-init-dir
-                            'find-lisp-file-predicate-is-directory
-                            'find-lisp-default-directory-predicate)))
+          (el-root-subdirs (seq-filter
+                            #'file-directory-p
+                            (directory-files-recursively user-init-dir "." t))))
       (apply 'update-directory-autoloads (cons user-init-dir el-root-subdirs))
       (rwd-recompile-init)
       (set-file-times autoload-file))))
