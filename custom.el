@@ -116,6 +116,7 @@
      ("~/Work/git/inspec" . 1)
      ("~/Work/git/chef" . 1)))
  '(magit-save-repository-buffers nil)
+ '(magit-section-initial-visibility-alist '((untracked . hide) (stashes . hide)))
  '(magit-stashes-margin '(t age-abbreviated magit-log-margin-width nil 18))
  '(magit-status-margin '(t age-abbreviated magit-log-margin-width t 5))
  '(magithub-api-low-threshold 30)
