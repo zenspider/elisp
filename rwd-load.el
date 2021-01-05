@@ -36,6 +36,9 @@
     (apply 'require args)))
 
 (defun rwd-packages-up-to-date ()
+  (unless (boundp 'package-quickstart-file)
+    (message "bootstrapping packages...")
+    (require 'package))
   (and
    (file-readable-p package-quickstart-file)
    (file-directory-p package-user-dir)
