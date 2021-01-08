@@ -113,8 +113,7 @@
  '(magit-repository-directories
    '(("~/Work/git/zenspider" . 1)
      ("~/Work/git/searbsg" . 1)
-     ("~/Work/git/inspec" . 1)
-     ("~/Work/git/chef" . 1)))
+     ("~/Work/git/zendesk" . 1)))
  '(magit-save-repository-buffers nil)
  '(magit-section-initial-visibility-alist '((untracked . hide) (stashes . hide)))
  '(magit-stashes-margin '(t age-abbreviated magit-log-margin-width nil 18))
@@ -208,6 +207,7 @@
  '(whitespace-global-modes
    '(c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode markdown-mode racc-mode racket-mode ruby-mode rust-mode scheme-mode sml-mode text-mode conf-unix-mode yaml-mode))
  '(whitespace-style '(face tabs trailing lines-tail space-before-tab empty))
+ '(window-combination-resize t)
  '(zenspider/magit-exclude-projects '("zendesk/zendesk")))
 
 ;; TODO: figure out why this doesn't work in git-blame frames
