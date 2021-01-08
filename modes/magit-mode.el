@@ -16,6 +16,11 @@
   (require 'magit)
   (require 'magit-diff))
 
+(with-eval-after-load 'magit
+  (let ((maps (list magit-file-section-map magit-hunk-section-map)))
+    (--each maps
+      (define-key it (kbd "RET") 'magit-diff-visit-file-other-window))))
+
 (defun magit-toggle-whitespace ()
   (interactive)
   (if (member "-w" magit-diff-arguments)
