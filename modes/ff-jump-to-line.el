@@ -10,4 +10,5 @@
         (and col  (move-to-column (max col 0)))))))
 
 (advice-add 'find-file :around #'rwd/find-file/numbers)
+(advice-add 'find-file-other-window :around #'rwd/find-file/numbers)
 ;; (advice-remove 'find-file #'rwd/find-file/numbers)
