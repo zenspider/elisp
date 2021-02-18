@@ -19,7 +19,7 @@
 (with-eval-after-load 'magit
   (let ((maps (list magit-file-section-map magit-hunk-section-map)))
     (--each maps
-      (define-key it (kbd "RET") 'magit-diff-visit-file-other-window))))
+      (define-key it (kbd "RET") 'magit-diff-visit-worktree-file-other-window))))
 
 (defun magit-toggle-whitespace ()
   (interactive)
