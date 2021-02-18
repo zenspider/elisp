@@ -404,11 +404,12 @@
   (balance-windows))
 
 ;;;###autoload
-(defun rwd-rotate-windows ()
+(defun rwd-rotate-windows (&optional reverse)
   "When a process or command brings up their buffer on top of the buffer you were working on and you want to move it into the next window so they're both side by side"
-  (interactive)
+  (interactive "P")
   (switch-to-buffer (other-buffer))
-  (other-window 1)
+  (message "reverse=%S" reverse)
+  (other-window (if reverse -1 1))
   (switch-to-buffer (other-buffer)))
 
 ;;;###autoload
