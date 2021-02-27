@@ -6,6 +6,8 @@
   (require 's)
   (require 'dash))
 
+(require 's)
+
 (setq path-re
       (rx bol
           (group (1+ (not (any ":"))))
@@ -921,6 +923,7 @@ even beep.)"
 
 (defvar rwd-window-config nil)
 
+;;;###autoload
 (defun rwd-window-save ()
   (interactive)
   (setq rwd-window-config
@@ -928,6 +931,7 @@ even beep.)"
               rwd-window-config))
   (message "Window configuration pushed"))
 
+;;;###autoload
 (defun rwd-window-restore ()
   (interactive)
   (when rwd-window-config
@@ -935,9 +939,6 @@ even beep.)"
     (unless (= (length rwd-window-config) 1)
       (setq rwd-window-config (cdr rwd-window-config))
       (message "Popped window configuration"))))
-
-(global-set-key (kbd "C-c <up>")   'rwd-window-save)
-(global-set-key (kbd "C-c <down>") 'rwd-window-restore)
 
 (defun rwd-shell-clear ()
   (interactive)

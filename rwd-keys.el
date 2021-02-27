@@ -141,6 +141,9 @@
   (gsk (kbd "C-c =")   'align-regexp-=)
   (gsk (kbd "C-c #")   'align-regexp-comment)
 
+  (gsk (kbd "C-c <up>")   'rwd-window-restore) ; push onto window stack
+  (gsk (kbd "C-c <down>") 'rwd-window-save)    ; pop off window stack
+
   ;; experimenting with hyperspace :D
   (gsk (kbd "H-SPC") 'point-to-register)
   (gsk (kbd "H-j")   'jump-to-register)
