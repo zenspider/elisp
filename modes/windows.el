@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (when-idle rwd-idle-time
   (windmove-default-keybindings)
   (winner-mode 1))
@@ -5,9 +7,10 @@
 (defun nth* (n xs)
   "Select the Nth item from XS, zero based. Go backwards from the
 right if N is negative."
-  (if (< n 0)
-      (nth* (1- (abs n)) (reverse xs))
-    (nth n xs)))
+    (if (< n 0)
+        (let* ((xs (vconcat xs)))
+          (aref xs (+ (length xs) n)))
+      (nth n xs)))
 
 (defun rwd/top-edge-windows ()
   (let* ((windows (list (frame-first-window)))
@@ -30,17 +33,21 @@ the ACTIONS alist."
 
 (defun rwd/nth-column-for-matching-buffers (nth regexp)
   (add-to-list 'display-buffer-alist `(,regexp
-                                       (rwd/display-buffer-in-column)
+                                       (display-buffer-reuse-window rwd/display-buffer-in-column)
                                        (column . ,nth))
                'append))
 
 (setq display-buffer-alist nil)
-(rwd/nth-column-for-matching-buffers  0 "^shell-")
-(rwd/nth-column-for-matching-buffers -1 "\\*info\\|\\*help")
-(rwd/nth-column-for-matching-buffers -1 "^magit:")
-(rwd/nth-column-for-matching-buffers  1 "PULLREQ_EDITMSG")
+
+;; (rwd/nth-column-for-matching-buffers  0 "^shell-")
 (rwd/nth-column-for-matching-buffers  0 "^magit-diff:")
 (rwd/nth-column-for-matching-buffers  0 "^magit-revision:")
 (rwd/nth-column-for-matching-buffers  0 "\\*vc-diff\\*")
+(rwd/nth-column-for-matching-buffers  0 "^magit-\\(diff\\|revision\\):")
 
-;; magit-diff: zendesk
+(rwd/nth-column-for-matching-buffers  1 "^COMMIT_EDITMSG")
+(rwd/nth-column-for-matching-buffers  1 "PULLREQ_EDITMSG")
+
+(rwd/nth-column-for-matching-buffers -1 "Racket REPL")
+(rwd/nth-column-for-matching-buffers -1 "\\*info\\|\\*help")
+(rwd/nth-column-for-matching-buffers -1 "^magit:")
