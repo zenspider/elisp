@@ -73,7 +73,7 @@
   (gsk (kbd "<M-down>") 'rwd-scroll-down)
 
   ;; iconify bugs the crap out of me:
-  ;; (when window-system (local-unset-key "\C-z"))
+  (when window-system (global-unset-key "\C-z"))
   ;; this is currently overridden by elscreen and my comint extensions.
 
   (global-unset-key (kbd "M-o"))        ; I will *never* use facemenu styles
