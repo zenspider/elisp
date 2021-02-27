@@ -38,4 +38,9 @@ the ACTIONS alist."
 (rwd/nth-column-for-matching-buffers  0 "^shell-")
 (rwd/nth-column-for-matching-buffers -1 "\\*info\\|\\*help")
 (rwd/nth-column-for-matching-buffers -1 "^magit:")
-(rwd/nth-column-for-matching-buffers  0 "^magit-\\(diff\\|revision\\):")
+(rwd/nth-column-for-matching-buffers  1 "PULLREQ_EDITMSG")
+(rwd/nth-column-for-matching-buffers  0 "^magit-diff:")
+(rwd/nth-column-for-matching-buffers  0 "^magit-revision:")
+(rwd/nth-column-for-matching-buffers  0 "\\*vc-diff\\*")
+
+;; magit-diff: zendesk
