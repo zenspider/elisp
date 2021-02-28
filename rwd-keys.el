@@ -174,7 +174,7 @@
 ;;           help-mode-map))
 
 ;;;###autoload
-(gsk [remap isearch-forward]
+(global-set-key [remap isearch-forward]
      (lambda (p)
        ;; http://endlessparentheses.com/quickly-search-for-occurrences-of-the-symbol-at-point.html
        (interactive "P")
