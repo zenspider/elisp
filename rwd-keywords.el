@@ -18,7 +18,7 @@
       '(c-mode
         enh-ruby-mode racc-mode ruby-mode sh-mode
         lisp-mode racket-mode scheme-mode emacs-lisp-mode
-        markdown-mode yaml-mode diff-mode text-mode))
+        markdown-mode yaml-mode))
 
 ;;;###autoload
 (progn
