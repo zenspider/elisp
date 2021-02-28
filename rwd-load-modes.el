@@ -7,6 +7,8 @@
            (idle-time (if normal-gui-startup 1 0))
            (names (mapcar clean paths)))
       (dolist (name (reverse names))
-        (rwd-load name nil t)))))
+        (condition-case err
+            (rwd-load name nil t)
+          (error (message "error loading %s %S" name err)))))))
 
 (provide 'rwd-load-modes)
