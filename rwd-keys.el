@@ -30,47 +30,52 @@
   ;; be specific to modes (even though they should almost all be bound
   ;; into "C-c C-<letter>...", per standard.
 
-  (defalias 'gsk 'global-set-key)
+  (defun gsk (key fn)
+    (global-set-key (kbd key) fn))
+
   (defalias 'rsk 'rwd-smart-keys)
 
-  (gsk (kbd "<f7>")    'rwd-toggle-split)        ; undefined
-  (gsk (kbd "<f8>")    'rwd-swap-buffers)        ; undefined
-  (gsk (kbd "C-M--")   'default-text-scale-decrease) ; was negative-argument
-  (gsk (kbd "C-M-.")   'etags-select-find-tag)   ; was xref-find-apropos
-  (gsk (kbd "C-M-;")   'unfill-paragraph)        ; unwrap a parapgraph!
-  (gsk (kbd "C-M-=")   'default-text-scale-increase) ; bigger font everywhere
-  (gsk (kbd "C-M-SPC") 'er/expand-region)        ; was mark-sexp
-  (gsk (kbd "C-c B")   'bury-buffer)             ; unassigned?
-  (gsk (kbd "C-M-y")   'kill-ring-search)        ; undefined
-  (gsk (kbd "C-h C")   'helpful-command)         ; better help for commands
-  (gsk (kbd "C-h C-p") 'helpful-at-point)        ; better help at point
-  (gsk (kbd "C-h F")   'helpful-function)        ; better help for functions
-  (gsk (kbd "C-h K")   'helpful-kill-buffers)    ; better help kill windows
-  (gsk (kbd "C-h f")   'helpful-callable)        ; better help for a thing
-  (gsk (kbd "C-h k")   'helpful-key)             ; better help for a key
-  (gsk (kbd "C-h v")   'helpful-variable)        ; better help for a var
-  (gsk (kbd "C-x C-b") 'bs-show)                 ; was list-buffers
-  (gsk (kbd "C-x C-p") 'find-file-at-point)      ; was mark-page
-  (gsk (kbd "C-x C-t") 'toggle-buffer)           ; was transpose-lines
-  (gsk (kbd "C-x f")   'find-file)               ; was set-fill-column, typos
-  (gsk (kbd "C-x r t") 'inline-string-rectangle) ; was string-rectangle
-  (gsk (kbd "M-?")     'etags-select-find-tag-at-point) ; was xref-find-references
-  (gsk (kbd "M-[")     'outdent-rigidly-2)       ; undefined
-  (gsk (kbd "M-]")     'indent-rigidly-2)        ; undefined
-  (gsk (kbd "M-j")     'rwd-join-lines)          ; was indent-new-comment-line
+  (gsk "<f7>"    'rwd-toggle-split)               ; undefined
+  (gsk "<f8>"    'rwd-swap-buffers)               ; undefined
+  (gsk "C-M--"   'default-text-scale-decrease)    ; was negative-argument
+  (gsk "C-M-."   'etags-select-find-tag)          ; was xref-find-apropos
+  (gsk "C-M-;"   'unfill-paragraph)               ; unwrap a parapgraph!
+  (gsk "C-M-="   'default-text-scale-increase)    ; bigger font everywhere
+  (gsk "C-M-SPC" 'er/expand-region)               ; was mark-sexp
+  (gsk "C-c B"   'bury-buffer)                    ; unassigned?
+  (gsk "C-M-y"   'kill-ring-search)               ; undefined
+  (gsk "C-h C"   'helpful-command)                ; better help for commands
+  (gsk "C-h C-p" 'helpful-at-point)               ; better help at point
+  (gsk "C-h F"   'helpful-function)               ; better help for functions
+  (gsk "C-h K"   'helpful-kill-buffers)           ; better help kill windows
+  (gsk "C-h f"   'helpful-callable)               ; better help for a thing
+  (gsk "C-h k"   'helpful-key)                    ; better help for a key
+  (gsk "C-h v"   'helpful-variable)               ; better help for a var
+  (gsk "C-x C-b" 'bs-show)                        ; was list-buffers
+  (gsk "C-x C-p" 'find-file-at-point)             ; was mark-page
+  (gsk "C-x C-t" 'toggle-buffer)                  ; was transpose-lines
+  (gsk "C-x f"   'find-file)                      ; was set-fill-column, typos
+  (gsk "C-x r t" 'inline-string-rectangle)        ; was string-rectangle
+  (gsk "M-?"     'etags-select-find-tag-at-point) ; was xref-find-references
+  (gsk "M-["     'outdent-rigidly-2)              ; undefined
+  (gsk "M-]"     'indent-rigidly-2)               ; undefined
+  (gsk "M-j"     'rwd-join-lines)                 ; was indent-new-comment-line
 
   ;; experiment: cycle through buffers of the same mode
-  (gsk (kbd "M-`")     'bs-cycle-next)           ; go to next buffer of same mode
-  (gsk (kbd "M-~")     'bs-cycle-previous)       ; go to prev buffer of same mode
-  (gsk (kbd "H-`")     'goto-last-change)        ; go to last change in buffer
-  (gsk (kbd "H-~")     'goto-last-change-reverse); go to prev change
+  (gsk "C-`"     'bs-cycle-next)            ; go to next buffer of same mode
+  (gsk "C-~"     'bs-cycle-previous)        ; go to prev buffer of same mode
+  ;; TODO: maybe my matias won't let me bind these? or mac os?
+  (gsk "M-`"     'bs-cycle-next)            ; go to next buffer of same mode
+  (gsk "M-~"     'bs-cycle-previous)        ; go to prev buffer of same mode
+  (gsk "H-`"     'goto-last-change)         ; go to last change in buffer
+  (gsk "H-~"     'goto-last-change-reverse) ; go to prev change
 
   ;; sanity/compatibility (mostly stuff from xemacs):
-  (gsk (kbd "M-g")      'goto-line)
-  (gsk (kbd "<C-up>")   'rwd-previous-line-6)
-  (gsk (kbd "<C-down>") 'rwd-forward-line-6)
-  (gsk (kbd "<M-up>")   'rwd-scroll-up)
-  (gsk (kbd "<M-down>") 'rwd-scroll-down)
+  (gsk "M-g"      'goto-line)
+  (gsk "<C-up>"   'rwd-previous-line-6)
+  (gsk "<C-down>" 'rwd-forward-line-6)
+  (gsk "<M-up>"   'rwd-scroll-up)
+  (gsk "<M-down>" 'rwd-scroll-down)
 
   ;; iconify bugs the crap out of me:
   (when window-system (global-unset-key "\C-z"))
@@ -81,10 +86,10 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; violations that need to be changed over time
 
-  (gsk (kbd "C-c C-s") 'rwd-select-all-mm-at-point)
-  (gsk (kbd "C-c M-q") 'unfill-paragraph)
-  (gsk (kbd "M-s")     'fixup-whitespace) ; useful search/highlight stuff
-  (gsk (kbd "M-S")     'rwd-fixup-whitespace)
+  (gsk "C-c C-s" 'rwd-select-all-mm-at-point)
+  (gsk "C-c M-q" 'unfill-paragraph)
+  (gsk "M-s"     'fixup-whitespace) ; useful search/highlight stuff
+  (gsk "M-S"     'rwd-fixup-whitespace)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; mode map bindings
@@ -107,12 +112,12 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; normal user-level keybindings
 
-  (gsk (kbd "C-c -")   'rwd-selective-display)
-  (gsk (kbd "C-c O")   'rwd-occur-n-buffer)
-  (gsk (kbd "C-c SPC") 'delete-trailing-whitespace)
-  (gsk (kbd "C-c a")   'align-cols)
-  (gsk (kbd "C-c b")   'rwd-rotate-windows)
-  (gsk (kbd "C-c c")   'rwd-clean)
+  (gsk "C-c -"   'rwd-selective-display)
+  (gsk "C-c O"   'rwd-occur-n-buffer)
+  (gsk "C-c SPC" 'delete-trailing-whitespace)
+  (gsk "C-c a"   'align-cols)
+  (gsk "C-c b"   'rwd-rotate-windows)
+  (gsk "C-c c"   'rwd-clean)
   (rsk 'd '((   "R" .  'ediff-regions-linewise)
             (   "b" .  'ediff-buffers)
             (   "d" .  'ediff-directories)
@@ -121,15 +126,15 @@
             ( "SPC" .  'delete-trailing-whitespace)
             (   "r" .  'ediff-regions-wordwise)
             (   "w" .  'delete-trailing-whitespace)))
-  (gsk (kbd "C-c e")   'erase-buffer)
-  (gsk (kbd "C-c g")   'magit-status)
-  (gsk (kbd "C-c G")   'magit-dispatch)
-  (gsk (kbd "C-c f")   'magit-file-dispatch)
-  (gsk (kbd "C-c i")   'imenu)
-  (gsk (kbd "C-c n")   'narrow-to-region-indirect)
-  (gsk (kbd "C-x n")   'narrow-or-widen-dwim)
-  (gsk (kbd "C-c o")   'rwd-occur-buffer)
-  (gsk (kbd "C-c S")   'string-edit-at-point)
+  (gsk "C-c e"   'erase-buffer)
+  (gsk "C-c g"   'magit-status)
+  (gsk "C-c G"   'magit-dispatch)
+  (gsk "C-c f"   'magit-file-dispatch)
+  (gsk "C-c i"   'imenu)
+  (gsk "C-c n"   'narrow-to-region-indirect)
+  (gsk "C-x n"   'narrow-or-widen-dwim)
+  (gsk "C-c o"   'rwd-occur-buffer)
+  (gsk "C-c S"   'string-edit-at-point)
   (rsk 's '((   "c" .  'sort-columns)
             (   "l" .  'sort-lines)
             (   "n" .  'sort-numbers)
@@ -137,17 +142,17 @@
             (   "s" .  'sort-sexps)
             (   "S" .  'sort-symbols)
             (   "w" .  'sort-words)))
-  (gsk (kbd "C-c /")   'align-regexp)
-  (gsk (kbd "C-c =")   'align-regexp-=)
-  (gsk (kbd "C-c #")   'align-regexp-comment)
+  (gsk "C-c /"   'align-regexp)
+  (gsk "C-c ="   'align-regexp-=)
+  (gsk "C-c #"   'align-regexp-comment)
 
-  (gsk (kbd "C-c <up>")   'rwd-window-restore) ; push onto window stack
-  (gsk (kbd "C-c <down>") 'rwd-window-save)    ; pop off window stack
+  (gsk "C-c <up>"   'rwd-window-restore) ; push onto window stack
+  (gsk "C-c <down>" 'rwd-window-save)    ; pop off window stack
 
   ;; experimenting with hyperspace :D
-  (gsk (kbd "H-SPC") 'point-to-register)
-  (gsk (kbd "H-j")   'jump-to-register)
-  (gsk (kbd "H-b")   'bury-buffer)
+  (gsk "H-SPC" 'point-to-register)
+  (gsk "H-j"   'jump-to-register)
+  (gsk "H-b"   'bury-buffer)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; unsorted
