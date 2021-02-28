@@ -3,6 +3,7 @@
 
 (racket-xp-mode)
 (flyspell-prog-mode)
+(flycheck-mode)
 
 (define-key racket-mode-map (kbd "C-c u")       'racket-unicode-input-method-enable)
 (define-key racket-mode-map (kbd "C-c C-r")     'racket-run)
@@ -10,6 +11,7 @@
 (define-key racket-mode-map (kbd "C-c t")       'racket-test)
 (define-key racket-mode-map (kbd "C-c C-d")     'delete-trailing-whitespace)
 (define-key racket-mode-map (kbd "<C-return>")  'eir-eval-in-racket)
+(define-key racket-mode-map (kbd "C-c e")       'rwd-flycheck-toggle-list-errors)
 
 ;; (define-key racket-mode-map (kbd "C-c C-c C-d") 'racket-doc)
 
