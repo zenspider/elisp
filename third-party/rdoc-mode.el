@@ -113,10 +113,35 @@
    (list "<code>[^<>]*</code>" 0 rdoc-code-face)
    (list "^\\([-*]\\|[0-9]+\\.\\|[A-Za-z]\\.\\)\\s "
 	 1 rdoc-description-face) ; bullet | numbered | alphabetically numbered
-   (list "^\\[[^\]]*\\]\\|\\S .*::\\)\\([ \t\v\f]\\|$\\)"
+   (list "^\\(\\[[^]]*]\\|\\S .*::\\)\\(?:[ \t\v\f]\\|$\\)"
 	 1 rdoc-description-face)	; labeled | node
    ;(list "^[ \t\v\f]+\\(.*\\)" 1 rdoc-verbatim-face)
    ))
+
+;; (xr "^\\[[^\]]*\\]\\|\\S .*::\\)\\([ \t\v\f]\\|$\\)")   ; original -- BAD
+;; (xr "^\\[[^]]*\\]\\|\\S .*::\\)\\([ \t\v\f]\\|$\\)")    ; fix [^]] -- BAD
+;; (xr "^\\(\\[[^]]*\\]\\|\\S .*::\\)\\([ \t\v\f]\\|$\\)") ; add leading \\(
+;; (xr "^\\(\\[[^]]*]\\|\\S .*::\\)\\([ \t\v\f]\\|$\\)")   ; remove extra \\
+;; (xr "^\\(\\[[^]]*]\\|\\S .*::\\)\\(?:[ \t\v\f]\\|$\\)") ; convert to shy
+
+;; ;; bad syntax
+;;
+;; ;; bad syntax
+;;
+;; (rx (seq bol
+;;          (group (or (seq "[" (zero-or-more (not (any "]"))) "]")
+;;                     (seq (not (syntax whitespace)) (zero-or-more nonl) "::")))
+;;          (group (or (any " \t\v\f") eol))))
+;;
+;; (rx (seq bol
+;;          (group (or (seq "[" (zero-or-more (not (any "]"))) "]")
+;;                     (seq (not (syntax whitespace)) (zero-or-more nonl) "::")))
+;;          (group (or (any " \t\v\f") eol))))
+;;
+;; (rx (seq bol
+;;          (group (or (seq "[" (zero-or-more (not (any "]"))) "]")
+;;                     (seq (not (syntax whitespace)) (zero-or-more nonl) "::")))
+;;          (or (any " \t\v\f") eol)))
 
 (defun rdoc-imenu-create-index ()
   (let ((root '(nil . nil))
