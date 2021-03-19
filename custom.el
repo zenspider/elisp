@@ -38,6 +38,8 @@
       (height . 48)
       (font . "Fira Code-18")))
  '(dired-recursive-deletes 'top)
+ '(dumb-jump-project-denoters
+   '(".dumbjump" ".projectile" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".svn" "Makefile" "PkgInfo" "-pkg.el" "Rakefile" "test"))
  '(ediff-split-window-function
    (lambda
      (&optional x)
@@ -80,6 +82,7 @@
  '(gc-cons-percentage 0.2)
  '(git-commit-summary-max-length 78)
  '(global-auto-revert-mode t)
+ '(global-whitespace-mode t)
  '(hippie-expand-try-functions-list
    '(try-expand-all-abbrevs try-expand-dabbrev-visible try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill rwd-try-expand-tag try-complete-lisp-symbol-partially try-complete-lisp-symbol try-complete-file-name-partially try-complete-file-name try-expand-list))
  '(history-length 1000)
@@ -99,7 +102,8 @@
  '(ispell-program-name "aspell")
  '(kill-ring-max 1000)
  '(line-move-visual nil)
- '(lua-indent-level 2)
+ '(mac-auto-operator-composition-mode t)
+ '(mac-function-modifier '(:ordinary hyper :button 2))
  '(mac-pass-command-to-system nil)
  '(mac-pass-control-to-system nil)
  '(magit-delete-by-moving-to-trash nil)
@@ -148,7 +152,6 @@
  '(persp-initial-frame-name "*")
  '(persp-mode-prefix-key "")
  '(persp-sort 'created)
- '(purpose-user-regexp-purposes nil)
  '(racket-images-system-viewer "open")
  '(racket-program "~/Applications/dev/lisp/Racket/bin/racket")
  '(read-buffer-completion-ignore-case t)
@@ -165,7 +168,7 @@
  '(save-place-skip-check-regexp
    "\\`/\\(cdrom\\|floppy\\|mnt\\|\\([^@/:]*@\\)?[^@/:]*[^@/:.]:\\)")
  '(savehist-additional-variables '(kill-ring compile-command search-ring regexp-search-ring))
- '(savehist-ignored-variables '(yes-or-no-p-history))
+ '(savehist-ignored-variables '(yes-or-no-p-history grep-history))
  '(savehist-mode t)
  '(scheme-program-name "csi -I ../lib")
  '(scroll-bar-mode nil)
@@ -204,6 +207,7 @@
  '(warning-suppress-types '((undo discard-info)))
  '(wdired-allow-to-change-permissions 'advanced)
  '(web-mode-markup-indent-offset 2)
+ '(which-key-mode t)
  '(whitespace-global-modes
    '(c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode markdown-mode racc-mode racket-mode ruby-mode rust-mode scheme-mode sml-mode text-mode conf-unix-mode yaml-mode))
  '(whitespace-style '(face tabs trailing lines-tail space-before-tab empty))
