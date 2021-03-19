@@ -1,3 +1,5 @@
+(define-key ielm-map (kbd "C-c e") 'rwd-shell-clear)
+
 (turn-on-elisp-slime-nav-mode)
 (paredit-mode +1)
 
