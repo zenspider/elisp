@@ -1,3 +1,6 @@
+(eval-when-compile
+  (require 'comint))
+
 (defun comint-scroll-to-bottom-on-output ()
   (interactive)
   (setq comint-scroll-to-bottom-on-input t)
