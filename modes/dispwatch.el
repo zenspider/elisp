@@ -1,6 +1,8 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;       1         2         3         4         5         6         7         8
-;;345678901234567890123456789012345678901234567890123456789012345678901234567890
+;; -*- truncate-lines: t -*-
+
+;;                                                                                                 1                                                                                                   2
+;;       1         2         3         4         5         6         7         8         9         0         1         2         3         4         5         6         7         8         9         0
+;;34567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012
 
 (defvar rwd/displays nil
   "Contains a list of display entries for emacs' dispwatch")
@@ -77,36 +79,31 @@
          )
     disp))
 
-(defun rwd/dispwatch-geom-changed (disp)
+(defun rwd/dispwatch-display-change-hook (geom)
+  (message "dispwatch %S" geom)
   (when window-system
-   (let* ((args    (assoc disp      rwd/displays))
-          (default (assoc "default" rwd/displays)))
-     (unless args
-       (find-variable 'rwd/displays)
-       (insert (format "%S\n" (list disp 'w 'h 16)))
-       (message "Please extend rwd/displays with %S" disp)
-       (setq args default))
-     (apply 'rwd/display-setup (cdr args))
-     (rwd-split-smart))))
+    (let* ((w       (car geom))
+           (h       (cdr geom))
+           (disp    (format "%sx%s" w h))
+           (args    (assoc disp      rwd/displays))
+           (default (assoc "default" rwd/displays)))
+      (unless args
+        (find-variable 'rwd/displays)
+        (insert (format "%S\n" (list disp 'w 'h 16)))
+        (message "Please extend rwd/displays with %S" disp)
+        (setq args default))
+      (apply 'rwd/display-setup (cdr args))
+      (rwd-split-smart))))
 
-;; TODO: push upstream
-(defvar dispwatch-geom-changed-hooks '())
-(defun rwd/dispwatch-display-change-hook (_disp)
-  (let* ((attr (frame-monitor-attributes))
-         (geom (assoc 'geometry attr))
-         (w (nth 3 geom))
-         (h (nth 4 geom))
-         (disp (format "%sx%s" w h))) ; calculated from actual geometry
-    (run-hook-with-args 'dispwatch-geom-changed-hooks disp)))
-
-(add-hook 'dispwatch-geom-changed-hooks 'rwd/dispwatch-geom-changed)
-
-;; https://github.com/mnp/dispwatch
-(rwd-require 'dispwatch)
+(when window-system
+  (add-to-list 'load-path (expand-file-name "~/Work/git/mnp/dispwatch"))
+  ;; https://github.com/mnp/dispwatch
+  (rwd-require 'dispwatch))
 
 (defun rwd/display-reset ()
   "Reset and force dispwatch to trigger again."
   (interactive)
+  (message "rwd/display-reset")
   (setq dispwatch-current-display nil))
 
 ;; (rwd/display-reset)
