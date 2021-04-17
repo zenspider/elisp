@@ -1,6 +1,14 @@
 (with-eval-after-load 'transient
   (transient-bind-q-to-quit))
 
+;; M1 macs install into /opt/homebrew/bin:
+
+(unless (f-executable-p magit-git-executable)
+  (setq magit-git-executable "/opt/homebrew/bin/git"))
+
+(unless (f-executable-p with-editor-emacsclient-executable)
+  (setq with-editor-emacsclient-executable "/opt/homebrew/bin/emacsclient"))
+
 ;; from http://www.ogre.com/node/447
 
 (defun git-grep (search)
