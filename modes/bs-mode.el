@@ -14,12 +14,15 @@
      (and (persp-is-current-buffer current-buf)
           (equal orig-mode current-mode))))
 
- (add-to-list 'bs-configurations '("persp"
-                                   nil nil
-                                   "^\\*" persp-buffer-filter
-                                   bs-sort-buffer-interns-are-last))
+ (when normal-gui-startup
+   (add-to-list 'bs-configurations '("persp"
+                                     nil nil
+                                     "^\\*" persp-buffer-filter
+                                     bs-sort-buffer-interns-are-last))
 
- (add-to-list 'bs-configurations '("current-mode"
-                                   nil rwd/persp/same-mode
-                                   "." nil
-                                   nil)))
+   (add-to-list 'bs-configurations '("current-mode"
+                                     nil rwd/persp/same-mode
+                                     "." nil
+                                     nil))
+
+   (setq bs-default-configuration "persp")))
