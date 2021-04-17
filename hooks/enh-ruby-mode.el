@@ -7,6 +7,8 @@
 (define-key enh-ruby-mode-map (kbd "C-c C-t") 'ri-show-term-composite-at-point)
 (define-key enh-ruby-mode-map (kbd "C-c C-c") 'recompile)
 
+(define-key enh-ruby-mode-map (kbd "C-c /") nil) ; I hate it
+
 ;; TODO: this doesn't affect spawning compilations windows?!?
 (set (make-local-variable 'compilation-error-regexp-alist)
      '(
