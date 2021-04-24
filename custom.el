@@ -109,7 +109,6 @@
  '(magit-delete-by-moving-to-trash nil)
  '(magit-delta-hide-plus-minus-markers nil)
  '(magit-diff-refine-hunk t)
- '(magit-git-executable "/usr/local/bin/git")
  '(magit-log-cutoff-length 250)
  '(magit-push-always-verify nil)
  '(magit-refresh-verbose t)
