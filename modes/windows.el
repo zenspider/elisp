@@ -72,7 +72,7 @@ the current fill-column."
 
 (setq display-buffer-alist nil)
 
-;; (rwd/nth-column-for-matching-buffers  0 "^shell-")
+(rwd/nth-column-for-matching-buffers  0 "^shell-")
 (rwd/nth-column-for-matching-buffers  0 "^magit-diff:")
 (rwd/nth-column-for-matching-buffers  0 "^magit-revision:")
 (rwd/nth-column-for-matching-buffers  0 "\\*vc-diff\\*")
@@ -81,7 +81,7 @@ the current fill-column."
 (rwd/nth-column-for-matching-buffers -1 "^COMMIT_EDITMSG")
 (rwd/nth-column-for-matching-buffers -1 "PULLREQ_EDITMSG")
 (rwd/nth-column-for-matching-buffers -1 "Racket REPL")
-(rwd/nth-column-for-matching-buffers -1 "^.P4 diff")
+(rwd/nth-column-for-matching-buffers  0 "^.P4 diff")
 (rwd/nth-column-for-matching-buffers -1 "\\*info\\|\\*help")
 (rwd/nth-column-for-matching-buffers -1 "^magit:")
 
