@@ -77,11 +77,12 @@ the current fill-column."
 (rwd/nth-column-for-matching-buffers  0 "^magit-revision:")
 (rwd/nth-column-for-matching-buffers  0 "\\*vc-diff\\*")
 (rwd/nth-column-for-matching-buffers  0 "^magit-\\(diff\\|revision\\):")
+(rwd/nth-column-for-matching-buffers  0 "^.P4 diff")
+(rwd/nth-column-for-matching-buffers  0 "^\\*rg\\*")
 
 (rwd/nth-column-for-matching-buffers -1 "^COMMIT_EDITMSG")
 (rwd/nth-column-for-matching-buffers -1 "PULLREQ_EDITMSG")
 (rwd/nth-column-for-matching-buffers -1 "Racket REPL")
-(rwd/nth-column-for-matching-buffers  0 "^.P4 diff")
 (rwd/nth-column-for-matching-buffers -1 "\\*info\\|\\*help")
 (rwd/nth-column-for-matching-buffers -1 "^magit:")
 
