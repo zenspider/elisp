@@ -79,6 +79,8 @@
          )
     disp))
 
+(defvar rwd/dispwatch/initialized '())
+
 (defun rwd/dispwatch-display-change-hook (geom)
   (when window-system
     (let* ((w       (car geom))
@@ -87,8 +89,11 @@
            (disp    (format "%sx%s" w h))
            (args    (assoc disp      rwd/displays))
            (default (assoc "default" rwd/displays)))
-      (unless (equal? current disp)
-        (message "dispwatch %S -> %S" current disp)
+      (unless (and rwd/dispwatch/initialized (equal current disp))
+        (if rwd/dispwatch/initialized
+            (message "dispwatch %S -> %S" current disp)
+          (setq rwd/dispwatch/initialized t)
+          (message "initializing dispwatch to %S" disp))
         (unless args
           (find-variable 'rwd/displays)
           (insert (format "%S\n" (list disp 'w 'h 16)))
