@@ -976,11 +976,10 @@ even beep.)"
 
 (defun rwd-workout (days-offset)
   (interactive "P")
-  (let ((time (seconds-to-time (+ (* (or days-offset 0) 86400)
-                                  (time-to-seconds (current-time)))))
-        (date (format-time-string "workout %Y-%m-%d" time)))
+  (let* ((time (seconds-to-time (+ (* (or days-offset 0) 86400)
+                                   (time-to-seconds (current-time)))))
+         (date (format-time-string "workout %Y-%m-%d" time)))
     (rwd/workout/2 date)))
-
 
 (defvar workout-last-date nil)
 
