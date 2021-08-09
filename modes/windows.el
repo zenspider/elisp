@@ -80,6 +80,7 @@ the current fill-column."
 (rwd/nth-column-for-matching-buffers  0 "^.P4 diff")
 (rwd/nth-column-for-matching-buffers  0 "^\\*rg\\*")
 
+(rwd/nth-column-for-matching-buffers -1 "^\\*Racket Describe\\*")
 (rwd/nth-column-for-matching-buffers -1 "^COMMIT_EDITMSG")
 (rwd/nth-column-for-matching-buffers -1 "PULLREQ_EDITMSG")
 (rwd/nth-column-for-matching-buffers -1 "Racket REPL")
