@@ -157,6 +157,7 @@
  '(persp-sort 'created)
  '(racket-images-system-viewer "open")
  '(racket-program "~/Applications/dev/lisp/Racket/bin/racket")
+ '(racket-show-functions '(racket-show-echo-area))
  '(read-buffer-completion-ignore-case t)
  '(require-final-newline t)
  '(rg-keymap-prefix "r")
