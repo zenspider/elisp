@@ -80,20 +80,22 @@
     disp))
 
 (defun rwd/dispwatch-display-change-hook (geom)
-  (message "dispwatch %S" geom)
   (when window-system
     (let* ((w       (car geom))
            (h       (cdr geom))
+           (current (rwd/current-display))
            (disp    (format "%sx%s" w h))
            (args    (assoc disp      rwd/displays))
            (default (assoc "default" rwd/displays)))
-      (unless args
-        (find-variable 'rwd/displays)
-        (insert (format "%S\n" (list disp 'w 'h 16)))
-        (message "Please extend rwd/displays with %S" disp)
-        (setq args default))
-      (apply 'rwd/display-setup (cdr args))
-      (rwd-split-smart))))
+      (unless (equal? current disp)
+        (message "dispwatch %S -> %S" current disp)
+        (unless args
+          (find-variable 'rwd/displays)
+          (insert (format "%S\n" (list disp 'w 'h 16)))
+          (message "Please extend rwd/displays with %S" disp)
+          (setq args default))
+        (apply 'rwd/display-setup (cdr args))
+        (rwd-split-smart)))))
 
 (when window-system
   (add-to-list 'load-path (expand-file-name "~/Work/git/mnp/dispwatch"))
