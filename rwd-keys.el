@@ -134,6 +134,7 @@
   (gsk "C-c n"   'narrow-to-region-indirect)
   (gsk "C-x n"   'narrow-or-widen-dwim)
   (gsk "C-c o"   'rwd-occur-buffer)
+  (gsk "C-c p"   'ffip)
   (gsk "C-c S"   'string-edit-at-point)
   (rsk 's '((   "c" .  'sort-columns)
             (   "l" .  'sort-lines)
