@@ -3,7 +3,6 @@
 
 (racket-xp-mode)
 (flyspell-prog-mode)
-(flycheck-mode)
 
 (define-key racket-mode-map (kbd "C-c u")       'racket-unicode-input-method-enable)
 (define-key racket-mode-map (kbd "C-c C-r")     'racket-run)
