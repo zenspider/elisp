@@ -4,9 +4,14 @@
   (transient-bind-q-to-quit))
 
 ;; M1 macs install into /opt/homebrew/bin:
-
+;; intel macs install into /usr/local/bin
 (unless (file-executable-p magit-git-executable)
-  (setq magit-git-executable "/opt/homebrew/bin/git"))
+  (let* ((paths '("/opt/homebrew/bin/git" "/usr/local/bin/git"))
+         (paths (mapcar   #'expand-file-name paths))
+         (found (seq-find #'file-exists-p    paths)))
+    (if found
+        (setq magit-git-executable found)
+      (message "git executable not found!"))))
 
 (unless (file-executable-p with-editor-emacsclient-executable)
   (setq with-editor-emacsclient-executable "/opt/homebrew/bin/emacsclient"))
