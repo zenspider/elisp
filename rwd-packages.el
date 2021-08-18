@@ -88,22 +88,23 @@
          magit-gh-pulls
          ;; package-lint            ; for checking elisp packages
          phi-grep                ; TODO
+         ;; smartrep                ; better repeatable key sequencing -- forked
          wgrep                   ; editable grep results
          which-key               ; show options in sub-keys
          xterm-color             ; used in modes/shell-mode.el
          ;; xr                      ; regexp -> xr (lispy regexps)
+
+         ;; benchmark-init       ; for measuring and speeding up boot time
 
          ;;; file formats
          bison-mode              ; for yacc/bison files
          jq-mode                 ; live view of jq queries
          json-mode               ; for json files
          markdown-mode           ; for md files
-         web-mode                ; TODO
+         web-mode                ; for web template files (do I use this?)
 
          ;;; fighting with window mgmt & big screens:
          dedicated               ; "stick" buffers to windows
-         shackle                 ; for me... ugh.
-         window-purpose          ; trying to find a workflow that works
          ))
 
 (package-quickstart-refresh)
