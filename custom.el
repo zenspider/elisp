@@ -201,6 +201,7 @@
  '(user-mail-address "ryand-ruby@zenspider.com")
  '(vc-annotate-display-mode nil)
  '(vc-command-messages t)
+ '(vc-display-status nil)
  '(vc-handled-backends '(CVS SVN Git))
  '(vc-svn-program-name "/usr/bin/svn")
  '(visible-bell t)
