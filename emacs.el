@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t; -*-
 
+(when (<= emacs-major-version 25)
+  (package-initialize))
+
 (unless user-init-file                  ; if running w/: -q --debug-init
   (setq user-init-file (expand-file-name "~/.emacs.d/init.el")))
 
@@ -28,7 +31,8 @@
 
 (rwd-require 'rwd-autoloads)
 (unless (rwd-packages-up-to-date)
-  (delete-file package-quickstart-file) ; force refresh?
+  (when package-quickstart-file
+    (delete-file package-quickstart-file)) ; force refresh?
   (rwd-require 'rwd-packages))
 (rwd-require 'rwd-autohooks)
 (rwd-require 'rwd-load-modes)

@@ -39,7 +39,11 @@
   (unless (boundp 'package-quickstart-file)
     (message "bootstrapping packages...")
     (require 'package))
+  (unless (boundp 'package-quickstart-file)
+    (message "package-quickstart-file still not defined!")
+    (setq package-quickstart-file nil))
   (and
+   package-quickstart-file
    (file-readable-p package-quickstart-file)
    (file-directory-p package-user-dir)
    (file-newer-than-file-p package-quickstart-file

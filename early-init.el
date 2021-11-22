@@ -5,7 +5,8 @@
                '(ns (fullscreen . maximized))))
 
 (menu-bar-mode -1)
-(scroll-bar-mode -1)
+(when (boundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
 ;; (tool-bar-mode -1) ; don't do this on mac... flashes a small window
 
 (setq garbage-collection-messages t          ; indicator of thrashing
