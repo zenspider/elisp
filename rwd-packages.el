@@ -107,7 +107,8 @@
          dedicated               ; "stick" buffers to windows
          ))
 
-(package-quickstart-refresh)
+(when (fboundp 'package-quickstart-refresh)
+    (package-quickstart-refresh))
 
 ;; (package-refresh-contents)
 ;; (rwd-recompile-init)
