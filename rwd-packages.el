@@ -33,6 +33,7 @@
        '(package+                ; duh
 
          auto-dim-other-buffers  ; makes current buffer "pop"
+         browse-at-remote        ; like github-browse-file
          browse-kill-ring        ; M-y kill ring browsing
          cyphejor                ; mode renaming. TODO: nuke
          dash                    ; better api for lists
@@ -42,7 +43,6 @@
          f                       ; better api for files/dirs
          gcmh                    ; Garbage Collector Magic Hack
          git-timemachine         ; fantastic spelunking tool
-         github-browse-file      ; jump to code browser on github
          helpful                 ; better help system
          htmlize                 ; colorizing as html
          find-file-in-project    ; ffip alternative to projectile FIX?
@@ -102,6 +102,8 @@
          json-mode               ; for json files
          markdown-mode           ; for md files
          web-mode                ; for web template files (do I use this?)
+
+         winnow                  ; for refining ag results
 
          ;;; fighting with window mgmt & big screens:
          dedicated               ; "stick" buffers to windows
