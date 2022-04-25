@@ -3,6 +3,8 @@
   (require 'autoload)                     ; = ;;;###autoload
   (require 'rwd-load))
 
+(require 'bytecomp) ; byte-compile-dest-file
+
 (defun rwd-recompile-init ()
   (interactive)
   (report-time 'rwd-recompile-init
