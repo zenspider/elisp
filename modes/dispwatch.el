@@ -111,8 +111,10 @@
   "Reset and force dispwatch to trigger again."
   (interactive)
   (message "rwd/display-reset")
+  (setq rwd/dispwatch/initialized '())
   (setq dispwatch-current-display nil))
 
+;; (rwd/display-setup 36)
 ;; (rwd/display-reset)
 
 (provide 'modes/dispwatch)
