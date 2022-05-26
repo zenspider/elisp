@@ -9,12 +9,13 @@
 (require 's)
 
 (setq path-re
-      (rx bol
-          (group (1+ (not (any ":"))))
+      (rx bos
+          (group (+? nonl))             ; allows it to parse tramp paths
           (? ":"
              (? (group (1+ (any "0-9"))))
              (? ":"
-                (group (1+ (any "0-9")))))))
+                (group (1+ (any "0-9")))))
+          eos))
 
 ;;;###autoload
 (defun rwd/parse-path-with-pos (path)
@@ -1034,13 +1035,13 @@ even beep.)"
   (with-current-buffer "superslow.txt"  ; outside save-excursion?!?
     (goto-char (point-max))))
 
-(defun rwd-renumber-debug ()
-  (interactive)
+(defun rwd-renumber-debug (offset)
+  (interactive "pOffset:")
   (save-excursion
     (replace-regexp
      "debug [0-9]+"
      '(replace-eval-replacement concat "debug "
-                                (replace-quote (1+ replace-count)))
+                                (replace-quote (+ 1 offset replace-count)))
      nil
      (point-min)
      (point-max))))
