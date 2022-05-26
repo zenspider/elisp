@@ -34,3 +34,6 @@
 ;; (getenv "EDITOR")
 ;; (getenv "VISUAL")
 ;; (getenv "LANG")
+
+(global-unset-key (kbd "C-<wheel-down>"))
+(global-unset-key (kbd "C-<wheel-up>"))
