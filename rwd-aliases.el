@@ -9,13 +9,13 @@
 (require 's)
 
 (setq path-re
-      (rx bos
-          (group (+? nonl))             ; allows it to parse tramp paths
+      (rx bol
+          (group (? "/" (+ word) ":" (+ word) ":") ; allows it to parse tramp paths
+                 (1+ (not (in "\n:"))))
           (? ":"
-             (? (group (1+ (any "0-9"))))
+             (group (1+ digit))
              (? ":"
-                (group (1+ (any "0-9")))))
-          eos))
+                (group (1+ digit))))))
 
 ;;;###autoload
 (defun rwd/parse-path-with-pos (path)
