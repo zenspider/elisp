@@ -42,6 +42,7 @@
          expand-region           ; mandatory
          f                       ; better api for files/dirs
          gcmh                    ; Garbage Collector Magic Hack
+         gist                    ; post to gist
          git-timemachine         ; fantastic spelunking tool
          helpful                 ; better help system
          htmlize                 ; colorizing as html
@@ -66,7 +67,6 @@
          string-edit             ; AMAZING string-edit-at-point
          w3m                     ; strange web browser FIX
          window-number           ; Jump to window by M-number
-         yagist                  ; gist
          yaml-mode               ; for yaml files.
 
          ;; trying out:          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -81,7 +81,6 @@
          flycheck                ; smoother than flyspell
          flycheck-color-mode-line; colors modeline based on status
          ;; flycheck-package        ; flycheck elisp package files
-         gist
          github-review           ; interesting workflow for reviews
          goto-chg
          magit-delta
