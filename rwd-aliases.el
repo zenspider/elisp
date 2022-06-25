@@ -1170,7 +1170,7 @@ already narrowed."
   (interactive "r")
   (set-text-properties (or start (mark)) (or end (point)) nil))
 
-(defun rwd/unfuck/yank (_arg)
+(defun rwd/unfuck/yank (&optional _arg)
   (rwd/unfuck/text (mark) (point)))
 
 (advice-add 'yank :after #'rwd/unfuck/yank)
