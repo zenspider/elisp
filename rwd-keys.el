@@ -57,8 +57,9 @@
   (gsk "C-x f"   'find-file)                      ; was set-fill-column, typos
   (gsk "C-x r t" 'inline-string-rectangle)        ; was string-rectangle
   (gsk "M-?"     'etags-select-find-tag-at-point) ; was xref-find-references
-  (gsk "M-["     'outdent-rigidly-2)              ; undefined
-  (gsk "M-]"     'indent-rigidly-2)               ; undefined
+  (gsk "M-{"     'outdent-rigidly-2)              ; undefined
+  (gsk "M-}"     'indent-rigidly-2)               ; undefined
+  ;; (global-unset-key (kbd "M-[")) ; ensure bracketed paste works
   (gsk "M-j"     'rwd-join-lines)                 ; was indent-new-comment-line
 
   ;; experiment: cycle through buffers of the same mode
