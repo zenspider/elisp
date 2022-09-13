@@ -42,6 +42,14 @@
 (advice-add 'find-file-at-point :around #'rwd/find-file-at-point/numbers)
 ;; (advice-remove 'find-file-at-point #'rwd/find-file-at-point/numbers)
 
+;;;###autoload
+(defun rwd/narrow-to-region-indirect/line-numbers (&rest _)
+  (display-line-numbers-mode))
+
+;;;###autoload
+(advice-add 'narrow-to-region-indirect :after #'rwd/narrow-to-region-indirect/line-numbers)
+;; (advice-remove 'narrow-to-region-indirect #'rwd/narrow-to-region-indirect/line-numbers)
+
 (defun buffer-string-no-properties ()
   (buffer-substring-no-properties (point-min) (point-max)))
 
@@ -369,6 +377,40 @@
   (unless split (delete-other-windows))
   (when full-screen (rwd-ns-fullscreen)))
 
+(defun rwd-arrange-frame-px (w h)
+  "Rearrange the current frame to a custom width and
+height (pixelwise) and split based on size."
+  (let ((frame (selected-frame)))
+    (set-frame-size frame w h 'pixels)
+    (set-frame-position (selected-frame) 0 0)
+    (rwd-split-smart)))
+
+(defun rwd-arrange-frame-fn (fn)
+  (let* ((w/h (cdddr (assoc 'geometry (frame-monitor-attributes))))
+         (w (car w/h))
+         (h (cadr w/h)))
+    (rwd-arrange-frame-px (apply fn (list w)) h)))
+
+(defun half       (n) (/ n 2))
+(defun two-thirds (n) (/ (* n 2) 3))
+
+(defun rwd-resize-auto ()
+  (interactive)
+  (rwd-ns-fullscreen)
+  (rwd/display-reset))
+
+(defalias 'rwd-resize-normal 'rwd-resize-auto)
+
+(defun rwd-resize-study-1/2 () ; 1/2 layout: code + browser
+  (interactive)
+  (rwd-ns-fullscreen-off)
+  (rwd-arrange-frame-fn #'half))
+
+(defun rwd-resize-study-2/3 () ; 2/3 layout: shell|code + browser
+  (interactive)
+  (rwd-ns-fullscreen-off)
+  (rwd-arrange-frame-fn #'two-thirds))
+
 ;;;###autoload
 (defun rwd-split-smart ()
   "Splits the current frame either in 2 or 3 depending on size"
@@ -410,10 +452,11 @@
 (defun rwd-rotate-windows (&optional reverse)
   "When a process or command brings up their buffer on top of the buffer you were working on and you want to move it into the next window so they're both side by side"
   (interactive "P")
-  (switch-to-buffer (other-buffer))
-  (message "reverse=%S" reverse)
-  (other-window (if reverse -1 1))
-  (switch-to-buffer (other-buffer)))
+  (let ((current-pos (point)))
+    (switch-to-buffer (other-buffer))
+    (other-window (if reverse -1 1))
+    (switch-to-buffer (other-buffer))
+    (goto-char current-pos)))
 
 ;;;###autoload
 (defun rwd-insert-arrange-frame ()
