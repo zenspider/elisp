@@ -38,6 +38,7 @@
       (height . 48)
       (font . "Fira Code-18")))
  '(dired-recursive-deletes 'top)
+ '(display-line-numbers-widen t)
  '(dumb-jump-project-denoters
    '(".dumbjump" ".projectile" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".svn" "Makefile" "PkgInfo" "-pkg.el" "Rakefile" "test"))
  '(ediff-split-window-function
