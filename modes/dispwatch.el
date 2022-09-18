@@ -10,23 +10,24 @@
 (setq rwd/displays
   `(("default"   14)
 
-    ;; 13" MBP
-    ("1440x900"  14) ; *
-
     ;; 13" MBP M1
     ;; 1024x640 ?!?!
     ("1280x800"  12)
-    ;; 1440x900        *
+    ("1440x900"  14) ; *
     ("1680x1050" 16)
 
-    ;; MBP 16"
+    ;; 13" MBA M2
+    ("1470x956"  16)
+    ("1710x1112" 16)
+
+    ;; 16" MBP
     ("1152x720"  10)
     ("1344x840"  13)
     ("1536x960"  15)
     ("1792x1120" 16) ; *
     ("2048x1280" 18)
 
-    ;; pairing MPB 16" w/ HP 27Z @ 60hz
+    ;; 16" MPB paired with HP 27Z @ 60hz
     ("1280x720"   9)
     ("1920x1080" 12)
     ("2560x1440" 16)
@@ -41,6 +42,7 @@
     ;;3840x2160
 
     ;; 13" MBP M1 paired with HP 27Z @ 60hz usbc
+    ;; 13" MBP M2 paired with HP 27Z @ 60hz usbc (same)
 
     ("1504x846"  15)
     ;;1920x1080
@@ -115,6 +117,7 @@
   (setq dispwatch-current-display nil))
 
 ;; (rwd/display-setup 36)
+;; (rwd-ns-fullscreen)
 ;; (rwd/display-reset)
 
 (provide 'modes/dispwatch)
