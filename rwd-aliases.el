@@ -737,6 +737,12 @@ Essentially, I didn't like the format of generate-new-buffer-name."
         (message "Don't know how yet"))))
 
 ;;;###autoload
+(defun rwd-ediff-split-window-function (&optional _size)
+  (if (> (frame-width) 150)
+      (split-window-horizontally)
+    (split-window-vertically)))
+
+;;;###autoload
 (add-hook 'temp-buffer-setup-hook 'split-horizontally-not-vertically)
 
 ;;;###autoload

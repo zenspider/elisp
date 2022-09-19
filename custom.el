@@ -41,14 +41,8 @@
  '(display-line-numbers-widen t)
  '(dumb-jump-project-denoters
    '(".dumbjump" ".projectile" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".svn" "Makefile" "PkgInfo" "-pkg.el" "Rakefile" "test"))
- '(ediff-split-window-function
-   (lambda
-     (&optional x)
-     (if
-         (>
-          (frame-width)
-          150)
-         'split-window-horizontally 'split-window-vertically)) nil nil "TODO: phase out? I think this might not be needed with the general window work")
+ '(ediff-split-window-function #'rwd-ediff-split-window-function
+                               nil nil "TODO: phase out? I think this might not be needed with the general window work")
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
