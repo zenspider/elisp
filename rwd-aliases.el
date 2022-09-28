@@ -54,6 +54,12 @@
   (buffer-substring-no-properties (point-min) (point-max)))
 
 ;;;###autoload
+(defun display-buffer-below-selected-window (buffer alist)
+  (with-minibuffer-selected-window
+    (display-buffer-in-direction buffer
+                                 (cons '(direction . down) alist))))
+
+;;;###autoload
 (defun rwd/imenu/push (_item)
   (xref-push-marker-stack))
 
