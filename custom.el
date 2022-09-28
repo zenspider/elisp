@@ -30,6 +30,8 @@
  '(comment-style 'extra-line)
  '(compilation-error-regexp-alist '(bash clang-include gnu gcc-include ruby-Test::Unit))
  '(completion-styles '(basic partial-completion initials flex))
+ '(completions-detailed t)
+ '(completions-format 'one-column)
  '(confirm-kill-processes nil)
  '(default-frame-alist
     '((wait-for-wm)
@@ -41,8 +43,7 @@
  '(display-line-numbers-widen t)
  '(dumb-jump-project-denoters
    '(".dumbjump" ".projectile" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".svn" "Makefile" "PkgInfo" "-pkg.el" "Rakefile" "test"))
- '(ediff-split-window-function #'rwd-ediff-split-window-function
-                               nil nil "TODO: phase out? I think this might not be needed with the general window work")
+ '(ediff-split-window-function #'rwd-ediff-split-window-function nil nil "TODO: phase out? I think this might not be needed with the general window work")
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(elscreen-display-tab nil)
  '(emerge-diff-options "--ignore-all-space")
@@ -123,6 +124,7 @@
  '(magithub-api-low-threshold 30)
  '(magithub-api-timeout 3)
  '(markdown-fontify-code-blocks-natively t)
+ '(max-mini-window-height 0.33)
  '(mediawiki-site-alist
    '(("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "Main Page")
      ("devchix" "http://www.wiki.devchix.com/" "zenspider" "" "Main Page")))
@@ -154,7 +156,9 @@
  '(racket-program "~/Applications/dev/lisp/Racket/bin/racket")
  '(racket-show-functions '(racket-show-echo-area))
  '(read-buffer-completion-ignore-case t)
+ '(read-file-name-completion-ignore-case t)
  '(require-final-newline t)
+ '(resize-mini-windows t)
  '(rg-keymap-prefix "r")
  '(safe-local-variable-values
    '((ffip-project-root . "~/Work/git/zendesk/zendesk--rails5/")
@@ -185,6 +189,7 @@
  '(tab-width 8)
  '(tags-case-fold-search nil)
  '(tags-revert-without-query t)
+ '(temp-buffer-resize-mode t)
  '(tool-bar-mode nil)
  '(tooltip-mode nil)
  '(tramp-copy-size-limit 1024)
