@@ -88,6 +88,19 @@ the current fill-column."
 (rwd/nth-column-for-matching-buffers -1 "\\*info\\|\\*help")
 (rwd/nth-column-for-matching-buffers -1 "^magit:")
 
+(add-to-list 'display-buffer-alist
+             '("\\*Completions\\*"
+               (
+                display-buffer-below-selected-window
+                display-buffer-pop-up-window
+                display-buffer-use-some-window
+                )
+               (window (minibuffer-selected-window))
+               (inhibit-same-window . t)
+               (window-height       . .5)
+               ))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; usual 2 column code & execution
