@@ -5,9 +5,11 @@
 
 (setq package-archives '())             ; remove elpa... fuck that thing
 
-;; TODO: consider ONLY using stable? do any packages disappear?
 (dolist (repo '(("melpa"        . "http://melpa.org/packages/")
-                ("melpa-stable" . "http://stable.melpa.org/packages/")))
+                ("melpa-stable" . "http://stable.melpa.org/packages/")
+                ("gnu"          . "https://elpa.gnu.org/packages/")
+                ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
+                ))
   (add-to-list 'package-archives repo))
 
 (unless (package-installed-p 'package+)
@@ -32,11 +34,13 @@
 (apply 'package-manifest
        '(package+                ; duh
 
+         ansible-doc             ; basic ansible documentation lookup
          auto-dim-other-buffers  ; makes current buffer "pop"
          browse-at-remote        ; like github-browse-file
          browse-kill-ring        ; M-y kill ring browsing
          cyphejor                ; mode renaming. TODO: nuke
          dash                    ; better api for lists
+         dedicated               ; "stick" buffers to windows
          ;; delight              ; mode renaming. now in third-party. TODO: nuke
          dispwatch               ; auto-switching on monitor changes
          expand-region           ; mandatory
@@ -64,10 +68,11 @@
          s                       ; better api for strings
          shell-command           ; tab-completion for `shell-command
          ;; ssh                  ; ssh-mode -- USING MY OWN FORK
-         string-edit             ; AMAZING string-edit-at-point
+         string-edit-at-point    ; AMAZING string-edit-at-point
          w3m                     ; strange web browser FIX
          window-number           ; Jump to window by M-number
          yaml-mode               ; for yaml files.
+         zig-mode                ; new language to play with
 
          ;; trying out:          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -104,14 +109,16 @@
 
          winnow                  ; for refining ag results
 
-         ;;; fighting with window mgmt & big screens:
-         dedicated               ; "stick" buffers to windows
+         unisonlang-mode         ; new language to play with
+
+         eat                     ; terminal emulator, hopefully pry is usable!
          ))
 
 (when (fboundp 'package-quickstart-refresh)
     (package-quickstart-refresh))
 
 ;; (package-refresh-contents)
+;; (package-quickstart-refresh)
 ;; (rwd-recompile-init)
 ;; (package-view-manifest)
 
