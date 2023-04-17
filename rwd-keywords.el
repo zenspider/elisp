@@ -15,7 +15,7 @@
 
 ;;;###autoload
 (setq rwd-programming-modes             ; TODO: move somewhere global
-      '(c-mode
+      '(c-mode zig-mode
         enh-ruby-mode racc-mode ruby-mode sh-mode
         lisp-mode racket-mode scheme-mode emacs-lisp-mode
         markdown-mode yaml-mode))
