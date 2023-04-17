@@ -2,11 +2,10 @@
 ;; ;; Aliases: (use sort-paragraphs on this section)
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(eval-when-compile
+(eval-and-compile
   (require 's)
+  (require 'thingatpt)
   (require 'dash))
-
-(require 's)
 
 (setq path-re
       (rx bol
@@ -319,6 +318,16 @@
 (defalias 'rwd-find-utf-8 'rwd-occur-non-ascii)
 
 ;;;###autoload
+(defun rwd-pp-last-sexp ()
+  "Pretty print the result of the last sexp and comment it out.
+Helps with documenting or debugging logs."
+  (interactive)
+
+  (set-mark (point))
+  (pp-eval-last-sexp t)
+  (comment-dwim nil))
+
+;;;###autoload
 (defun rwd-previous-line-6 ()
   (interactive)
   (line-move-1 -6))
@@ -537,8 +546,6 @@ Essentially, I didn't like the format of generate-new-buffer-name."
           (shell (switch-to-buffer buf)))
       (shell (switch-to-buffer-other-window buf)))))
 
-(require 'dash)
-
 (defun rwd-currently-only-scratch ()
   ;; Modified to check the name so perspective-mode scratch buffers
   ;; count. Also checks any number of windows are all scratch, in case
@@ -665,7 +672,6 @@ Essentially, I didn't like the format of generate-new-buffer-name."
 ;;       (replace-regexp "\\[" "s(" nil start end))))
 
 (defun rwd-select-thing-at-point (type)
-  (require 'thingatpt)
   (let* ((bounds (bounds-of-thing-at-point type)))
     (when bounds
       (goto-char (cdr bounds))
@@ -699,8 +705,6 @@ Essentially, I didn't like the format of generate-new-buffer-name."
 
 (defun rwd-select-all-mm-at-point ()
   (interactive)
-
-  (require 'thingatpt)
   (let ((bounds (bounds-of-thing-at-point 'sexp)))
     (if bounds
         (let* ((start (car bounds))
