@@ -1,13 +1,12 @@
-;;; rcov.el --- colorize untested ruby code
+;;; rcov-overlay.el --- Colorize untested ruby code
 
-;; Copyright (C) 2008 by Ryan Davis
+;; Copyright (C) 2008-2022 by Ryan Davis
 
 ;; Author: Ryan Davis <ryand-ruby@zenspider.com>
-;; Version 1.2
-;; Keywords: no-freakin-clue
-;; Created: 2008-01-14
-;; Compatibility: Emacs 23, 22, 21?
-;; URL(en): http://seattlerb.rubyforge.org/
+;; URL: https://github.org/zenspider/elisp
+;; Keywords: tools, languages
+;; Version: 1.3
+;; Package-Requires: ((a "1.0") (cl-lib "0.5") (emacs "24.1"))
 
 ;;; Posted using:
 ;; (emacswiki-post "rcov-overlay.el")
@@ -42,6 +41,8 @@
 ;; data. Also provided are two rake tasks to help generate the needed
 ;; data.
 
+;; See function `show-coverage'.
+
 ;; The function `overlay-current-buffer-with-command` is actually
 ;; quite flexible as it will execute an external command that returns
 ;; json data specifying regions and colors. It could be used for all
@@ -53,94 +54,79 @@
 
 ;;; History:
 
+;; 1.3 2022-10-17 Updated for modern emacs & simplecov, requires the 'a package.
 ;; 1.2 2009-10-21 Added customizable overlay background color.
 ;; 1.1 2008-12-01 Added find-project-dir to fix path generation issues.
 ;; 1.0 2008-01-14 Birfday.
 
+;;; Code:
+
 (require 'cl)
-(require 'json) ;; From: http://edward.oconnor.cx/2006/03/json.el
-
-;; (global-set-key (kbd "C-c C-r")   'rcov-buffer)
-
-;;
-;; If you use hoe and autotest with the autotest/rcov plugin, all of
-;; this works straight up. Just fire up autotest, let it do its thing,
-;; and you can trigger rcov-buffer to see the coverage on the file.
-
-;;
-;; If you do NOT use hoe, then you should add the following to your rake tasks:
-;; Add this to your Rakefile:
-;;
-;; task :rcov_info do
-;;   ruby "-Ilib -S rcov --text-report --save coverage.info test/test_*.rb"
-;; end
-
-;; task :rcov_overlay do
-;;   rcov, eol = Marshal.load(File.read("coverage.info")).last[ENV["FILE"]], 1
-;;   puts rcov[:lines].zip(rcov[:coverage]).map { |line, coverage|
-;;     bol, eol = eol, eol + line.length
-;;     [bol, eol, "#ffcccc"] unless coverage
-;;   }.compact.inspect
-;; end
-
-(defun buffer-line-regions (buffer-name)
- (let ((lines '()))
-   (with-current-buffer buffer-name
-     (save-excursion
-       (goto-char (point-min))
-       (while (not (eobp))
-         (push (cons (line-beginning-position) (line-end-position)) lines)
-         (forward-line))))
-   (nreverse lines)))
-
-(defun find-coverage-for-buffer (buffer-name)
- (with-current-buffer buffer-name
-   (let* ((cov-file "coverage/.resultset.json")
-          (base-dir (find-project-dir cov-file))
-          (cov-path (concat base-dir cov-file)))
-     cov-path)))
-
-(defun coverage-for-buffer (buffer-name)
-  (with-current-buffer buffer-name
-    (let* ((json-object-type 'alist)
-           (json-array-type 'list)
-           (json-key-type 'string)
-           (path (find-coverage-for-buffer buffer-name))
-           (resultset (json-read-file path))
-           (buffer (buffer-file-name))
-           (files (cdadar resultset))
-           (ranges (cdr (assoc buffer files))))
-      ranges)))
-
-(defun show-coverage ()
-  (interactive)
-  (let* ((buffer (current-buffer))
-         (coverage (coverage-for-buffer buffer)))
-    (with-current-buffer buffer
-      (remove-overlays)
-      (dolist (pair (-filter (lambda (pair)
-                               (let ((cov (cdr pair))) (and (numberp cov) (zerop cov))))
-                             (-zip (buffer-line-regions buffer)
-                                   coverage)))
-        (let* ((range (car pair))
-               (start (car range))
-               (stop (1+ (cdr range))))
-          ;; (message "cov %d to %d" start stop)
-          (overlay-put (make-overlay start stop)
-                       'face (cons 'background-color "#ffcccc")))))
-    (let* ((valid (-filter 'identity coverage))
-           (len   (length valid))
-           (zero  (-count 'zerop valid)))
-      (message "coverage = %.1f%%" (- 100 (/ (* 100.0 zero) len))))))
-
-(define-key enh-ruby-mode-map (kbd "C-c R") 'rcov-clear)
-(define-key enh-ruby-mode-map (kbd "C-c r") 'show-coverage)
+(require 'json)                         ; built into emacs now
+(require 'a)                            ; from melpa
 
 (defcustom rcov-overlay-fg-color
   "#ffcccc"
   "The default background color."
   :group 'rcov-overlay
   :type 'color)
+
+;; ruby-mode-map
+
+;;;###autoload
+(defun show-coverage ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (remove-overlays)
+    (->> buffer-name
+         (coverage-for-buffer)
+         (coverage-to-lines)
+         (lines-to-regions)
+         (make-overlays-for-regions))))
+
+;;;###autoload
+(defun rcov-clear ()
+  (interactive)
+  (remove-overlays))
+
+;;; Utilities:
+
+(defun find-coverage-file-for-buffer (buffer-name)
+ (with-current-buffer buffer-name
+   (let* ((cov-file "coverage/.resultset.json")
+          (base-dir (find-project-dir cov-file))
+          (cov-path (concat base-dir cov-file)))
+     cov-path)))
+
+(defun coverage-read-json (cov-path)
+  (let ((json-array-type 'list)
+        (json-key-type   'string))
+    (json-read-file cov-path)))
+
+(defun coverage-for-buffer (buffer-name)
+  (let* ((buffer (get-buffer buffer-name))
+         (source-path (buffer-file-name buffer))
+         (cov-path (find-coverage-file-for-buffer buffer-name))
+         (coverage (coverage-read-json cov-path)))
+    (a-get* coverage "Minitest" "coverage" source-path "lines")))
+
+(defun coverage-to-lines (coverage)
+  (->> coverage
+       (-map-indexed #'cons)
+       (--filter (eq 0 (cdr it)))
+       (-map #'car)
+       (-map #'1+)))
+
+(defun lines-to-regions (lines)
+  (--map (cons (point-at-bol it)
+               (point-at-eol it))
+         lines))
+
+(defun make-overlays-for-regions (regions)
+  (--each regions
+    (overlay-put (make-overlay (car it) (cdr it))
+                 'face (cons 'background-color "#ffcccc"))))
 
 (defun find-project-dir (file &optional dir)
   (or dir (setq dir default-directory))
@@ -150,29 +136,6 @@
         nil
       (find-project-dir file (expand-file-name (concat dir "../"))))))
 
-(defun overlay-current-buffer-with-command (cmd)
-  "cmd must output serialized json of the form [[start stop color] ...]"
-  (let* ((json-object-type 'plist)
-         (json-array-type 'list)
-         (json (shell-command-to-string cmd))
-         (ranges (json-read-from-string json)))
-    (rcov-clear)
-    (dolist (range ranges)
-      (overlay-put
-       (make-overlay (car range) (cadr range))
-       'face (cons 'background-color rcov-overlay-fg-color)))))
-
-(defun rcov-buffer (buffer)
-  (interactive (list (current-buffer)))
-  (with-current-buffer buffer
-    (overlay-current-buffer-with-command
-     (concat "rake -s rcov_overlay FILE=\""
-             (file-relative-name
-              (buffer-file-name)
-              (find-project-dir "coverage.info")) "\" 2>/dev/null"))))
-
-(defun rcov-clear ()
-  (interactive)
-  (remove-overlays))
-
 (provide 'rcov-overlay)
+
+;;; rcov-overlay.el ends here
