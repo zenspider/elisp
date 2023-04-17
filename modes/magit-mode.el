@@ -1,20 +1,28 @@
-(require 'magit)
+;; (require 'magit)
+
+(eval-when-compile
+  (require 'json)
+  (require 'magit)
+  (require 'magit-diff))
 
 (with-eval-after-load 'transient
+  (message "TRANSIENT!")
   (transient-bind-q-to-quit))
 
 ;; M1 macs install into /opt/homebrew/bin:
 ;; intel macs install into /usr/local/bin
-(unless (file-executable-p magit-git-executable)
-  (let* ((paths '("/opt/homebrew/bin/git" "/usr/local/bin/git"))
-         (paths (mapcar   #'expand-file-name paths))
-         (found (seq-find #'file-exists-p    paths)))
-    (if found
-        (setq magit-git-executable found)
-      (message "git executable not found!"))))
+(with-eval-after-load 'magit
+  (unless (file-executable-p magit-git-executable)
+    (let* ((paths '("/opt/homebrew/bin/git" "/usr/local/bin/git"))
+           (paths (mapcar   #'expand-file-name paths))
+           (found (seq-find #'file-exists-p    paths)))
+      (if found
+          (setq magit-git-executable found)
+        (message "git executable not found!")))))
 
-(unless (file-executable-p with-editor-emacsclient-executable)
-  (setq with-editor-emacsclient-executable "/opt/homebrew/bin/emacsclient"))
+(with-eval-after-load 'with-editor
+  (unless (file-executable-p with-editor-emacsclient-executable)
+    (setq with-editor-emacsclient-executable "/opt/homebrew/bin/emacsclient")))
 
 ;; from http://www.ogre.com/node/447
 
@@ -25,11 +33,6 @@
   (grep-find (concat "git --no-pager grep -P -n "
                      search
                      " `git rev-parse --show-toplevel`")))
-
-(eval-when-compile
-  (require 'json)
-  (require 'magit)
-  (require 'magit-diff))
 
 (with-eval-after-load 'magit
   (let ((maps (list magit-file-section-map magit-hunk-section-map)))
