@@ -29,6 +29,7 @@
 (setq package-archive-priorities
       '(("melpa-stable" . -20)
         ("gnu"          .   0)
+        ("nongnu"       .   5)
         ("melpa"        .  10)))
 
 (apply 'package-manifest
@@ -112,6 +113,7 @@
          unisonlang-mode         ; new language to play with
 
          eat                     ; terminal emulator, hopefully pry is usable!
+         coterm
          ))
 
 (when (fboundp 'package-quickstart-refresh)
