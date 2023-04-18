@@ -33,6 +33,7 @@
  '(completions-detailed t)
  '(completions-format 'one-column)
  '(confirm-kill-processes nil)
+ '(coterm-mode t)
  '(default-frame-alist
     '((wait-for-wm)
       (top . 0)
@@ -110,7 +111,7 @@
  '(magit-refresh-verbose t)
  '(magit-refs-filter-alist
    '(("-deploy$")
-     ("zenspider\\|R5U\\|r5u\\|rails5\\|master$" . t)
+     ("zenspider\\|[rR]5?[uU][/-]\\|rails5\\|master$\\|main$\\|gem_bump\\|dirty_dep\\|JUNK" . t)
      (".")))
  '(magit-refs-pad-commit-counts t)
  '(magit-repository-directories
@@ -179,6 +180,7 @@
  '(send-mail-function 'smtpmail-send-it)
  '(sentence-end-double-space nil)
  '(set-mark-command-repeat-pop t)
+ '(shell-file-name "/bin/bash")
  '(show-paren-mode t)
  '(smtpmail-smtp-server "envy.zenspider.com")
  '(smtpmail-smtp-service 25)
