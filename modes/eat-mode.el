@@ -43,12 +43,10 @@
               eat-semi-char-non-bound-keys))
 (eat-update-semi-char-mode-map)
 
-(defalias 'rwd-shell 'rwd-shell-old "The old rwd-shell command")
-
 ;; TODO: fold this back into rwd-aliases when it feels right
 
 ;;;###autoload
-(defun rwd-shell ()
+(defun rwd-term-eat ()
   "Create a shell (using eat) buffer that is properly named (shell-<N>)"
   (interactive)
   (let ((buf (rwd-unique-buffer "shell")))
