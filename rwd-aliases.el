@@ -874,23 +874,8 @@ Essentially, I didn't like the format of generate-new-buffer-name."
     (insert (format"%s %.1f %.1f\n" (shell-command-to-string "today") weight bodyfat))))
 
 ;;;###autoload
-(defun github-open-url ()
-  (interactive)
-  (unless (vc-git-registered (buffer-file-name))
-    (error "This is not a git file!"))
-  (save-excursion
-    (let* ((git-url    (shell-command-to-string "git config remote.origin.url"))
-           (git-dir    (vc-git-root (buffer-file-name)))
-           (rel-dir    (file-relative-name (buffer-file-name) git-dir))
-           (branch     (remove-in-string
-                         (shell-command-to-string "git symbolic-ref HEAD")
-                        "refs/heads/\\|\n"))
-           (url-base   (remove-in-string git-url "\\.git\n*\\|git:"))
-           (start-line (line-number-at-pos (region-beginning)))
-           (end-line   (line-number-at-pos (region-end)))
-           (url        (format "http:%s/blob/%s/%s#L%d-%d"
-                               url-base branch rel-dir start-line end-line)))
-      (browse-url url))))
+(defun get-gh-token ()
+  (car (process-lines "gh" "auth" "token")))
 
 ;;; http://www.emacswiki.org/emacs/SortWords
 (defun sort-words (reverse beg end)
