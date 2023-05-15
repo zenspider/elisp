@@ -1,5 +1,3 @@
-;; (require 'magit)
-
 (eval-when-compile
   (require 'json)
   (require 'magit)
@@ -38,34 +36,6 @@
   (let ((maps (list magit-file-section-map magit-hunk-section-map)))
     (--each maps
       (define-key it (kbd "RET") 'magit-diff-visit-worktree-file-other-window))))
-
-(defun magit-toggle-whitespace ()
-  (interactive)
-  (if (member "-w" magit-diff-arguments)
-      (magit-dont-ignore-whitespace)
-    (magit-ignore-whitespace)))
-
-(defun magit-ignore-whitespace ()
-  (interactive)
-  (add-to-list 'magit-diff-arguments "-w")
-  (magit-refresh))
-
-(defun magit-dont-ignore-whitespace ()
-  (interactive)
-  (setq magit-diff-arguments (remove "-w" magit-diff-arguments))
-  (magit-refresh))
-
-(defun yaml-to-json (path)
-  (let* ((rb "ruby -ryaml -rjson -e 'puts JSON.dump YAML.load File.read ARGV.shift' ")
-         (cmd (concat rb path)))
-    (condition-case nil
-        (json-read-from-string (shell-command-to-string cmd))
-      (json-error nil))))
-
-(defun get-hub-token ()
-  (let* ((json (yaml-to-json "~/.config/hub"))
-         (gh   (and json (alist-get 'github.com json))))
-    (and gh (alist-get 'oauth_token (aref gh 0)))))
 
 (setq magit-last-seen-setup-instructions "1.4.0")
 
@@ -106,9 +76,47 @@
     (message "Visiting PR @ %s" url)
     (browse-url url)))
 
+(defun rwd/magit-diff-file-master ()
+  (interactive)
+  (magit-diff-range (format "%s..." (magit-name-remote-branch "origin/HEAD"))
+                    (quote ("--no-ext-diff" "--stat"))
+                    (list (buffer-file-name))))
+
+(defun rwd/magit-diff-branch-master ()
+  (interactive)
+  (magit-diff-range (format "%s..." (magit-name-remote-branch "origin/HEAD"))
+                    (quote ("--no-ext-diff" "--stat"))))
+
+;; https://with-emacs.com/posts/tutorials/almost-all-you-need-to-know-about-variables/
+
+(defun rwd/toggle-custom-variable (symbol)
+  (if (custom-variable-p symbol)
+      (let ((current-value  (default-value symbol))
+            (saved-value    (eval (car (get symbol 'saved-value)))))
+        (if (equal current-value saved-value)
+            (let ((set            (or (get symbol 'custom-set) 'set-default))
+                  (standard-value (get symbol 'standard-value)))
+              (funcall set symbol (eval (car standard-value))))
+          (custom-reevaluate-setting symbol)))))
+
+(defun rwd/magit/toggle-refs-filter ()
+  "Toggle filtering regexp for magit-refs-filter-alist"
+  (interactive)
+  (rwd/toggle-custom-variable 'magit-refs-filter-alist))
+
+;; (setq vc-git-annotate-switches '("--no-show-name"))
+
+;; (defun rwd/magit-diff-visit-file/toggle-other (orig-fn file other-window)
+;;   (apply orig-fn (list file (not other-window))))
+;;
+;; (advice-add 'magit-diff-visit-file :around #'rwd/magit-diff-visit-file/toggle-other)
+;; ;; (advice-remove 'magit-diff-visit-file 'rwd/magit-diff-visit-file/toggle-other)
+
 ;;; https://magit.vc/manual/magit/Performance.html
 
 ;; (setq magit-refresh-status-buffer nil)
+
+;; (magit-toggle-verbose-refresh)
 
 ;; (setq auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffers-p)
 
