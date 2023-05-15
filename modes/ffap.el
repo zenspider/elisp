@@ -24,7 +24,7 @@ cell of FUNCs rather than their value cell.
 (defun rwd/ffap-like-emacs27 (orig-fun &rest args)
   ;; put simply, replace that last find-file with ffap-file-finder
   (dflet ((find-file (filename &optional wildcards)
-             (funcall ffap-file-finder (expand-file-name filename))))
+                     (funcall ffap-file-finder (expand-file-name filename))))
     (apply orig-fun args)))
 
 (advice-add 'find-file-at-point :around #'rwd/ffap-like-emacs27)
