@@ -653,33 +653,17 @@ Essentially, I didn't like the format of generate-new-buffer-name."
 ;;;###autoload
 (defalias 'server-stop 'server-force-delete "Stop the server")
 
-;; (defun my-get-mac-font ()
-;;   (list (face-attribute 'default :family)
-;;         (/ (face-attribute 'default :height) 10)))
-
-;; (defun my-indent-whole-buffer ()
-;;   "indent whole buffer"
-;;   (interactive)
-;;   (delete-trailing-whitespace)
-;;   (indent-region (point-min) (point-max) nil)
-;;   (untabify (point-min) (point-max)))
-
-;; (defun my-ruby-sexp (start end)
-;;   (interactive "r")
-;;   (save-excursion
-;;     (save-match-data
-;;       (replace-regexp "]" ")" nil start end)
-;;       (replace-regexp "\\[" "s(" nil start end))))
-
 (defun rwd-select-thing-at-point (type)
   (let* ((bounds (bounds-of-thing-at-point type)))
     (when bounds
       (goto-char (cdr bounds))
-      (set-mark (car bounds)))))
+      (set-mark (car bounds))
+      bounds)))
 
 (defun rwd-select-sexp-at-point ()
   (interactive)
-  (rwd-select-thing-at-point 'sexp))
+  (or (rwd-select-thing-at-point 'sexp)
+      (rwd-select-thing-at-point 'defun)))
 
 (defun rwd-select-matching (s &optional end)
   (interactive "sSelect all matching: ")
@@ -951,31 +935,6 @@ Essentially, I didn't like the format of generate-new-buffer-name."
       (let ((ov (make-overlay start (match-beginning 0))))
         (overlay-put ov 'invisible 'rwd-hide-region)
         (overlay-put ov 'display "...")))))
-
-(defun kill-matching-lines (regexp &optional rstart rend interactive)
-  "Kill lines containing matches for REGEXP.
-
-See `flush-lines' or `keep-lines' for behavior of this command.
-
-If the buffer is read-only, Emacs will beep and refrain from deleting
-the line, but put the line in the kill ring anyway.  This means that
-you can use this command to copy text from a read-only buffer.
-\(If the variable `kill-read-only-ok' is non-nil, then this won't
-even beep.)"
-  (interactive
-   (keep-lines-read-args "Kill lines containing match for regexp"))
-  (let ((buffer-file-name nil)) ;; HACK for `clone-buffer'
-    (with-current-buffer (clone-buffer nil nil)
-      (let ((inhibit-read-only t))
-        (keep-lines regexp rstart rend interactive)
-        (kill-region (or rstart (line-beginning-position))
-                     (or rend (point-max))))
-      (kill-buffer)))
-  (unless (and buffer-read-only kill-read-only-ok)
-    ;; Delete lines or make the "Buffer is read-only" error.
-    (flush-lines regexp rstart rend interactive)))
-
-(defalias 'kill-lines 'kill-matching-lines)
 
 (defun rwd-comint-scroll-to-bottom-on-output ()
   (interactive)
