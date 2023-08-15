@@ -110,9 +110,6 @@
 
          winnow                  ; for refining ag results
 
-         unisonlang-mode         ; new language to play with
-
-         eat                     ; terminal emulator, hopefully pry is usable!
          coterm
          ))
 
