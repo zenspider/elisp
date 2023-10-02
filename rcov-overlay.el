@@ -64,6 +64,7 @@
 (require 'cl)
 (require 'json)                         ; built into emacs now
 (require 'a)                            ; from melpa
+(require 'dash)
 
 (defcustom rcov-overlay-fg-color
   "#ffcccc"
@@ -79,7 +80,7 @@
   (save-excursion
     (goto-char (point-min))
     (remove-overlays)
-    (->> buffer-name
+    (->> (buffer-name)
          (coverage-for-buffer)
          (coverage-to-lines)
          (lines-to-regions)
