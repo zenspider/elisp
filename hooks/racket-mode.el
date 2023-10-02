@@ -55,11 +55,3 @@
                     (put x 'racket-indent-function dent))
                   xs)))
         specials))
-
-(defadvice racket-test (before racket-test-clear compile activate)
-  (with-racket-repl-buffer
-    (rwd-shell-clear)))
-
-(defadvice racket-run (before racket-run-clear compile activate)
-  (with-racket-repl-buffer
-    (rwd-shell-clear)))
