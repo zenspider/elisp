@@ -496,14 +496,15 @@ height (pixelwise) and split based on size."
 ;;;###autoload
 (defun rwd-set-font-size (size)
   (interactive "nSize: ")
-  (rwd-set-mac-font "Fira Code" size))
+  (rwd-set-mac-font "FiraCode Nerd Font" size))
 
 ;;;###autoload
 (defun rwd-set-mac-font (name size)
   (interactive
    (list (completing-read "font-name: "
                           (mapcar (lambda (p) (list p p))
-                                  (font-family-list)) nil t)
+                                  (font-family-list))
+                          nil t)
          (read-number "size: " 12)))
   (set-face-attribute 'default nil
                       :family name
