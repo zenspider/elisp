@@ -214,6 +214,18 @@
   (kill-new (htmlize-region-for-paste (point-min) (point-max))))
 
 ;;;###autoload
+(defun rwd-file-line ()
+  "Calculate path/to/file:line relative to current project."
+  (interactive)
+  (let* ((file (buffer-file-name))
+         (line (line-number-at-pos))
+         (proj (expand-file-name (project-root (project-current))))
+         (path (file-relative-name file proj))
+         (str  (format "%s:%d" path line)))
+    (kill-new str)
+    (message "%s added to kill-ring" str)))
+
+;;;###autoload
 (defun rwd-insert-shebang ()
   "Insert a shebang line based on mode into the file."
   (interactive)
