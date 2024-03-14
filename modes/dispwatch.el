@@ -56,7 +56,7 @@
 ;; (rwd-split-smart)
 ;; (rwd/current-display)
 
-(defcustom rwd/default-font "Fira Code"
+(defcustom rwd/default-font "FiraCode Nerd Font"
   "Default font to use in all windows."
   :type 'string
   :group 'rwd/gui)
