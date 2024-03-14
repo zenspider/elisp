@@ -35,11 +35,11 @@
  '(confirm-kill-processes nil)
  '(coterm-mode t)
  '(default-frame-alist
-    '((wait-for-wm)
-      (top . 0)
-      (width . 80)
-      (height . 48)
-      (font . "Fira Code-18")))
+   '((wait-for-wm)
+     (top . 0)
+     (width . 80)
+     (height . 48)
+     (font . "FiraCode Nerd Font-18")))
  '(dired-recursive-deletes 'top)
  '(display-line-numbers-widen t)
  '(dumb-jump-project-denoters
