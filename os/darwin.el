@@ -35,5 +35,10 @@
 ;; (getenv "VISUAL")
 ;; (getenv "LANG")
 
-(global-unset-key (kbd "C-<wheel-down>"))
-(global-unset-key (kbd "C-<wheel-up>"))
+;; mac-mouse-wheel-text-scale
+(keymap-global-unset "C-<wheel-down>")
+(keymap-global-unset "C-<wheel-up>")
+
+;; mac-previous-buffer & mac-next-buffer
+(keymap-global-unset "<swipe-left>")
+(keymap-global-unset "<swipe-right>")
