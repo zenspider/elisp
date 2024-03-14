@@ -44,6 +44,12 @@ Then switch to the process buffer."
 (set-register ?P "require \"pry\"; binding.pry\n")
 
 ;;;###autoload
+(set-register ?I "require \"irb\"; binding.irb\n")
+
+;;;###autoload
+(set-register ?D "require \"debug\"; binding.break\n")
+
+;;;###autoload
 (set-register ?T "require 'minitest/autorun'
 
 class TestXXX < Minitest::Test
