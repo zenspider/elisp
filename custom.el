@@ -179,6 +179,8 @@
  '(search-whitespace-regexp nil)
  '(send-mail-function 'smtpmail-send-it)
  '(sentence-end-double-space nil)
+ '(server-client-instructions nil)
+ '(server-window 'pop-to-buffer)
  '(set-mark-command-repeat-pop t)
  '(shell-file-name "/bin/bash")
  '(show-paren-mode t)
