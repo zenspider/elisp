@@ -1192,5 +1192,12 @@ already narrowed."
 (advice-add 'yank :after #'rwd/unfuck/yank)
 ;; (advice-remove 'yank #'rwd/unfuck/text)
 
+(defun rwd-yank-overwrite ()
+  (interactive)
+  (let* ((str (substring-no-properties (current-kill 0)))
+         (len (length str)))
+    (insert str)
+    (delete-char len)))
+
 ;; (setq urlreg "\\(?:http://\\)?www\\(?:[./#\+-]\\w*\\)+")
 ;; (re-seq urlreg (buffer-string))
