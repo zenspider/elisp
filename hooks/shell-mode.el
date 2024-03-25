@@ -1,3 +1,5 @@
+(shell-dirtrack-mode -1)
+
 (setq ansi-color-for-comint-mode 'filter)
 
 (setq shell-dirstack-query "dirs -l")
