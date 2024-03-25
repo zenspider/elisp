@@ -1,4 +1,4 @@
-(with-eval-after-load 'dumb-jump
+(when-idle rwd-idle-time
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 
   ;; (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
