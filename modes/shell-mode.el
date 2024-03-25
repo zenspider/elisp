@@ -1,6 +1,8 @@
 (eval-when-compile
   (require 'comint))
 
+(add-hook 'comint-output-filter-functions #'comint-osc-process-output)
+
 (defun comint-scroll-to-bottom-on-output ()
   (interactive)
   (setq comint-scroll-to-bottom-on-input t)
