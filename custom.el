@@ -208,6 +208,7 @@
  '(vc-display-status nil)
  '(vc-handled-backends '(CVS SVN Git))
  '(vc-svn-program-name "/usr/bin/svn")
+ '(vertico-buffer-display-action '(display-buffer-below-selected (window-height . 13)))
  '(visible-bell t)
  '(warning-suppress-types '((undo discard-info)))
  '(wdired-allow-to-change-permissions 'advanced)
