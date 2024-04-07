@@ -245,6 +245,16 @@
   (join-line -1))
 
 ;;;###autoload
+(defun rwd-keymap-holepunch (mode &rest keys)
+  "Removes bindings for KEYS in MODE local to the current buffer."
+  ;; Generalized from: https://blog.ryuslash.org/archives/2023/04/12/ielm-paredit
+  ;; minor-mode-overriding-map-alist is automatically buffer-local
+  (let* ((old   (map-elt minor-mode-map-alist mode))
+         (holes (seq-mapcat (lambda (k) (list k nil)) keys)) ; '(A nil B nil...)
+         (new   (apply #'define-keymap :parent old holes)))
+    (push `(,mode . ,new) minor-mode-overriding-map-alist)))
+
+;;;###autoload
 (defun rwd-lappy ()
   (interactive)
   (delete-other-windows)
