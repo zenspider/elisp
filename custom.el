@@ -42,6 +42,7 @@
      (font . "FiraCode Nerd Font-18")))
  '(dired-recursive-deletes 'top)
  '(display-line-numbers-widen t)
+ '(dumb-jump-force-searcher 'rg)
  '(dumb-jump-project-denoters
    '(".dumbjump" ".projectile" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".svn" "Makefile" "PkgInfo" "-pkg.el" "Rakefile" "test"))
  '(ediff-split-window-function #'rwd-ediff-split-window-function nil nil "TODO: phase out? I think this might not be needed with the general window work")
@@ -218,6 +219,8 @@
    '(c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode markdown-mode racc-mode racket-mode ruby-mode rust-mode scheme-mode sml-mode text-mode conf-unix-mode yaml-mode))
  '(whitespace-style '(face tabs trailing lines-tail space-before-tab empty))
  '(window-combination-resize t)
+ '(xref-search-program 'ripgrep)
+ '(xref-show-definitions-function 'xref-show-definitions-buffer-at-bottom)
  '(zenspider/magit-exclude-projects '("zendesk/zendesk")))
 
 ;; TODO: figure out why this doesn't work in git-blame frames
