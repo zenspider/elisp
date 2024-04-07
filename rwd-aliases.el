@@ -42,6 +42,10 @@
 ;; (advice-remove 'find-file-at-point #'rwd/find-file-at-point/numbers)
 
 ;;;###autoload
+(defun rwd/ielm/save-history (_str)
+  (with-file-modes #o600 (comint-write-input-ring)))
+
+;;;###autoload
 (defun rwd/narrow-to-region-indirect/line-numbers (&rest _)
   (display-line-numbers-mode))
 
