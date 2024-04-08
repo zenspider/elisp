@@ -77,6 +77,8 @@
 
          ;; trying out:          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+         mct                     ; minimal completing-read enhancement
+
          copy-as-format
          default-text-scale      ; change font sizes globally
          diff-at-point

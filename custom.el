@@ -74,6 +74,7 @@
  '(ffap-file-finder 'find-file-other-window)
  '(ffap-lax-url nil)
  '(ffap-machine-p-known 'accept)
+ '(ffip-project-file '(".svn" ".hg" ".git" "test" "Rakefile"))
  '(find-file-visit-truename t)
  '(flycheck-display-errors-function 'flycheck-display-error-messages-unless-error-list)
  '(flyspell-delayed-commands '(kmacro-call-macro kmacro-end-and-call-macro))
@@ -126,6 +127,11 @@
  '(magithub-api-timeout 3)
  '(markdown-fontify-code-blocks-natively t)
  '(max-mini-window-height 0.33)
+ '(mct-completion-passlist
+   '(Info-goto-node Info-index Info-menu find-file-in-project ffip file))
+ '(mct-hide-completion-mode-line t)
+ '(mct-mode t)
+ '(mct-remove-shadowed-file-names t)
  '(mediawiki-site-alist
    '(("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "Main Page")
      ("devchix" "http://www.wiki.devchix.com/" "zenspider" "" "Main Page")))
