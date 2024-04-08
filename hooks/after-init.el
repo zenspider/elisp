@@ -1,1 +1,1 @@
-(setq file-name-handler-alist rwd-file-name-handler-alist) ; see early-init.el
+;; moved to hooks/emacs-startup.el to make it later
