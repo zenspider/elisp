@@ -33,6 +33,9 @@
   (defun gsk (key fn)
     (global-set-key (kbd key) fn))
 
+  (defun grk (old-fn new-fn)
+    (global-set-key (vector 'remap old-fn) new-fn))
+
   (defalias 'rsk 'rwd-smart-keys)
 
   (gsk "<f7>"    'rwd-toggle-split)               ; undefined
@@ -51,8 +54,6 @@
   (gsk "C-h f"   'helpful-callable)               ; better help for a thing
   (gsk "C-h k"   'helpful-key)                    ; better help for a key
   (gsk "C-h v"   'helpful-variable)               ; better help for a var
-  (gsk "C-x C-b" 'bs-show)                        ; was list-buffers
-  (gsk "C-x C-p" 'find-file-at-point)             ; was mark-page
   (gsk "C-x C-t" 'toggle-buffer)                  ; was transpose-lines
   (gsk "C-x f"   'find-file)                      ; was set-fill-column, typos
   (gsk "C-x r t" 'inline-string-rectangle)        ; was string-rectangle
@@ -61,6 +62,12 @@
   (gsk "M-}"     'indent-rigidly-2)               ; undefined
   ;; (global-unset-key (kbd "M-[")) ; ensure bracketed paste works
   (gsk "M-j"     'rwd-join-lines)                 ; was indent-new-comment-line
+
+  ;; Remaps!
+
+  ;; TODO? (grk #'comment-dwim #'comment-line)       ; M-;
+  (grk #'list-buffers #'bs-show)            ; C-x C-b
+  (grk #'mark-page    #'find-file-at-point) ; C-x C-p
 
   ;; experiment: cycle through buffers of the same mode
   (gsk "C-`"     'bs-cycle-next)            ; go to next buffer of same mode
@@ -87,7 +94,7 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; violations that need to be changed over time
 
-  (gsk "C-c C-s" 'rwd-select-all-mm-at-point)
+  (gsk "C-c C-s" 'rwd-select-sexp-at-point)
   (gsk "C-c M-q" 'unfill-paragraph)
   (gsk "M-s"     'fixup-whitespace) ; useful search/highlight stuff
   (gsk "M-S"     'rwd-fixup-whitespace)
