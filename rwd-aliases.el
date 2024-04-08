@@ -145,7 +145,7 @@
 (defun read-file-to-string (path)
   (with-temp-buffer
     (insert-file-contents-literally path)
-    (buffer-string)))
+    (buffer-substring-no-properties (point-min) (point-max))))
 
 ;;;###autoload
 (defmacro remove-from-list (var x)
