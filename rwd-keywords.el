@@ -33,3 +33,6 @@
            (list (list yellow-tokens 0 ''my-yellow-face 'prepend)
                  (list red-tokens    0 ''my-red-face    'prepend))))
         rwd-programming-modes))
+
+(font-lock-add-keywords 'yaml-mode '(("\\<true\\>")) 'prepend)
+(font-lock-add-keywords 'yaml-mode '(("\\<false\\>")) 'prepend)
