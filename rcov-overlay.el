@@ -110,7 +110,9 @@
          (source-path (buffer-file-name buffer))
          (cov-path (find-coverage-file-for-buffer buffer-name))
          (coverage (coverage-read-json cov-path)))
-    (a-get* coverage "Minitest" "coverage" source-path "lines")))
+    (if (a-get* coverage "Minitest")
+        (a-get* coverage "Minitest" "coverage" source-path "lines")
+      (a-get* coverage "RSpec" "coverage" source-path "lines"))))
 
 (defun coverage-to-lines (coverage)
   (->> coverage
