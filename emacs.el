@@ -25,7 +25,7 @@
        (host        (system-name))
        (to          (string-search "." host))
        (host-name   (if   to (substring host 0 to) host))
-       (domain-name (when to (substring host (1+ to))))))
+       (domain-name (when to (substring host (1+ to)))))
   (rwd-load (concat "os/" os-name)         t)  ;; os/darwin
   (rwd-load (concat "domain/" domain-name) t)  ;; domain/zenspider.com
   (rwd-load (concat "host/" host-name)     t)) ;; host/greed
