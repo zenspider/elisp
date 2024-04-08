@@ -41,7 +41,7 @@ Then switch to the process buffer."
                            (current-buffer) t))
 
 ;;;###autoload
-(set-register ?P "require \"pry\"; binding.pry\n")
+(set-register ?P "require \"pry\"; binding.pry # ryand\n")
 
 ;;;###autoload
 (set-register ?I "require \"irb\"; binding.irb\n")
@@ -72,6 +72,7 @@ end")
    (rwd-ws "LHS.must_be_nil")               "\\1assert_nil \\2"
    (rwd-ws "LHS.must_be_truthy")            "\\1assert \\2"
    (rwd-ws "LHS.must_equal *RHS")           "\\1assert_equal \\3, \\2"
+   (rwd-ws "LHS.must_include(RHS)")         "\\1assert_includes \\2, \\3"
    (rwd-ws "LHS.must_include RHS")          "\\1assert_includes \\2, \\3"
    (rwd-ws "LHS.must_match(RHS)")           "\\1assert_match(\\2, \\3)"
 
@@ -87,11 +88,11 @@ end")
 
    (rwd-ws "lambda *{LHS}.must_raise(RHS)") "\\1assert_raises \\3 do\n\\2\nend"
 
-   ;; more complex example because we need to remove spaces for underscores
-   "it \"\\(.+\\)\" do"
-   (lambda ()
-     (concat "def test_"
-             (replace-regexp-in-string " " "_" (match-string 1))))
+   ;; ;; more complex example because we need to remove spaces for underscores
+   ;; "it \"\\(.+\\)\" do"
+   ;; (lambda ()
+   ;;   (concat "def test_"
+   ;;           (replace-regexp-in-string " " "_" (match-string 1))))
   ))
 
 ;;;###autoload
