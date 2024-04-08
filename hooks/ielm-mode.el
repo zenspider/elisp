@@ -1,6 +1,3 @@
-(define-key ielm-map (kbd "C-c e") 'rwd-shell-clear)
-(rwd-keymap-holepunch 'paredit-mode "RET" "C-j") ; this punches through paredit
-
 ;; some code adapted from https://www.n16f.net/blog/making-ielm-more-comfortable
 
 (elisp-slime-nav-mode)
@@ -9,6 +6,9 @@
 
 (require 'eval-in-repl)
 (require 'eval-in-repl-ielm)
+
+(define-key ielm-map (kbd "C-c e") 'rwd-shell-clear)
+(rwd-keymap-holepunch 'paredit-mode "RET" "C-j") ; this punches through paredit
 
 (setq eir-jump-after-eval nil)
 (setq eir-ielm-eval-in-current-buffer t)
