@@ -1,5 +1,8 @@
 ;; TODO: move most of these defuns out to rwd-aliases (and rename)
 
+(eval-when-compile
+  (require 'dash))
+
 ;;;###autoload
 (defun canonical-file-path (path)
   (file-truename (expand-file-name path)))
