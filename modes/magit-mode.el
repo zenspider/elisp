@@ -87,6 +87,16 @@
   (magit-diff-range (format "%s..." (magit-name-remote-branch "origin/HEAD"))
                     (quote ("--no-ext-diff" "--stat"))))
 
+(defun rwd/magit-bisect-all ()
+  (interactive)
+  (magit-bisect-start "HEAD" (magit-name-remote-branch "origin/HEAD") '()))
+
+(defun rwd/magit-show-refs-head-sorted (&optional args)
+  "List and compare references in a dedicated buffer, but sorted by -commiterdate
+Compared with `HEAD'."
+  (interactive (list (magit-show-refs-arguments)))
+  (magit-refs-setup-buffer "HEAD" (cons "--sort=-committerdate" args)))
+
 ;; https://with-emacs.com/posts/tutorials/almost-all-you-need-to-know-about-variables/
 
 (defun rwd/toggle-custom-variable (symbol)

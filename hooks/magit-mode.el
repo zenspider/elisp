@@ -1,4 +1,13 @@
 (transient-append-suffix 'magit-diff "p" '("m" "main.." rwd/magit-diff-file-master))
+(transient-append-suffix
+  'magit-bisect
+  "s" ;; after start script
+  '("a" "all" rwd/magit-bisect-all))
+
+(transient-append-suffix
+  'magit-show-refs
+  "y" ;; after start script
+  '("Y" "Show refs, sorted by date" rwd/magit-show-refs-head-sorted))
 
 (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)
 (define-key magit-mode-map        (kbd "M-w") nil)
