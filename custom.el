@@ -134,10 +134,6 @@
  '(mct-hide-completion-mode-line t)
  '(mct-mode t)
  '(mct-remove-shadowed-file-names t)
- '(mediawiki-site-alist
-   '(("Wikipedia" "http://en.wikipedia.org/w/" "username" "password" "Main Page")
-     ("devchix" "http://www.wiki.devchix.com/" "zenspider" "" "Main Page")))
- '(mediawiki-site-default "devchix")
  '(ns-alternate-modifier 'none)
  '(ns-command-modifier 'meta)
  '(ns-pop-up-frames nil)
