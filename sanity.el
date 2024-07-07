@@ -1,11 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; These functions and bindings keep ryan sane.
 
-(global-set-key (kbd "C-x C-b") 'bs-show)
-(global-set-key (kbd "M-s")     'fixup-whitespace)
+(keymap-global-set "C-x C-b" 'bs-show)
+(keymap-global-set "M-s"     'fixup-whitespace)
 
 (when window-system
-  (global-unset-key "\C-z")
+  (keymap-global-unset "C-z")
   (setq ns-alternate-modifier    'none
         ns-command-modifier      'meta
         ns-pop-up-frames         nil
@@ -32,10 +32,10 @@
   (scroll-up 1))
 
 ;; compatibility:
-(global-set-key (kbd "M-g")      'goto-line)
-(global-set-key (kbd "<C-up>")   'rwd-previous-line-6)
-(global-set-key (kbd "<C-down>") 'rwd-forward-line-6)
-(global-set-key (kbd "<M-up>")   'rwd-scroll-up)
-(global-set-key (kbd "<M-down>") 'rwd-scroll-down)
+(keymap-global-set "M-g"      'goto-line)
+(keymap-global-set "C-<up>"   'rwd-previous-line-6)
+(keymap-global-set "C-<down>" 'rwd-forward-line-6)
+(keymap-global-set "M-<up>"   'rwd-scroll-up)
+(keymap-global-set "M-<down>" 'rwd-scroll-down)
 
 (provide 'sanity)
