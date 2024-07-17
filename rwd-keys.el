@@ -28,10 +28,10 @@
   ;; to replace anemic 'list-buffers is a very good example of this.
   ;; Some of these keys aren't actually bound globally, but they might
   ;; be specific to modes (even though they should almost all be bound
-  ;; into "C-c C-<letter>...", per standard.
+  ;; into "C-c C-<letter>...", per standard).
 
   (defun gsk (key fn)
-    (global-set-key (kbd key) fn))
+    (keymap-global-set key fn))
 
   (defun grk (old-fn new-fn)
     (global-set-key (vector 'remap old-fn) new-fn))
@@ -41,7 +41,8 @@
   (gsk "<f7>"    'rwd-toggle-split)               ; undefined
   (gsk "<f8>"    'rwd-swap-buffers)               ; undefined
   (gsk "C-M--"   'default-text-scale-decrease)    ; was negative-argument
-  (gsk "C-M-."   'etags-select-find-tag)          ; was xref-find-apropos
+  ;; (gsk "C-M-."   'etags-select-find-tag)          ; was xref-find-apropos
+  ;; (gsk "M-."     'xref-find-definitions-other-window) ; was xref-find-definitions
   (gsk "C-M-;"   'unfill-paragraph)               ; unwrap a parapgraph!
   (gsk "C-M-="   'default-text-scale-increase)    ; bigger font everywhere
   (gsk "C-M-SPC" 'er/expand-region)               ; was mark-sexp
@@ -57,7 +58,7 @@
   (gsk "C-x C-t" 'toggle-buffer)                  ; was transpose-lines
   (gsk "C-x f"   'find-file)                      ; was set-fill-column, typos
   (gsk "C-x r t" 'inline-string-rectangle)        ; was string-rectangle
-  (gsk "M-?"     'etags-select-find-tag-at-point) ; was xref-find-references
+  ;; (gsk "M-?"     'etags-select-find-tag-at-point) ; was xref-find-references
   (gsk "M-{"     'outdent-rigidly-2)              ; undefined
   (gsk "M-}"     'indent-rigidly-2)               ; undefined
   ;; (global-unset-key (kbd "M-[")) ; ensure bracketed paste works
@@ -68,6 +69,8 @@
   ;; TODO? (grk #'comment-dwim #'comment-line)       ; M-;
   (grk #'list-buffers #'bs-show)            ; C-x C-b
   (grk #'mark-page    #'find-file-at-point) ; C-x C-p
+
+  (grk #'xref-find-definitions #'xref-find-definitions-other-window) ; M-.
 
   ;; experiment: cycle through buffers of the same mode
   (gsk "C-`"     'bs-cycle-next)            ; go to next buffer of same mode
@@ -80,10 +83,10 @@
 
   ;; sanity/compatibility (mostly stuff from xemacs):
   (gsk "M-g"      'goto-line)
-  (gsk "<C-up>"   'rwd-previous-line-6)
-  (gsk "<C-down>" 'rwd-forward-line-6)
-  (gsk "<M-up>"   'rwd-scroll-up)
-  (gsk "<M-down>" 'rwd-scroll-down)
+  (gsk "C-<up>"   'rwd-previous-line-6)
+  (gsk "C-<down>" 'rwd-forward-line-6)
+  (gsk "M-<up>"   'rwd-scroll-up)
+  (gsk "M-<down>" 'rwd-scroll-down)
 
   ;; iconify bugs the crap out of me:
   (when window-system (global-unset-key "\C-z"))
