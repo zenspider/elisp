@@ -233,9 +233,9 @@
   "Calculate path/to/file relative to current project or the full path."
   (interactive "p")
   (let* ((path (buffer-file-name))
-         (proj (project-current))
+         (proj (ffip-project-root))
          (path (if proj
-                   (file-relative-name path (expand-file-name (project-root proj)))
+                   (file-relative-name path (expand-file-name proj))
                  path)))
     (when interactivep
       (kill-new path)
