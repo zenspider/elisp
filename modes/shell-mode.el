@@ -1,6 +1,9 @@
 (eval-when-compile
   (require 'comint))
 
+(when-idle rwd-idle-time
+  (coterm-mode +1))
+
 (add-hook 'comint-output-filter-functions #'comint-osc-process-output)
 
 (defun comint-scroll-to-bottom-on-output ()
