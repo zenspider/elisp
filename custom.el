@@ -128,6 +128,7 @@
  '(magithub-api-timeout 3)
  '(markdown-fontify-code-blocks-natively t)
  '(max-mini-window-height 0.33)
+ '(mct-completion-blocklist '(man manual-entry))
  '(mct-completion-passlist
    '(Info-goto-node Info-index Info-menu find-file-in-project ffip file))
  '(mct-hide-completion-mode-line t)
