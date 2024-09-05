@@ -6,6 +6,27 @@
 
 (add-hook 'comint-output-filter-functions #'comint-osc-process-output)
 
+;; hacked to use string-equal-ignore-case
+;; $HOSTNAME=TR9TJ70595, but url-host=tr9tj70595
+(defun ansi-osc-directory-tracker (_ text)
+  "Update `default-directory' from OSC 7 escape sequences.
+
+This function is intended to be included as an element of the
+list that is the value of `ansi-osc-handlers'.  You should arrange
+for your shell to print the appropriate escape sequence at each prompt,
+such as with the following command:
+
+    printf \"\\e]7;file://%s%s\\e\\\\\" \"$HOSTNAME\" \"$PWD\"
+
+This functionality serves as an alternative to `dirtrack-mode'
+and `shell-dirtrack-mode'."
+  (let ((url (url-generic-parse-url text)))
+    (when (and (string= (url-type url) "file")
+               (or (null (url-host url))
+                   (string-equal-ignore-case (url-host url) (system-name))))
+      (ignore-errors
+        (cd-absolute (url-unhex-string (url-filename url)))))))
+
 (defun comint-scroll-to-bottom-on-output ()
   (interactive)
   (setq comint-scroll-to-bottom-on-input t)
