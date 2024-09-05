@@ -33,7 +33,6 @@
  '(completions-detailed t)
  '(completions-format 'one-column)
  '(confirm-kill-processes nil)
- '(coterm-mode t)
  '(default-frame-alist
    '((wait-for-wm)
      (top . 0)
