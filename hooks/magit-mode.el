@@ -1,12 +1,21 @@
-(transient-append-suffix 'magit-diff "p" '("m" "main.." rwd/magit-diff-file-master))
+(transient-append-suffix
+  'magit-diff
+  "p"                                   ; after diff-paths
+  '("m" "main.." rwd/magit-diff-file-master))
+
+(transient-append-suffix
+  'magit-log
+  "h"                                   ; after diff head
+  '("m" "main.." rwd/magit-log-main))
+
 (transient-append-suffix
   'magit-bisect
-  "s" ;; after start script
+  "s"                                   ; after start script
   '("a" "all" rwd/magit-bisect-all))
 
 (transient-append-suffix
   'magit-show-refs
-  "y" ;; after start script
+  "y"                                   ; after normal show refs
   '("Y" "Show refs, sorted by date" rwd/magit-show-refs-head-sorted))
 
 (define-key magit-status-mode-map (kbd "W") 'magit-toggle-whitespace)

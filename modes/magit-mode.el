@@ -76,20 +76,29 @@
     (message "Visiting PR @ %s" url)
     (browse-url url)))
 
+(defun magit-master/main ()
+  (magit-name-remote-branch "origin/HEAD"))
+
 (defun rwd/magit-diff-file-master ()
   (interactive)
-  (magit-diff-range (format "%s..." (magit-name-remote-branch "origin/HEAD"))
+  (magit-diff-range (format "%s..." (magit-master/main))
                     (quote ("--no-ext-diff" "--stat"))
                     (list (buffer-file-name))))
 
 (defun rwd/magit-diff-branch-master ()
   (interactive)
-  (magit-diff-range (format "%s..." (magit-name-remote-branch "origin/HEAD"))
+  (magit-diff-range (format "%s..." (magit-master/main))
                     (quote ("--no-ext-diff" "--stat"))))
+
+(defun rwd/magit-log-main (&optional args files)
+  "Show log for `main...'."
+  (interactive (magit-log-arguments))
+  (magit-log-setup-buffer (list (format "%s..." (magit-master/main)))
+                          args files))
 
 (defun rwd/magit-bisect-all ()
   (interactive)
-  (magit-bisect-start "HEAD" (magit-name-remote-branch "origin/HEAD") '()))
+  (magit-bisect-start "HEAD" (magit-master/main) '()))
 
 (defun rwd/magit-show-refs-head-sorted (&optional args)
   "List and compare references in a dedicated buffer, but sorted by -commiterdate
