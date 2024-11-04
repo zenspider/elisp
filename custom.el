@@ -29,7 +29,7 @@
  '(comment-empty-lines 'eol)
  '(comment-style 'extra-line)
  '(compilation-error-regexp-alist '(bash clang-include gnu gcc-include ruby-Test::Unit))
- '(completion-styles '(basic partial-completion initials flex))
+ '(completion-styles '(basic partial-completion initials flex orderless))
  '(completions-detailed t)
  '(completions-format 'one-column)
  '(confirm-kill-processes nil)
@@ -41,9 +41,6 @@
      (font . "FiraCode Nerd Font-18")))
  '(dired-recursive-deletes 'top)
  '(display-line-numbers-widen t)
- '(dumb-jump-force-searcher 'rg)
- '(dumb-jump-project-denoters
-   '(".dumbjump" ".projectile" ".git" ".hg" ".fslckout" ".bzr" "_darcs" ".svn" "Makefile" "PkgInfo" "-pkg.el" "_FOSSIL_" "Rakefile"))
  '(ediff-split-window-function #'rwd-ediff-split-window-function nil nil "TODO: phase out? I think this might not be needed with the general window work")
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(elscreen-display-tab nil)

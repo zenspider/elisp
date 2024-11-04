@@ -76,8 +76,6 @@ or else the number of characters matched by `outline-regexp'."
 (imenu-add-menubar-index)
 (flyspell-prog-mode)
 
-(dumb-jump-mode)
-
 ;; enh-ruby-mode hooks into expand-region:
 
 (require 'expand-region-core)
