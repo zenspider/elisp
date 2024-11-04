@@ -6,7 +6,6 @@
 (setq package-archives '())             ; remove elpa... fuck that thing
 
 (dolist (repo '(("melpa"        . "http://melpa.org/packages/")
-                ("melpa-stable" . "http://stable.melpa.org/packages/")
                 ("gnu"          . "https://elpa.gnu.org/packages/")
                 ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
                 ))
@@ -39,6 +38,7 @@
          auto-dim-other-buffers  ; makes current buffer "pop"
          browse-at-remote        ; like github-browse-file
          browse-kill-ring        ; M-y kill ring browsing
+         coterm                  ; Terminal emulation for comint
          cyphejor                ; mode renaming. TODO: nuke
          dash                    ; better api for lists
          dedicated               ; "stick" buffers to windows
@@ -83,7 +83,7 @@
          default-text-scale      ; change font sizes globally
          diff-at-point
          dockerfile-mode         ; for Dockerfile files
-         dumb-jump
+         dumber-jump             ; very fast dumb definition search
          elisp-slime-nav         ; M-. M-, for elisp
          eval-in-repl            ; C-RET to send to repls
          flycheck                ; smoother than flyspell
@@ -112,7 +112,7 @@
 
          winnow                  ; for refining ag results
 
-         coterm
+         orderless                      ; experimenting
          ))
 
 (when (fboundp 'package-quickstart-refresh)
