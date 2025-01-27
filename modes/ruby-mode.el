@@ -20,8 +20,4 @@
                 ("\\.gem$"   . tar-mode)))
   (add-to-list 'auto-mode-alist spec))
 
-(add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
-
-(setq ruby-program-name "/usr/bin/env irb")
-
 (defalias 'ruby-find-file 'enh-ruby-find-file)
