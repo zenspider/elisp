@@ -42,7 +42,7 @@
          cyphejor                ; mode renaming. TODO: nuke
          dash                    ; better api for lists
          dedicated               ; "stick" buffers to windows
-         ;; delight              ; mode renaming. now in third-party. TODO: nuke
+         delight                 ; mode renaming. now in third-party.
          dispwatch               ; auto-switching on monitor changes
          expand-region           ; mandatory
          f                       ; better api for files/dirs
@@ -55,6 +55,7 @@
          inf-ruby                ; trying to use more
          keyfreq                 ; stats on actual usage FIX?
          kill-ring-search        ; C-M-y kill ring search FIX
+         lua-mode
          magit                   ; the only reason I can use git
          mode-line-bell          ; visual bell
          multiple-cursors        ; mandatory
@@ -64,7 +65,7 @@
          perspective
          phi-search              ; TODO
          phi-search-mc           ; TODO
-         racket-mode             ; mandatory
+         racket-mode
          rg                      ; ripgrep
          s                       ; better api for strings
          shell-command           ; tab-completion for `shell-command
@@ -72,8 +73,8 @@
          string-edit-at-point    ; AMAZING string-edit-at-point
          w3m                     ; strange web browser FIX
          window-number           ; Jump to window by M-number
-         yaml-mode               ; for yaml files.
-         zig-mode                ; new language to play with
+         yaml-mode
+         zig-mode
 
          ;; trying out:          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -112,7 +113,7 @@
 
          winnow                  ; for refining ag results
 
-         orderless                      ; experimenting
+         orderless               ; experimenting
          ))
 
 (when (fboundp 'package-quickstart-refresh)
