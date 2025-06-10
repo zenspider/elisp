@@ -159,7 +159,6 @@
  '(require-final-newline t)
  '(resize-mini-windows t)
  '(rg-keymap-prefix "r")
- '(rwd/default-font "FiraCode Nerd Font")
  '(safe-local-variable-values
    '((ffip-project-root . "~/Work/git/zendesk/zendesk--rails5/")
      (ffip-project-root . "~/Work/git/zenspider/minitest-lint/")
