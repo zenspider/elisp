@@ -535,7 +535,7 @@ height (pixelwise) and split based on size."
 ;;;###autoload
 (defun rwd-set-font-size (size)
   (interactive "nSize: ")
-  (rwd-set-mac-font "FiraCode Nerd Font" size))
+  (rwd-set-mac-font rwd/default-font size))
 
 ;;;###autoload
 (defun rwd-set-mac-font (name size)
@@ -1127,15 +1127,15 @@ With prefix P, don't widen, just narrow even if buffer is
 already narrowed."
 
   ;; from http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+  (declare (interactive-only nil))
   (interactive "P")
-  (declare (interactive-only))
   (cond ((and (buffer-narrowed-p) (not p)) (widen))
         ((region-active-p) (narrow-to-region (region-beginning) (region-end)))
         ((derived-mode-p 'org-mode)
          ;; `org-edit-src-code' is not a real narrowing
          ;; command. Remove this first conditional if you
          ;; don't want it.
-         (cond ((ignore-errors (org-edit-src-code)) (delete-other-windows))
+         (cond ((ignore-errors (org-edit-src-code) t) (delete-other-windows))
                ((ignore-errors (org-narrow-to-block) t))
                (t              (org-narrow-to-subtree))))
         ((derived-mode-p 'latex-mode) (LaTeX-narrow-to-environment))
