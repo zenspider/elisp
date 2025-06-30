@@ -72,6 +72,7 @@
  '(ffap-machine-p-known 'accept)
  '(ffip-project-file '(".svn" ".hg" ".git" "test" "Rakefile"))
  '(find-file-visit-truename t)
+ '(find-function-recenter-line nil)
  '(flycheck-display-errors-function 'flycheck-display-error-messages-unless-error-list)
  '(flyspell-delayed-commands '(kmacro-call-macro kmacro-end-and-call-macro))
  '(gcmh-verbose t)
