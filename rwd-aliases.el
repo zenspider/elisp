@@ -70,13 +70,6 @@
 (advice-add 'imenu :before #'rwd/imenu/push)
 
 ;;;###autoload
-(unless (boundp 'ns-is-fullscreen)
-  (setq ns-is-fullscreen nil)
-
-  (defadvice ns-toggle-fullscreen (before record-state compile activate)
-    (setq ns-is-fullscreen (not ns-is-fullscreen))))
-
-;;;###autoload
 (defalias 'elisp-mode 'emacs-lisp-mode "constantly screwing this one up...")
 
 ;;;###autoload
@@ -295,36 +288,23 @@
     "Extract version from a package description vector."
     (aref desc 0)))
 
-(defun rwd-is-fullscreen ()
-  (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth)))
+(unless (fboundp 'frame-is-fullscreen)
+  (defun frame-is-fullscreen (&optional frame)
+    (memq (frame-parameter frame 'fullscreen) '(fullscreen fullboth))))
 
 ;;;###autoload
-(defun rwd-ns-fullscreen ()
-  (interactive)
-  (unless (rwd-is-fullscreen)
-    (toggle-frame-fullscreen)))
+(unless (fboundp 'frame-fullscreen-on)
+  (defun frame-fullscreen-on ()
+    (interactive)
+    (unless (frame-is-fullscreen)
+      (toggle-frame-fullscreen))))
 
 ;;;###autoload
-(defun rwd-ns-fullscreen-off ()
-  (interactive)
-  (if (rwd-is-fullscreen)
-      (toggle-frame-fullscreen)))
-
-;;;###autoload
-(defun rwd-ns-fullscreen-toggle ()
-  (interactive)
-  (toggle-frame-fullscreen))
-
-(defalias 'rwd-ns-toggle-fullscreen 'rwd-ns-fullscreen-toggle)
-
-;;;###autoload
-(defun rwd-ns-fullscreen-resize ()
-  (interactive)
-  (when (rwd-is-fullscreen)
-    (toggle-frame-fullscreen)
-    (toggle-frame-fullscreen)))
-
-(defalias 'rwd-fix-fullscreen 'rwd-ns-fullscreen-resize)
+(unless (fboundp 'frame-fullscreen-on)
+  (defun frame-fullscreen-off ()
+    (interactive)
+    (if (frame-is-fullscreen)
+        (toggle-frame-fullscreen))))
 
 ;;;###autoload
 (defun rwd-occur (opt)
@@ -402,7 +382,7 @@ Helps with documenting or debugging logs."
        (interactive)
        (message "%s: %s %s %s" ',full-name ,font-size ',d-o-f ',splitfunc)
        (when (and ',full (featurep 'cocoa)) (sleep-for 0.01))
-       ,@(if full `((rwd-ns-fullscreen)) `((rwd-ns-fullscreen-off)))
+       ,@(if full `((frame-fullscreen-on)) `((frame-fullscreen-off)))
        (rwd-set-font-size ,font-size)
        ,@(when dimensions `((rwd-arrange-frame ,@dimensions t)))
        ,@(when splitfunc `((,(intern (concat "rwd-split-" (symbol-name splitfunc))))))
@@ -423,13 +403,13 @@ Helps with documenting or debugging logs."
 
 (defalias 'rwd-resize-reset 'rwd-resize-default)
 
-(defun rwd-resize (font-size h w split full-screen)
-  (unless full-screen (rwd-ns-fullscreen-off))
+(defun rwd-resize (font-size h w split fullscreen)
+  (unless fullscreen (frame-fullscreen-off))
   (rwd-set-font-size font-size)
-  (unless full-screen
+  (unless fullscreen
     (rwd-arrange-frame h w (not split)))
   (unless split (delete-other-windows))
-  (when full-screen (rwd-ns-fullscreen)))
+  (when fullscreen (frame-fullscreen-on)))
 
 (defun rwd-arrange-frame-px (w h)
   "Rearrange the current frame to a custom width and
@@ -450,19 +430,19 @@ height (pixelwise) and split based on size."
 
 (defun rwd-resize-auto ()
   (interactive)
-  (rwd-ns-fullscreen)
+  (frame-fullscreen-on)
   (rwd/display-reset))
 
 (defalias 'rwd-resize-normal 'rwd-resize-auto)
 
 (defun rwd-resize-study-1/2 () ; 1/2 layout: code + browser
   (interactive)
-  (rwd-ns-fullscreen-off)
+  (frame-fullscreen-off)
   (rwd-arrange-frame-fn #'half))
 
 (defun rwd-resize-study-2/3 () ; 2/3 layout: shell|code + browser
   (interactive)
-  (rwd-ns-fullscreen-off)
+  (frame-fullscreen-off)
   (rwd-arrange-frame-fn #'two-thirds))
 
 ;;;###autoload
@@ -1140,6 +1120,12 @@ already narrowed."
                (t              (org-narrow-to-subtree))))
         ((derived-mode-p 'latex-mode) (LaTeX-narrow-to-environment))
         (t (narrow-to-defun))))
+
+(defun rwd/fix-display ()
+  (interactive)
+  (toggle-frame-fullscreen)
+  (toggle-frame-fullscreen)
+  (rwd/display-reset))
 
 ;;;###autoload
 (defun dired-ediff-marked-files ()
