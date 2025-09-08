@@ -119,7 +119,7 @@
   (setq dispwatch-current-display nil))
 
 ;; (rwd/display-setup 36)
-;; (rwd-ns-fullscreen)
+;; (toggle-frame-fullscreen)
 ;; (rwd/display-reset)
 
 (provide 'modes/dispwatch)
