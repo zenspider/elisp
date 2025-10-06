@@ -42,7 +42,7 @@
          cyphejor                ; mode renaming. TODO: nuke
          dash                    ; better api for lists
          dedicated               ; "stick" buffers to windows
-         delight                 ; mode renaming. now in third-party.
+         delight                 ; mode renaming.
          dispwatch               ; auto-switching on monitor changes
          expand-region           ; mandatory
          f                       ; better api for files/dirs
