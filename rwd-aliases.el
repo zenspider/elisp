@@ -300,7 +300,7 @@
       (toggle-frame-fullscreen))))
 
 ;;;###autoload
-(unless (fboundp 'frame-fullscreen-on)
+(unless (fboundp 'frame-fullscreen-off)
   (defun frame-fullscreen-off ()
     (interactive)
     (if (frame-is-fullscreen)
