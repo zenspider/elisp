@@ -230,7 +230,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((((type tty)) (:background "black" :foreground "brightgreen"))))
- '(auto-dim-other-buffers-face ((((type tty)) (:foreground "#aaaaaa" :background "#444444")) (t (:background "gray95"))))
+ '(auto-dim-other-buffers ((((type tty)) (:foreground "#aaaaaa" :background "#444444")) (t (:background "gray95"))))
  '(cursor ((((type tty)) (:background "Green")) (t (:background "Blue"))))
  '(diff-added ((t (:inherit diff-changed :foreground "green4"))))
  '(diff-removed ((t (:inherit diff-changed :foreground "red4"))))
