@@ -1,6 +1,5 @@
 (add-to-list 'load-path
              (expand-file-name "~/Work/git/zenspider/package+"))
 
-(require 'package+advice)               ; TODO: remove once published
-
-(package+-disable-package-selected-packages)
+(when-idle rwd-idle-time
+  (package+-disable-package-selected-packages))
