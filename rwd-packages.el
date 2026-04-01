@@ -32,88 +32,88 @@
         ("melpa"        .  10)))
 
 (apply 'package-manifest
-       '(package+                ; duh
+       '(package+                   ; duh
 
-         ansible-doc             ; basic ansible documentation lookup
-         auto-dim-other-buffers  ; makes current buffer "pop"
-         browse-at-remote        ; like github-browse-file
-         browse-kill-ring        ; M-y kill ring browsing
-         coterm                  ; Terminal emulation for comint
-         cyphejor                ; mode renaming. TODO: nuke
-         dash                    ; better api for lists
-         dedicated               ; "stick" buffers to windows
-         delight                 ; mode renaming.
-         dispwatch               ; auto-switching on monitor changes
-         expand-region           ; mandatory
-         f                       ; better api for files/dirs
-         gcmh                    ; Garbage Collector Magic Hack
-         gist                    ; post to gist
-         git-timemachine         ; fantastic spelunking tool
-         helpful                 ; better help system
-         htmlize                 ; colorizing as html
-         find-file-in-project    ; ffip alternative to projectile FIX?
-         inf-ruby                ; trying to use more
-         keyfreq                 ; stats on actual usage FIX?
-         kill-ring-search        ; C-M-y kill ring search FIX
+         ansible-doc                ; basic ansible documentation lookup
+         auto-dim-other-buffers     ; makes current buffer "pop"
+         browse-at-remote           ; like github-browse-file
+         browse-kill-ring           ; M-y kill ring browsing
+         coterm                     ; Terminal emulation for comint
+         cyphejor                   ; mode renaming. TODO: nuke
+         dash                       ; better api for lists
+         dedicated                  ; "stick" buffers to windows
+         delight                    ; mode renaming.
+         dispwatch                  ; auto-switching on monitor changes
+         expand-region              ; mandatory
+         f                          ; better api for files/dirs
+         gcmh                       ; Garbage Collector Magic Hack
+         gist                       ; post to gist
+         git-timemachine            ; fantastic spelunking tool
+         helpful                    ; better help system
+         htmlize                    ; colorizing as html
+         find-file-in-project       ; ffip alternative to projectile FIX?
+         inf-ruby                   ; trying to use more
+         keyfreq                    ; stats on actual usage FIX?
+         kill-ring-search           ; C-M-y kill ring search FIX
          lua-mode
-         magit                   ; the only reason I can use git
-         mode-line-bell          ; visual bell
-         multiple-cursors        ; mandatory
-         outline-magic           ; outline-cycle FIX?
-         p4                      ; mandatory
-         paredit                 ; mandatory
+         magit                      ; the only reason I can use git
+         mode-line-bell             ; visual bell
+         multiple-cursors           ; mandatory
+         outline-magic              ; outline-cycle FIX?
+         p4                         ; mandatory
+         paredit                    ; mandatory
          perspective
-         phi-search              ; TODO
-         phi-search-mc           ; TODO
+         phi-search                 ; TODO
+         phi-search-mc              ; TODO
          racket-mode
-         rg                      ; ripgrep
-         s                       ; better api for strings
-         shell-command           ; tab-completion for `shell-command
-         ;; ssh                  ; ssh-mode -- USING MY OWN FORK
-         string-edit-at-point    ; AMAZING string-edit-at-point
-         w3m                     ; strange web browser FIX
-         window-number           ; Jump to window by M-number
+         rg                         ; ripgrep
+         s                          ; better api for strings
+         shell-command              ; tab-completion for `shell-command
+         ;; ssh                     ; ssh-mode -- USING MY OWN FORK
+         string-edit-at-point       ; AMAZING string-edit-at-point
+         w3m                        ; strange web browser FIX
+         window-number              ; Jump to window by M-number
          yaml-mode
          zig-mode
 
-         ;; trying out:          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+         ;; trying out:             ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-         mct                     ; minimal completing-read enhancement
+         mct                        ; minimal completing-read enhancement
 
          copy-as-format
-         default-text-scale      ; change font sizes globally
+         default-text-scale         ; change font sizes globally
          diff-at-point
-         dockerfile-mode         ; for Dockerfile files
-         dumber-jump             ; very fast dumb definition search
-         elisp-slime-nav         ; M-. M-, for elisp
-         eval-in-repl            ; C-RET to send to repls
-         flycheck                ; smoother than flyspell
-         flycheck-color-mode-line; colors modeline based on status
+         dockerfile-mode            ; for Dockerfile files
+         dumber-jump                ; very fast dumb definition search
+         elisp-slime-nav            ; M-. M-, for elisp
+         eval-in-repl               ; C-RET to send to repls
+         flycheck                   ; smoother than flyspell
+         flycheck-color-mode-line   ; colors modeline based on status
          ;; flycheck-package        ; flycheck elisp package files
-         github-review           ; interesting workflow for reviews
+         github-review              ; interesting workflow for reviews
          goto-chg
          magit-delta
          magit-gh-pulls
          ;; package-lint            ; for checking elisp packages
-         phi-grep                ; TODO
+         phi-grep                   ; TODO
          ;; smartrep                ; better repeatable key sequencing -- forked
-         wgrep                   ; editable grep results
-         which-key               ; show options in sub-keys
-         xterm-color             ; used in modes/shell-mode.el
+         wgrep                      ; editable grep results
+         which-key                  ; show options in sub-keys
+         xterm-color                ; used in modes/shell-mode.el
          ;; xr                      ; regexp -> xr (lispy regexps)
 
-         ;; benchmark-init       ; for measuring and speeding up boot time
+         ;; benchmark-init          ; for measuring and speeding up boot time
 
-         ;;; file formats
-         bison-mode              ; for yacc/bison files
-         jq-mode                 ; live view of jq queries
-         json-mode               ; for json files
-         markdown-mode           ; for md files
-         web-mode                ; for web template files (do I use this?)
+         ;; file formats
+         bison-mode                 ; for yacc/bison files
+         jq-mode                    ; live view of jq queries
+         json-mode                  ; for json files
+         markdown-mode              ; for md files
+         web-mode                   ; for web template files (do I use this?)
 
-         winnow                  ; for refining ag results
+         winnow                     ; for refining ag results
 
-         orderless               ; experimenting
+         orderless                  ; experimenting
          ))
 
 (when (fboundp 'package-quickstart-refresh)
@@ -128,4 +128,6 @@
 
 ;; Local variables:
 ;; byte-compile-warnings: (not cl-functions)
+;; comment-column: 36
+;; comment-fill-column: 78
 ;; End:
