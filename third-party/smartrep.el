@@ -7,8 +7,6 @@
 ;; Copyright (C) :2011,2012 myuhe all rights reserved.
 ;; Created: :2011-12-19
 ;; Version: 1.0.0
-;; Package-Version: 20150509.230
-;; Package-Commit: f0ff5a6d7b8603603598ae3045c98b011e58d86e
 ;; Keywords: convenience
 ;; URL: https://github.com/myuhe/smartrep.el
 
@@ -92,7 +90,7 @@
         (if (eq keymap global-map)
             alist
           (append alist (gethash prefix smartrep-global-alist-hash))))
-  (let ((oa (make-vector 13 nil)))
+  (let ((oa (obarray-make 13)))
     (mapc (lambda(x)
             (let ((obj (intern (prin1-to-string
                                 (smartrep-unquote (cdr x)))
