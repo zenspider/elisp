@@ -12,11 +12,6 @@
   (add-to-list 'package-archives repo))
 
 (unless (package-installed-p 'package+)
-  (when (<= emacs-major-version 25)
-    (setq package-check-signature nil))
-  (when (< emacs-major-version 27)
-    (package-initialize)                ; is this needed?
-    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")) ; HACK
   (package-refresh-contents)
   (package-install 'package+))
 
