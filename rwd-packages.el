@@ -63,7 +63,6 @@
          racket-mode
          rg                         ; ripgrep
          s                          ; better api for strings
-         shell-command              ; tab-completion for `shell-command
          ;; ssh                     ; ssh-mode -- USING MY OWN FORK
          string-edit-at-point       ; AMAZING string-edit-at-point
          w3m                        ; strange web browser FIX
