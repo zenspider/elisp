@@ -18,10 +18,8 @@
      ("M" 1 1 left bs--get-modified-string)
      ("R" 2 2 left bs--get-readonly-string)
      ("Buffer" bs--get-name-length 10 left bs--get-name)
-     ("" 1 1 left " ")
-     ("Mode" 4 8 right bs--get-mode-name)
-     ("" 2 2 left "  ")
-     ("File" 12 12 left bs--get-file-name)
+     ("" 1 1 left " ") ("Mode" 4 8 right bs--get-mode-name)
+     ("" 2 2 left "  ") ("File" 12 12 left bs--get-file-name)
      ("" 2 2 left "  ")))
  '(bs-cycle-configuration-name "current-mode")
  '(bs-default-configuration "persp")
@@ -35,10 +33,7 @@
  '(completions-format 'one-column)
  '(confirm-kill-processes nil)
  '(default-frame-alist
-   '((wait-for-wm)
-     (top . 0)
-     (width . 80)
-     (height . 48)
+   '((wait-for-wm) (top . 0) (width . 80) (height . 48)
      (font . "FiraCode Nerd Font-18")))
  '(dired-recursive-deletes 'top)
  '(display-line-numbers-widen t)
@@ -49,7 +44,8 @@
  '(enh-ruby-check-syntax nil)
  '(enh-ruby-program "~/.rubies.current/bin/ruby")
  '(erc-fools
-   '("Welkin" "konsolebox" "`slikts" "slack-irc-bot" "Aeyrix" "Hanmac" "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros"))
+   '("Welkin" "konsolebox" "`slikts" "slack-irc-bot" "Aeyrix" "Hanmac"
+     "yorickpeterse" "ianm_" "Bish" "dminuoso" "cthulchu" "Pateros"))
  '(erc-join-buffer 'bury)
  '(erc-keywords
    '("autotest\\|zentest\\|inline\\|parse_?tree\\|minitest\\|parser"))
@@ -58,7 +54,9 @@
  '(erc-kill-server-buffer-on-quit t)
  '(erc-mode-line-format "%t %a")
  '(erc-modules
-   '(autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands readonly ring scrolltobottom stamp track))
+   '(autojoin button completion fill irccontrols list match menu
+              move-to-prompt netsplit networks noncommands readonly
+              ring scrolltobottom stamp track))
  '(erc-server-auto-reconnect nil)
  '(erc-services-mode t)
  '(erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT"))
@@ -81,7 +79,14 @@
  '(global-auto-revert-mode t)
  '(global-whitespace-mode t)
  '(hippie-expand-try-functions-list
-   '(try-expand-all-abbrevs try-expand-dabbrev-visible try-expand-dabbrev try-expand-dabbrev-all-buffers try-expand-dabbrev-from-kill rwd-try-expand-tag try-complete-lisp-symbol-partially try-complete-lisp-symbol try-complete-file-name-partially try-complete-file-name try-expand-list))
+   '(try-expand-all-abbrevs try-expand-dabbrev-visible try-expand-dabbrev
+                            try-expand-dabbrev-all-buffers
+                            try-expand-dabbrev-from-kill
+                            rwd-try-expand-tag
+                            try-complete-lisp-symbol-partially
+                            try-complete-lisp-symbol
+                            try-complete-file-name-partially
+                            try-complete-file-name try-expand-list))
  '(history-length 1000)
  '(ielm-prompt-read-only nil)
  '(imenu-max-items 50)
@@ -112,12 +117,12 @@
  '(magit-refresh-verbose t)
  '(magit-refs-filter-alist
    '(("-deploy$")
-     ("zenspider\\|[rR]5?[uU][/-]\\|rails5\\|master$\\|main$\\|gem_bump\\|dirty_dep\\|JUNK" . t)
+     ("zenspider\\|[rR]5?[uU][/-]\\|rails5\\|master$\\|main$\\|gem_bump\\|dirty_dep\\|JUNK"
+      . t)
      (".")))
  '(magit-refs-pad-commit-counts t)
  '(magit-repository-directories
-   '(("~/Work/git/zenspider" . 1)
-     ("~/Work/git/searbsg" . 1)
+   '(("~/Work/git/zenspider" . 1) ("~/Work/git/searbsg" . 1)
      ("~/Work/git/zendesk" . 1)))
  '(magit-save-repository-buffers nil)
  '(magit-section-initial-visibility-alist '((untracked . hide) (stashes . hide)))
@@ -144,11 +149,10 @@
  '(org-use-sub-superscripts '{})
  '(outline-minor-mode-prefix "\357")
  '(override-keymap-rules
-   '(("\230" bury-buffer
-      (ruby python emacs-lisp racc))
-     ("\214" rwd-scroll-top
-      (shell comint))))
+   '(("\230" bury-buffer (ruby python emacs-lisp racc))
+     ("\214" rwd-scroll-top (shell comint))))
  '(p4-do-find-file nil)
+ '(package-vc-selected-packages '((majutsu :url "https://github.com/0WD0/majutsu")))
  '(persp-initial-frame-name "*")
  '(persp-mode-prefix-key "")
  '(persp-sort 'created)
@@ -210,7 +214,9 @@
  '(web-mode-markup-indent-offset 2)
  '(which-key-mode t)
  '(whitespace-global-modes
-   '(c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode markdown-mode racc-mode racket-mode ruby-mode rust-mode scheme-mode sml-mode text-mode conf-unix-mode yaml-mode))
+   '(c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode
+            markdown-mode racc-mode racket-mode ruby-mode rust-mode
+            scheme-mode sml-mode text-mode conf-unix-mode yaml-mode))
  '(whitespace-style '(face tabs trailing lines-tail space-before-tab empty))
  '(window-combination-resize t)
  '(xref-search-program 'ripgrep)
