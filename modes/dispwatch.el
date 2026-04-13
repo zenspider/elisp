@@ -51,6 +51,14 @@
     ;;2560x1440
     ;;3008x1692        *
     ;;3840x2160
+
+    ;; BenQ RD280UA
+    ("1504x1003" 10)
+    ("1920x1280" 12) ; *
+    ("2560x1707" 16)
+    ("3008x2005" 19) ; = 3 column (first one wins)
+    ("3008x2005" 15) ; = 4 column
+    ("3840x2560" 24)
     ))
 
 ;; (rwd/display-reset)
@@ -97,7 +105,7 @@
         (if rwd/dispwatch/initialized
             (message "dispwatch %S -> %S" current disp)
           (setq rwd/dispwatch/initialized t)
-          (message "initializing dispwatch to %S" disp))
+          (message "initializing dispwatch to %S @ %S pt" disp (cadr args)))
         (unless args
           (find-variable 'rwd/displays)
           (insert (format "%S\n" (list disp 'w 'h 16)))
