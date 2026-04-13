@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -160,10 +161,7 @@
  '(require-final-newline t)
  '(resize-mini-windows t)
  '(rg-keymap-prefix "r")
- '(safe-local-variable-values
-   '((ffip-project-root . "~/Work/git/zendesk/zendesk--rails5/")
-     (ffip-project-root . "~/Work/git/zenspider/minitest-lint/")
-     (flycheck-checker . chefstyle)))
+ '(safe-local-variable-values '((comment-fill-column . 78)))
  '(save-interprogram-paste-before-kill t)
  '(save-place-file "~/.emacs.d/emacs-places")
  '(save-place-limit 100)
