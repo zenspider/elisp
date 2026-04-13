@@ -4,7 +4,8 @@
   (windmove-default-keybindings)
   (winner-mode 1)
   (smartrep-define-key winner-mode-map "C-c"
-                       '(("<left>"  . winner-undo))))
+                       '(("<left>"  . winner-undo)
+                         ("<right>" . winner-redo))))
 
 (defun nth* (n xs)
   "Select the Nth item from XS, zero based. Go backwards from the
