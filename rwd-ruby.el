@@ -2,6 +2,13 @@
   (require 'ruby nil t))
 
 ;;;###autoload
+(defun ruby-insert-shebang ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (insert "#!/usr/bin/env -S ruby -w\n")))
+
+;;;###autoload
 (defun ruby-run-buffer-clean ()
   "Send the entire buffer to the inferior Ruby process.
 Then switch to the process buffer."
