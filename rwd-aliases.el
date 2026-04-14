@@ -932,10 +932,6 @@ Essentially, I didn't like the format of generate-new-buffer-name."
        (package-delete (symbol-name name) (package-version name))
        (package-initialize t)))
 
-(defun rwd-html-to-markdown (beg end)
-  (interactive "r")
-  (shell-command-on-region beg end "/Users/ryan/Desktop/webby/octopress.blog/html2markdown.rb" t t nil t))
-
 (defun rwd-faster-editing ()
   (interactive)
   (flyspell-mode -1)
