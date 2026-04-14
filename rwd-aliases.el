@@ -42,6 +42,15 @@
 ;; (advice-remove 'find-file-at-point #'rwd/find-file-at-point/numbers)
 
 ;;;###autoload
+(defun rwd/advice/custom-save-variables (orig-fun &rest args)
+  (let ((print-escape-control-characters nil))
+    (apply orig-fun args)))
+
+;;;###autoload
+(advice-add 'custom-save-variables :around #'rwd/advice/custom-save-variables)
+;; (advice-remove 'custom-save-variables #'rwd/advice/custom-save-variables)
+
+;;;###autoload
 (defun rwd/ielm/save-history (_str)
   (with-file-modes #o600 (comint-write-input-ring)))
 
