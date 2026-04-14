@@ -1,5 +1,8 @@
+;; -*- lexical-binding: t; -*-
+
 (eval-when-compile
   (require 'json)
+  (require 'dash)                       ; ironic, magit uses this
   (require 'magit)
   (require 'magit-diff))
 
@@ -37,8 +40,6 @@
     (--each maps
       (define-key it (kbd "RET") 'magit-diff-visit-worktree-file-other-window))))
 
-(setq magit-last-seen-setup-instructions "1.4.0")
-
 ;; http://endlessparentheses.com/automatically-configure-magit-to-access-github-prs.html
 
 (defcustom zenspider/magit-exclude-projects '()
@@ -48,7 +49,6 @@
 
 (defun endless/add-PR-fetch ()
   "If refs/pull is not defined on a GH repo, define it."
-  (require 'dash)                       ; ironic, magit uses this
   (let ((fetch-address
          "+refs/pull/*/head:refs/pull/origin/*")
         (magit-url     (magit-get "remote" "origin" "url"))
