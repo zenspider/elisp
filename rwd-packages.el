@@ -108,10 +108,12 @@
          winnow                     ; for refining ag results
 
          orderless                  ; experimenting
+
+         gleam-ts-mode
          ))
 
 (when (fboundp 'package-quickstart-refresh)
-    (package-quickstart-refresh))
+  (package-quickstart-refresh))
 
 ;; (package-refresh-contents)
 ;; (package-quickstart-refresh)
