@@ -4,6 +4,10 @@
 (when-idle rwd-idle-time
   (coterm-mode +1))
 
+;; not really for shell-mode, but whatevs
+(require 'shell-command)
+(shell-command-completion-mode)
+
 (add-hook 'comint-output-filter-functions #'comint-osc-process-output)
 
 ;; hacked to use string-equal-ignore-case
