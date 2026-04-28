@@ -128,9 +128,6 @@
   (butlast list (- (length list) (or n 10))))
 
 ;;;###autoload
-(defun identity (a) a)
-
-;;;###autoload
 (defun list-join (sep lst)
   (mapconcat 'identity lst sep))
 
@@ -481,6 +478,14 @@ the frame."
   (split-window-vertically)
   (split-window-vertically)
   (balance-windows))
+
+;;;###autoload
+(defmacro rwd-time (&rest body)
+  "Measure and return a cons of the result of BODY and the time it takes to
+evaluate BODY."
+  `(let* ((time (current-time))
+          (value (progn ,@body)))
+     (cons value (float-time (time-since time)))))
 
 ;;;###autoload
 (defun rwd-toggle-window (buffer display-fn)
