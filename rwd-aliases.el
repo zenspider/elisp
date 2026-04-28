@@ -455,14 +455,23 @@ height (pixelwise) and split based on size."
   (rwd-arrange-frame-fn #'two-thirds))
 
 ;;;###autoload
-(defun rwd-split-smart ()
-  "Splits the current frame either in 2 or 3 depending on size"
-  (interactive)
-
-  (delete-other-windows)
-  (dotimes (n (1- (/ (frame-width) 80)))
-    (split-window-horizontally))
-  (balance-windows))
+(defun rwd-split-smart (&optional size)
+  "Intelligently splits the frame into N properly sized windows where N is
+either SIZE or calculated from the frame's width / 80. The number of
+current columns is determined by counting windows across the top edge of
+the frame."
+  (interactive "P")
+  (let* ((calculated (or size (/ (frame-width) 80)))
+         (top-wins   (rwd/top-edge-windows))
+         (actual     (length top-wins))
+         (diff       (- calculated actual)))
+    (cond
+     ((> diff 0)                        ; add DIFF columns to end
+      (let ((last (nth (1- actual) top-wins)))
+        (dotimes (n diff)               ; TODO: rotate through buffers? scratch?
+          (split-window-horizontally nil last))))
+     ((< diff 0)                        ; del last DIFF columns
+      (mapc #'delete-window (-slice top-wins diff))))))
 
 ;;;###autoload
 (defun rwd-split-thirds-v ()
