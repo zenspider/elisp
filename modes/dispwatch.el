@@ -8,7 +8,7 @@
   "Contains a list of display entries for emacs' dispwatch")
 
 (setq rwd/displays
-  `(("default"   14)
+  '(("default"   14)
 
     ;; 13" MBP M1
     ;; 1024x640 ?!?!
@@ -52,7 +52,7 @@
     ;;3008x1692        *
     ;;3840x2160
 
-    ;; BenQ RD280UA
+    ;; BenQ RD280UA (3:2 aspect ratio)
     ("1504x1003" 10)
     ("1920x1280" 12) ; *
     ("2560x1707" 16)
@@ -91,28 +91,33 @@
          )
     disp))
 
-(defvar rwd/dispwatch/initialized '())
+(defun rwd/current-size ()
+  (cadr (assoc (rwd/current-display) rwd/displays)))
+
+(defvar rwd/dispwatch/initialized nil)  ; TODO: maybe rename
 
 (defun rwd/dispwatch-display-change-hook (geom)
   (when window-system
     (let* ((w       (car geom))
            (h       (cdr geom))
-           (current (rwd/current-display))
            (disp    (format "%sx%s" w h))
+           (attribs (dispwatch--get-display))
            (args    (assoc disp      rwd/displays))
            (default (assoc "default" rwd/displays)))
-      (unless (and rwd/dispwatch/initialized (equal current disp))
-        (if rwd/dispwatch/initialized
-            (message "dispwatch %S -> %S" current disp)
-          (setq rwd/dispwatch/initialized t)
-          (message "initializing dispwatch to %S @ %S pt" disp (cadr args)))
-        (unless args
-          (find-variable 'rwd/displays)
-          (insert (format "%S\n" (list disp 'w 'h 16)))
-          (message "Please extend rwd/displays with %S" disp)
-          (setq args default))
-        (apply 'rwd/display-setup (cdr args))
-        (rwd-split-smart)))))
+      (unless args
+        (find-variable 'rwd/displays)
+        (insert (format "%S\n" (list disp 16)))
+        (message "Please extend rwd/displays with %S" disp)
+        (setq args default))
+      (let* ((font-size (cadr args))
+             (new       (cons font-size attribs)))
+        (unless (equal new rwd/dispwatch/initialized)
+          (message "rwd/dispwatch-display-change-hook triggered w/ difference")
+          (setq rwd/dispwatch/initialized new)
+          (message "changing display to %S @ %S pt" disp font-size)
+          (rwd/display-setup font-size)
+          ;; can I do this in every project automatically?
+          (rwd-split-smart))))))
 
 (when window-system
   (add-to-list 'load-path (expand-file-name "~/Work/git/mnp/dispwatch"))
@@ -122,12 +127,11 @@
 (defun rwd/display-reset ()
   "Reset and force dispwatch to trigger again."
   (interactive)
-  (message "rwd/display-reset")
-  (setq rwd/dispwatch/initialized '())
   (setq dispwatch-current-display nil))
 
 ;; (rwd/display-setup 36)
 ;; (toggle-frame-fullscreen)
 ;; (rwd/display-reset)
+;; (setq rwd/dispwatch/initialized nil)
 
 (provide 'modes/dispwatch)
