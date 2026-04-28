@@ -1,8 +1,5 @@
 ;; -*- lexical-binding: t; -*-
 
-(when (<= emacs-major-version 25)
-  (package-initialize))
-
 (unless user-init-file                  ; if running w/: -q --debug-init
   (setq user-init-file (expand-file-name "~/.emacs.d/init.el")))
 

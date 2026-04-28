@@ -112,6 +112,9 @@
          gleam-ts-mode
          ))
 
+;; (use-package majutsu
+;;   :vc (:url "https://github.com/0WD0/majutsu"))
+
 (when (fboundp 'package-quickstart-refresh)
   (package-quickstart-refresh))
 

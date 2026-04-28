@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (unless (cdr command-line-args)
   (add-to-list 'window-system-default-frame-alist
                '(mac (fullscreen . fullboth)))

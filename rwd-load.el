@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defun rwd/require/handler (orig-fun &rest args)
   (let ((file-name-handler-alist nil))
     (apply orig-fun args)))
