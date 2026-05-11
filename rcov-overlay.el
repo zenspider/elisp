@@ -74,6 +74,7 @@
 
 ;;;###autoload
 (defun coverage-update ()
+  "Update all the coverage overlays for the current buffer."
   (interactive)
   (save-excursion
     (goto-char (point-min))
@@ -84,15 +85,19 @@
          (coverage--lines-to-regions)
          (coverage--regions-to-overlays))))
 
+(defalias 'coverage-show 'coverage-update)
+
 (define-obsolete-function-alias 'show-coverage 'coverage-update "2026-04-15")
 
 ;;;###autoload
 (defun coverage-clear ()
+  "Remove all coverage overlays."
   (interactive)
   (remove-overlays))
 
 ;;;###autoload
-(defun coverage-summary ()
+(defun coverage-report ()
+  "Show a report of all the coverage data for this project."
   (interactive)
   (let* ((buffer   (current-buffer))
          (cov-path (coverage--find-file-for-buffer buffer))
@@ -118,7 +123,34 @@
               (sort paths))
         (pop-to-buffer "*Coverage Summary*")))))
 
+(defun coverage-next ()
+  "Go to the next line without coverage."
+  (interactive)
+  (let* ((starts  (->> (current-buffer)
+                       (coverage--for-buffer)
+                       (coverage--to-lines)
+                       (coverage--collate)
+                       (-map #'car)))
+         (current (line-number-at-pos))
+         (start   (--first (> it current) starts)))
+    (and start
+         (goto-line start))))
+
+(keymap-set enh-ruby-mode-map "C-c v n" #'coverage-next)
+
 ;;; Utilities:
+
+(defun coverage--collate (ns &optional rs)
+  (if (consp rs)
+      (if (consp ns)
+          (let ((r (caar rs))
+                (n (car ns)))
+            (if (eq 1 (- n r))
+                (push n (car rs))
+              (push (list n) rs))
+            (coverage--collate (cdr ns) rs))
+        (nreverse (mapcar #'nreverse rs)))
+    (coverage--collate (cdr ns) `((,(car ns))))))
 
 (defun coverage--find-project-dir (file &optional dir)
   (or dir (setq dir default-directory))
@@ -171,8 +203,9 @@
 
 (defun coverage--regions-to-overlays (regions)
   (--each regions
-    (overlay-put (make-overlay (car it) (cdr it))
-                 'face (cons 'background-color "#ffcccc"))))
+    (let ((ov (make-overlay (car it) (cdr it))))
+      (overlay-put ov 'face (cons 'background-color "#ffcccc"))
+      (overlay-put ov 'category 'coverage))))
 
 (provide 'rcov-overlay)
 
