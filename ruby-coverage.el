@@ -1,4 +1,4 @@
-;;; rcov-overlay.el --- Colorize untested ruby code  -*- lexical-binding: t; -*-
+;;; ruby-coverage.el --- Colorize untested ruby code  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2008-2026 by Ryan Davis
 
@@ -9,7 +9,7 @@
 ;; Package-Requires: ((a "1.0") (json "1.5") (dash) (cl-lib "0.5") (emacs "29"))
 
 ;;; Posted using:
-;; (emacswiki-post "rcov-overlay.el")
+;; (emacswiki-post "ruby-coverage.el")
 
 ;;; The MIT License:
 
@@ -207,6 +207,6 @@
       (overlay-put ov 'face (cons 'background-color "#ffcccc"))
       (overlay-put ov 'category 'coverage))))
 
-(provide 'rcov-overlay)
+(provide 'ruby-coverage)
 
 ;;; coverage.el ends here
