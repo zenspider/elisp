@@ -1144,7 +1144,8 @@ already narrowed."
   (interactive)
   (toggle-frame-fullscreen)
   (toggle-frame-fullscreen)
-  (rwd/display-reset))
+  (rwd/display-reset)
+  (rwd-split-smart))
 
 ;;;###autoload
 (defun dired-ediff-marked-files ()
@@ -1202,6 +1203,10 @@ already narrowed."
   (set-face-attribute 'mode-line nil
                       :background "grey75"
                       :foreground "black"))
+
+(defun find-major-mode ()
+  (interactive)
+  (find-function major-mode))
 
 ;;;###autoload
 (defun re-seq (regexp string)
