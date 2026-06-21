@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t; -*-
 
+(eval-and-compile
+  (require 'rwd-load))
+
 (defun rwd-autohooks ()
   (interactive)
   (report-time 'rwd-autohooks

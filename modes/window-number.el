@@ -1,3 +1,6 @@
+(eval-and-compile
+  (require 'rwd-load))
+
 (when-idle rwd-idle-time
   (rwd-require 'window-number)
   (window-number-meta-mode 1))

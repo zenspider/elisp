@@ -1,5 +1,4 @@
-(eval-when-compile
-  (require 'gnutls))
+;; -*- lexical-binding: t; -*-
 
 (require 'package)
 

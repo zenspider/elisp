@@ -1,3 +1,6 @@
+(eval-and-compile
+  (require 'rwd-load))
+
 (defun rwd-load-modes ()
   (require 'subr-x)
   (report-time 'rwd-load-modes

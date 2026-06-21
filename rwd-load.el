@@ -17,6 +17,7 @@
 
 (defconst rwd-idle-time (if normal-gui-startup 1 0))
 
+;;;###autoload
 (defmacro report-time (name &rest body)
   (declare (indent defun))
   `(let ((t1 (current-time))

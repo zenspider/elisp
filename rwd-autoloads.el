@@ -1,9 +1,7 @@
-(eval-when-compile
-  (require 'bytecomp)
-  (require 'autoload)                     ; = ;;;###autoload
+(eval-and-compile
+  (require 'bytecomp)                   ; byte-compile-dest-file
+  (require 'autoload)                   ; = ;;;###autoload
   (require 'rwd-load))
-
-(require 'bytecomp) ; byte-compile-dest-file
 
 (defun rwd-recompile-init ()
   (interactive)

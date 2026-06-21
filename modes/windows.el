@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t; -*-
 
+(eval-and-compile
+  (require 'rwd-load))
+
 (when-idle rwd-idle-time
   (windmove-default-keybindings)
   (winner-mode 1)
