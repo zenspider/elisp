@@ -15,6 +15,8 @@
 ;; I MUCH prefer the approach above, but it doesn't do minor-modes. Extend?
 
 (setq delight-rules '((abbrev-mode            nil  "abbrev")
+                      (auto-fill-mode         nil  "simple")
+                      (auto-fill-function     nil  "simple")
                       (dispwatch-mode         nil  "dispwatch")
                       (eldoc-mode             nil  "eldoc")
                       (elisp-slime-nav-mode   nil  "elisp-slime-nav")
@@ -24,6 +26,8 @@
                       (outline-minor-mode     nil  "outline")
                       (paredit-mode           nil  "paredit")
                       (projectile-mode        nil  "projectile")
+                      (which-key-mode         nil  "which-key")
+                      (whitespace-mode        nil  "whitespace")
                       ))
 
 (with-eval-after-load 'delight
