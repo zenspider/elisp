@@ -1,3 +1,9 @@
+;; -*- lexical-binding: t; -*-
+
+(eval-and-compile
+  (require 'rg)
+  (require 'rg-menu))
+
 (autoload 'rg-menu "rg-menu" "doco" t)
 (global-set-key (kbd "C-c r") #'rg-menu)
 
