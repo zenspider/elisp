@@ -120,6 +120,9 @@
         (occur (if isearch-regexp
                    isearch-string (regexp-quote isearch-string))))))
 
+  (keymap-set isearch-mode-map "M-r" #'rg-isearch-menu)
+  (keymap-set help-map         "M-k" #'find-function-on-key)
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; normal user-level keybindings
 
@@ -131,6 +134,7 @@
   (gsk "C-c c"   'rwd-clean)
   (rsk 'd '((   "R" .  'ediff-regions-linewise)
             (   "b" .  'ediff-buffers)
+            (   "c" .  'compare-windows)
             (   "d" .  'ediff-directories)
             (   "f" .  'ediff-files)
             (   "q" .  'ediff-quit)
