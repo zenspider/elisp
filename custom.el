@@ -214,7 +214,14 @@
  '(warning-suppress-types '((undo discard-info)))
  '(wdired-allow-to-change-permissions 'advanced)
  '(web-mode-markup-indent-offset 2)
+ '(which-key-custom-hide-popup-function 'which-key--hide-buffer-side-window)
+ '(which-key-custom-popup-max-dimensions-function 'rwd/which-key-max-dimensions)
+ '(which-key-custom-show-popup-function 'rwd/which-key-show-buffer)
+ '(which-key-max-display-columns 2)
  '(which-key-mode t)
+ '(which-key-popup-type 'custom)
+ '(which-key-preserve-window-configuration t)
+ '(which-key-sort-order 'which-key-key-order-alpha)
  '(whitespace-global-modes
    '(c-mode diff-mode emacs-lisp-mode enh-ruby-mode haskell-mode
             markdown-mode racc-mode racket-mode ruby-mode rust-mode

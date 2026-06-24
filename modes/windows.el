@@ -29,7 +29,7 @@ right if N is negative."
 (defun rwd/display-buffer-in-column (buffer actions)
   "Try to display buffer in the Nth column (window on the top
 edge) from the left, starting at 0. Negative values count from
-the right. The Nth column is determined by the 'column assoc in
+the right. The Nth column is determined by the \='column assoc in
 the ACTIONS alist."
   (let* ((column (alist-get 'column actions))
          (windows (rwd/top-edge-windows))
@@ -81,6 +81,7 @@ the current fill-column."
 (rwd/nth-column-for-matching-buffers  0 "^magit-revision:")
 (rwd/nth-column-for-matching-buffers  0 "\\*vc-diff\\*")
 (rwd/nth-column-for-matching-buffers  0 "\\*Annotate")
+(rwd/nth-column-for-matching-buffers  0 "\\*Compile-Log\\*")
 (rwd/nth-column-for-matching-buffers  0 "^magit-\\(diff\\|revision\\):")
 (rwd/nth-column-for-matching-buffers  0 "^.P4 diff")
 (rwd/nth-column-for-matching-buffers  0 "^\\*rg\\*")
@@ -104,6 +105,14 @@ the current fill-column."
                (window-height       . .5)
                ))
 
+(add-to-list 'display-buffer-alist
+             '("\\*which-key\\*"
+               (display-buffer-below-selected
+                display-buffer-pop-up-window)
+               (window (minibuffer-selected-window))
+               (inhibit-same-window . t)
+               (window-height       . fit-window-to-buffer)
+               (window-height       . .5)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -219,7 +228,7 @@ the current fill-column."
 ;;         ))
 
 (defun rwd/for-mode (mode)
-  (lambda (buffer actions)
+  (lambda (buffer _actions)
     (with-current-buffer buffer (derived-mode-p mode))))
 
 (defun rwd/nth-column-for-mode (nth mode)
