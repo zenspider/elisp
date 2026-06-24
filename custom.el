@@ -199,6 +199,8 @@
  '(tramp-default-method "rsync")
  '(tramp-use-ssh-controlmaster-options nil)
  '(transient-display-buffer-action '(display-buffer-below-selected))
+ '(treesit-auto-install-grammar 'always)
+ '(treesit-enabled-modes t)
  '(truncate-partial-width-windows nil)
  '(use-dialog-box nil)
  '(user-mail-address "ryand-ruby@zenspider.com")
