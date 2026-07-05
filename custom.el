@@ -36,6 +36,7 @@
    '((wait-for-wm) (top . 0) (width . 80) (height . 48)
      (font . "FiraCode Nerd Font-18")))
  '(dired-recursive-deletes 'top)
+ '(dired-use-ls-dired nil)
  '(display-line-numbers-widen t)
  '(ediff-split-window-function #'rwd-ediff-split-window-function nil nil "TODO: phase out? I think this might not be needed with the general window work")
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
