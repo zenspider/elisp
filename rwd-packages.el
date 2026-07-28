@@ -53,12 +53,11 @@
          magit                      ; the only reason I can use git
          mode-line-bell             ; visual bell
          multiple-cursors           ; mandatory
-         outline-magic              ; outline-cycle FIX?
          p4                         ; mandatory
          paredit                    ; mandatory
          perspective
-         phi-search                 ; TODO
-         phi-search-mc              ; TODO
+         phi-search                 ; incremental search and replace
+         phi-search-mc              ; with multiple-cursor support
          racket-mode
          rg                         ; ripgrep
          s                          ; better api for strings
@@ -79,7 +78,6 @@
          dockerfile-mode            ; for Dockerfile files
          dumber-jump                ; very fast dumb definition search
          elisp-slime-nav            ; M-. M-, for elisp
-         eval-in-repl               ; C-RET to send to repls
          flycheck                   ; smoother than flyspell
          flycheck-color-mode-line   ; colors modeline based on status
          ;; flycheck-package        ; flycheck elisp package files
@@ -108,8 +106,16 @@
 
          orderless                  ; experimenting
 
+         ghostel                    ; alternative to shell
+
          gleam-ts-mode
+         ct                         ; color theory
          ))
+
+;; removed due to lack of maintenance:
+;;
+;; eval-in-repl               ; C-RET to send to repls
+;; outline-magic              ; outline-cycle FIX?
 
 ;; (use-package majutsu
 ;;   :vc (:url "https://github.com/0WD0/majutsu"))
