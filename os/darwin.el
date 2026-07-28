@@ -42,3 +42,7 @@
 ;; mac-previous-buffer & mac-next-buffer
 (keymap-global-unset "<swipe-left>")
 (keymap-global-unset "<swipe-right>")
+
+;; track pad pinch bigger/smaller
+(keymap-global-unset "<magnify-down>")
+(keymap-global-unset "<magnify-up>")
