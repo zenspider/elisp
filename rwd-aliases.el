@@ -69,7 +69,9 @@
 (defun display-buffer-below-selected-window (buffer alist)
   (with-minibuffer-selected-window
     (display-buffer-in-direction buffer
-                                 (cons '(direction . down) alist))))
+                                 (cons '(direction . below) alist))))
+
+;; (display-buffer-in-direction buffer (cons '(direction . below) alist))
 
 ;;;###autoload
 (defun rwd/imenu/push (_item)
@@ -425,6 +427,12 @@ height (pixelwise) and split based on size."
     (set-frame-position (selected-frame) 0 0)
     (rwd-split-smart)))
 
+;; TODO: make this shit work
+;; default-text-scale-increase
+;; default-text-scale-decrease
+;; default-text-scale-reset
+;; (add-to-list 'after-setting-font-hook #'rwd-split-smart)
+
 (defun rwd-arrange-frame-fn (fn)
   (let* ((w/h (cdddr (assoc 'geometry (frame-monitor-attributes))))
          (w (car w/h))
@@ -578,6 +586,17 @@ Essentially, I didn't like the format of generate-new-buffer-name."
 
 ;;;###autoload
 (defun rwd-shell ()
+  "Create a new shell using ghostel."
+  (interactive)
+  (let ((buffer-name (rwd-unique-buffer "shell")))
+    (when (and (eq 1 (length (window-list)))
+               (rwd-currently-only-scratch)
+               (> (window-width) 82))
+      (rwd-split-smart))
+    (let* ((buffer (ghostel t)))
+      (rename-buffer buffer-name))))
+
+(defun rwd-shell/old ()
   "Create a shell buffer that is properly named (shell-<N>)"
   (interactive)
   (let ((buf (rwd-unique-buffer "shell")))
@@ -1238,3 +1257,5 @@ already narrowed."
 
 ;; (setq urlreg "\\(?:http://\\)?www\\(?:[./#\+-]\\w*\\)+")
 ;; (re-seq urlreg (buffer-string))
+
+(provide 'rwd-aliases)
