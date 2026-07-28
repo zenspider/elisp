@@ -23,6 +23,7 @@
         racc-mode
         racket-mode
         ruby-mode
+        ruby-ts-mode
         scheme-mode
         sh-mode
         web-mode
