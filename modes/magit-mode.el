@@ -1,10 +1,12 @@
 ;; -*- lexical-binding: t; -*-
 
 (eval-when-compile
-  (require 'json)
-  (require 'dash)                       ; ironic, magit uses this
+  (require 'dash)                       ; ironic, magit uses dash, --each below
+  )
+
+(eval-and-compile
   (require 'magit)
-  (require 'magit-diff))
+  )
 
 (with-eval-after-load 'transient
   (message "TRANSIENT!")
@@ -25,7 +27,7 @@
   (unless (file-executable-p with-editor-emacsclient-executable)
     (setq with-editor-emacsclient-executable "/opt/homebrew/bin/emacsclient")))
 
-;; from http://www.ogre.com/node/447
+;; from https://web.archive.org/web/20191206155745/http://www.ogre.com/node/447
 
 (defun git-grep (search)
   "git-grep the entire current repo"
