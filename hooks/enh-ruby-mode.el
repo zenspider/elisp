@@ -61,36 +61,9 @@ or else the number of characters matched by `outline-regexp'."
               "when" "while")
           eow))
 
-(defun enh-update-outline ()
-  (interactive)
-
-  (set (make-local-variable 'outline-regexp) outline-regexp-ruby))
-
-(require 'eval-in-repl)
-(require 'eval-in-repl-ruby)
-(define-key enh-ruby-mode-map (kbd "<C-return>") 'eir-eval-in-ruby)
-
-(enh-update-outline)
-(outline-minor-mode)
-
 (imenu-add-menubar-index)
 (flyspell-prog-mode)
 
 ;; enh-ruby-mode hooks into expand-region:
 
 (require 'expand-region-core)
-
-;; (defun er/add-enh-ruby-mode-expansions ()
-;;   "Adds enh-ruby-specific expansions for buffers in enh-ruby-mode"
-;;   (require 'ruby-mode-expansions)
-;;
-;;   (defalias 'er/mark-enh-ruby-instance-variable 'er/mark-ruby-instance-variable)
-;;   (defalias 'er/mark-enh-ruby-block-up          'er/mark-ruby-block-up)
-;;
-;;   (set (make-local-variable 'er/try-expand-list)
-;;        (append
-;;         (remove 'er/mark-defun er/try-expand-list)
-;;         '(er/mark-enh-ruby-instance-variable
-;;           er/mark-enh-ruby-block-up))))
-;;
-;; (er/enable-mode-expansions 'enh-ruby-mode 'er/add-enh-ruby-mode-expansions)
