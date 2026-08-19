@@ -96,13 +96,14 @@
 
 (defvar rwd/dispwatch/initialized nil)  ; TODO: maybe rename
 
+;; TODO: (time-less-p (persp-last-switch-time xyz) dispwatch-last-change)
+
 (defun rwd/dispwatch-display-change-hook (geom)
   (when window-system
     (let* ((w       (car geom))
            (h       (cdr geom))
            (disp    (format "%sx%s" w h))
-           (attribs (dispwatch--get-display))
-           (args    (assoc disp      rwd/displays))
+           (args    (assoc disp      rwd/displays)) ; TODO: use rwd/current-size
            (default (assoc "default" rwd/displays)))
       (unless args
         (find-variable 'rwd/displays)
@@ -110,7 +111,7 @@
         (message "Please extend rwd/displays with %S" disp)
         (setq args default))
       (let* ((font-size (cadr args))
-             (new       (cons font-size attribs)))
+             (new       (cons font-size (rwd/current-display))))
         (unless (equal new rwd/dispwatch/initialized)
           (message "rwd/dispwatch-display-change-hook triggered w/ difference")
           (setq rwd/dispwatch/initialized new)
