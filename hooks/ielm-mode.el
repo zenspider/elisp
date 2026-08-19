@@ -4,18 +4,8 @@
 (paredit-mode +1)
 (eldoc-mode)
 
-(require 'eval-in-repl)
-(require 'eval-in-repl-ielm)
-
 (define-key ielm-map (kbd "C-c e") 'rwd-shell-clear)
 (rwd-keymap-holepunch 'paredit-mode "RET" "C-j") ; this punches through paredit
-
-(setq eir-jump-after-eval nil)
-(setq eir-ielm-eval-in-current-buffer t)
-
-(define-key emacs-lisp-mode-map       (kbd "<C-return>") 'eir-eval-in-ielm)
-(define-key lisp-interaction-mode-map (kbd "<C-return>") 'eir-eval-in-ielm)
-(define-key Info-mode-map             (kbd "<C-return>") 'eir-eval-in-ielm)
 
 (let ((path (expand-file-name "ielm/history" user-emacs-directory)))
   (make-directory (file-name-directory path) t)
