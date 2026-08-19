@@ -118,7 +118,9 @@
       (interactive)
       (let ((case-fold-search isearch-case-fold-search))
         (occur (if isearch-regexp
-                   isearch-string (regexp-quote isearch-string))))))
+                   isearch-string (regexp-quote isearch-string)))
+        (pop-to-buffer "*Occur*")
+        )))
 
   (keymap-set isearch-mode-map "M-r" #'rg-isearch-menu)
   (keymap-set help-map         "M-k" #'find-function-on-key)
