@@ -83,8 +83,7 @@
          ;; flycheck-package        ; flycheck elisp package files
          github-review              ; interesting workflow for reviews
          goto-chg
-         magit-delta
-         magit-gh-pulls
+         magit-gh                   ; github cmdline interface for magit
          ;; package-lint            ; for checking elisp packages
          phi-grep                   ; TODO
          ;; smartrep                ; better repeatable key sequencing -- forked
