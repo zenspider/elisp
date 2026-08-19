@@ -1,14 +1,12 @@
+;; -*- lexical-binding: t; -*-
+
 (eval-when-compile
   (require 'rwd-load)
+  (require 'rwd-aliases)
   (require 'comint))
 
 (when-idle rwd-idle-time
   (coterm-mode +1))
-
-;; not really for shell-mode, but whatevs
-(when-idle rwd-idle-time
-  (require 'shell-command)
-  (shell-command-completion-mode))
 
 (add-hook 'comint-output-filter-functions #'comint-osc-process-output)
 
