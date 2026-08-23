@@ -1,12 +1,11 @@
 ;; -*- lexical-binding: t; -*-
 
+;; consider nuking this whole thing for ghostel?
+
 (eval-when-compile
   (require 'rwd-load)
   (require 'rwd-aliases)
   (require 'comint))
-
-(when-idle rwd-idle-time
-  (coterm-mode +1))
 
 (add-hook 'comint-output-filter-functions #'comint-osc-process-output)
 

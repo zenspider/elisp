@@ -32,7 +32,6 @@
          auto-dim-other-buffers     ; makes current buffer "pop"
          browse-at-remote           ; like github-browse-file
          browse-kill-ring           ; M-y kill ring browsing
-         coterm                     ; Terminal emulation for comint
          cyphejor                   ; mode renaming. TODO: nuke
          dash                       ; better api for lists
          dedicated                  ; "stick" buffers to windows
