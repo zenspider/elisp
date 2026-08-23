@@ -8,18 +8,18 @@
   (require 'dash))
 
 (setq path-re
-      (rx bol
-          (group (? "/" (+ word) ":" (+ word) ":") ; allows it to parse tramp paths
+      (rx bos ;; "/rsync:lust.zenspider.com:/home/ryan/whatevs.txt
+          (group (? "/" (+ (or "." word)) ":" (+ (or "." word)) ":") ; allows it to parse tramp paths
                  (1+ (not (in "\n:"))))
           (? ":"
              (group (1+ digit))
              (? ":"
-                (group (1+ digit))))))
+                (group (1+ digit))))
+          eos))
 
 ;;;###autoload
 (defun rwd/parse-path-with-pos (path)
-  (-let* ((re path-re)
-          ((path line col) (cdar (s-match-strings-all re path)))
+  (-let* (((path line col) (cdar (s-match-strings-all path-re path)))
           (line     (and line (string-to-number line)))
           (col      (or (and col (string-to-number col)) 0)))
     (if line
