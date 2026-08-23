@@ -1,6 +1,6 @@
 ;; -*- lexical-binding: t; -*-
 
-(eval-and-compile
+(eval-when-compile
   (require 'rg)
   (require 'rg-menu))
 
