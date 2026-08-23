@@ -2,9 +2,6 @@
 
 (eval-when-compile
   (require 'dash)                       ; ironic, magit uses dash, --each below
-  )
-
-(eval-and-compile
   (require 'magit)
   )
 
