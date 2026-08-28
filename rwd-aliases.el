@@ -1,11 +1,17 @@
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  -*- lexical-binding: t; -*-
 ;; ;; Aliases: (use sort-paragraphs on this section)
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(eval-and-compile
+(eval-when-compile
+  (load "modes/dispwatch.el")
+  (require 'cl-lib)
+  (require 'dash)
+  (require 'ffap)
+  (require 'map)
+  (require 'org)
   (require 's)
   (require 'thingatpt)
-  (require 'dash))
+  )
 
 (setq path-re
       (rx bos ;; "/rsync:lust.zenspider.com:/home/ryan/whatevs.txt
@@ -374,7 +380,7 @@ Helps with documenting or debugging logs."
 ;;;###autoload
 (defun rwd-renumber-list ()
   (interactive)
-  (letf ((query-replace-defaults '("\\(.+:\\)" . "\\,(1+ \\#):")))
+  (letf ((query-replace-defaults '(("\\(.+:\\)" . "\\,(1+ \\#):"))))
     (call-interactively 'replace-regexp)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -570,8 +576,8 @@ Essentially, I didn't like the format of generate-new-buffer-name."
   (let* ((count 1)
          (buffer-name (format "%s-%d" name count)))
     (while (get-buffer buffer-name)
-      (set 'count (+ count 1))
-      (set 'buffer-name (format "%s-%d" name count)))
+      (setq count (+ count 1))
+      (setq buffer-name (format "%s-%d" name count)))
     buffer-name))
 
 ;;;###autoload
@@ -870,8 +876,8 @@ Essentially, I didn't like the format of generate-new-buffer-name."
 (defun indent-rigidly-n (n)
   "Indent the region, or otherwise the current line, by N spaces."
   (let* ((use-region (and transient-mark-mode mark-active))
-         (rstart (if use-region (region-beginning) (point-at-bol)))
-         (rend   (if use-region (region-end)       (point-at-eol)))
+         (rstart (if use-region (region-beginning) (pos-bol)))
+         (rend   (if use-region (region-end)       (pos-eol)))
          (deactivate-mark "irrelevant")) ; avoid deactivating mark
     (indent-rigidly rstart rend n)))
 
@@ -1014,13 +1020,6 @@ Essentially, I didn't like the format of generate-new-buffer-name."
 
 (defalias 'rwd-comint-trucate-buffer 'rwd-shell-truncate-buffer)
 
-;;;###autoload
-(defun ns-get-pasteboard ()
-  "Returns the value of the pasteboard, or nil for unsupported formats."
-  (condition-case nil
-      (ns-get-selection-internal 'CLIPBOARD)
-    (quit nil)))
-
 (defun rwd-workout-search (name)
   (save-excursion
     (re-search-backward (concat name ": +\\([0-9]+\\)") nil t)
@@ -1156,7 +1155,6 @@ already narrowed."
          (cond ((ignore-errors (org-edit-src-code) t) (delete-other-windows))
                ((ignore-errors (org-narrow-to-block) t))
                (t              (org-narrow-to-subtree))))
-        ((derived-mode-p 'latex-mode) (LaTeX-narrow-to-environment))
         (t (narrow-to-defun))))
 
 (defun rwd/fix-display ()
