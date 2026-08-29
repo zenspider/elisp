@@ -32,12 +32,24 @@
   (interactive)
   (kill-line))
 
+(defun ghostel-send-up ()
+  (interactive)
+  (ghostel--on-user-input)
+  (ghostel--send-encoded "up" nil))
+
+(defun ghostel-send-down ()
+  (interactive)
+  (ghostel--on-user-input)
+  (ghostel--send-encoded "down" nil))
+
 (with-eval-after-load 'ghostel
   ;; (add-to-list 'ghostel-keymap-exceptions "C-k" t)
   ;; (keymap-set ghostel-mode-map "C-k" #'kill-line)
   (ghostel--keymap-set         "C-k"     #'ghostel-kill-line)
   (ghostel--keymap-set         "M-<"     #'ghostel-bob)
   (ghostel--keymap-set         "M->"     #'ghostel-eob)
+  (ghostel--keymap-set         "M-p"     #'ghostel-send-up)
+  (ghostel--keymap-set         "M-n"     #'ghostel-send-down)
   (keymap-set ghostel-mode-map "C-c e"   #'ghostel-clear-scrollback)
   (keymap-set ghostel-mode-map "C-c C-u" #'ghostel-send-C-u)
   (keymap-set ghostel-mode-map "C-c u"   #'ghostel-send-C-u)
