@@ -78,6 +78,7 @@
  '(gcmh-verbose t)
  '(ghostel-max-scrollback 524288000)
  '(ghostel-tramp-shell-integration t)
+ '(ghostel-word-boundary-string " 	\"'`|:;,()[]{}<>$│/")
  '(git-commit-summary-max-length 78)
  '(global-auto-revert-mode t)
  '(global-whitespace-mode t)
