@@ -1,6 +1,27 @@
 ;; -*- lexical-binding: t; -*-
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; my preferences for window selection:
+;;
+;; start by reusing if at all possible (usually both):
+;;
+;;   display-buffer-reuse-window
+;;   display-buffer-reuse-mode-window
+;;
+;; then, optionally, try below current (if transient) or pop up a new window:
+;;
+;;   display-buffer-below-selected
+;;   display-buffer-at-bottom
+;;   display-buffer-pop-up-window
+;;
+;; finally, either use LRU window or just some window if it doesn't matter:
+;;
+;;   display-buffer-use-least-recent-window
+;;   display-buffer-use-some-window
+
 (eval-and-compile
+  (require 'smartrep)
+  (require 'winner)
   (require 'rwd-load))
 
 (when-idle rwd-idle-time
@@ -37,10 +58,14 @@ the ACTIONS alist."
     (when window
       (window--display-buffer buffer window 'reuse actions))))
 
-(defun rwd/nth-column-for-matching-buffers (nth regexp)
-  (add-to-list 'display-buffer-alist `(,regexp
-                                       (display-buffer-reuse-window rwd/display-buffer-in-column)
-                                       (column . ,nth))
+(defun rwd/nth-column-for-name (nth regexp)
+  (add-to-list 'display-buffer-alist
+               `(,regexp
+                 (
+                  display-buffer-reuse-window
+                  rwd/display-buffer-in-column
+                  )
+                 (column . ,nth))
                'append))
 
 (defun interactive-split-current-window ()
@@ -52,6 +77,32 @@ the current fill-column."
   (if (> (window-width) (* 2 fill-column))
       (split-window-horizontally)
     (split-window-vertically)))
+
+(defun rwd/nth-column-for-mode (nth &rest modes)
+  (add-to-list 'display-buffer-alist
+               `((derived-mode ,modes)
+                 (rwd/display-buffer-in-column)
+                 (column . ,nth))
+               'append))
+
+(defun rwd/display-buffer-below (regexp &optional height)
+  (unless height
+    (setq height 0.5))
+  (add-to-list 'display-buffer-alist
+               `(,regexp
+                 (
+                  ;; display-buffer-reuse-window
+                  ;; display-buffer-reuse-mode-window
+                  display-buffer-below-selected
+                  display-buffer-use-least-recent-window
+                  display-buffer-pop-up-window
+                  )
+                 (window (minibuffer-selected-window))
+                 (dedicated           . t)
+                 (inhibit-same-window . t)
+                 (window-height       . ,height)
+                 )
+               'append))
 
 (defun rwd/window-columns ()
   (/ (frame-width) 80))
@@ -73,35 +124,46 @@ the current fill-column."
                      (split-window-below))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; display-buffer-alist: the monster
+;;
+;; TODO: https://www.reddit.com/r/emacs/comments/1og34ko/configuring_displaybufferalist_is_absolutely/>
+;; TODO: https://karthinks.com/software/emacs-window-management-almanac/ (maybe)
 
 (setq display-buffer-alist nil)
 
-(rwd/nth-column-for-matching-buffers  0 "^shell-")
-(rwd/nth-column-for-matching-buffers  0 "^magit-diff:")
-(rwd/nth-column-for-matching-buffers  0 "^magit-revision:")
-(rwd/nth-column-for-matching-buffers  0 "\\*vc-diff\\*")
-(rwd/nth-column-for-matching-buffers  0 "\\*Annotate")
-(rwd/nth-column-for-matching-buffers  0 "\\*Compile-Log\\*")
-(rwd/nth-column-for-matching-buffers  0 "^magit-\\(diff\\|revision\\):")
-(rwd/nth-column-for-matching-buffers  0 "^.P4 diff")
-(rwd/nth-column-for-matching-buffers  0 "^\\*rg\\*")
+;; (rwd/nth-column-for-mode  0 '(shell-mode ghostel-mode comint-mode term-mode))
+(rwd/nth-column-for-name  0 "\\*Annotate")
+(rwd/nth-column-for-name  0 "\\*Compile-Log\\*")
+(rwd/nth-column-for-name  0 "\\*vc-diff\\*")
+(rwd/nth-column-for-name  0 "^.P4 diff")
+(rwd/nth-column-for-name  0 "^\\*ghostel\\*")
+(rwd/nth-column-for-name  0 "^\\*rg\\*")
+(rwd/nth-column-for-name  0 "^magit-\\(diff\\|revision\\):")
+(rwd/nth-column-for-name  0 "^shell-")
 
-(rwd/nth-column-for-matching-buffers -1 "^\\*Racket Describe\\*")
-(rwd/nth-column-for-matching-buffers -1 "^COMMIT_EDITMSG")
-(rwd/nth-column-for-matching-buffers  1 "PULLREQ_EDITMSG")
-(rwd/nth-column-for-matching-buffers -1 "Racket REPL")
-(rwd/nth-column-for-matching-buffers -1 "\\*info\\|\\*help")
-(rwd/nth-column-for-matching-buffers -1 "^magit:")
+(rwd/nth-column-for-name  1 "COMMIT_EDITMSG")
+(rwd/nth-column-for-name  1 "PULLREQ_EDITMSG")
+
+(rwd/nth-column-for-name -1 "^\\*Racket")
+(rwd/nth-column-for-name -1 "^\\*\\(ielm\\|info\\|help\\)")
+(rwd/nth-column-for-name -1 "^magit:")
+
+(rwd/display-buffer-below "\\*Completions\\*")
+;; (rwd/display-buffer-below "\\*Occur\\*" 'fit-window-to-buffer)
+;;(rwd/display-buffer-below "\\*buffer-selection\\*")
+(rwd/display-buffer-below "\\*refs:")
+;; (rwd/display-buffer-below "\\*which-key\\*")
 
 (add-to-list 'display-buffer-alist
              '("\\*Completions\\*"
                (
+                ;; display-buffer-below-selected
                 display-buffer-below-selected-window
                 display-buffer-pop-up-window
                 display-buffer-use-some-window
                 )
-               (window (minibuffer-selected-window))
-               (inhibit-same-window . t)
+               ;; (window (minibuffer-selected-window))
+               ;; (inhibit-same-window . t)
                (window-height       . .5)
                ))
 
@@ -114,36 +176,14 @@ the current fill-column."
                (window-height       . fit-window-to-buffer)
                (window-height       . .5)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; usual 2 column code & execution
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Layout Scheme:
+;;
+;; 2 column code & execution (the usual):
+;;
 ;; +-----------------+-----------------+
-;; |                 |                 |
 ;; |                 |                 |
 ;; |      shell      |     code        |
-;; |                 |                 |
-;; |                 |                 |
-;; |                 |                 |
-;; |                 |                 |
-;; |                 |                 |
-;; |                 |                 |
-;; |                 |                 |
-;; |                 |                 |
-;; |                 |                 |
-;; |                 |                 |
-;; +-----------------+-----------------+
-
-;; 2 column code & test / autotest
-
-;; +-----------------+-----------------+
-;; |                 |                 |
-;; |                 |                 |
-;; |      code       |     tests       |
-;; |                 |     magit       |
-;; |                 |     diff        |
-;; |                 |     help        |
-;; |                 |                 |
 ;; |                 |                 |
 ;; |                 |-----------------+
 ;; |                 |    (popup)      |
@@ -151,25 +191,38 @@ the current fill-column."
 ;; |                 |     repl        |
 ;; |                 |     etc         |
 ;; +-----------------+-----------------+
-
-;; usual 3 column ... not sure how solid on this yet
-
+;;
+;; 2 column code & test / autotest:
+;;
+;; +-----------------+-----------------+
+;; |                 |                 |
+;; |      code       |     tests       |
+;; |      shell      |     magit       |
+;; |                 |     diff        |
+;; |                 |     help        |
+;; |                 |-----------------+
+;; |                 |    (popup)      |
+;; |                 |     help        |
+;; |                 |     repl        |
+;; |                 |     etc         |
+;; +-----------------+-----------------+
+;;
+;; 3 column usual:
+;;
 ;; +-----------------+-----------------+-----------------+
 ;; |                 |                 |                 |
-;; |                 |                 |                 |
-;; |                 |                 |     tests       |
+;; |      shell      |      code       |     tests       |
 ;; |                 |                 |     magit       |
-;; |      shell      |      code       |     diff        |
+;; |                 |                 |     diff        |
 ;; |                 |                 |     help        |
-;; |                 |                 |                 |
-;; |                 |                 |                 |
 ;; |                 |                 +-----------------+
-;; |                 |                 | (popup)         |
-;; |                 |                 |  help           |
-;; |                 |                 |  repl           |
-;; |                 |                 |  etc            |
+;; |                 |                 |    (popup)      |
+;; |                 |                 |     help        |
+;; |                 |                 |     repl        |
+;; |                 |                 |     etc         |
 ;; +-----------------+-----------------+-----------------+
 
+;; TODO MAYBE:
 
 ;; "*Calendar*"
 ;; "*Completions*"
@@ -226,25 +279,3 @@ the current fill-column."
 ;;         (magit-mode               . right)
 ;;         (special-mode             . right)
 ;;         ))
-
-(defun rwd/for-mode (mode)
-  (lambda (buffer _actions)
-    (with-current-buffer buffer (derived-mode-p mode))))
-
-(defun rwd/nth-column-for-mode (nth mode)
-  (add-to-list 'display-buffer-alist `(,(rwd/for-mode mode)
-                                       (rwd/display-buffer-in-column)
-                                       (column . ,nth))
-               'append))
-
-;; (rwd/for-mode 'comint-mode)
-;; (apply (rwd/for-mode 'comint-mode) '("shell-1" 42))
-
-;; (rwd/nth-column-for-matching-buffers  0 'comint-mode)
-
-;; (add-to-list 'display-buffer-alist
-;;              '((lambda (buffer actions)
-;;                  (with-current-buffer buffer
-;;                    (derived-mode-p 'comint-mode)))
-;;                (rwd/display-buffer-in-column)
-;;                (column . 0)))
