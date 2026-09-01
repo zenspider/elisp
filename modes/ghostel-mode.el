@@ -16,31 +16,39 @@
 (defun ghostel-send-C-u ()
   "Send C-u, geneally clearing from point to the prompt."
   (interactive)
+  (ghostel--ensure-ghostel-buffer)
   (ghostel--on-user-input)
   (ghostel-send-key "u" "ctrl"))
 
 (defun ghostel-bob ()
   (interactive)
+  (ghostel--ensure-ghostel-buffer)
   (ghostel-emacs-mode)                  ; you're triggering this to WATCH it run
   (goto-char (point-min)))
 
 (defun ghostel-eob ()
   (interactive)
+  (ghostel--ensure-ghostel-buffer)
   (ghostel-readonly-exit))
 
 (defun ghostel-kill-line ()
   (interactive)
-  (kill-line))
+  (ghostel--ensure-ghostel-buffer)
+  (ghostel--on-user-input)
+  (kill-ring-save (ghostel-cursor-point) (line-end-position)) ; to emacs
+  (ghostel-send-key "k" "ctrl"))        ; to shell kill ring
 
 (defun ghostel-send-up ()
   (interactive)
+  (ghostel--ensure-ghostel-buffer)
   (ghostel--on-user-input)
-  (ghostel--send-encoded "up" nil))
+  (ghostel-send-key "up"))
 
 (defun ghostel-send-down ()
   (interactive)
+  (ghostel--ensure-ghostel-buffer)
   (ghostel--on-user-input)
-  (ghostel--send-encoded "down" nil))
+  (ghostel-send-key "down"))
 
 (with-eval-after-load 'ghostel
   ;; (add-to-list 'ghostel-keymap-exceptions "C-k" t)
